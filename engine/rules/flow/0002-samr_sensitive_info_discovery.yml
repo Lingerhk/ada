@@ -1,0 +1,25 @@
+title: SAMR Sensitive Information Discovery
+id: flow-0002
+status: experimental
+description: flow test
+references:
+  - https://www.test.com
+author: test
+date: 2021/12/12
+modified: 2023/02/14
+tags:
+  - TA0007
+  - attack.t2056.002
+logsource:
+  product: sigma_flow
+
+detection:
+  event_type: multi_eve # count | multi_eve | multi_pkt, 暂时不支持: multi_eve_pkt
+  win_size: 60s # windows time size.
+  sorted: false # 按sigma_id事件顺序,默认为false,所以可不写.
+  selection:
+    sigma_id: # 关联sigma rule id
+      - "winlog-0000-0001" # event_log1, this is $s1, 4624 login
+      - "winlog-0102-0001" # event_log2, this is $s2, SAM_GROUP
+    match_by: "$s1.TargetUserName == $s2.SubjectUserName AND $s1.Hostname == $s2.Hostname" # 这些fields将自动更新到sigma rule到fields中
+level: high

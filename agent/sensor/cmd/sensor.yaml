@@ -1,0 +1,14 @@
+ProjectName: sensor
+
+Log:
+  LogPath: logs
+  LogLevel: debug
+  IsStdOut: false
+
+Redis:
+  Password: "1pa2YgE3jfTbVVpn06CN"
+  Port: 9091
+
+Sensor:
+  RegHost: "192.168.18.4"
+  RegCode: "xxx-xxx-xxx-xxx"

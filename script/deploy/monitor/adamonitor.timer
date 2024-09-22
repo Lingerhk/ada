@@ -1,0 +1,13 @@
+#/lib/systemd/system/adamonitor.timer
+
+[Unit]
+Description=ADA Monitor Timer
+
+[Timer]
+OnBootSec=10min
+OnCalendar=*:0/5
+#Persistent=true
+Unit=adamonitor.service
+
+[Install]
+WantedBy=timers.target

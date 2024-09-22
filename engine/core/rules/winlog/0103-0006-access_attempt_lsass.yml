@@ -1,0 +1,43 @@
+title: An attempt was made to access an Lsass object.
+id: winlog-0103-0006
+status: test
+description: Detects usage of windows powershell executed
+references:
+  - https://blog.netspi.com/15-ways-to-download-a-file/#bitsadmin
+author: Michael
+date: 2017/03/09
+modified: 2023/02/15
+tags:
+  - TA0009
+logsource:
+  product: windows
+  category: process_creation
+detection:
+  selection_source:
+    Channel: "Security"
+    EventID:
+      - 4663
+      - 4656
+  object_process:
+    ObjectName|endswith: '\lsass.exe'
+  filter_ignore:
+    ProcessName|contains:
+      - 'WmiPrvSE.exe'
+      - 'MsMpEng.exe' # windows defender
+      - 'vmtoolsd.exe'
+      - 'Taskmgr.exe'
+      - 'lsass.exe'
+      - 'WerFault.exe'
+      - 'svchost.exe'
+      - 'ldapFwManager.exe'
+      - 'rpcFwManager.exe'
+  condition: selection_source and object_process and not filter_ignore
+fields:
+  - 'Hostname'
+  - 'SubjectUserName'
+  - 'SubjectUserSid'
+  - 'ProcessName'
+unique_fields:
+  - 'Hostname'
+  - 'SubjectUserName'
+level: medium

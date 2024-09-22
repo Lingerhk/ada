@@ -1,0 +1,43 @@
+title: NTDS certificate dump
+id: winlog-0103-0017
+status: test
+description: |
+  Detects suspicious reconnaissance command line activity on Windows systems using Net.EXE
+  Check if the user that executed the commands is suspicious (e.g. service accounts, LOCAL_SYSTEM)
+references:
+  - https://redcanary.com/blog/how-one-hospital-thwarted-a-ryuk-ransomware-outbreak/
+  - https://thedfirreport.com/2020/10/18/ryuk-in-5-hours/
+  - https://research.nccgroup.com/2022/08/19/back-in-black-unlocking-a-lockbit-3-0-ransomware-attack/
+author: Michael
+date: 2017/03/09
+modified: 2023/02/15
+tags:
+  - TA0006
+logsource:
+  product: windows
+  category: process_creation
+detection:
+  selection_source:
+    Channel: "Security"
+    EventID: 4688
+    NewProcessName|endswith:
+      - "vssadmin.exe"
+      - "ntdsutil.exe"
+      - "diskshadow.exe"
+      - "cscript.exe"
+  filter_ignore:
+    CommandLine|contains:
+      - "0xffffffff"
+      - "npcap"
+  condition: selection_source and not filter_ignore
+fields:
+  - 'Hostname'
+  - 'CommandLine'
+  - 'NewProcessName'
+  - 'ParentProcessName'
+  - 'SubjectUserName'
+  - 'SubjectUserSid'
+unique_fields:
+  - 'Hostname'
+  - 'SubjectUserName'
+level: high

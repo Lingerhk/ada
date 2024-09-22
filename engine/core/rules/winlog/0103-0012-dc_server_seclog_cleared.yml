@@ -1,0 +1,25 @@
+title: A directory server's security log was cleared
+id: winlog-0103-0012
+status: test
+description: Detects usage of windows powershell executed
+references:
+  - https://blog.netspi.com/15-ways-to-download-a-file/#bitsadmin
+author: Michael
+date: 2017/03/09
+modified: 2023/02/15
+tags:
+  - TA0005
+logsource:
+  product: windows
+  category: process_creation
+detection:
+  selection_source:
+    Channel: "Security"
+    EventID: 1102
+  condition: selection_source
+fields:
+  - 'Hostname'
+  - 'SourceName'
+unique_fields:
+  - 'Hostname'
+level: high

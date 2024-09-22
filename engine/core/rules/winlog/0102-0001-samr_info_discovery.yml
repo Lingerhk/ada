@@ -1,0 +1,28 @@
+title: MS-SAMR Information Discovery
+id: winlog-0102-0001
+status: experimental
+description: This is some description here
+references:
+  - https://github.com/redcanaryco/atomic-red-team/blob/f339e7da7d05f6057fdfcdd3742bfcf365fee2a9/atomics/T1069.001/T1069.001.md
+author: frack113
+date: 2021/12/12
+modified: 2023/02/14
+tags:
+  - TA0007
+logsource:
+  product: windows
+  category: process_creation
+detection:
+  selection1:
+    Channel: "Security"
+    EventID: 4661
+    ObjectType: "SAM_GROUP"
+  condition: selection1
+fields:
+  - 'Hostname'
+  - 'SubjectUserName'
+  - 'SubjectUserSid'
+unique_fields:
+  - 'Hostname'
+  - 'SubjectUserName'
+level: medium
