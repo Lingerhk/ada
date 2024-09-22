@@ -1,0 +1,14 @@
+#/lib/systemd/system/adamonitor.service
+
+[Unit]
+Description=ADA Monitor Service
+
+[Service]
+Type=simple
+Restart=always
+ExecStart=/home/s0nnet/ada/bin/monitor.sh
+User=root
+Group=root
+
+[Install]
+WantedBy=multi-user.target

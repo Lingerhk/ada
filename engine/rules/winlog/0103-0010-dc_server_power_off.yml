@@ -1,0 +1,26 @@
+title: A directory server was power-off.
+id: winlog-0103-0010
+status: test
+description: Detects usage of windows powershell executed
+references:
+  - https://blog.netspi.com/15-ways-to-download-a-file/#bitsadmin
+author: Michael
+date: 2017/03/09
+modified: 2023/02/15
+tags:
+  - TA0012
+logsource:
+  product: windows
+  category: process_creation
+detection:
+  selection_source:
+    Channel: "System"
+    EventID: 6006
+  condition: selection_source
+fields:
+  - 'Hostname'
+  - 'SourceName'
+unique_fields:
+  - 'Hostname'
+  - 'EventID'
+level: high

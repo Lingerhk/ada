@@ -1,0 +1,91 @@
+syntax = "proto3";
+package api;
+option go_package = "./;api";
+
+//protoc  -I.:. --govalidators_out=:. --go_out=plugins=grpc:. ada_task.proto
+
+service ADATask {
+  // tasker内部接口
+  rpc GetTaskState(GetTaskStateReq) returns(GetTaskStateReply);//获取任务状态
+
+  // 域名相关任务
+  rpc DomainStatusSyncTask(DomainStatusSyncTaskReq)returns(DomainStatusSyncTaskReply); // 域状态同步
+  rpc DomainLdapSyncTask(DomainLdapSyncTaskReq)returns(DomainLdapSyncTaskReply); // 域内资产（Ldap）同步
+
+  // 传感器相关任务
+
+  // 扫描器相关任务
+  rpc ScannerBaselineTask(ScannerBaselineTaskReq) returns (ScannerBaselineTaskReply);
+  rpc ScannerLeakTask(ScannerLeakTaskReq) returns (ScannerLeakTaskReply);
+  rpc ScannerWeakPwdTask(ScannerWeakPwdTaskReq) returns (ScannerWeakPwdTaskReply);
+  rpc ScannerRecheckTask(ScannerRecheckTaskReq) returns (ScannerRecheckTaskReply);
+
+  // 导出任务
+    rpc ExportReportTask(ExportReportTaskReq) returns (ExportReportTaskReply);
+}
+
+message GetTaskStateReq{
+  string taskUUID = 1; //任务UUID
+}
+message GetTaskStateReply{
+  string taskUUID = 1; //任务ID
+  string taskName = 2; //任务名称
+  string state = 3; //任务状态 PENDING RECEIVED STARTED RETRY SUCCESS FAILURE
+  string error = 4; //错误日志
+  string  createdAt = 5; //创建时间
+}
+
+message DomainStatusSyncTaskReq{}
+
+message DomainStatusSyncTaskReply{
+  string taskID = 1;
+}
+
+message DomainLdapSyncTaskReq{}
+message DomainLdapSyncTaskReply{
+  string taskID = 1;
+}
+
+// multi time to call this API for multi domain scanning task
+message ScannerBaselineTaskReq{
+  map <string, string> domainTmplMap = 1;
+}
+
+message ScannerBaselineTaskReply{
+  string taskID = 1;
+}
+
+message ScannerLeakTaskReq{
+  map <string, string> domainTmplMap = 1;
+}
+
+message ScannerLeakTaskReply{
+  string taskID = 1;
+}
+
+message ScannerWeakPwdTaskReq{
+  map <string, string> domainTmplMap = 1;
+}
+
+message ScannerWeakPwdTaskReply{
+  string taskID = 1;
+}
+
+message ScannerRecheckTaskReq{
+  string scanType = 1; // baseline|leak|weakpwd
+  string subTaskId = 2; // subtask_id
+}
+
+message ScannerRecheckTaskReply{
+  string taskID = 1;
+}
+
+message ExportReportTaskReq{
+  string taskID = 1;
+  string type = 2; // alert|baseline|leak|weakpwd|audit|...
+  string params = 3; // 参数 json
+}
+
+message ExportReportTaskReply{
+  string taskID = 1;
+}
