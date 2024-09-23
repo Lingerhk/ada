@@ -27,4 +27,4 @@ ES:
 TaskSrv:
   GrpcAddr: 127.0.0.1:8802 # bind for grpc(tcp)
   HttpAddr: 127.0.0.1:8803 # bind for http(tcp)
-  SyslogAddr: 0.0.0.0:9093 # bind for syslog(udp)
+  SyslogAddr: 0.0.0.0:9092 # bind for syslog(udp)
