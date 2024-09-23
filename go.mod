@@ -24,12 +24,9 @@ require (
 	github.com/mwitkow/go-proto-validators v0.3.2
 	github.com/natefinch/lumberjack v2.0.0+incompatible
 	github.com/redis/go-redis/v9 v9.3.1
-	github.com/sbinet/go-python v0.1.0
 	github.com/shirou/gopsutil v3.21.11+incompatible
 	github.com/sirupsen/logrus v1.9.3
 	github.com/smartystreets/goconvey v1.8.1
-	github.com/songgao/packets v0.0.0-20160404182456-549a10cd4091
-	github.com/songgao/water v0.0.0-20200317203138-2b4b6d7c09d8
 	github.com/stretchr/testify v1.9.0
 	github.com/xuri/excelize/v2 v2.8.1
 	go.mongodb.org/mongo-driver v1.13.1
