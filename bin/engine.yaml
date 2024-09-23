@@ -1,0 +1,24 @@
+ProjectName: engine
+
+Log:
+  LogPath: logs
+  LogLevel: debug
+  IsStdOut: true
+
+Redis :
+  URI: redis://:1pa2YgE3jfTbVVpn06CN@192.168.18.3:6379/0
+  Active: 120
+  Idle: 15
+  IdleTimeout: 3600
+
+Mongodb :
+  Host : 192.168.18.3:27017
+  User : user_ada
+  Passwd : XEl44B4p3hFurztFMo38
+  DbName : db_ada
+  PoolLimit : 100
+
+ES:
+  Addresses: ["http://127.0.0.1:9200"]
+  Username: elastic
+  Password: "nX0ZIN0AIfFs5x=fZfuE"
