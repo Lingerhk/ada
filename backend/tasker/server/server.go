@@ -8,6 +8,16 @@ import (
 	"ada/backend/tasker/worker"
 	"context"
 	"fmt"
+	"math"
+	"net"
+	"net/http"
+	"os"
+	"os/signal"
+	"strconv"
+	"strings"
+	"syscall"
+	"time"
+
 	"github.com/RichardKnop/machinery/v2"
 	redisbackend "github.com/RichardKnop/machinery/v2/backends/redis"
 	redisbroker "github.com/RichardKnop/machinery/v2/brokers/redis"
@@ -20,15 +30,6 @@ import (
 	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/reflection"
 	"google.golang.org/grpc/status"
-	"math"
-	"net"
-	"net/http"
-	"os"
-	"os/signal"
-	"strconv"
-	"strings"
-	"syscall"
-	"time"
 )
 
 const (
@@ -45,6 +46,7 @@ type TaskService struct {
 	httpServer   *http.Server
 	cronServer   *CronScheduler
 	pubsubServer *PubsubServer
+	syslogServer *SyslogServer
 }
 
 type TaskServer struct {
@@ -117,12 +119,19 @@ func New(env *config.Env) (*TaskService, error) {
 	// cron server
 	cronServer := NewCronScheduler(taskServer)
 
+	// syslog server
+	syslogServer, err := NewSyslogServer(env)
+	if err != nil {
+		return nil, err
+	}
+
 	return &TaskService{
 		taskServer:   taskServer,
 		grpcServer:   gprcServer,
 		httpServer:   httpServer,
 		cronServer:   cronServer,
 		pubsubServer: pubsubServer,
+		syslogServer: syslogServer,
 	}, nil
 }
 
@@ -132,6 +141,9 @@ func (s *TaskService) Start() error {
 
 	logger.Info("starting pubsub handler")
 	go s.pubsubServer.EventsServe()
+
+	logger.Infof("starting syslog service at %s", s.taskServer.env.Cfg.TaskSrv.SyslogAddr)
+	go s.syslogServer.SyslogServe()
 
 	logger.Infof("starting http service at %s", s.taskServer.env.Cfg.TaskSrv.HttpAddr)
 	go s.httpServer.ListenAndServe()
@@ -152,6 +164,7 @@ func (s *TaskService) Start() error {
 }
 
 func (s *TaskService) Stop() {
+	s.syslogServer.Stop()
 	s.grpcServer.Stop()
 	s.httpServer.Shutdown(nil)
 }

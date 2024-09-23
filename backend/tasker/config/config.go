@@ -5,14 +5,16 @@ import (
 	"ada/infra/mongo"
 	"context"
 	"fmt"
-	"github.com/natefinch/lumberjack"
-	"github.com/redis/go-redis/v9"
-	"github.com/sirupsen/logrus"
-	"gopkg.in/yaml.v2"
 	"io/ioutil"
 	"os"
 	"path"
 	"time"
+
+	"github.com/elastic/go-elasticsearch/v8"
+	"github.com/natefinch/lumberjack"
+	"github.com/redis/go-redis/v9"
+	"github.com/sirupsen/logrus"
+	"gopkg.in/yaml.v2"
 )
 
 type LogCfg struct {
@@ -22,8 +24,9 @@ type LogCfg struct {
 }
 
 type TaskSrvCfg struct {
-	GrpcAddr string `yaml:"GrpcAddr"`
-	HttpAddr string `yaml:"HttpAddr"`
+	GrpcAddr   string `yaml:"GrpcAddr"`
+	HttpAddr   string `yaml:"HttpAddr"`
+	SyslogAddr string `yaml:"SyslogAddr"`
 }
 
 type RedisCfg struct {
@@ -42,18 +45,27 @@ type MongodbCfg struct {
 	PoolLimit uint64 `yaml:"PoolLimit"`
 }
 
+type ESCfg struct {
+	Enable    bool     `yaml:"Enable"`
+	Addresses []string `yaml:"Addresses"`
+	Username  string   `yaml:"Username"`
+	Password  string   `yaml:"Password"`
+}
+
 type Config struct {
 	ProjectName string     `yaml:"ProjectName"`
 	Log         LogCfg     `yaml:"Log"`
 	TaskSrv     TaskSrvCfg `yaml:"TaskSrv"`
 	Redis       RedisCfg   `yaml:"Redis"`
 	Mongodb     MongodbCfg `yaml:"Mongodb"`
+	ES          ESCfg      `yaml:"ES"`
 }
 
 type Env struct {
 	Cfg      *Config
 	RedisCli *redis.Client
 	MongoCli mongo.DBAdaptor
+	EsCli    *elasticsearch.Client
 }
 
 func InitLog(setting *Config, redisCli *redis.Client, moduleName string) error {
@@ -129,6 +141,23 @@ func InitMongoClient(setting *Config) (mongo.DBAdaptor, error) {
 	return mongoCli, nil
 }
 
+func InitElasticsearch(setting *Config) (*elasticsearch.Client, error) {
+	if !setting.ES.Enable {
+		return nil, nil
+	}
+
+	cfg := elasticsearch.Config{
+		Addresses: setting.ES.Addresses,
+		Username:  setting.ES.Username,
+		Password:  setting.ES.Password,
+	}
+	esCli, err := elasticsearch.NewClient(cfg)
+	if err != nil {
+		panic(err)
+	}
+	return esCli, nil
+}
+
 func Init(confPath, moduleName string) (*Env, error) {
 	content, err := ioutil.ReadFile(confPath)
 	if err != nil {
@@ -156,5 +185,10 @@ func Init(confPath, moduleName string) (*Env, error) {
 		return nil, err
 	}
 
-	return &Env{&setting, redisCli, mongoCli}, nil
+	esCli, err := InitElasticsearch(&setting)
+	if err != nil {
+		return nil, err
+	}
+
+	return &Env{&setting, redisCli, mongoCli, esCli}, nil
 }
