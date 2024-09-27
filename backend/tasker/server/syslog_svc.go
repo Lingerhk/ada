@@ -10,21 +10,26 @@ import (
 	"time"
 
 	"ada/backend/cache"
-	"ada/backend/recevier/pktlog"
 	"ada/backend/tasker/config"
 
 	"github.com/elastic/go-elasticsearch/v8/esapi"
 	"github.com/elastic/go-elasticsearch/v8/esutil"
+	"github.com/redis/go-redis/v9"
 	logger "github.com/sirupsen/logrus"
 	"gopkg.in/mcuadros/go-syslog.v2"
 )
 
 const (
+	maxLogQueueLen    = 200000             // 日志队列的最大长度(20W, evelog&pktlog)
 	eveLogQueueKey    = "ada:evelog_queue" // same with receiver module
+	pktLogQueueKey    = "ada:pktlog_queue" // same with engine module
 	eveLogIndexPrefix = "ada-eventlog"
+	pktLogIndexPrefix = "ada-packetlog"
+	pktLogChannel     = "ada:pktlog_channel" // receive pktlog from zeek-redis
 )
 
-const mapping = `{
+const (
+	eveLogMapping = `{
 	"settings": {
 	  "number_of_shards": 1,
 	  "number_of_replicas": 0
@@ -37,6 +42,21 @@ const mapping = `{
 	  }
 	}
   }`
+
+	pktLogMapping = `{
+	"settings": {
+	  "number_of_shards": 1,
+	  "number_of_replicas": 0
+	},
+	"mappings": {
+	  "properties": {
+		"ts": {
+		  "type": "date"
+		}
+	  }
+	}
+  }`
+)
 
 type nodeStats struct {
 	DiskAvail       string `json:"diskAvail"`
@@ -80,14 +100,15 @@ type indexStats struct {
 }
 
 type SyslogServer struct {
-	ctx           context.Context
-	env           *config.Env
-	esBulker      esutil.BulkIndexer
-	channel       syslog.LogPartsChannel
-	server        *syslog.Server
-	dcHostnameMap map[string]string // cache mapping dcHostname&ip 减少redis查询
-	currIndexMap  map[string]bool   // 当创建es index后缓存在此，避免每次写入前判断index是否存在
-	stop          bool
+	env             *config.Env
+	ctx             context.Context
+	cancel          context.CancelFunc
+	esBulker        esutil.BulkIndexer
+	channel         syslog.LogPartsChannel
+	server          *syslog.Server
+	dcHostnameMap   map[string]string // cache mapping dcHostname&ip 减少redis查询
+	eveLogIndexName string            // 当前evelog日志index的日期,用于缓存
+	pktLogIndexName string            // 当前pktlog日志index的日期,用于缓存
 }
 
 func NewSyslogServer(env *config.Env) (*SyslogServer, error) {
@@ -119,9 +140,17 @@ func NewSyslogServer(env *config.Env) (*SyslogServer, error) {
 	}
 
 	dcHostnameMap := make(map[string]string)
-	currIndexMap := make(map[string]bool)
+	ctx, cancel := context.WithCancel(context.Background())
 
-	return &SyslogServer{esBulker: bi, channel: channel, server: server, dcHostnameMap: dcHostnameMap, currIndexMap: currIndexMap}, nil
+	return &SyslogServer{
+		ctx:           ctx,
+		env:           env,
+		cancel:        cancel,
+		esBulker:      bi,
+		channel:       channel,
+		server:        server,
+		dcHostnameMap: dcHostnameMap,
+	}, nil
 }
 
 func (s *SyslogServer) SyslogServe() {
@@ -134,7 +163,7 @@ func (s *SyslogServer) SyslogServe() {
 
 	go func(channel syslog.LogPartsChannel) {
 		for logParts := range s.channel {
-			go s.sync(logParts)
+			go s.syslogSync(logParts)
 		}
 	}(s.channel)
 
@@ -142,12 +171,12 @@ func (s *SyslogServer) SyslogServe() {
 }
 
 func (s *SyslogServer) Stop() {
-	s.stop = true
 	s.server.Kill()
-	s.esBulker.Close(context.Background())
+	s.cancel()
+	s.esBulker.Close(s.ctx)
 }
 
-func (s *SyslogServer) sync(event map[string]interface{}) {
+func (s *SyslogServer) syslogSync(event map[string]interface{}) {
 	// "client":"192.168.145.135:49627",
 	// "facility":1,
 	// "hostname":"DC2019-02.china.com",
@@ -157,8 +186,6 @@ func (s *SyslogServer) sync(event map[string]interface{}) {
 	// "timestamp":time.Date(2023, time.December, 31, 14, 43, 49, 0, time.UTC),
 
 	logger.Debugf("recv syslog:%#v", event)
-
-	ctx := context.Background()
 
 	hostname := event["hostname"].(string)
 	client := event["client"].(string)
@@ -176,7 +203,7 @@ func (s *SyslogServer) sync(event map[string]interface{}) {
 	}
 
 	rdxDomainKey := cache.DomainIPRelateDCKey(parts[1])
-	if s.env.RedisCli.Exists(ctx, rdxDomainKey).Val() == 0 {
+	if s.env.RedisCli.Exists(s.ctx, rdxDomainKey).Val() == 0 {
 		logger.Warnf("ignore invalid syslog from hostname:%s, please add domain first!", hostname)
 		return
 	}
@@ -184,7 +211,7 @@ func (s *SyslogServer) sync(event map[string]interface{}) {
 	if ip, ok := s.dcHostnameMap[hostname]; !ok || ip != c[0] {
 		// 设置为通用KV形式，便于zeek-redis模块直接从redis中根据ip获取dc hostname
 		rdxDcIPKey := cache.DomainIPRelateDCNameKey(c[0])
-		if err := s.env.RedisCli.Set(ctx, rdxDcIPKey, hostname, 0).Err(); err != nil {
+		if err := s.env.RedisCli.Set(s.ctx, rdxDcIPKey, hostname, 0).Err(); err != nil {
 			logger.Errorf("update domain cache to redis err%v", err)
 			return
 		}
@@ -194,17 +221,17 @@ func (s *SyslogServer) sync(event map[string]interface{}) {
 	// 记录当前dc的timestamp到SensorCollectStatusKey中，task_worker会check是否异常
 	ts := time.Now().Unix()
 	if ts%10 == 0 {
-		_ = s.env.RedisCli.HSet(ctx, cache.SensorCollectStatusKey, "rawlog_"+hostname, ts).Err()
+		_ = s.env.RedisCli.HSet(s.ctx, cache.SensorCollectStatusKey, "rawlog_"+hostname, ts).Err()
 	}
 
 	// 如果queue超过20W条，则清除5%旧数据。每个eventlog按4KB计算，4KB*200000 = 780MB
-	if s.env.RedisCli.LLen(ctx, eveLogQueueKey).Val() > 200000 {
+	if s.env.RedisCli.LLen(s.ctx, eveLogQueueKey).Val() > maxLogQueueLen {
 		logger.Warnf("queue %s is full, will remove some old eventlog", eveLogQueueKey)
-		s.env.RedisCli.LTrim(ctx, eveLogQueueKey, 1000, -1)
+		s.env.RedisCli.LTrim(s.ctx, eveLogQueueKey, 2000, -1)
 	}
 
 	content := event["content"].(string)
-	if err := s.env.RedisCli.LPush(ctx, eveLogQueueKey, content).Err(); err != nil {
+	if err := s.env.RedisCli.LPush(s.ctx, eveLogQueueKey, content).Err(); err != nil {
 		logger.Errorf("lpush redis err:%v", err)
 		// do nothing
 	}
@@ -213,39 +240,11 @@ func (s *SyslogServer) sync(event map[string]interface{}) {
 		return
 	}
 
-	indexName := fmt.Sprintf("%s-%s", eveLogIndexPrefix, time.Now().Format("2006.01.02"))
-
-	if _, ok := s.currIndexMap[indexName]; !ok {
-		// check if the index is created. if not, create first.
-		req := esapi.IndicesExistsRequest{Index: []string{indexName}}
-		r, err := req.Do(context.Background(), s.env.EsCli)
-		if err != nil {
-			logger.Errorf("request es exist index err:%v", err)
-			return
-		}
-		defer r.Body.Close()
-
-		// is index doesn't exist, the status_code is 404
-		if r.StatusCode == 404 {
-			// create index
-			req := esapi.IndicesCreateRequest{
-				Index: indexName,
-				Body:  strings.NewReader(mapping),
-			}
-			res, err := req.Do(context.Background(), s.env.EsCli)
-			if err != nil {
-				logger.Errorf("request es create err:%v", err)
-				return
-			}
-			defer res.Body.Close()
-		}
-
-		s.currIndexMap[indexName] = true // 更新cache
-	}
+	s.checkIndex(eveLogIndexPrefix)
 
 	item := esutil.BulkIndexerItem{
 		Action: "index",
-		Index:  indexName,
+		Index:  s.eveLogIndexName,
 		Body:   strings.NewReader(content),
 		// OnFailure is the optional callback for each failed operation
 		OnFailure: func(
@@ -254,11 +253,11 @@ func (s *SyslogServer) sync(event map[string]interface{}) {
 			res esutil.BulkIndexerResponseItem, err error,
 		) {
 			if err != nil {
-				logger.Warnf("bulk indexer item on-failure err:%v", err)
+				logger.Warnf("bulk indexer item(evelog) on-failure err:%v", err)
 			}
 		},
 	}
-	err := s.esBulker.Add(ctx, item)
+	err := s.esBulker.Add(s.ctx, item)
 	if err != nil {
 		logger.Errorf("bulk indexing document err:%v", err)
 		return
@@ -271,15 +270,16 @@ func (s *SyslogServer) monitor() {
 	var last int64
 
 	for {
-		if s.stop {
-			break
-		}
-
-		time.Sleep(1 * time.Second)
-		now := time.Now().Unix()
-		if now-last > 300 {
-			s.stats()
-			last = now
+		select {
+		case <-s.ctx.Done():
+			return
+		default:
+			time.Sleep(1 * time.Second)
+			now := time.Now().Unix()
+			if now-last > 300 {
+				s.stats()
+				last = now
+			}
 		}
 	}
 }
@@ -393,11 +393,11 @@ func (s *SyslogServer) stats() {
 }
 
 func (s *SyslogServer) deleteOldestIndex(ctx context.Context) {
-	// TODO: bug fix: 下面结果返回的list中的顺序是 eveLogIndexPrefix，再PktLogIndexPrefix
+	// TODO: bug fix: 下面结果返回的list中的顺序是 eveLogIndexPrefix，再pktLogIndexPrefix
 	// 需要按日志删除日志。todo： 比较两个日志中时间最早的，进行删除。
 	req := esapi.CatIndicesRequest{
 		Format: "json",
-		Index:  []string{eveLogIndexPrefix + "-*", pktlog.PktLogIndexPrefix + "-*"},
+		Index:  []string{eveLogIndexPrefix + "-*", pktLogIndexPrefix + "-*"},
 		S:      []string{"index"},
 	}
 	res, err := req.Do(ctx, s.env.EsCli)
@@ -441,4 +441,112 @@ func (s *SyslogServer) deleteOldestIndex(ctx context.Context) {
 	}
 
 	logger.Infof("deleted the oldest index: %s, dataset.size:%s", indices[0].Index, indices[0].DatasetSize)
+}
+
+// for pktlog
+func (s *SyslogServer) PktlogServe() {
+	pubsub := s.env.RedisCli.PSubscribe(s.ctx, pktLogChannel)
+	defer pubsub.Close()
+
+	for {
+		select {
+		case <-s.ctx.Done():
+			return
+		default:
+			msg, err := pubsub.ReceiveTimeout(s.ctx, 5*time.Second)
+			if err != nil {
+				if err := pubsub.Ping(s.ctx); err != nil {
+					logger.Errorf("PubSub failure:%s", err.Error())
+				}
+				time.Sleep(2 * time.Second)
+				continue
+			}
+			switch msg := msg.(type) {
+			case *redis.Message:
+				logger.Infof("channel: %s received:%s, ", msg.Channel, msg.Payload)
+				go s.pktlogSync(s.ctx, msg.Payload)
+			}
+		}
+	}
+}
+
+func (s *SyslogServer) pktlogSync(ctx context.Context, event string) {
+	if s.env.RedisCli.LLen(ctx, pktLogQueueKey).Val() > maxLogQueueLen {
+		logger.Warnf("queue %s is full, will remove some old packetlog", pktLogQueueKey)
+		s.env.RedisCli.LTrim(ctx, pktLogQueueKey, 2000, -1)
+	}
+
+	if !s.env.Cfg.ES.Enable {
+		return
+	}
+
+	s.checkIndex(pktLogIndexPrefix)
+
+	item := esutil.BulkIndexerItem{
+		Action: "index",
+		Index:  s.pktLogIndexName,
+		Body:   strings.NewReader(event),
+		// OnFailure is the optional callback for each failed operation
+		OnFailure: func(
+			ctx context.Context,
+			item esutil.BulkIndexerItem,
+			res esutil.BulkIndexerResponseItem, err error,
+		) {
+			if err != nil {
+				logger.Warnf("bulk indexer item(pktlog) on-failure err:%v", err)
+			}
+		},
+	}
+	err := s.esBulker.Add(s.ctx, item)
+	if err != nil {
+		logger.Errorf("bulk indexing document err:%v", err)
+		return
+	}
+
+	logger.Debug("sotred pktlog into es succed")
+
+}
+
+func (s *SyslogServer) checkIndex(logIndexPrefix string) {
+	var oldLogIndexname, logIndexMapping string
+	if logIndexPrefix == eveLogIndexPrefix {
+		oldLogIndexname = s.eveLogIndexName
+		logIndexMapping = eveLogMapping
+	} else if logIndexPrefix == pktLogIndexPrefix {
+		oldLogIndexname = s.pktLogIndexName
+		logIndexMapping = pktLogMapping
+	}
+
+	currentIndexName := fmt.Sprintf("%s-%s", logIndexPrefix, time.Now().Format("2006.01.02"))
+	if currentIndexName == oldLogIndexname {
+		return
+	}
+
+	// check if the index is created. if not, create first.
+	req := esapi.IndicesExistsRequest{Index: []string{currentIndexName}}
+	r, err := req.Do(context.Background(), s.env.EsCli)
+	if err != nil {
+		logger.Errorf("request es exist index(%s) err:%v", currentIndexName, err)
+		return
+	}
+	defer r.Body.Close()
+
+	if r.StatusCode == 404 {
+		req := esapi.IndicesCreateRequest{
+			Index: currentIndexName,
+			Body:  strings.NewReader(logIndexMapping),
+		}
+		res, err := req.Do(s.ctx, s.env.EsCli)
+		if err != nil {
+			logger.Errorf("request es create err:%v", err)
+			return
+		}
+		defer res.Body.Close()
+	}
+
+	if logIndexPrefix == eveLogIndexPrefix {
+		s.eveLogIndexName = currentIndexName
+	} else if logIndexPrefix == pktLogIndexPrefix {
+		s.pktLogIndexName = currentIndexName
+	}
 }

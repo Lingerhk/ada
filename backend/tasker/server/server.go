@@ -142,8 +142,9 @@ func (s *TaskService) Start() error {
 	logger.Info("starting pubsub handler")
 	go s.pubsubServer.EventsServe()
 
-	logger.Infof("starting syslog service at %s", s.taskServer.env.Cfg.TaskSrv.SyslogAddr)
+	logger.Infof("starting syslog/pktlog service at %s", s.taskServer.env.Cfg.TaskSrv.SyslogAddr)
 	go s.syslogServer.SyslogServe()
+	go s.syslogServer.PktlogServe()
 
 	logger.Infof("starting http service at %s", s.taskServer.env.Cfg.TaskSrv.HttpAddr)
 	go s.httpServer.ListenAndServe()
