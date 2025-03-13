@@ -1,18 +1,21 @@
 package main
 
+// env GOOS=linux GOARCH=amd64 go build log_monitor.go
+
 import (
 	"context"
 	"crypto/md5"
 	"encoding/hex"
 	"fmt"
+	"strings"
+	"time"
+
 	"github.com/go-lark/lark"
 	"github.com/gregdel/pushover"
 	"github.com/redis/go-redis/v9"
-	"strings"
-	"time"
 )
 
-const redisURI = "redis://:1pa2YgE3jfTbVVpn06CN@192.168.18.4:6379/0"
+const redisURI = "redis://:1pa2YgE3jfTbVVpn06CN@192.168.6.4:6379/0"
 
 var notifyMap map[string]int64
 
@@ -38,7 +41,7 @@ func main() {
 	}
 
 	// queue name
-	queues := []string{"ada:logs_queue:apiserver", "ada:logs_queue:sensor", "ada:logs_queue:task_worker", "ada:logs_queue:task_worker", "ada:logs_queue:receiver", "ada:logs_queue:engine", "ada:logs_queue:scanner"}
+	queues := []string{"ada:logs_queue:apiserver", "ada:logs_queue:sensor", "ada:logs_queue:task_worker", "ada:logs_queue:task_server", "ada:logs_queue:receiver", "ada:logs_queue:engine", "ada:logs_queue:scanner"}
 
 	for {
 		time.Sleep(2 * time.Second)
@@ -71,8 +74,8 @@ func main() {
 			continue
 		}
 
-		//pushAlert(msg[0], msg[1])
-		pushFeishu(msg[0], msg[1])
+		pushAlert(msg[0], msg[1])
+		//pushFeishu(msg[0], msg[1])
 		notifyMap[hashStr] = nowTs
 
 		for k, ts := range notifyMap {

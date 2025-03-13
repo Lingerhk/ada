@@ -7,12 +7,13 @@ import (
 	"ada/infra/license"
 	_ "ada/infra/version"
 	"bytes"
-	"github.com/gin-gonic/gin"
-	logger "github.com/sirupsen/logrus"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"os"
 	"time"
+
+	"github.com/gin-gonic/gin"
+	logger "github.com/sirupsen/logrus"
 )
 
 ////go:embed /xxx/xx
@@ -95,7 +96,7 @@ func (h *httpHandle) licenseHandler(c *gin.Context) {
 			return
 		}
 
-		cnt, err := ioutil.ReadAll(c.Request.Body)
+		cnt, err := io.ReadAll(c.Request.Body)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"err": err.Error()})
 			return
