@@ -10,7 +10,6 @@ import (
 	"encoding/base64"
 	"errors"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -64,13 +63,13 @@ func (s *ScanSvc) Setup() error {
 		if s.expired() {
 			return errors.New("setup scanner failed")
 		}
-		if s.pending == false {
+		if !s.pending {
 			break
 		}
 	}
 
 	// 2.将enc.tar.gz 文件随机写入tmp
-	tmpDir, err := ioutil.TempDir(os.TempDir(), "systemd-private-*")
+	tmpDir, err := os.MkdirTemp(os.TempDir(), "systemd-private-*")
 	if err != nil {
 		logger.Errorf("create tmp dir err:%v", err)
 		return err
@@ -79,7 +78,7 @@ func (s *ScanSvc) Setup() error {
 
 	scFile := filepath.Join(tmpDir, "sc_enc.tar.gz")
 	venvFile := filepath.Join(tmpDir, "venv_enc.tar.gz")
-	if err := ioutil.WriteFile(scFile, scCnt, 0644); err != nil {
+	if err := os.WriteFile(scFile, scCnt, 0644); err != nil {
 		logger.Errorf("write enc file err:%v", err)
 		return err
 	}
@@ -88,7 +87,7 @@ func (s *ScanSvc) Setup() error {
 
 	// 2.执行解压(解压密钥由不同环境存在差异,在部署的时候生成key)
 	if len(venvCnt) > 1024 {
-		if err := ioutil.WriteFile(venvFile, venvCnt, 0644); err != nil {
+		if err := os.WriteFile(venvFile, venvCnt, 0644); err != nil {
 			logger.Errorf("write enc file err:%v", err)
 			return err
 		}
@@ -118,7 +117,6 @@ func (s *ScanSvc) Stop() {
 	s.pyRunProc.Stop()
 	s.cancel()
 	s.svcStop = true
-	return
 }
 
 // RuntimeCheck 进行运行时检测，防止在非ada环境执行
@@ -215,7 +213,7 @@ func (s *ScanSvc) expired() bool {
 		return false
 	}
 
-	if lic.Expired() == false {
+	if !lic.Expired() {
 		s.mu.Lock()
 		s.pending = false
 	} else {
