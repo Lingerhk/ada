@@ -1,10 +1,17 @@
 
 FROM redis:7.2.5
 
-COPY redis/redis.conf /usr/local/etc/redis/redis.conf
-COPY redis/ssl /usr/local/etc/redis/ssl
+USER root
 
-EXPOSE 5513
+COPY redis.conf /usr/local/etc/redis/redis.conf
+COPY ssl /usr/local/etc/redis/ssl
+
+RUN mkdir -p /data
+RUN chown -R redis:redis /data
+
+EXPOSE 9091
 EXPOSE 6379
+
+USER redis
 
 CMD [ "redis-server", "/usr/local/etc/redis/redis.conf" ]
