@@ -14,9 +14,9 @@ BUILD_API_PROTO_PATH=${BUILD_BASE_PATH}/backend/apiserver/api/v2
 BUILD_RPC_PROTO_PATH=${BUILD_BASE_PATH}/backend/tasker/api
 
 
-.PHONY: all gen_proto apiserver task_worker task_server receiver engine scanner clean
+.PHONY: all gen_proto apiserver task_worker task_server engine scanner clean
 
-all: gen_proto apiserver task_worker task_server receiver engine scanner
+all: gen_proto apiserver task_worker task_server engine scanner
 
 gen_proto:
 	protoc -I=${GOPATH}/src:${BUILD_API_PROTO_PATH} --govalidators_out=:${BUILD_API_PROTO_PATH} --go_out=plugins=grpc:${BUILD_API_PROTO_PATH} ${BUILD_API_PROTO_PATH}/ada.proto
@@ -49,15 +49,6 @@ task_server:
         -X '${BUILD_PATH_INFRA}/version.CommitVersion=${COMMIT_VERSION}'"\
         -o ${BUILD_BASE_PATH}/bin/task_server ${BUILD_PATH_TASK}/server.go
 
-receiver:
-	/usr/local/go/bin/go build -ldflags \
-        "-w -s -X '${BUILD_PATH_INFRA}/version.BuildVersion=${BUILD_VERSION}'\
-        -X '${BUILD_PATH_INFRA}/version.BuildTime=${BUILD_TIME}'\
-        -X '${BUILD_PATH_INFRA}/version.BuildName=ADA@recevier'\
-        -X '${BUILD_PATH_INFRA}/version.CommitTime=${COMMIT_TIME}'\
-        -X '${BUILD_PATH_INFRA}/version.CommitVersion=${COMMIT_VERSION}'"\
-        -o ${BUILD_BASE_PATH}/bin/receiver ${BUILD_PATH_RECEIVER}/receiver.go
-
 engine:
 	/usr/local/go/bin/go build -ldflags \
         "-w -s -X '${BUILD_PATH_INFRA}/version.BuildVersion=${BUILD_VERSION}'\
@@ -80,6 +71,5 @@ clean:
 	rm -rf ${BUILD_BASE_PATH}/bin/apiserver
 	rm -rf ${BUILD_BASE_PATH}/bin/task_server
 	rm -rf ${BUILD_BASE_PATH}/bin/task_worker
-	rm -rf ${BUILD_BASE_PATH}/bin/receiver
 	rm -rf ${BUILD_BASE_PATH}/bin/engine
 	rm -rf ${BUILD_BASE_PATH}/bin/scanner
