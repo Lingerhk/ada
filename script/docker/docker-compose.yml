@@ -1,123 +1,119 @@
 
 services:
-#  ada_mongodb:
-#    container_name: "ada_mongodb"
-#    image: ada_mongodb:2.6
-#    restart: always
-#    networks:
-#      - ada-networks
-#    volumes:
-#      - /home/adadmin/data/mongodb:/data/db
-#      - /home/adadmin/logs/mongodb:/var/log/mongodb
-#    ports:
-#      - "27017:27017"
+  ada_mongodb:
+    container_name: "ada_mongodb"
+    image: ada_mongodb:2.9.1
+    restart: unless-stopped
+    networks:
+      - ada-networks
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME="root"
+      - MONGO_INITDB_ROOT_PASSWORD="XEl44B4p3hFurztFMo38"
+    volumes:
+      - /home/adadmin/data/mongodb:/data/db:rw
+      - /home/adadmin/logs/mongodb:/var/log/mongodb:rw
+    ports:
+      - "27017:27017/tcp"
 
-  # ada_redis:
-  #   container_name: "ada_redis"
-  #   image: ada_redis:2.9.1
-  #   restart: always
+  ada_redis:
+    container_name: "ada_redis"
+    image: ada_redis:2.9.1
+    restart: unless-stopped
+    networks:
+      - ada-networks
+    volumes:
+      - /home/adadmin/data/redis:/data:rw
+    ports:
+      - "9091:9091/tcp"
+      - "6379:6379/tcp"
+
+  # ada_elasticsearch:
+  #   container_name: "ada_elasticsearch"
+  #   image: docker.elastic.co/elasticsearch/elasticsearch:8.14.3
+  #   restart: unless-stopped
   #   networks:
   #     - ada-networks
-#    volumes:
-#      - /home/adadmin/data/redis:/data:Z
-      #- /home/adadmin/logs/redis:/var/log/redis:Z
-      #- /home/adadmin/conf/redis/redis.conf:/usr/local/etc/redis/redis.conf:ro,Z
-    # ports:
-    #   - "5513:5513/tcp"
-    #   - "6379:6379/tcp"
+  #   volumes:
+  #     - /home/adadmin/data/elasticsearch:/usr/share/elasticsearch/data
+  #     - /home/adadmin/logs/elasticsearch:/var/log/elasticsearch
+  #   ports:
+  #     - "9200:9200"
+  #   environment:
+  #     - cluster.name=elasticsearch
+  #     - discovery.type=single-node
+  #     - network.host=0.0.0.0
+  #     - xpack.security.enabled=true
+  #     - xpack.security.http.ssl.enabled=false
+  #     - ES_JAVA_OPTS=-Xms512m -Xmx512m
+  #     - ELASTIC_PASSWORD="nX0ZIN0AIfFs5x=fZfuE"
+  #     - KIBANA_SYSTEM_PASSWORD="nX0ZIN0AIfFs5x=fZfuE"
+  #   healthcheck:
+  #     test: ['CMD-SHELL', 'curl --silent --fail localhost:9200/_cluster/health || exit 1']
+  #     interval: 10s
+  #     timeout: 5s
+  #     retries: 3
+  #     start_period: 30s
+  #   mem_limit: 8G
+  #   ulimits:
+  #     memlock:
+  #       soft: -1
+  #       hard: -1
 
- ada_elasticsearch:
-   container_name: "ada_elasticsearch"
-   image: docker.elastic.co/elasticsearch/elasticsearch:8.14.3
-   restart: unless-stopped
-   command: ["elasticsearch", "-Elogger.level=WARN"]
-   networks:
-     - ada-networks
-   volumes:
-     - es_data:/usr/share/elasticsearch/data
-   ports:
-     - "9200:9200"
-   environment:
-     - cluster.name=elasticsearch
-     - discovery.type=single-node
-     - network.host=0.0.0.0
-     - xpack.security.enabled=true
-     - xpack.security.http.ssl.enabled=false
-     - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
-     - ELASTIC_PASSWORD="nX0ZIN0AIfFs5x=fZfuE"
-     - KIBANA_SYSTEM_PASSWORD="nX0ZIN0AIfFs5x=fZfuE"
+  # ada_kibana:
+  #   container_name: "ada_kibana"
+  #   image: docker.elastic.co/kibana/kibana:8.14.3
+  #   restart: unless-stopped
+  #   user: "1002:1002"
+  #   networks:
+  #     - ada-networks
+  #   # volumes:
+  #   #   - /home/adadmin/conf/kibana/kibana.yml:/usr/share/kibana/config/kibana.yml:ro,Z
+  #   ports:
+  #     - "5601:5601"
+  #   depends_on:
+  #     - ada_elasticsearch
 
-#
-#  ada_kibana:
-#    container_name: "ada_kibana"
-#    image: ada_kibana:8.14.3
-#    restart: unless-stopped
-#    networks:
-#      - ada-networks
-#    volumes:
-#      - /home/adadmin/conf/kibana/kibana.yml:/usr/share/kibana/config/kibana.yml:ro,Z
-#    ports:
-#      - "5601:5601"
-#    depends_on:
-#      - ada_elasticsearch
+  # ada_backend:
+  #   container_name: "ada_backend"
+  #   image: ada_backend:2.9.1
+  #   restart: unless-stopped
+  #   networks:
+  #     - ada-networks
+  #   ports:
+  #     - "80:80"
+  #   volumes:
+  #     - /home/adadmin/logs/nginx:/var/log/nginx
+  #     - /home/adadmin/logs/supervisor:/var/log/supervisor
+  #     - /home/adadmin/logs/backend:/home/adadmin/logs
+  #   depends_on:
+  #     - ada_elasticsearch
+  #     - ada_redis
+  #     - ada_mongodb
 
-#  ada_zeek:
-#    container_name: "ada_zeek"
-#    image: ada_zeek:2.6
-#    restart: unless-stopped
-#    networks:
-#      - ada-networks
-#    volumes:
-#      - /home/adadmin/conf/zeek:/home/adadmin/conf:ro,Z
-#      - /home/adadmin/logs/zeek:/home/adadmin/logs:Z
-#    ports:
-#      - "7890:7890/udp"
-#      - "7891:7891/udp"
-#    cap_add:
-#      - NET_ADMIN
-#    devices:
-#      - /dev/net/tap:/dev/net/tap
-#    depends_on:
-#      - ada_elasticsearch
-#      - ada_redis
+  # ada_zeek:
+  #   container_name: "ada_zeek"
+  #   image: ada_zeek:2.9.1
+  #   restart: unless-stopped
+  #   networks:
+  #     - ada-networks
+  #   ports:
+  #     - "9093:9093/udp"
+  #   depends_on:
+  #     - ada_elasticsearch
+  #     - ada_redis
+  #     - ada_backend
 
-#  ada_scanner:
-#    container_name: "ada_scanner"
-#    image: ada_scanner:2.6
-#    restart: always
-#    networks:
-#      - ada-networks
-#    volumes:
-#      - /home/adadmin/conf/scanner:/home/adadmin/conf:ro,Z
-#      - /home/adadmin/logs/scanner:/home/adadmin/logs:Z
-#    depends_on:
-#      #- ada_mongodb
-#      - ada_redis
-
-#
-#  hp_engine:
-#    image: harbor.test.shopeemobile.com/infrasec/hp_ssh:1.0
-#    container_name: "hp_ssh"
-#    restart: always
-#    networks:
-#      - ada-networks
-#    volumes:
-#      - /home/ada/logs/engine:/opt/logs
-#    ports:
-#      - "22022:22"
-#
-#  hp_backend:
-#    image: confluentinc/cp-zookeeper:7.3.2
-#    hostname: zookeeper
-#    container_name: "hp_kafka_zookeeper"
-#    restart: always
-#    networks:
-#      - ada-networks
-#    volumes:
-#      - /home/ada/logs/backend:/opt/.log/ssh/
-#    environment:
-#      ZOOKEEPER_CLIENT_PORT: 2181
-#      ZOOKEEPER_TICK_TIME: 2000
+  # ada_scanner:
+  #   container_name: "ada_scanner"
+  #   image: ada_scanner:2.9.1
+  #   restart: unless-stopped
+  #   networks:
+  #     - ada-networks
+  #   volumes:
+  #     - /home/adadmin/logs/scanner:/home/adadmin/logs:Z
+  #   depends_on:
+  #     - ada_mongodb
+  #     - ada_redis
 
 # define docker network
 networks:
