@@ -1,0 +1,14 @@
+path:
+  data: /bitnami/kibana/data
+pid:
+  file: /opt/bitnami/kibana/tmp/kibana.pid
+server:
+  host: 0.0.0.0
+  port: 5601
+  basePath: "/kibana"
+  rewriteBasePath: true
+elasticsearch:
+  hosts: http://elasticsearch:9200
+  #username: "kibana_system"
+  #password: "nX0ZIN0AIfFs5x=fZfuE"
+

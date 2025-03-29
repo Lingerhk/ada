@@ -1,3 +1,4 @@
+name: "adaegis"
 
 services:
   ada_mongodb:
@@ -5,13 +6,15 @@ services:
     image: ada_mongodb:2.9.1
     restart: unless-stopped
     networks:
-      - ada-networks
+      ada-networks:
+        aliases:
+          - mongodb
+          - ada_mongodb
     environment:
       - MONGO_INITDB_ROOT_USERNAME="root"
       - MONGO_INITDB_ROOT_PASSWORD="XEl44B4p3hFurztFMo38"
     volumes:
-      - /home/adadmin/data/mongodb:/data/db:rw
-      - /home/adadmin/logs/mongodb:/var/log/mongodb:rw
+      - mongodb_data:/data/db:rw
     ports:
       - "27017:27017/tcp"
 
@@ -20,58 +23,43 @@ services:
     image: ada_redis:2.9.1
     restart: unless-stopped
     networks:
-      - ada-networks
+      ada-networks:
+        aliases:
+          - redis
+          - ada_redis
     volumes:
-      - /home/adadmin/data/redis:/data:rw
+      - redis_data:/data:rw
     ports:
       - "9091:9091/tcp"
       - "6379:6379/tcp"
 
-  # ada_elasticsearch:
-  #   container_name: "ada_elasticsearch"
-  #   image: docker.elastic.co/elasticsearch/elasticsearch:8.14.3
-  #   restart: unless-stopped
-  #   networks:
-  #     - ada-networks
-  #   volumes:
-  #     - /home/adadmin/data/elasticsearch:/usr/share/elasticsearch/data
-  #     - /home/adadmin/logs/elasticsearch:/var/log/elasticsearch
-  #   ports:
-  #     - "9200:9200"
-  #   environment:
-  #     - cluster.name=elasticsearch
-  #     - discovery.type=single-node
-  #     - network.host=0.0.0.0
-  #     - xpack.security.enabled=true
-  #     - xpack.security.http.ssl.enabled=false
-  #     - ES_JAVA_OPTS=-Xms512m -Xmx512m
-  #     - ELASTIC_PASSWORD="nX0ZIN0AIfFs5x=fZfuE"
-  #     - KIBANA_SYSTEM_PASSWORD="nX0ZIN0AIfFs5x=fZfuE"
-  #   healthcheck:
-  #     test: ['CMD-SHELL', 'curl --silent --fail localhost:9200/_cluster/health || exit 1']
-  #     interval: 10s
-  #     timeout: 5s
-  #     retries: 3
-  #     start_period: 30s
-  #   mem_limit: 8G
-  #   ulimits:
-  #     memlock:
-  #       soft: -1
-  #       hard: -1
+  ada_elasticsearch:
+    container_name: "ada_elasticsearch"
+    image: ada_elasticsearch:2.9.1
+    restart: unless-stopped
+    networks:
+      ada-networks:
+        aliases:
+          - elasticsearch
+          - ada_elasticsearch
+    volumes:
+      - es_data:/bitnami/elasticsearch/data:rw
+    ports:
+      - "9200:9200"
 
-  # ada_kibana:
-  #   container_name: "ada_kibana"
-  #   image: docker.elastic.co/kibana/kibana:8.14.3
-  #   restart: unless-stopped
-  #   user: "1002:1002"
-  #   networks:
-  #     - ada-networks
-  #   # volumes:
-  #   #   - /home/adadmin/conf/kibana/kibana.yml:/usr/share/kibana/config/kibana.yml:ro,Z
-  #   ports:
-  #     - "5601:5601"
-  #   depends_on:
-  #     - ada_elasticsearch
+  ada_kibana:
+    container_name: "ada_kibana"
+    image: ada_kibana:2.9.1
+    restart: unless-stopped
+    networks:
+      ada-networks:
+        aliases:
+          - kibana
+          - ada_kibana
+    ports:
+      - "5601:5601"
+    depends_on:
+      - ada_elasticsearch
 
   # ada_backend:
   #   container_name: "ada_backend"
@@ -121,4 +109,8 @@ networks:
 
 volumes:
   es_data:
+    driver: local
+  redis_data:
+    driver: local
+  mongodb_data:
     driver: local
