@@ -81,6 +81,22 @@ services:
       - ada_redis
       - ada_mongodb
 
+  ada_engine:
+    container_name: "ada_engine"
+    image: ada_engine:2.9.1
+    restart: unless-stopped
+    networks:
+      ada-networks:
+        aliases:
+          - engine
+          - ada_engine
+    volumes:
+      - engine_data:/home/adadmin/logs:rw
+    depends_on:
+      - ada_elasticsearch
+      - ada_redis
+      - ada_mongodb
+
   ada_zeek:
     container_name: "ada_zeek"
     image: ada_zeek:2.9.1
@@ -123,4 +139,6 @@ volumes:
   mongodb_data:
     driver: local
   backend_data:
+    driver: local
+  engine_data:
     driver: local
