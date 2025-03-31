@@ -18,7 +18,12 @@ RUN useradd -rm -d /home/adadmin -s /bin/bash -g root -G sudo -u 1001 adadmin
 RUN set -x \
     && mkdir -p /home/adadmin/logs \
     && mkdir -p /home/adadmin/bin \
-    && mkdir -p /home/adadmin/conf
+    && mkdir -p /home/adadmin/conf \
+    && mkdir -p /home/adadmin/download \
+    && chmod 755 /home/adadmin \
+    && chown -R adadmin:root /home/adadmin/logs \
+    && chown -R adadmin:root /home/adadmin/download \
+    && sed -i 's/worker_processes auto;/worker_processes 2;/' /etc/nginx/nginx.conf
 
 COPY conf/nginx.conf /etc/nginx/sites-available/default
 COPY conf/supervisord.conf /etc/supervisor/supervisord.conf
@@ -26,13 +31,12 @@ COPY conf/supervisord.conf /etc/supervisor/supervisord.conf
 COPY apiserver /home/adadmin/bin/
 COPY task_server /home/adadmin/bin/
 COPY task_worker /home/adadmin/bin/
-#COPY --chown=www-data backend/static /home/adadmin/static
+COPY --chown=www-data static /home/adadmin/static
 
 COPY apiserver.yaml /home/adadmin/conf/
 COPY tasker.yaml /home/adadmin/conf/
 
-
-USER adadmin
+USER root
 WORKDIR /home/adadmin
 
-CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/supervisord.conf"]
+CMD ["/usr/bin/supervisord", "-n", "-c", "/etc/supervisor/supervisord.conf"]

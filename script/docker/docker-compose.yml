@@ -61,22 +61,25 @@ services:
     depends_on:
       - ada_elasticsearch
 
-  # ada_backend:
-  #   container_name: "ada_backend"
-  #   image: ada_backend:2.9.1
-  #   restart: unless-stopped
-  #   networks:
-  #     - ada-networks
-  #   ports:
-  #     - "80:80"
-  #   volumes:
-  #     - /home/adadmin/logs/nginx:/var/log/nginx
-  #     - /home/adadmin/logs/supervisor:/var/log/supervisor
-  #     - /home/adadmin/logs/backend:/home/adadmin/logs
-  #   depends_on:
-  #     - ada_elasticsearch
-  #     - ada_redis
-  #     - ada_mongodb
+  ada_backend:
+    container_name: "ada_backend"
+    image: ada_backend:2.9.1
+    restart: unless-stopped
+    networks:
+      ada-networks:
+        aliases:
+          - backend
+          - ada_backend
+    ports:
+      - "80:80"
+    volumes:
+      - backend_data:/home/adadmin/logs:rw
+    environment:
+      - GIN_MODE=release
+    depends_on:
+      - ada_elasticsearch
+      - ada_redis
+      - ada_mongodb
 
   # ada_zeek:
   #   container_name: "ada_zeek"
@@ -113,4 +116,6 @@ volumes:
   redis_data:
     driver: local
   mongodb_data:
+    driver: local
+  backend_data:
     driver: local
