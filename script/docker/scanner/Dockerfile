@@ -66,4 +66,4 @@ USER adadmin
 WORKDIR /home/adadmin
 
 #CMD ["./bin/scanner"]
-CMD ["bash", "-c", "sleep 600 && ./bin/scanner"]
+CMD ["bash", "-c", "./bin/scanner"]

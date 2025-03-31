@@ -10,8 +10,7 @@ RUN useradd -rm -d /home/adadmin -s /bin/bash -g root -G sudo -u 1001 adadmin
 
 RUN set -x \
     && mkdir -p /home/adadmin/logs \
-    && mkdir -p /home/adadmin/bin \
-    && mkdir -p /home/adadmin/conf
+    && mkdir -p /home/adadmin/bin
 
 # Install dependencies
 RUN set -x \
@@ -46,7 +45,8 @@ RUN set -x \
     && rm -rf zeek.bin.7.1.0.tar.gz \
     && rm -rf sedara_Redis-0.4.0.tar.gz \
     && rm -rf Zeek_TrafficOverUdp-1.0.0.tar.gz \
-    && chown -R adadmin:root /home/adadmin
+    && chown -R adadmin:root /home/adadmin \
+    && sed -i 's/127.0.0.1/ada_redis/g' /usr/local/zeek/lib/zeek/plugins/sedara_Redis/scripts/types.zeek
 
 USER root
 WORKDIR /usr/local/zeek

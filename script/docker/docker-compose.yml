@@ -81,30 +81,35 @@ services:
       - ada_redis
       - ada_mongodb
 
-  # ada_zeek:
-  #   container_name: "ada_zeek"
-  #   image: ada_zeek:2.9.1
-  #   restart: unless-stopped
-  #   networks:
-  #     - ada-networks
-  #   ports:
-  #     - "9093:9093/udp"
-  #   depends_on:
-  #     - ada_elasticsearch
-  #     - ada_redis
-  #     - ada_backend
+  ada_zeek:
+    container_name: "ada_zeek"
+    image: ada_zeek:2.9.1
+    restart: unless-stopped
+    networks:
+      ada-networks:
+        aliases:
+          - zeek
+          - ada_zeek
+    ports:
+      - "9093:9093/udp"
+    depends_on:
+      - ada_elasticsearch
+      - ada_redis
+      - ada_backend
 
-  # ada_scanner:
-  #   container_name: "ada_scanner"
-  #   image: ada_scanner:2.9.1
-  #   restart: unless-stopped
-  #   networks:
-  #     - ada-networks
-  #   volumes:
-  #     - /home/adadmin/logs/scanner:/home/adadmin/logs:Z
-  #   depends_on:
-  #     - ada_mongodb
-  #     - ada_redis
+  ada_scanner:
+    container_name: "ada_scanner"
+    image: ada_scanner:2.9.1
+    restart: unless-stopped
+    networks:
+      ada-networks:
+        aliases:
+          - scanner
+          - ada_scanner
+    depends_on:
+      - ada_mongodb
+      - ada_redis
+      - ada_backend
 
 # define docker network
 networks:
