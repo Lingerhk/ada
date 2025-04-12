@@ -3,13 +3,15 @@ package test
 import (
 	"encoding/base64"
 	"fmt"
-	"golang.org/x/crypto/bcrypt"
-	"io/ioutil"
+	"io"
 	"os"
 	"testing"
 
+	"golang.org/x/crypto/bcrypt"
+
 	v2 "ada/backend/apiserver/api/v2"
 	"ada/backend/apiserver/common"
+
 	logger "github.com/sirupsen/logrus"
 	. "github.com/smartystreets/goconvey/convey"
 )
@@ -193,7 +195,7 @@ func TestUpdateAvatar(t *testing.T) {
 		fmt.Println(err)
 		return
 	}
-	fileAll, err := ioutil.ReadAll(file)
+	fileAll, err := io.ReadAll(file)
 	if err != nil {
 		fmt.Println(err)
 		return

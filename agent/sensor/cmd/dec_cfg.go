@@ -4,7 +4,7 @@ import (
 	"ada/infra/crypto"
 	"encoding/base64"
 	"fmt"
-	"io/ioutil"
+	"os"
 	"time"
 )
 
@@ -14,7 +14,7 @@ func main() {
 	const cfgEncKey = "adcc368715ce1bd2"
 
 	var fileCnt []byte
-	fileEncCntB64, err := ioutil.ReadFile(confEncFile)
+	fileEncCntB64, err := os.ReadFile(confEncFile)
 	if err != nil {
 		panic(err)
 	}
@@ -29,7 +29,7 @@ func main() {
 		panic(err)
 	}
 
-	err = ioutil.WriteFile(confFile, fileCnt, 0644)
+	err = os.WriteFile(confFile, fileCnt, 0644)
 	if err != nil {
 		panic(err)
 	}

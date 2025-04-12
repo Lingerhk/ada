@@ -7,12 +7,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/google/uuid"
-	"github.com/redis/go-redis/v9"
-	"github.com/shirou/gopsutil/host"
-	"github.com/shirou/gopsutil/mem"
-	logger "github.com/sirupsen/logrus"
-	"io/ioutil"
 	"net"
 	"os"
 	"os/exec"
@@ -21,6 +15,12 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/google/uuid"
+	"github.com/redis/go-redis/v9"
+	"github.com/shirou/gopsutil/host"
+	"github.com/shirou/gopsutil/mem"
+	logger "github.com/sirupsen/logrus"
 )
 
 func Register(rdx *redis.Client, regCode string) error {
@@ -96,7 +96,7 @@ func Register(rdx *redis.Client, regCode string) error {
 		}
 	}
 	if taskSucc {
-		return ioutil.WriteFile(filepath.Join(common.SensorDir, "uuid"), []byte(sensorId), 0644)
+		return os.WriteFile(filepath.Join(common.SensorDir, "uuid"), []byte(sensorId), 0644)
 	}
 
 	return fmt.Errorf("sensor register err or timeout")

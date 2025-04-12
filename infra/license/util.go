@@ -7,11 +7,12 @@ import (
 	"encoding/gob"
 	"encoding/hex"
 	"fmt"
-	logger "github.com/sirupsen/logrus"
-	"io/ioutil"
 	"net"
+	"os"
 	"sort"
 	"strings"
+
+	logger "github.com/sirupsen/logrus"
 )
 
 func toBytes(obj interface{}) ([]byte, error) {
@@ -52,11 +53,11 @@ func fromB64String(obj interface{}, s string) error {
 
 func GetTrait() string {
 	var dockerEnv bool
-	mid, err := ioutil.ReadFile("/etc/machine-id") // machine server, none-root required
+	mid, err := os.ReadFile("/etc/machine-id") // machine server, none-root required
 	if err != nil {
-		mid, err = ioutil.ReadFile("/var/lib/dbus/machine-id") // machine server,backup, none-root required
+		mid, err = os.ReadFile("/var/lib/dbus/machine-id") // machine server,backup, none-root required
 		if err != nil {
-			mid, err = ioutil.ReadFile("/sys/class/dmi/id/product_uuid") // docker, root required
+			mid, err = os.ReadFile("/sys/class/dmi/id/product_uuid") // docker, root required
 			dockerEnv = true
 		}
 	}
@@ -81,7 +82,7 @@ func GetTrait() string {
 
 func getLocalIPText(dockerEnv bool) string {
 	if dockerEnv {
-		serial, err := ioutil.ReadFile("/sys/class/dmi/id/product_serial")
+		serial, err := os.ReadFile("/sys/class/dmi/id/product_serial")
 		if err != nil {
 			return "docker-err"
 		}

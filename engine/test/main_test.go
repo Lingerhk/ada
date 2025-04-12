@@ -6,11 +6,11 @@ import (
 	"ada/engine/core"
 	"context"
 	"fmt"
-	"github.com/redis/go-redis/v9"
-	"io/ioutil"
 	"os"
 	"strings"
 	"testing"
+
+	"github.com/redis/go-redis/v9"
 )
 
 const confPath = "/Users/yihuan/project/ada/engine/config/engine.yaml"
@@ -48,7 +48,7 @@ func TestMain(m *testing.M) {
 }
 
 func loadEventRdx(rdxCli *redis.Client) {
-	b, err := ioutil.ReadFile(eventFile)
+	b, err := os.ReadFile(eventFile)
 	if err != nil {
 		panic(err)
 	}

@@ -1,19 +1,18 @@
 package config
 
 import (
-	"ada/agent/sensor/common"
 	logrusredis "ada/infra/loghook"
 	"ada/infra/mongo"
 	"context"
 	"fmt"
+	"os"
+	"path"
+	"time"
+
 	"github.com/natefinch/lumberjack"
 	"github.com/redis/go-redis/v9"
 	"github.com/sirupsen/logrus"
 	"gopkg.in/yaml.v2"
-	"io/ioutil"
-	"os"
-	"path"
-	"time"
 )
 
 type LogCfg struct {
@@ -73,7 +72,7 @@ func InitLog(setting *Config, redisCli *redis.Client) error {
 		logrus.SetOutput(os.Stdout)
 		logrus.SetFormatter(&logrus.TextFormatter{})
 	} else if setting.Log.LogPath != "" {
-		logFile := path.Join(common.GetCurrentPath(), setting.Log.LogPath, setting.ProjectName+".log")
+		logFile := path.Join(setting.Log.LogPath, setting.ProjectName+".log")
 		if err == nil {
 			logout := &lumberjack.Logger{
 				Filename:   logFile,
@@ -128,7 +127,7 @@ func InitMongoClient(setting *Config) (mongo.DBAdaptor, error) {
 }
 
 func Init(confPath string) (*Env, error) {
-	content, err := ioutil.ReadFile(confPath)
+	content, err := os.ReadFile(confPath)
 	if err != nil {
 		panic(err)
 	}

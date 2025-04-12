@@ -10,7 +10,7 @@ import (
 	"compress/gzip"
 	"encoding/binary"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"os"
 	"strings"
 
@@ -49,18 +49,17 @@ func ParseGzip(data []byte) ([]byte, error) {
 	b := new(bytes.Buffer)
 	_ = binary.Write(b, binary.LittleEndian, data)
 	r, err := gzip.NewReader(b)
-	defer r.Close()
 	if err != nil {
 		logger.Printf("parse gzip error %v", err)
 		return nil, err
-	} else {
-		data, err := ioutil.ReadAll(r)
-		if err != nil {
-			logger.Printf("gzip ioutil ReadAll error: %v", err)
-			return nil, err
-		}
-		return data, nil
 	}
+	defer r.Close()
+	result, err := io.ReadAll(r)
+	if err != nil {
+		logger.Printf("gzip io ReadAll error: %v", err)
+		return nil, err
+	}
+	return result, nil
 }
 
 // write file

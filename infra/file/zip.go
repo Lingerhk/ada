@@ -7,10 +7,8 @@ package file
 import (
 	"archive/zip"
 	"io"
-	"io/ioutil"
 	"os"
 	"path/filepath"
-	"runtime/debug"
 )
 
 func Compress(files []*os.File, dest string) error {
@@ -42,44 +40,37 @@ func CompressOne(file *os.File, dest string) error {
 func _Compress(file *os.File, prefix string, zw *zip.Writer) error {
 	info, err := file.Stat()
 	if err != nil {
-		debug.PrintStack()
 		return err
 	}
 	if info.IsDir() {
 		prefix = prefix + "/" + info.Name()
 		fileInfos, err := file.Readdir(-1)
 		if err != nil {
-			debug.PrintStack()
 			return err
 		}
 		for _, fi := range fileInfos {
 			f, err := os.Open(file.Name() + "/" + fi.Name())
 			if err != nil {
-				debug.PrintStack()
 				return err
 			}
 			err = _Compress(f, prefix, zw)
 			if err != nil {
-				debug.PrintStack()
 				return err
 			}
 		}
 	} else {
 		header, err := zip.FileInfoHeader(info)
 		if err != nil {
-			debug.PrintStack()
 			return err
 		}
 		header.Name = prefix + "/" + header.Name
 		writer, err := zw.CreateHeader(header)
 		if err != nil {
-			debug.PrintStack()
 			return err
 		}
 		_, err = io.Copy(writer, file)
 		Close(file)
 		if err != nil {
-			debug.PrintStack()
 			return err
 		}
 	}
@@ -106,11 +97,20 @@ func GetFilesFromDir(dirPath string) ([]*os.File, error) {
 }
 
 func ListDir(path string) []os.FileInfo {
-	list, err := ioutil.ReadDir(path)
+	entries, err := os.ReadDir(path)
 	if err != nil {
-		debug.PrintStack()
 		return nil
 	}
+
+	var list []os.FileInfo
+	for _, entry := range entries {
+		info, err := entry.Info()
+		if err != nil {
+			continue
+		}
+		list = append(list, info)
+	}
+
 	return list
 }
 
@@ -118,7 +118,6 @@ func DeCompress(srcFile *os.File, dstPath string) error {
 	// 如果保存路径不存在，创建一个
 	if !Exists(dstPath) {
 		if err := os.MkdirAll(dstPath, os.ModePerm); err != nil {
-			debug.PrintStack()
 			return err
 		}
 	}

@@ -4,15 +4,16 @@ import (
 	"ada/agent/sensor/common"
 	"crypto/sha256"
 	"fmt"
+	"os"
+	"os/exec"
+	"path/filepath"
+	"strings"
+
 	sigar "github.com/cloudfoundry/gosigar"
 	"github.com/shirou/gopsutil/process"
 	logger "github.com/sirupsen/logrus"
 	"golang.org/x/sys/windows/svc"
 	"golang.org/x/sys/windows/svc/mgr"
-	"io/ioutil"
-	"os/exec"
-	"path/filepath"
-	"strings"
 )
 
 var (
@@ -140,7 +141,7 @@ func (p *Plugin) sensorConfUpdate(data map[string]string) error {
 		return fmt.Errorf("check file(sensor.cfg) sum(%s) failed", data["sensor.cfg.sha256"])
 	}
 
-	if err := ioutil.WriteFile("sensor.cfg", []byte(sensorCfg), 0644); err != nil {
+	if err := os.WriteFile("sensor.cfg", []byte(sensorCfg), 0644); err != nil {
 		logger.Errorf("write sensor.cfg file err:%v", err)
 		return err
 	}
@@ -163,7 +164,7 @@ func (p *Plugin) pluginConfUpdate(data map[string]string) error {
 			logger.Error("check file(nxlog.conf) sum failed")
 		} else {
 			nxlogCfgFile := filepath.Join(common.SensorDir, "nxlog", "conf", "nxlog.conf")
-			if err = ioutil.WriteFile(nxlogCfgFile, []byte(nxlogCfg), 0644); err != nil {
+			if err = os.WriteFile(nxlogCfgFile, []byte(nxlogCfg), 0644); err != nil {
 				logger.Errorf("write %s file err:%v", nxlogCfgFile, err)
 			} else {
 				if err = startNxlogPlugin(true); err != nil {
@@ -178,7 +179,7 @@ func (p *Plugin) pluginConfUpdate(data map[string]string) error {
 			logger.Error("check file(rpcFw.conf) sum failed")
 		} else {
 			rpcfwCfgFile := filepath.Join(common.SensorDir, "rpcfw", "rpcFw.conf")
-			if err = ioutil.WriteFile(rpcfwCfgFile, []byte(rpcfwCfg), 0644); err != nil {
+			if err = os.WriteFile(rpcfwCfgFile, []byte(rpcfwCfg), 0644); err != nil {
 				logger.Errorf("write %s file err:%v", rpcfwCfgFile, err)
 			} else {
 				// reload rpcfw
@@ -194,7 +195,7 @@ func (p *Plugin) pluginConfUpdate(data map[string]string) error {
 			logger.Error("check file(config.json) sum failed")
 		} else {
 			ldapfwCfgFile := filepath.Join(common.SensorDir, "ldapfw", "config.json")
-			if err = ioutil.WriteFile(ldapfwCfgFile, []byte(ldapfwCfg), 0644); err != nil {
+			if err = os.WriteFile(ldapfwCfgFile, []byte(ldapfwCfg), 0644); err != nil {
 				logger.Errorf("write %s file err:%v", ldapfwCfgFile, err)
 			} else {
 				// reload ldapfw
