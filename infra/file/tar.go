@@ -10,7 +10,6 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"os"
 	"os/exec"
 	"path"
@@ -77,16 +76,21 @@ func tarDir(srcBase, srcRelative string, tw *tar.Writer, fi os.FileInfo) (err er
 		srcRelative += string(os.PathSeparator)
 	}
 
-	fis, er := ioutil.ReadDir(srcFull)
+	entries, er := os.ReadDir(srcFull)
 	if er != nil {
 		return er
 	}
 
-	for _, fi := range fis {
-		if fi.IsDir() {
-			_ = tarDir(srcBase, srcRelative+fi.Name(), tw, fi)
+	for _, entry := range entries {
+		info, er := entry.Info()
+		if er != nil {
+			continue
+		}
+
+		if info.IsDir() {
+			_ = tarDir(srcBase, srcRelative+info.Name(), tw, info)
 		} else {
-			_ = tarFile(srcBase, srcRelative+fi.Name(), tw, fi)
+			_ = tarFile(srcBase, srcRelative+info.Name(), tw, info)
 		}
 	}
 

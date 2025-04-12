@@ -5,15 +5,15 @@ import (
 	"ada/infra/mongo"
 	"context"
 	"fmt"
+	"os"
+	"path"
+	"time"
+
 	"github.com/elastic/go-elasticsearch/v8"
 	"github.com/natefinch/lumberjack"
 	"github.com/redis/go-redis/v9"
 	"github.com/sirupsen/logrus"
 	"gopkg.in/yaml.v2"
-	"io/ioutil"
-	"os"
-	"path"
-	"time"
 )
 
 type LogCfg struct {
@@ -142,7 +142,7 @@ func InitElasticsearch(setting *Config) (*elasticsearch.Client, error) {
 }
 
 func Init(confPath string) (*Env, error) {
-	content, err := ioutil.ReadFile(confPath)
+	content, err := os.ReadFile(confPath)
 	if err != nil {
 		panic(err)
 	}

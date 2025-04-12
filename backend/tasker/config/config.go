@@ -5,7 +5,6 @@ import (
 	"ada/infra/mongo"
 	"context"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"path"
 	"time"
@@ -159,7 +158,7 @@ func InitElasticsearch(setting *Config) (*elasticsearch.Client, error) {
 }
 
 func Init(confPath, moduleName string) (*Env, error) {
-	content, err := ioutil.ReadFile(confPath)
+	content, err := os.ReadFile(confPath)
 	if err != nil {
 		panic(err)
 	}

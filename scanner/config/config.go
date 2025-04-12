@@ -5,14 +5,14 @@ import (
 	"ada/infra/mongo"
 	"context"
 	"fmt"
+	"os"
+	"path"
+	"time"
+
 	"github.com/natefinch/lumberjack"
 	"github.com/redis/go-redis/v9"
 	"github.com/sirupsen/logrus"
 	"gopkg.in/yaml.v2"
-	"io/ioutil"
-	"os"
-	"path"
-	"time"
 )
 
 type LogCfg struct {
@@ -120,7 +120,7 @@ func InitMongoClient(setting *Config) (mongo.DBAdaptor, error) {
 }
 
 func Init(confPath string) (*Env, error) {
-	content, err := ioutil.ReadFile(confPath)
+	content, err := os.ReadFile(confPath)
 	if err != nil {
 		panic(err)
 	}

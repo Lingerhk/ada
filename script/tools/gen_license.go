@@ -6,12 +6,13 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
-	logger "github.com/sirupsen/logrus"
-	"io/ioutil"
 	"net"
+	"os"
 	"sort"
 	"strings"
 	"time"
+
+	logger "github.com/sirupsen/logrus"
 )
 
 func main() {
@@ -57,10 +58,10 @@ func genLicenseCnt(priKey string) string {
 }
 
 func getTrait() string {
-	mid, err := ioutil.ReadFile("/etc/machine-id")
+	mid, err := os.ReadFile("/etc/machine-id")
 	if err != nil {
 		// try fallback path
-		mid, err = ioutil.ReadFile("/var/lib/dbus/machine-id")
+		mid, err = os.ReadFile("/var/lib/dbus/machine-id")
 	}
 	if err != nil {
 		return ""

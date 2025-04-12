@@ -11,21 +11,22 @@ import (
 	"context"
 	"encoding/base64"
 	"fmt"
-	"github.com/go-cmd/cmd"
-	"github.com/shirou/gopsutil/host"
-	logger "github.com/sirupsen/logrus"
-	"go.mongodb.org/mongo-driver/bson"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
-	"io/ioutil"
 	"net"
 	"net/http"
+	"os"
 	"os/exec"
 	"path"
 	"regexp"
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/go-cmd/cmd"
+	"github.com/shirou/gopsutil/host"
+	logger "github.com/sirupsen/logrus"
+	"go.mongodb.org/mongo-driver/bson"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 func (s *ADAServiceV2) GetSystemInfo(ctx context.Context, in *v2.GetSystemInfoReq) (*v2.GetSystemInfoReply, error) {
@@ -84,7 +85,7 @@ func (s *ADAServiceV2) GetCompanyIcon(ctx context.Context, in *v2.GetCompanyIcon
 
 	if si.CompanyIcon == "" {
 		originIcon := path.Join(common.RESOURCE_PATH, "image", "favicon.png")
-		fCnt, err := ioutil.ReadFile(originIcon)
+		fCnt, err := os.ReadFile(originIcon)
 		if err != nil {
 			logger.Warnf("read file err:%v", err)
 			return nil, status.Error(codes.Internal, "获取原始图标异常")

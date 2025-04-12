@@ -8,15 +8,16 @@ import (
 	"context"
 	"crypto/sha1"
 	"encoding/base32"
+	"io"
+	"net/http"
+	"os"
+	"time"
+
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
 	"github.com/redis/go-redis/v9"
 	logger "github.com/sirupsen/logrus"
 	"golang.org/x/crypto/ssh"
-	"io"
-	"io/ioutil"
-	"net/http"
-	"time"
 )
 
 const (
@@ -171,7 +172,7 @@ func getSshConfigByDeviceId(deviceId string) (string, *ssh.ClientConfig) {
 		return "", nil
 	}
 
-	privateKeyBytes, err := ioutil.ReadFile(sshPrivKey)
+	privateKeyBytes, err := os.ReadFile(sshPrivKey)
 	if err != nil {
 		logger.Errorf("read ras pub failed,err:%v", err)
 		return "", nil

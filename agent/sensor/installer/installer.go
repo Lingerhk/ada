@@ -7,13 +7,13 @@ import (
 	"context"
 	"crypto/sha256"
 	"fmt"
-	"github.com/redis/go-redis/v9"
-	"io/ioutil"
 	"os"
 	"os/exec"
 	"path/filepath"
 	"strings"
 	"time"
+
+	"github.com/redis/go-redis/v9"
 )
 
 const sensorDir = "C:\\Program Files\\ada_sensor"
@@ -68,7 +68,7 @@ func (i *Installer) Download() error {
 		return err
 	}
 
-	if err := ioutil.WriteFile(i.pkgFile, pkgBytes, 0); err != nil {
+	if err := os.WriteFile(i.pkgFile, pkgBytes, 0); err != nil {
 		fmt.Printf("write sensor package to file err:%v\n", err)
 		return err
 	}
@@ -246,7 +246,7 @@ func (i *Installer) Register() error {
 		fmt.Printf("Register sensor err:%v\n", err)
 		return err
 	} else {
-		uuid, _ := ioutil.ReadFile(uuidFile)
+		uuid, _ := os.ReadFile(uuidFile)
 		fmt.Printf("Registered sensor with uuid:%s\n", uuid)
 	}
 
@@ -301,7 +301,7 @@ func (i *Installer) Start() error {
 }
 
 func (i *Installer) shasum(file string) (string, error) {
-	cnt, err := ioutil.ReadFile(file)
+	cnt, err := os.ReadFile(file)
 	if err != nil {
 		return "", err
 	}

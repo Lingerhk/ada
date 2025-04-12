@@ -5,12 +5,12 @@ import (
 	"context"
 	"crypto/sha256"
 	"fmt"
-	"github.com/redis/go-redis/v9"
 	"io"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"time"
+
+	"github.com/redis/go-redis/v9"
 )
 
 // Sensor 打包并发如redis
@@ -77,7 +77,7 @@ func main() {
 	}
 
 	sumFile := filepath.Join(pkgDir, "checksum.txt")
-	err = ioutil.WriteFile(sumFile, []byte(sumCnt), 0644)
+	err = os.WriteFile(sumFile, []byte(sumCnt), 0644)
 	if err != nil {
 		fmt.Println("write checksum.txt err:", err)
 		return
@@ -97,7 +97,7 @@ func main() {
 	}
 
 	// 计算shasum
-	zipBytes, err := ioutil.ReadFile(zipPkg)
+	zipBytes, err := os.ReadFile(zipPkg)
 	if err != nil {
 		fmt.Println("read pkg.zip err:", err)
 		return
