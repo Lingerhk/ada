@@ -123,20 +123,6 @@ func (i *Installer) Deploy() error {
 		}
 	}
 
-	// 安装nxlog
-	if !dirExists("C:\\Program Files\\nxlog") {
-		nxlogPath := filepath.Join(pkgDir, "nxlog-ce-3.2.msi")
-		err = i.exec("", []string{"C:\\Windows\\System32\\msiexec.exe", "/i", fmt.Sprintf(`'%s'`, nxlogPath), "/q"}, false, 60)
-		if err != nil {
-			return err
-		}
-		nxlogCfgFile := filepath.Join(pkgDir, "nxlog.conf")
-		nxlogCfgDstFile := "C:\\Program Files\\nxlog\\conf\\nxlog.conf"
-		if err := copyFile(nxlogCfgFile, nxlogCfgDstFile); err != nil {
-			return err
-		}
-	}
-
 	// 安装npcap-0.93
 	if !dirExists("C:\\Program Files\\Npcap") {
 		err = i.exec("", []string{filepath.Join(pkgDir, "npcap-0.93.exe"), "/S", "/winpcap_mode=yes", "/loopback_support=no"}, true, 20)
@@ -144,17 +130,6 @@ func (i *Installer) Deploy() error {
 			fmt.Printf("[exec] install npcap err:%v", err)
 			return err
 		}
-	}
-
-	//安装ntap
-	ntapDir := filepath.Join(sensorDir, "ntap")
-	if !dirExists(ntapDir) {
-		if err := os.Mkdir(ntapDir, os.ModePerm); err != nil {
-			return err
-		}
-	}
-	if err := copyFile(filepath.Join(pkgDir, "ntap_remote.exe"), filepath.Join(ntapDir, "ntap_remote.exe")); err != nil {
-		return err
 	}
 
 	// 安装rpcfw
@@ -275,24 +250,14 @@ func (i *Installer) Start() error {
 		}
 	}(filepath.Join(sensorDir, "ada_sensor.pkg"))
 
-	// restart nxlog
-	err := i.exec("", []string{"Restart-Service", "-Name", "nxlog"}, false, 10)
-	if err != nil {
-		fmt.Printf("start nxlog service err:%v\n", err)
-		return err
-	}
-	fmt.Println("Restarted nxlog service ok:")
-	out, _ := exec.Command("powershell.exe", "-nologo", "-noprofile", "Get-Service", "-Name", `"nxlog"`).Output()
-	fmt.Println(string(out))
-
 	// restart ada_sensor
-	err = i.exec("", []string{"Restart-Service", "-Name", "ada_sensor"}, false, 10)
+	err := i.exec("", []string{"Restart-Service", "-Name", "ada_sensor"}, false, 10)
 	if err != nil {
 		fmt.Printf("restart ada_sensor service err:%v\n", err)
 		return err
 	}
 	fmt.Println("Restarted ada_sensor service ok:")
-	out, _ = exec.Command("powershell.exe", "-nologo", "-noprofile", "Get-Service", "-Name", `"ada_sensor"`).Output()
+	out, _ := exec.Command("powershell.exe", "-nologo", "-noprofile", "Get-Service", "-Name", `"ada_sensor"`).Output()
 	fmt.Println(string(out))
 
 	time.Sleep(3 * time.Second)

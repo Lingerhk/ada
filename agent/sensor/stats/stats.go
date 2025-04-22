@@ -6,13 +6,14 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"runtime"
+	"sync"
+	"time"
+
 	"github.com/google/uuid"
 	"github.com/redis/go-redis/v9"
 	"github.com/shirou/gopsutil/mem"
 	logger "github.com/sirupsen/logrus"
-	"runtime"
-	"sync"
-	"time"
 )
 
 type State struct {
@@ -90,17 +91,12 @@ func (s *State) getSensorState(plugProcessMap map[string]uint32) (*sCommon.AdaMe
 	msg.Data["mem_total"] = ""
 	memary, err := mem.VirtualMemory()
 	if err == nil {
-		msg.Data["mem_total"] = fmt.Sprintf("%d", memary.Total)
+		msg.Data["mem_total"] = humanReadableBytes(memary.Total)
 	}
 	msg.Data["cpu_total"] = fmt.Sprintf("%d", runtime.NumCPU())
 
 	msg.Data["pkt_status"] = sCommon.SensorStatusStop
-	msg.Data["pkt_cpu_used"] = "0%"
-	msg.Data["pkt_mem_used"] = "0%"
-
 	msg.Data["log_status"] = sCommon.SensorStatusStop
-	msg.Data["log_cpu_used"] = "0%"
-	msg.Data["log_mem_used"] = "0%"
 
 	msg.Data["rpcfw_status"] = sCommon.SensorStatusStop
 	msg.Data["rpcfw_cpu_used"] = "0%"
@@ -113,32 +109,16 @@ func (s *State) getSensorState(plugProcessMap map[string]uint32) (*sCommon.AdaMe
 	var sensorCpuUsed float64
 	var sensorMemUsed float32
 
-	ntapPid := plugProcessMap[sCommon.PlugNtapName]
-	if ntapPid > 0 {
-		cpu, mem, err := getProcessCpuMemPercent(3*time.Second, ntapPid)
-		if err == nil {
-			msg.Data["pkt_status"] = sCommon.SensorStatusRun
-			msg.Data["pkt_cpu_used"] = fmt.Sprintf("%f%%", cpu)
-			msg.Data["pkt_mem_used"] = fmt.Sprintf("%f%%", mem)
-			sensorCpuUsed += cpu
-			sensorMemUsed += mem
-		}
+	if val, ok := plugProcessMap[sCommon.PlugPktName]; ok && val > 0 {
+		msg.Data["pkt_status"] = sCommon.SensorStatusRun
 	}
 
-	nxlogPid := plugProcessMap[sCommon.PlugNxlogName]
-	if nxlogPid > 0 {
-		cpu, mem, err := getProcessCpuMemPercent(3*time.Second, nxlogPid)
-		if err == nil {
-			msg.Data["log_status"] = sCommon.SensorStatusRun
-			msg.Data["log_cpu_used"] = fmt.Sprintf("%f%%", cpu)
-			msg.Data["log_mem_used"] = fmt.Sprintf("%f%%", mem)
-			sensorCpuUsed += cpu
-			sensorMemUsed += mem
-		}
+	if val, ok := plugProcessMap[sCommon.PlugEvtName]; ok && val > 0 {
+		msg.Data["log_status"] = sCommon.SensorStatusRun
 	}
 
-	rpcfwPid := plugProcessMap[sCommon.PlugRpcFwName]
-	if rpcfwPid > 0 {
+	rpcfwPid, ok := plugProcessMap[sCommon.PlugRpcFwName]
+	if ok && rpcfwPid > 0 {
 		cpu, mem, err := getProcessCpuMemPercent(3*time.Second, rpcfwPid)
 		if err == nil {
 			msg.Data["rpcfw_status"] = sCommon.SensorStatusRun
@@ -149,8 +129,8 @@ func (s *State) getSensorState(plugProcessMap map[string]uint32) (*sCommon.AdaMe
 		}
 	}
 
-	ldapfwPid := plugProcessMap[sCommon.PlugLdapFwName]
-	if ldapfwPid > 0 {
+	ldapfwPid, ok := plugProcessMap[sCommon.PlugLdapFwName]
+	if ok && ldapfwPid > 0 {
 		cpu, mem, err := getProcessCpuMemPercent(3*time.Second, ldapfwPid)
 		if err == nil {
 			msg.Data["ldapfw_status"] = sCommon.SensorStatusRun
@@ -161,8 +141,8 @@ func (s *State) getSensorState(plugProcessMap map[string]uint32) (*sCommon.AdaMe
 		}
 	}
 
-	sensorPid := plugProcessMap["self"]
-	if sensorPid > 0 {
+	sensorPid, ok := plugProcessMap[sCommon.SensorSvcName]
+	if ok && sensorPid > 0 {
 		cpu, mem, err := getProcessCpuMemPercent(3*time.Second, sensorPid)
 		if err == nil {
 			sensorCpuUsed += cpu

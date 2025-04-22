@@ -10,18 +10,19 @@ import (
 	_ "ada/infra/version"
 	"context"
 	"fmt"
-	winsvc "github.com/kardianos/service"
-	logger "github.com/sirupsen/logrus"
 	"os"
 	"runtime"
 	"sync"
 	"time"
+
+	winsvc "github.com/kardianos/service"
+	logger "github.com/sirupsen/logrus"
 )
 
 var isRegister bool
 
 func init() {
-	runtime.GOMAXPROCS(2) // 限制CPU
+	runtime.GOMAXPROCS(4) // 限制CPU
 
 	args := os.Args
 	if nil == args || len(args) < 2 {
@@ -43,14 +44,16 @@ func main() {
 		if err := register.Register(env.RedisCli, env.Cfg.Sensor.RegCode); err != nil {
 			fmt.Printf("[sensor] register sensor err:%v\n", err)
 			os.Exit(-1)
+		} else {
+			fmt.Printf("[sensor] register sensor success!\n")
 		}
 		os.Exit(0)
 	}
 
 	svcConfig := &winsvc.Config{
 		Name:        common.SensorSvcName,
-		DisplayName: "Active Directory Protection Sensor",
-		Description: "Active Directory Protection Sensor",
+		DisplayName: "ADAegis Sensor",
+		Description: "ADAegis Sensor for Active Directory Protection",
 	}
 
 	prg := &adaSensorSvc{env: env, exit: make(chan struct{})}
@@ -71,8 +74,6 @@ type adaSensorSvc struct {
 }
 
 func (p *adaSensorSvc) Start(s winsvc.Service) error {
-	plugin.TryKillProcess(common.PlugNtapProcName)
-	plugin.TryStopService(common.PlugNxlogSvcName)
 	plugin.TryStopService(common.PlugRpcFwSvcName)
 	plugin.TryStopService(common.PlugLdapFwSvcName)
 
@@ -123,10 +124,13 @@ func launch(ctx context.Context, env *config.Env) {
 	}
 	go u.Serve(wg) // 监听升级
 
-	p := plugin.New(ctx, env.RedisCli, env.SensorId, env.Cfg.Sensor.RegHost)
-	go p.Event(wg)   // 监听插件事件
-	go p.Serve(wg)   //监听插件启停
-	go p.RunNtap(wg) //监听插件启停
+	p, err := plugin.New(ctx, env.RedisCli, env.SensorId, env.Cfg.Sensor)
+	if err != nil {
+		logger.Errorf("new plugin err:%v", err)
+		return
+	}
+	go p.Event(wg) // 监听插件事件
+	go p.Serve(wg) //监听插件启停
 
 	s := stats.New(ctx, env.RedisCli, env.SensorId)
 	go s.Serve(wg, p.PlugProcessMap) // 上报状态

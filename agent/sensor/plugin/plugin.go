@@ -2,17 +2,18 @@ package plugin
 
 import (
 	"ada/agent/sensor/common"
+	"ada/agent/sensor/config"
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/go-cmd/cmd"
-	"github.com/redis/go-redis/v9"
-	logger "github.com/sirupsen/logrus"
-	"path/filepath"
+	"reflect"
 	"strconv"
 	"strings"
 	"sync"
 	"time"
+
+	"github.com/redis/go-redis/v9"
+	logger "github.com/sirupsen/logrus"
 )
 
 type Plugin struct {
@@ -24,28 +25,49 @@ type Plugin struct {
 	logPluginSwitch    bool
 	rpcFwPluginSwitch  bool
 	ldapFwPluginSwitch bool
-	ntapBindIface      []string
 	cpuMaxLimit        float32
 	memMaxLimit        float32
 
-	ntapProc       *cmd.Cmd // ntap process
-	PlugProcessMap map[string]uint32
+	plugEvtThread        *evtPlugin
+	plugPktThread        *pktPlugin
+	PlugProcessMap       map[string]uint32
+	PlugConfigChangedMap map[string]bool // 记录插件配置是否发生变化
 }
 
-func New(ctx context.Context, rdxCli *redis.Client, sensorId, regHost string) *Plugin {
-	plug := Plugin{ctx: ctx, rdxCli: rdxCli, sensorId: sensorId, adaHost: regHost}
-	plug.ntapBindIface = []string{"0"}
-	plug.cpuMaxLimit = float32(0.05)
-	plug.memMaxLimit = float32(0.05)
+func New(ctx context.Context, rdxCli *redis.Client, sensorId string, sensorCfg config.SensorCfg) (*Plugin, error) {
+	var err error
+
+	plug := Plugin{ctx: ctx, rdxCli: rdxCli, sensorId: sensorId, adaHost: sensorCfg.RegHost}
+	plug.cpuMaxLimit = float32(0.15)
+	plug.memMaxLimit = float32(0.15)
 
 	plugProcessMap := make(map[string]uint32)
-	plugProcessMap[common.PlugNtapName] = 0
-	plugProcessMap[common.PlugNxlogName] = 0
+	plugProcessMap[common.SensorSvcName] = 0
+	plugProcessMap[common.PlugPktName] = 0
+	plugProcessMap[common.PlugEvtName] = 0
 	plugProcessMap[common.PlugRpcFwName] = 0
 	plugProcessMap[common.PlugLdapFwName] = 0
 	plug.PlugProcessMap = plugProcessMap
 
-	return &plug
+	plugConfigChangedMap := make(map[string]bool)
+	plugConfigChangedMap[common.PlugEvtName] = false
+	plugConfigChangedMap[common.PlugPktName] = false
+	plugConfigChangedMap[common.PlugRpcFwName] = false
+	plugConfigChangedMap[common.PlugLdapFwName] = false
+	plug.PlugConfigChangedMap = plugConfigChangedMap
+
+	plug.plugEvtThread, err = NewEvtPlugin(sensorCfg.RegHost, sensorCfg.EvtSrvPort)
+	if err != nil {
+		logger.Errorf("new evt plugin err:%v", err)
+		return nil, err
+	}
+	plug.plugPktThread, err = NewPktPlugin(ctx, sensorCfg.RegHost, sensorCfg.PktSrvPort)
+	if err != nil {
+		logger.Errorf("new pkt plugin err:%v", err)
+		return nil, err
+	}
+
+	return &plug, nil
 }
 
 func (p *Plugin) Event(wg *sync.WaitGroup) {
@@ -134,15 +156,15 @@ func (p *Plugin) cmdResp(taskId, sensorId, msg string) {
 func (p *Plugin) Serve(wg *sync.WaitGroup) {
 	defer wg.Done()
 
-	plugRunTicker := time.NewTicker(5 * time.Second)
-	defer plugRunTicker.Stop()
+	p.loadConfigure()
 
 	for {
 		select {
 		case <-p.ctx.Done():
+			logger.Info("received sensor stop signal, stop all plugin!")
 			p.stopAllPlugin()
 			return
-		case <-plugRunTicker.C:
+		case <-time.After(5 * time.Second):
 			{
 				// 执行插件配置加载
 				p.loadConfigure()
@@ -152,58 +174,124 @@ func (p *Plugin) Serve(wg *sync.WaitGroup) {
 			}
 		}
 	}
-
 }
 
 func (p *Plugin) loadConfigure() {
+	for pluginName, _ := range p.PlugConfigChangedMap {
+		p.PlugConfigChangedMap[pluginName] = false
+	}
+
 	sensorIDKey := fmt.Sprintf("%s:%s", common.SensorIDPrefixKey, p.sensorId)
+
 	v, err := p.rdxCli.HGet(p.ctx, sensorIDKey, "pkt_plugin_switch").Result()
 	if err != nil {
 		logger.Errorf("get pkt switch err:%v", err)
-	} else {
-		p.pktPluginSwitch = false
-		if v == "true" {
-			p.pktPluginSwitch = true
+	} else if v != "" {
+		pktPluginSwitch, err := strconv.ParseBool(v)
+		if err == nil {
+			if v != strconv.FormatBool(p.pktPluginSwitch) {
+				logger.Infof("pkt plugin switch changed to %s", v)
+				p.PlugConfigChangedMap[common.PlugPktName] = true
+			}
+
+			p.pktPluginSwitch = pktPluginSwitch
 		}
 	}
 
 	v, err = p.rdxCli.HGet(p.ctx, sensorIDKey, "bind_net_iface").Result()
 	if err != nil {
 		logger.Errorf("get bind iface err:%v", err)
-	} else {
-		if v != "" {
-			p.ntapBindIface = strings.Split(v, ",")
+	} else if v != "" {
+		// v 格式为网卡索引："eth0,eth1". 多个网卡用逗号分隔, 转位 int 数组
+		pktBindIfaceNames := strings.Split(v, ",")
+		if len(pktBindIfaceNames) > 0 {
+			// check if all iface indexes are changed: compare []int
+			if !reflect.DeepEqual(p.plugPktThread.IfaceNames, pktBindIfaceNames) {
+				logger.Infof("pkt bind iface names changed to %v", pktBindIfaceNames)
+				p.PlugConfigChangedMap[common.PlugPktName] = true
+			}
+
+			p.plugPktThread.IfaceNames = pktBindIfaceNames
+		}
+	}
+
+	v, err = p.rdxCli.HGet(p.ctx, sensorIDKey, "pkt_bpf_filter").Result()
+	if err != nil && err != redis.Nil {
+		logger.Errorf("get bpf filter err:%v", err)
+	} else if err == redis.Nil {
+		logger.Debug("pkt bpf filter not set")
+	} else if v != "" {
+		err = p.plugPktThread.SetBpfFilter(v)
+		if err != nil {
+			logger.Errorf("set bpf filter err:%v", err)
 		}
 	}
 
 	v, err = p.rdxCli.HGet(p.ctx, sensorIDKey, "log_plugin_switch").Result()
 	if err != nil {
 		logger.Errorf("get log switch err:%v", err)
-	} else {
-		p.logPluginSwitch = false
+	} else if v != "" {
+		logPluginSwitch, err := strconv.ParseBool(v)
+		if err == nil {
+			if v != strconv.FormatBool(p.logPluginSwitch) {
+				logger.Infof("log plugin switch changed to %s", v)
+			}
 
-		if v == "true" {
-			p.logPluginSwitch = true
+			p.logPluginSwitch = logPluginSwitch
 		}
+	}
+
+	// 获取evt plugin 的配置
+	v, err = p.rdxCli.HGet(p.ctx, sensorIDKey, "log_eid_filter").Result()
+	if err != nil && err != redis.Nil {
+		logger.Errorf("get log eventid filter err:%v", err)
+	} else if err == redis.Nil {
+		logger.Debug("log eventid filter not set")
+	} else if v != "" {
+		// v 格式为EventIDs："4624,4625". 多个EventID用逗号分隔, 转位 int 数组
+		parts := strings.Split(v, ",")
+		logEventidFilter := make([]int, len(parts))
+		for i, idx := range parts {
+			logEventidFilter[i], err = strconv.Atoi(idx)
+			if err != nil {
+				logger.Errorf("convert eventid(%s) to int err:%v", idx, err)
+				continue
+			}
+		}
+
+		if !reflect.DeepEqual(p.plugEvtThread.EventidFilter, logEventidFilter) {
+			logger.Infof("log eventid filter changed to %v", logEventidFilter)
+			p.PlugConfigChangedMap[common.PlugEvtName] = true
+		}
+
+		p.plugEvtThread.EventidFilter = logEventidFilter
 	}
 
 	v, err = p.rdxCli.HGet(p.ctx, sensorIDKey, "rpcfw_plugin_switch").Result()
 	if err != nil {
 		logger.Errorf("get rpcfw switch err:%v", err)
-	} else {
-		p.rpcFwPluginSwitch = false
-		if v == "true" {
-			p.rpcFwPluginSwitch = true
+	} else if v != "" {
+		rpcFwPluginSwitch, err := strconv.ParseBool(v)
+		if err == nil {
+			if v != strconv.FormatBool(p.rpcFwPluginSwitch) {
+				logger.Infof("rpcfw plugin switch changed to %s", v)
+			}
+
+			p.rpcFwPluginSwitch = rpcFwPluginSwitch
 		}
 	}
 
 	v, err = p.rdxCli.HGet(p.ctx, sensorIDKey, "ldapfw_plugin_switch").Result()
 	if err != nil {
 		logger.Errorf("get ldapfw switch err:%v", err)
-	} else {
-		p.ldapFwPluginSwitch = false
-		if v == "true" {
-			p.ldapFwPluginSwitch = true
+	} else if v != "" {
+		ldapFwPluginSwitch, err := strconv.ParseBool(v)
+		if err == nil {
+			if v != strconv.FormatBool(p.ldapFwPluginSwitch) {
+				logger.Infof("ldapfw plugin switch changed to %s", v)
+			}
+
+			p.ldapFwPluginSwitch = ldapFwPluginSwitch
 		}
 	}
 
@@ -230,8 +318,6 @@ func (p *Plugin) loadConfigure() {
 			p.memMaxLimit = float32(value)
 		}
 	}
-
-	logger.Debugf("load sensor configure: pkt_switch:%t, log_switch:%t, rpcfw_switch:%t, ldapfw_switch:%t, bind_iface:%v, cpu_limit:%f, mem_limit:%f", p.pktPluginSwitch, p.logPluginSwitch, p.rpcFwPluginSwitch, p.ldapFwPluginSwitch, p.ntapBindIface, p.cpuMaxLimit, p.memMaxLimit)
 }
 
 func (p *Plugin) runPlugin() {
@@ -244,139 +330,133 @@ func (p *Plugin) runPlugin() {
 	}
 
 	if p.logPluginSwitch {
-		// 如果没有启动，则start
-		if !plugs[common.PlugNxlogName] {
-			if err = startNxlogPlugin(false); err != nil {
-				logger.Infof("try to start nxlog svc err:%v", err)
+		// if plugin is installed and not running, start it
+		if !p.plugEvtThread.IsRunning() {
+			logger.Info("evt plugin is not running, start it")
+			if err = p.plugEvtThread.Start(); err != nil {
+				logger.Infof("start evt plugin err:%v", err)
 			}
 		}
-	} else {
-		// 如果已启动，则stop
-		if err = stopNxlogPlugin(); err != nil {
-			logger.Infof("try to stop nxlog svc err:%v", err)
+
+		if p.PlugConfigChangedMap[common.PlugEvtName] { // only log_eid_filter changed, need reload
+			logger.Info("evt plugin config changed, reload it")
+			// if plugin is installed and running, reload it
+			if err = p.plugEvtThread.Reload(); err != nil {
+				logger.Infof("reload evt plugin err:%v", err)
+			}
 		}
+
+		p.PlugProcessMap[common.PlugEvtName] = 1
+
+	} else {
+		// if plugin is installed and running, stop it
+		if p.plugEvtThread.IsRunning() {
+			if err = p.plugEvtThread.Stop(); err != nil {
+				logger.Infof("stop evt plugin err:%v", err)
+			}
+		}
+
+		p.PlugProcessMap[common.PlugEvtName] = 0
+	}
+
+	if p.pktPluginSwitch {
+		// if plugin is installed and not running, start it
+		if !p.plugPktThread.IsRunning() {
+			if err = p.plugPktThread.Start(); err != nil {
+				logger.Infof("start pkt plugin err:%v", err)
+			}
+		}
+
+		if p.PlugConfigChangedMap[common.PlugPktName] {
+			// if plugin is installed and running, reload it
+			logger.Info("reload pkt plugin by config changed")
+			if err = p.plugPktThread.Reload(); err != nil {
+				logger.Infof("reload pkt plugin err:%v", err)
+			}
+		}
+
+		p.PlugProcessMap[common.PlugPktName] = 1
+	} else {
+		// if plugin is installed and running, stop it
+		if p.plugPktThread.IsRunning() {
+			if err = p.plugPktThread.Stop(); err != nil {
+				logger.Infof("stop pkt plugin err:%v", err)
+			}
+		}
+
+		p.PlugProcessMap[common.PlugPktName] = 0
 	}
 
 	if p.rpcFwPluginSwitch {
-		// 如果没有启动，则start
-		if !plugs[common.PlugRpcFwName] {
+		// if plugin is installed and not running, start it
+		if isRunning, ok := plugs[common.PlugRpcFwName]; ok && !isRunning {
 			if err = startRpcFwPlugin(false); err != nil {
 				logger.Infof("try to start rpcfw svc err:%v", err)
 			}
 		}
-	} else {
-		// 如果已启动，则stop
-		if err = stopRpcFwPlugin(); err != nil {
-			logger.Infof("try to stop rpcfw svc err:%v", err)
+		if p.PlugConfigChangedMap[common.PlugRpcFwName] {
+			// if plugin's config changed, reload it
+			logger.Info("reload rpcfw plugin by config changed")
+			if err = reloadRpcFwPlugin(); err != nil {
+				logger.Infof("reload rpcfw plugin err:%v", err)
+			}
 		}
+
+		p.PlugProcessMap[common.PlugRpcFwName] = 1
+	} else {
+		// is installed and running, stop it
+		if isRunning, ok := plugs[common.PlugRpcFwName]; ok && isRunning {
+			if err = stopRpcFwPlugin(); err != nil {
+				logger.Infof("try to stop rpcfw svc err:%v", err)
+			}
+		}
+
+		p.PlugProcessMap[common.PlugRpcFwName] = 0
 	}
 
 	if p.ldapFwPluginSwitch {
-		// 如果没有启动，则start
-		if !plugs[common.PlugLdapFwName] {
+		// is installed and not running, start it
+		if isRunning, ok := plugs[common.PlugLdapFwName]; ok && !isRunning {
 			if err = startLdapFwPlugin(false); err != nil {
 				logger.Infof("try to start ldapfw svc err:%v", err)
 			}
 		}
-	} else {
-		// 如果已启动，则stop
-		if err = stopLdapFwPlugin(); err != nil {
-			logger.Infof("try to stop ldapfw svc err:%v", err)
+
+		if p.PlugConfigChangedMap[common.PlugLdapFwName] {
+			// if plugin's config changed, reload it
+			logger.Info("reload ldapfw plugin by config changed")
+			if err = reloadLdapFwPlugin(); err != nil {
+				logger.Infof("reload ldapfw plugin err:%v", err)
+			}
 		}
+
+		p.PlugProcessMap[common.PlugLdapFwName] = 1
+	} else {
+		// is installed and running, stop it
+		if isRunning, ok := plugs[common.PlugLdapFwName]; ok && isRunning {
+			if err = stopLdapFwPlugin(); err != nil {
+				logger.Infof("try to stop ldapfw svc err:%v", err)
+			}
+		}
+
+		p.PlugProcessMap[common.PlugLdapFwName] = 0
 	}
 }
 
 func (p *Plugin) stopAllPlugin() {
-	p.ntapProc.Stop() // stop ntap
-	stopNxlogPlugin()
-	stopRpcFwPlugin()
-	stopLdapFwPlugin()
-}
-
-func (p *Plugin) RunNtap(wg *sync.WaitGroup) {
-	defer wg.Done()
-
-	plugNtapTicker := time.NewTicker(3 * time.Second)
-	defer plugNtapTicker.Stop()
-
-	var origBindIface = p.ntapBindIface[0]
-
-	ntapBin := filepath.Join(common.SensorDir, "ntap", common.PlugNtapProcName)
-
-	p.ntapProc = cmd.NewCmd(ntapBin)
-	p.ntapProc.Dir = common.GetCurrentPath()
-	p.ntapProc.Args = getNtapArgs(p.adaHost, origBindIface)
-
-	// TODO: fix 不行  如果启动前还有ntap进行（僵尸进程），则killed
-	TryKillProcess(common.PlugNtapProcName)
-
-	var stop bool
-	go func() {
-		for {
-			if stop {
-				return
-			}
-			time.Sleep(2 * time.Second)
-
-			currProcPid := p.PlugProcessMap[common.PlugNtapName]
-
-			// check if need stop this plugin by switch
-			if p.pktPluginSwitch == false && currProcPid != 0 {
-				logger.Infof("will stop ntap(%d) process by switch", currProcPid)
-				p.ntapProc.Stop()
-				p.PlugProcessMap[common.PlugNtapName] = 0
-				continue
-			}
-
-			// check if need stop this plugin by bind port changed
-			if currProcPid != 0 && p.ntapBindIface[0] != origBindIface {
-				logger.Infof("will stop ntap(%d) process by bind changed(iface_id %s to %s)", currProcPid, origBindIface, p.ntapBindIface[0])
-				p.ntapProc.Stop()
-				p.PlugProcessMap[common.PlugNtapName] = 0
-				continue
-			}
-		}
-	}()
-
-	for {
-		select {
-		case <-p.ctx.Done():
-			p.ntapProc.Stop()
-			stop = true
-			return
-		case <-plugNtapTicker.C:
-			{
-				if !p.pktPluginSwitch {
-					time.Sleep(2 * time.Second)
-					continue
-				} else {
-					// 执行到这里意味着,ntap程序已经退出了. 如果switch是开的话，需要重新拉起
-					p.ntapProc = cmd.NewCmd(ntapBin)
-					p.ntapProc.Dir = common.GetCurrentPath()
-					p.ntapProc.Args = getNtapArgs(p.adaHost, p.ntapBindIface[0])
-					origBindIface = p.ntapBindIface[0]
-				}
-
-				statusChan := p.ntapProc.Start()
-				time.Sleep(300 * time.Millisecond)
-
-				logger.Infof("started ntap process with pid %d", p.ntapProc.Status().PID)
-				p.PlugProcessMap[common.PlugNtapName] = uint32(p.ntapProc.Status().PID)
-
-				done := <-statusChan
-				p.PlugProcessMap[common.PlugNtapName] = 0
-
-				var stopDesc = "signal"
-				if done.Complete {
-					stopDesc = "kill"
-				}
-				logger.Infof("ntap stopped(history_pid:%d) by %s, exit_code:%d", done.PID, stopDesc, done.Exit)
-			}
-		}
+	if isLdapFwInstalled() {
+		stopLdapFwPlugin()
 	}
-}
 
-func getNtapArgs(adaHost, bindIface string) []string {
-	bpf := fmt.Sprintf("(tcp) and (not (host %s and port 9091))", adaHost)
-	return []string{"/c", "-K", "-i", bindIface, "-c", fmt.Sprintf("%s:9093", adaHost), "-f", bpf}
+	if isRpcFwInstalled() {
+		stopRpcFwPlugin()
+	}
+
+	if p.plugPktThread.IsRunning() {
+		p.plugPktThread.Stop()
+	}
+
+	if p.plugEvtThread.IsRunning() {
+		p.plugEvtThread.Stop()
+	}
 }

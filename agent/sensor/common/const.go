@@ -19,12 +19,8 @@ const (
 const (
 	SensorSvcName = "ada_sensor"
 
-	PlugNtapName     = "ntap"
-	PlugNtapProcName = "ntap_remote.exe"
-
-	PlugNxlogName     = "nxlog"
-	PlugNxlogProcName = "nxlog.exe"
-	PlugNxlogSvcName  = "nxlog"
+	PlugEvtName = "evt"
+	PlugPktName = "pkt"
 
 	PlugRpcFwName     = "rpcfw"
 	PlugRpcFwProcName = "rpcFwManager.exe"
