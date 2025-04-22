@@ -1,0 +1,73 @@
+
+# Zeek::TrafficReceiver
+
+This plugin provides native TrafficReceiver support for Zeek. 
+
+
+## Installation
+
+
+### Package Manager
+
+The plugin is available as package for the [Zeek Package Manager](https://github.com/zeek/package-manager) and can be installed using the following command:
+
+    zkg install zeek-trafficreceiver
+
+### Manual Install
+
+The following will compile and install the TrafficReceiver plugin alongside Zeek:
+
+    # ./configure && make && make install
+
+If everything built and installed correctly, you should see this:
+
+    # zeek -NN Zeek::TrafficReceiver
+    Zeek::TrafficReceiver - Packet acquisition via TrafficReceiver (dynamic, version 1.0.0)
+    [Packet Source] TrafficReceiverReader (interface prefix "trafficreceiver"; supports live input)
+    [Constant] TrafficReceiver::buffer_size
+
+## Usage
+
+Once installed, you can use TrafficReceiver interfaces/ports by prefixing them with `trafficreceiver::` on the command line. For example, to use TrafficReceiver to use a local socket with port 57012:
+
+    # zeek -i trafficreceiver::127.0.0.1:57012
+
+## Usage with `zeekctl`
+
+You can use the TrafficReceiver plugin with `zeekctl`. The following shows a sample configuration:
+
+```
+    [manager]
+    type=manager
+    host=localhost
+     
+    [proxy-1]
+    type=proxy
+    host=localhost
+     
+    [worker-1]
+    type=worker
+    host=localhost
+    interface=trafficreceiver::1.2.3.4:57012
+    # Optional parameters for per node configuration:
+    trafficreceiver_buffer_size=32*1024
+
+    [worker-2]
+    type=worker
+    host=localhost
+    interface=trafficreceiver::1.2.3.5:57012
+    # Optional parameters for per node configuration:
+    trafficreceiver_buffer_size=32*1024
+```
+
+Note that workers must consume different streams (different IP, Port combinations). The TrafficReceiver plugin does not yet support multiple workers consuming the *same* stream.
+
+## Debugging the Plugin
+
+To debug the plugin, configure with `--enable-debug`, as well as Zeek itself.  Then when you run Zeek, add `-B plugin-Zeek-TrafficReceiver` to the command line to enable debugging.  The resulting `debug.log` should show debug comments.
+
+## Advanced Configuration
+
+While the plugin aims at providing a "plug and play" user experience, it exposes at the momement one option of the underlying API for customization (see [init.zeek](scripts/init.zeek) for the default values):
+
+* `buffer_size`: Set the overall buffer size allocated per socket. 
