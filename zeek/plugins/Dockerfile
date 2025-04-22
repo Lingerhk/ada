@@ -29,6 +29,7 @@ WORKDIR /tmp
 COPY zeek-adaegis-redis /tmp/zeek-adaegis-redis
 RUN cd /tmp/zeek-adaegis-redis && \
   rm -rf ./build && \
+  chmod +x ./configure && \
   ./configure && \
   make && \
   make install && \
@@ -41,6 +42,7 @@ RUN zeek -N Zeek::Redis
 COPY zeek-adaegis-receiver /tmp/zeek-adaegis-receiver
 RUN cd /tmp/zeek-adaegis-receiver && \
   rm -rf ./build && \
+  chmod +x ./configure && \
   ./configure && \
   make && \
   make install && \
