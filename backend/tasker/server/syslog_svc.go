@@ -21,7 +21,7 @@ import (
 
 const (
 	maxLogQueueLen    = 200000             // 日志队列的最大长度(20W, evelog&pktlog)
-	eveLogQueueKey    = "ada:evelog_queue" // same with receiver module
+	eveLogQueueKey    = "ada:evelog_queue" // same with engine module
 	pktLogQueueKey    = "ada:pktlog_queue" // same with engine module
 	eveLogIndexPrefix = "ada-eventlog"
 	pktLogIndexPrefix = "ada-packetlog"
@@ -235,6 +235,8 @@ func (s *SyslogServer) syslogSync(event map[string]interface{}) {
 		logger.Errorf("lpush redis err:%v", err)
 		// do nothing
 	}
+
+	// 记录stats
 
 	if !s.env.Cfg.ES.Enable {
 		return
@@ -475,6 +477,8 @@ func (s *SyslogServer) pktlogSync(ctx context.Context, event string) {
 		logger.Warnf("queue %s is full, will remove some old packetlog", pktLogQueueKey)
 		s.env.RedisCli.LTrim(ctx, pktLogQueueKey, 2000, -1)
 	}
+
+	// 记录stats
 
 	if !s.env.Cfg.ES.Enable {
 		return

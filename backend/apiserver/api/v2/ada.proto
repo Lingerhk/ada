@@ -449,29 +449,27 @@ message ListSensorReply {
     string logPluginStatus = 17;     // 日志插件状态 Init|Running|Stopped|Error
     string rpcFwPluginStatus = 18;   // rpcfw插件状态 Init|Running|Stopped|Error
     string ldapFwPluginStatus = 19;  // ldapfw插件状态 Init|Running|Stopped|Error
-    string pktCpuUsed = 20;
-    string pktMemUsed = 21;
-    string logCpuUsed = 22;
-    string logMemUsed = 23;
-    string rpcFWCpuUsed = 24;
-    string rpcFWMemUsed = 25;
-    string ldapFwCpuUsed = 26;
-    string ldapFwMemUsed = 27;
+    string rpcFWCpuUsed = 20;
+    string rpcFWMemUsed = 21;
+    string ldapFwCpuUsed = 22;
+    string ldapFwMemUsed = 23;
+    string sensorCpuUsed = 24;
+    string sensorMemUsed = 25;
 
-    string platform = 28; // DC 平台
-    string kernelVer = 29; // DC内核版本
-    string memTotal = 30; // 内存大小(DC)
-    string cpuTotal  =31; // CPU核数
-    map<string, string> netIface = 32; // 主机上网口列表
-    repeated string bindNetIface = 33; // 绑定的接口list： ["0", "1"]
-    int32 dcIntervalTm = 34; // 域控时间与服务器时间的差值(秒)
+    string platform = 26; // DC 平台
+    string kernelVer = 27; // DC内核版本
+    string memTotal = 28; // 内存大小(DC)
+    string cpuTotal  = 29; // CPU核数
+    map<string, string> netIface = 30; // 主机上网口列表 {"eth0":"ip1,ip2"}
+    repeated string bindNetIface = 31; // 绑定的接口list： ["eth0", "eth1"]
+    int32 dcIntervalTm = 32; // 域控时间与服务器时间的差值(秒)
 
-    map<string, string> perfLimit = 35; // // 资源占用限制
-    repeated mapSlice events = 36; //  运行日志
+    map<string, string> perfLimit = 33; // // 资源占用限制
+    repeated mapSlice events = 34; //  运行日志
 
-    string createTm = 37; // 添加时间
-    string lastOnlineTm = 38; // 最后在线时间
-    string LastCollectTm = 39;// 最后采集时间
+    string createTm = 35; // 添加时间
+    string lastOnlineTm = 36; // 最后在线时间
+    string LastCollectTm = 37;// 最后采集时间
   }
   repeated Details List = 2;
   bool exhausted = 3; // if this is last page

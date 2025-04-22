@@ -8,14 +8,15 @@ import (
 	"bytes"
 	"context"
 	"fmt"
-	logger "github.com/sirupsen/logrus"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
 	"log/syslog"
 	"net"
 	"net/http"
 	"strings"
 	"time"
+
+	logger "github.com/sirupsen/logrus"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 func (s *ADAServiceV2) ListNotify(ctx context.Context, in *v2.ListNotifyReq) (*v2.ListNotifyReply, error) {
@@ -190,7 +191,7 @@ func (s *ADAServiceV2) TestNotifyConf(ctx context.Context, in *v2.TestNotifyConf
 		if !ok {
 			return &ret, status.Error(codes.Internal, "未传入服务器端口")
 		}
-		address := fmt.Sprintf("%s:%s", host, port)
+		address := net.JoinHostPort(host, port)
 		_, err := net.DialTimeout("tcp", address, time.Second*20)
 		if err != nil {
 			logger.Errorf("network connect %s err:%v", address, err)

@@ -131,9 +131,9 @@ func (s *ADAServiceV2) UpdateCompanyIcon(ctx context.Context, in *v2.UpdateCompa
 			break
 		}
 	}
-	if allowExt == false {
+	if !allowExt {
 		logger.Warnf("invalid icon type %s", fileExt)
-		return ret, status.Error(codes.Internal, "仅限上传jpg，jpeg，png格式的图片文件")
+		return ret, status.Error(codes.Internal, "仅限上传jpg/jpeg/png格式的图片文件")
 	}
 
 	si, err := server.GetSystemInfo(s.env)
