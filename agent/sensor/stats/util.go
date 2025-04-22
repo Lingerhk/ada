@@ -1,26 +1,25 @@
 package stats
 
 import (
-	"ada/agent/sensor/common"
 	"encoding/json"
-	"github.com/go-cmd/cmd"
+	"fmt"
+	"strings"
+	"time"
+
 	"github.com/google/gopacket/pcap"
 	"github.com/shirou/gopsutil/process"
 	"github.com/sirupsen/logrus"
-	"path/filepath"
-	"strings"
-	"time"
 )
 
-func getNetIface() (map[string]string, error) {
+func GetNetDevices() (string, error) {
 	ifaceMap := make(map[string]string)
 
 	devices, err := pcap.FindAllDevs()
 	if err != nil {
-		return nil, err
+		return "", err
 	}
 	if len(devices) == 0 {
-		return ifaceMap, nil
+		return "", nil
 	}
 
 	for _, dev := range devices {
@@ -40,104 +39,13 @@ func getNetIface() (map[string]string, error) {
 		ifaceMap[dev.Name] = strings.Join(ips, ",")
 	}
 
-	return ifaceMap, nil
-}
-
-func getNtapIfaceList() (map[string]string, error) {
-	ntapBin := filepath.Join(common.SensorDir, "ntap", common.PlugNtapProcName)
-	ntapProc := cmd.NewCmd(ntapBin)
-	ntapProc.Args = []string{"/c"}
-	status := <-ntapProc.Start()
-
-	var firstLine bool
-	ifaceIdxMap := make(map[string]string)
-	for _, line := range status.Stdout {
-		if strings.HasPrefix(line, "Available interfaces:") {
-			firstLine = true
-			continue
-		}
-		if firstLine && strings.Contains(line, "[index=") {
-			parts := strings.Fields(line)
-			IdxDesc := strings.SplitN(parts[0], "[index=", 2)
-			idxNum := string(IdxDesc[1][0])
-			devName := parts[1]
-			ifaceIdxMap[idxNum] = devName[1 : len(devName)-1]
-		}
-	}
-
-	return ifaceIdxMap, nil
-}
-
-func GetNetDevices() (string, error) {
-	ifaceMap, err := getNetIface()
-	if err != nil {
-		return "", err
-	}
-
-	ifaceIdxMap, err := getNtapIfaceList()
-	if err != nil {
-		return "", err
-	}
-
-	var cardMap = make(map[string]string)
-	for devName, ips := range ifaceMap {
-		for idNum, ifaceName := range ifaceIdxMap {
-			if ifaceName == devName {
-				cardMap[idNum] = ips
-				break
-			}
-		}
-	}
-
-	cardInfo, err := json.Marshal(&cardMap)
+	cardInfo, err := json.Marshal(&ifaceMap)
 	if err != nil {
 		return "", err
 	}
 
 	return string(cardInfo), nil
 }
-
-// 获取的驱动列表
-//func GetNetDevices() (string, error) {
-//	// 多次尝试获取，失败重试
-//	cardIPMap := map[string]string{}
-//	for i := 0; i < 5; i++ {
-//		devices, err := pcap.FindAllDevs()
-//		if err != nil {
-//			return "", err
-//		}
-//		if len(devices) == 0 {
-//			time.Sleep(2 * time.Second)
-//			continue
-//		}
-//
-//		var idx = 0
-//		for _, dev := range devices {
-//			name := dev.Name
-//			var ips string
-//			if len(dev.Addresses) > 0 {
-//				ips = ""
-//				for i, address := range dev.Addresses {
-//					if i > 0 {
-//						ips += " "
-//					}
-//					ips += fmt.Sprintf("%s", address.IP.String())
-//				}
-//				name += fmt.Sprintf(" (%s)", ips)
-//			}
-//			cardIPMap[strconv.Itoa(idx)] = name
-//			idx++
-//		}
-//		break
-//	}
-//
-//	cardInfo, err := json.Marshal(&cardIPMap)
-//	if err != nil {
-//		return "", err
-//	}
-//
-//	return string(cardInfo), nil
-//}
 
 // 根据pid获取进程CPU(单核利用率)/MEM信息
 // 如果传入interval 则计算一段时间内的均值
@@ -199,4 +107,18 @@ func getProcessCpuMemPercent(interval time.Duration, pid uint32) (float64, float
 	}
 
 	return cpuPercent, memPercent, nil
+}
+
+// Add helper function for human-readable bytes
+func humanReadableBytes(bytes uint64) string {
+	const unit = 1024
+	if bytes < unit {
+		return fmt.Sprintf("%d B", bytes)
+	}
+	div, exp := uint64(unit), 0
+	for n := bytes / unit; n >= unit; n /= unit {
+		div *= unit
+		exp++
+	}
+	return fmt.Sprintf("%.1f %cB", float64(bytes)/float64(div), "KMGTPE"[exp])
 }

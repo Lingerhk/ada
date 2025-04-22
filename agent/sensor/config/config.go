@@ -37,13 +37,16 @@ type LogCfg struct {
 }
 
 type RedisCfg struct {
+	Username string `yaml:"Username"`
 	Password string `yaml:"Password"`
 	Port     int    `yaml:"Port"`
 }
 
 type SensorCfg struct {
-	RegHost string `yaml:"RegHost"`
-	RegCode string `yaml:"RegCode"`
+	RegHost    string `yaml:"RegHost"`
+	RegCode    string `yaml:"RegCode"`
+	EvtSrvPort int    `yaml:"EvtSrvPort"`
+	PktSrvPort int    `yaml:"PktSrvPort"`
 }
 
 type Config struct {
@@ -146,8 +149,14 @@ func InitRedisClient(setting *Config) (*redis.Client, error) {
 		redisPort = 9091 // 默认为9091/tcp端口
 	}
 
+	redisUser := setting.Redis.Username
+	if redisUser == "" {
+		redisUser = "ada_sensor"
+	}
+
 	opt := redis.Options{
 		Addr:         fmt.Sprintf("%s:%d", setting.Sensor.RegHost, redisPort),
+		Username:     redisUser,
 		Password:     setting.Redis.Password,
 		DB:           0,
 		DialTimeout:  15 * time.Second,
