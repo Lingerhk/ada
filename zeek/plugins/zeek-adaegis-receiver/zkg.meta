@@ -1,0 +1,9 @@
+[package]
+summary = Zeek plugins for ADAegis
+description = A traffic Receiver for the Zeek in ADAegis.
+tags = adaegis, zeek plugin, receiver
+script_dir = scripts
+credits = adaegislab <https://github.com/adaegislab>
+depends =
+    zkg >=2.0
+    zeek >=7.1.0

@@ -1,0 +1,17 @@
+module Redis;
+
+const json_timestamps: JSON::TimestampFormat;
+
+const redis_host: string;
+
+const redis_port: count;
+
+const redis_db: count;
+
+const redis_password: string;
+
+const redis_key_prefix: string;
+const redis_push_type: string;
+
+const pool_size: count;
+const pool_connection_lifetime: count;
