@@ -911,14 +911,14 @@ func checkThreatWhitelistExist(ctx context.Context, env *config.Env, ruleId stri
 }
 
 func checkThreatWhitelistFields(ruleInfo map[string]string, fields []string) (bool, string) {
-	if ruleInfo == nil || len(ruleInfo) == 0 {
+	if len(ruleInfo) == 0 {
 		return false, "无效的规则"
 	}
 	filed, ok := ruleInfo["field"]
 	if !ok {
 		return false, "规则字段field不存在"
 	}
-	if base.InArray(filed, fields) == false {
+	if !base.InArray(filed, fields) {
 		return false, fmt.Sprintf("无效的规则字段field:%s", filed)
 	}
 
@@ -926,7 +926,7 @@ func checkThreatWhitelistFields(ruleInfo map[string]string, fields []string) (bo
 	if !ok {
 		return false, "规则字段op不存在"
 	}
-	if base.InArray(op, []string{"==", "!=", ">", "<", ">=", "<=", "in", "not_in", "contain", "not_contain", "regex"}) == false {
+	if !base.InArray(op, []string{"==", "!=", ">", "<", ">=", "<=", "in", "not_in", "contain", "not_contain", "regex"}) {
 		return false, fmt.Sprintf("无效的规则字段op:%s", op)
 	}
 
@@ -1303,11 +1303,7 @@ func checkSensorOffline(env *config.Env, domain string) bool {
 			break
 		}
 	}
-	if !anySensorOnline {
-		return true
-	}
-
-	return false
+	return !anySensorOnline
 }
 
 func pushThreatPolicy(ctx context.Context, rdxCli *redis.Client, cmdMsg sCommon.AdaMessage) error {

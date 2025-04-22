@@ -10,16 +10,17 @@ import (
 	"ada/infra/version"
 	"context"
 	"fmt"
-	"github.com/google/uuid"
-	jsoniter "github.com/json-iterator/go"
-	logger "github.com/sirupsen/logrus"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
 	"io"
 	"os"
 	"path"
 	"strings"
 	"time"
+
+	"github.com/google/uuid"
+	jsoniter "github.com/json-iterator/go"
+	logger "github.com/sirupsen/logrus"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 func (s *ADAServiceV2) ListSensor(ctx context.Context, in *v2.ListSensorReq) (*v2.ListSensorReply, error) {
@@ -71,14 +72,12 @@ func (s *ADAServiceV2) ListSensor(ctx context.Context, in *v2.ListSensorReq) (*v
 			LogPluginStatus:    sensor.LogPluginStatus,
 			RpcFwPluginStatus:  sensor.RpcFwPluginStatus,
 			LdapFwPluginStatus: sensor.LdapFwPluginStatus,
-			PktCpuUsed:         sensor.PktCpuUsed,
-			PktMemUsed:         sensor.PktMemUsed,
-			LogCpuUsed:         sensor.LogCpuUsed,
-			LogMemUsed:         sensor.LogMemUsed,
 			RpcFWCpuUsed:       sensor.RpcFwCpuUsed,
 			RpcFWMemUsed:       sensor.RpcFwMemUsed,
 			LdapFwCpuUsed:      sensor.LdapFwCpuUsed,
 			LdapFwMemUsed:      sensor.LdapFwMemUsed,
+			SensorCpuUsed:      sensor.SensorCpuUsed,
+			SensorMemUsed:      sensor.SensorMemUsed,
 
 			Platform:     sensor.Platform,
 			KernelVer:    sensor.KernelVer,
