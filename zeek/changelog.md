@@ -2,6 +2,17 @@
 
 #### ZEEK (二次开发) V7.1.0
 只修改json format输出，以支持zeek-redis plugin
+- `scripts/site/local.zeek`
+```c++
+// disable it
+#@load tuning/defaults
+```
+
+- `auxil/zeekctl/etc/zeekctl.cfg.in`
+```c++
+// setting FileExtractDir to empty
+FileExtractDir =
+```
 
 - `src/threading/formatters/JSON.cc`
 ```c++
