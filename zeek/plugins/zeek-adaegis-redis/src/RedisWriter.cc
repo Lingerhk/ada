@@ -7,6 +7,7 @@
 #include <regex>
 #include <string>
 #include <vector>
+#include <time.h>
 
 using namespace logging;
 using namespace writer;
@@ -42,6 +43,9 @@ RedisWriter::RedisWriter(zeek::logging::WriterFrontend *frontend) : zeek::loggin
   zeek::ODesc tsfmt;
   zeek::BifConst::Redis::json_timestamps->Describe(&tsfmt);
   json_timestamps.assign((const char *)tsfmt.Bytes(), tsfmt.Len());
+
+  // Initialize queue size
+  const int MAX_QUEUE_SIZE = 1024 * 64; // 64KB
 }
 
 RedisWriter::~RedisWriter() {
@@ -229,7 +233,7 @@ std::string RedisWriter::GetHostnameFromCache(const std::string& ip) {
   }
 
   // If not found in the local cache, try to get from Redis
-  auto resp_h = redis_client->get(Fmt("%s:dc_ip:%s", redis_key_prefix.c_str(), ip.c_str()));
+  auto resp_h = redis_client->get(Fmt("%s:engine:dc_ip:%s", redis_key_prefix.c_str(), ip.c_str()));
   if (resp_h) {
     // Update the local cache
     localCache[ip] = *resp_h;
@@ -258,18 +262,6 @@ bool RedisWriter::DoWrite(int num_fields, const zeek::threading::Field *const *f
   for (int i = 0; i < num_fields; ++i)
     params.push_back(CreateParams(vals[i]));
 
-  // add by adaegis, get hostname from redis cache
-//  std::string hostname = "";
-//  auto resp_h = redis_client->get(Fmt("ada:dc_ip:%s", std::get<1>(params[4]).c_str()));
-//  if (resp_h) {
-//    hostname = *resp_h;
-//  } else {
-//    auto orig_h = redis_client->get(Fmt("ada:dc_ip:%s", std::get<1>(params[2]).c_str()));
-//    if (orig_h) {
-//      hostname = *orig_h;
-//    }
-//  }
-
   // Get hostname from the local cache or Redis
   std::string hostname = GetHostnameFromCache(std::get<1>(params[4]));
   if (hostname.empty()) {
@@ -277,28 +269,38 @@ bool RedisWriter::DoWrite(int num_fields, const zeek::threading::Field *const *f
   }
 
   // format the log entry
-  formatter->DescribeV2(&buff, num_fields, fields, vals, hostname);
+  //formatter->DescribeV2(&buff, num_fields, fields, vals, hostname);
+  formatter->Describe(&buff, num_fields, fields, vals);
   const char *raw = (const char *)buff.Bytes();
   // send the formatted log entry to redis
   std::string entry = raw;
+  
+  // Insert hostname at the beginning of the JSON object
+  // Make sure the string is a JSON object that starts with "{"
+  if (!entry.empty() && entry[0] == '{') {
+    // Insert after the opening brace
+    entry.insert(1, "\"Hostname\":\"" + hostname + "\",");
+  }
 
-
-  // check if the queue is too long
-  queue_length = redis_client->llen(Fmt("%s:pktlog_queue", redis_key_prefix.c_str()));
-  if (queue_length > 1024*32 ) {
-    queue_fulled = 1;
+  // check if the queue is full every 10 seconds
+  time_t current_time = time(nullptr);
+  if (current_time % 10 == 0) {
+    queue_length = redis_client->llen(Fmt("%s:pktlog_queue", redis_key_prefix.c_str()));
+    if (queue_length > MAX_QUEUE_SIZE) {
+      queue_fulled = 1;
+    }
   }
 
   // RPUSH
   if (strcmp(redis_push_type.c_str(), "RPUSH") == 0) {
     if (queue_fulled) {
-      redis_client->ltrim(Fmt("%s:pktlog_queue", redis_key_prefix.c_str()), 1024, -1); // 
+      redis_client->ltrim(Fmt("%s:pktlog_queue", redis_key_prefix.c_str()), 1024, -1); //  remove the first 1024 entries
     }
     redis_client->rpush(Fmt("%s:pktlog_queue", redis_key_prefix.c_str()), entry);
   } else {
     // LPUSH
     if (queue_fulled) {
-      redis_client->ltrim(Fmt("%s:pktlog_queue", redis_key_prefix.c_str()), 0, -1024); // 
+      redis_client->ltrim(Fmt("%s:pktlog_queue", redis_key_prefix.c_str()), 0, -1024); //  remove the last 1024 entries
     }
     redis_client->lpush(Fmt("%s:pktlog_queue", redis_key_prefix.c_str()), entry);
   }

@@ -1,3 +1,8 @@
+## Background
+```shell
+OS: Ubuntu 24.04 LTS
+```
+
 ## Build Base image
 ```shell
 # 
@@ -25,4 +30,16 @@ docker build -t ada_zeek:7.1.0 .
 adadmin@ada:~/zeek/plugins$ docker images
 REPOSITORY     TAG       IMAGE ID       CREATED          SIZE
 ada_zeek       7.1.0     f9607c616c60   1 hours ago      834MB
+```
+
+#### Build local
+```shell
+# dependencies
+sudo apt-get install cmake make gcc g++ flex libfl-dev bison libpcap-dev libssl-dev python3 python3-dev swig zlib1g-dev libkrb5-dev libmaxminddb-dev libhiredis-dev libjemalloc-dev
+
+# build
+cd zeek-7.1.0
+./configure --enable-jemalloc
+make -j8
+sudo make install
 ```

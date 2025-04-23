@@ -4,6 +4,7 @@
 
 #include <zeek/Desc.h>
 #include <zeek/logging/WriterBackend.h>
+#include <zeek/logging/WriterFrontend.h>
 #include <zeek/threading/Formatter.h>
 #include <zeek/threading/formatters/Ascii.h>
 #include <zeek/threading/formatters/JSON.h>
@@ -12,6 +13,7 @@
 #include "redis.bif.h"
 #include <string>
 #include <unordered_map>
+#include <time.h>
 
 namespace logging {
 namespace writer {
@@ -30,6 +32,8 @@ public:
   }
 
 protected:
+  const int MAX_QUEUE_SIZE = 1024 * 64; // 64KB
+
   virtual bool DoInit(const zeek::logging::WriterBackend::WriterInfo &info,
                       int num_fields,
                       const zeek::threading::Field *const *fields);
