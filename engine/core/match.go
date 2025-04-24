@@ -9,12 +9,13 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"strings"
+	"time"
+
 	"github.com/elastic/go-elasticsearch/v8/esapi"
 	"github.com/redis/go-redis/v9"
 	logger "github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/bson/primitive"
-	"strings"
-	"time"
 )
 
 // 并发执行
@@ -154,6 +155,11 @@ func (e *EngineWorker) syncAlert(ctx context.Context, ruleType, rawLog, dcHostna
 }
 
 func (e *EngineWorker) syncElasticsearch(ctx context.Context, alertBytes []byte) (string, error) {
+	if e.esCli == nil {
+		logger.Debugf("ES disabled, skip indexing")
+		return "es_disabled", nil
+	}
+
 	// return the es document _id
 	req := esapi.IndexRequest{
 		Index:   common.AlertActivityIndexKey,

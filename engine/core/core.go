@@ -186,6 +186,11 @@ func (e *EngineWorker) Setup() error {
 		return err
 	}
 
+	if e.esCli == nil {
+		logger.Infof("ES disabled, skip create index")
+		return nil
+	}
+
 	// check if the index(ada-activity(common.AlertActivityIndexKey)) is created. if not, create first.
 	req := esapi.IndicesExistsRequest{Index: []string{common.AlertActivityIndexKey}}
 	r, err := req.Do(context.Background(), e.esCli)

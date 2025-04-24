@@ -38,6 +38,7 @@ type MongodbCfg struct {
 }
 
 type ESCfg struct {
+	Enable    bool     `yaml:"Enable"`
 	Addresses []string `yaml:"Addresses"`
 	Username  string   `yaml:"Username"`
 	Password  string   `yaml:"Password"`
@@ -129,6 +130,10 @@ func InitMongoClient(setting *Config) (mongo.DBAdaptor, error) {
 }
 
 func InitElasticsearch(setting *Config) (*elasticsearch.Client, error) {
+	if !setting.ES.Enable {
+		return nil, nil
+	}
+
 	cfg := elasticsearch.Config{
 		Addresses: setting.ES.Addresses,
 		Username:  setting.ES.Username,
