@@ -32,7 +32,7 @@ public:
   }
 
 protected:
-  const int MAX_QUEUE_SIZE = 1024 * 64; // 64KB
+  const int MAX_QUEUE_SIZE = 1024 * 512; // 52.4W
 
   virtual bool DoInit(const zeek::logging::WriterBackend::WriterInfo &info,
                       int num_fields,
