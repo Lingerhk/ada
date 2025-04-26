@@ -10,9 +10,11 @@ script/docker/zeek/redis-plus-1.3.12.tar.gz
 agent/sensor/tools/ntap.go
 agent/sensor/tools/packet_forward.go
 agent/sensor/tools/crypt_cfg.go
+agent/sensor/tools/pkg_sensor.go
 
 engine/rules/flow/TODO.txt
 
+scanner/scan_bussis.md
 scanner/worker/sc_enc.tar.gz
 scanner/worker/venv_enc.tar.gz
 
