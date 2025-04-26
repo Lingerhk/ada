@@ -107,16 +107,14 @@ func InitLog(setting *Config, redisCli *redis.Client) error {
 		logger.SetFormatter(&logger.TextFormatter{})
 	} else if setting.Log.LogPath != "" {
 		logFile := path.Join(common.GetCurrentPath(), setting.Log.LogPath, setting.ProjectName+".log")
-		if err == nil {
-			logout := &lumberjack.Logger{
-				Filename:   logFile,
-				MaxSize:    20,    // 日志文件最大size, 单位是MB
-				MaxBackups: 2,     // 最大过期日志保留的个数
-				MaxAge:     60,    // 保留过期文件的最大时间间隔，单位是天
-				Compress:   false, // 是否需要压缩滚动日志，使用的gzip压缩
-			}
-			logger.SetOutput(logout)
+		logout := &lumberjack.Logger{
+			Filename:   logFile,
+			MaxSize:    20,    // 日志文件最大size, 单位是MB
+			MaxBackups: 2,     // 最大过期日志保留的个数
+			MaxAge:     60,    // 保留过期文件的最大时间间隔，单位是天
+			Compress:   false, // 是否需要压缩滚动日志，使用的gzip压缩
 		}
+		logger.SetOutput(logout)
 	}
 
 	logger.SetReportCaller(true)
@@ -245,6 +243,25 @@ func WriteConfigFile(setting *Config) error {
 	return os.WriteFile(confFile, cfgBytes, 0644)
 }
 
+func SetManagerIP(ip string) error {
+	// update the reg host in config file
+	content, err := LoadConfig()
+	if err != nil {
+		return err
+	}
+
+	var setting Config
+	err = yaml.Unmarshal(content, &setting)
+	if err != nil {
+		return err
+	}
+
+	// write reg host to config file
+	setting.Sensor.RegHost = ip
+
+	return WriteConfigFile(&setting)
+}
+
 func readSensorId() (string, error) {
 	cnt, err := os.ReadFile(filepath.Join(common.SensorDir, "uuid"))
 	if err != nil {
@@ -264,6 +281,8 @@ func Init() (*Env, error) {
 	if err != nil {
 		panic(err)
 	}
+
+	logger.Infof("sensor reg host:%s", setting.Sensor.RegHost)
 
 	// init redis first!(before log init)
 	redisCli, err := InitRedisClient(&setting)

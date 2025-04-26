@@ -9,7 +9,9 @@ import (
 	"ada/agent/sensor/upgrade"
 	_ "ada/infra/version"
 	"context"
+	"flag"
 	"fmt"
+	"net"
 	"os"
 	"runtime"
 	"sync"
@@ -19,21 +21,38 @@ import (
 	logger "github.com/sirupsen/logrus"
 )
 
-var isRegister bool
+var (
+	isRegister bool   // Existing flag, will be set by -r
+	managerIP  string // New flag for manager IP, set by -m
+)
 
 func init() {
-	runtime.GOMAXPROCS(4) // 限制CPU
+	// Define flags
+	flag.BoolVar(&isRegister, "r", false, "Register the sensor")
+	flag.StringVar(&managerIP, "m", "", "Manager IP address")
 
-	args := os.Args
-	if nil == args || len(args) < 2 {
-		return
-	}
-	if "-r" == args[1] {
-		isRegister = true
-	}
+	// Parse the flags
+	flag.Parse()
 }
 
 func main() {
+	runtime.GOMAXPROCS(4) // 限制CPU
+
+	if managerIP != "" {
+		// check if managerIP is valid
+		if net.ParseIP(managerIP) == nil {
+			fmt.Printf("[sensor] invalid manager ip:%s\n", managerIP)
+			os.Exit(-1)
+		}
+
+		if err := config.SetManagerIP(managerIP); err != nil {
+			fmt.Printf("[sensor] set manager ip(%s) err:%v\n", managerIP, err)
+			os.Exit(-1)
+		}
+		fmt.Printf("[sensor] set manager ip(%s) success!\n", managerIP)
+		os.Exit(0)
+	}
+
 	env, err := config.Init()
 	if err != nil {
 		panic(err)
@@ -42,10 +61,10 @@ func main() {
 	// if using -r in command, then start register this sensor
 	if isRegister {
 		if err := register.Register(env.RedisCli, env.Cfg.Sensor.RegCode); err != nil {
-			fmt.Printf("[sensor] register sensor err:%v\n", err)
+			fmt.Printf("[sensor] register sensor(srv:%s) err:%v\n", env.Cfg.Sensor.RegHost, err)
 			os.Exit(-1)
 		} else {
-			fmt.Printf("[sensor] register sensor success!\n")
+			fmt.Printf("[sensor] register sensor(srv:%s) success!\n", env.Cfg.Sensor.RegHost)
 		}
 		os.Exit(0)
 	}
