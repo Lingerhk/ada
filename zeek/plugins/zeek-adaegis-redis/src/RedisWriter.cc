@@ -294,19 +294,19 @@ bool RedisWriter::DoWrite(int num_fields, const zeek::threading::Field *const *f
   // RPUSH
   if (strcmp(redis_push_type.c_str(), "RPUSH") == 0) {
     if (queue_fulled) {
-      redis_client->ltrim(Fmt("%s:pktlog_queue", redis_key_prefix.c_str()), 1024, -1); //  remove the first 1024 entries
+      redis_client->ltrim(Fmt("%s:pktlog_queue", redis_key_prefix.c_str()), 1024*10, -1); //  remove the first 1024*10 entries
     }
     redis_client->rpush(Fmt("%s:pktlog_queue", redis_key_prefix.c_str()), entry);
   } else {
     // LPUSH
     if (queue_fulled) {
-      redis_client->ltrim(Fmt("%s:pktlog_queue", redis_key_prefix.c_str()), 0, -1024); //  remove the last 1024 entries
+      redis_client->ltrim(Fmt("%s:pktlog_queue", redis_key_prefix.c_str()), 0, -1024*10); //  remove the last 1024*10 entries
     }
     redis_client->lpush(Fmt("%s:pktlog_queue", redis_key_prefix.c_str()), entry);
   }
 
   // publish the log entry to redis
-  redis_client->publish(Fmt("%s:pktlog_channel", redis_key_prefix.c_str()), entry);
+  redis_client->publish(Fmt("%s:pktlog_channel", redis_key_prefix.c_str()), hostname+"::"+entry);
 
   return true;
 }
