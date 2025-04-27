@@ -10,7 +10,7 @@ const (
 	SysStatsCfgKey   = "ada:server:stats:cfg"    // hash 监控阈值配置
 
 	SysStatsPktLogKey = "ada:server:stats:pktlog:%s" // 流量日志统计(domain)
-	SysStatsEveLogKey = "ada:server:stats:evelog:%s" // 事件日志统计(domain)
+	SysStatsWinLogKey = "ada:server:stats:winlog:%s" // 事件日志统计(domain)
 )
 
 const (

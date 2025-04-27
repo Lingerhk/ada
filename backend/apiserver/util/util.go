@@ -6,7 +6,6 @@ import (
 	"errors"
 	"fmt"
 	"net/url"
-	"os/exec"
 	"regexp"
 	"strings"
 	"time"
@@ -140,16 +139,6 @@ func LDAPParse(ldapAddr string) (domain, domainName, dcHostName, dn string, err 
 	return
 }
 
-func GetDomainFromHostname(hostname string) string {
-	parts := strings.Split(hostname, ".")
-	if len(parts) < 2 {
-		return parts[0]
-	}
-
-	//A.B.C.D A:域控制器 B.C.D:域名
-	return strings.Join(parts[1:], ".")
-}
-
 // ldap password encrypt
 func PasswordEncrypt(password string) (encrypt string, err error) {
 	aesUtil := crypto.NewAes([]byte(base_common.RDX_CRYPT_SECRET))
@@ -174,30 +163,6 @@ func PasswordDecode(encrypt string) (password string, err error) {
 	}
 
 	return string(cfgStr), nil
-}
-
-func Tar(src, dst, password string) (err error) {
-	// 如果存在特殊字符，抛出异常，防止系统命令执行
-	for _, ch := range []string{" ", "|", "&"} {
-		if strings.Contains(src, ch) {
-			return fmt.Errorf("illegal char in src")
-		}
-		if strings.Contains(dst, ch) {
-			return fmt.Errorf("illegal char in dst")
-		}
-	}
-
-	var tarCmd string
-	if password == "" {
-		tarCmd = fmt.Sprintf("tar -czvf %s %s", dst, src)
-	} else {
-		tarCmd = fmt.Sprintf("tar -czvf - %s | openssl des3 -salt -k %s -out %s", src, password, dst)
-	}
-	c := exec.Command("bash", "-c", tarCmd)
-	if err := c.Run(); err != nil {
-		return err
-	}
-	return nil
 }
 
 func Escaping(str string) string {

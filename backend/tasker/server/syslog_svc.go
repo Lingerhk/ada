@@ -7,10 +7,12 @@ import (
 	"io"
 	"strconv"
 	"strings"
+	"sync"
 	"time"
 
 	"ada/backend/cache"
 	"ada/backend/tasker/config"
+	"ada/infra/base"
 
 	"github.com/elastic/go-elasticsearch/v8/esapi"
 	"github.com/elastic/go-elasticsearch/v8/esutil"
@@ -20,12 +22,13 @@ import (
 )
 
 const (
-	maxLogQueueLen    = 200000             // 日志队列的最大长度(20W, evelog&pktlog)
+	maxLogQueueLen    = 1024 * 512         // 日志队列的最大长度(velog&pktlog), 实试20W条evelog约250M
 	eveLogQueueKey    = "ada:evelog_queue" // same with engine module
 	pktLogQueueKey    = "ada:pktlog_queue" // same with engine module
 	eveLogIndexPrefix = "ada-eventlog"
 	pktLogIndexPrefix = "ada-packetlog"
 	pktLogChannel     = "ada:pktlog_channel" // receive pktlog from zeek-redis
+	statsListMaxLen   = 60 * 24 * 7          // Max length for stats lists (7 days of minutely data)
 )
 
 const (
@@ -109,6 +112,7 @@ type SyslogServer struct {
 	dcHostnameMap   map[string]string // cache mapping dcHostname&ip 减少redis查询
 	eveLogIndexName string            // 当前evelog日志index的日期,用于缓存
 	pktLogIndexName string            // 当前pktlog日志index的日期,用于缓存
+	logStats        *sync.Map         // map[domain]count - Added for pktlog stats
 }
 
 func NewSyslogServer(env *config.Env) (*SyslogServer, error) {
@@ -150,6 +154,7 @@ func NewSyslogServer(env *config.Env) (*SyslogServer, error) {
 		channel:       channel,
 		server:        server,
 		dcHostnameMap: dcHostnameMap,
+		logStats:      new(sync.Map), // Initialize the map
 	}, nil
 }
 
@@ -219,15 +224,15 @@ func (s *SyslogServer) syslogSync(event map[string]interface{}) {
 	}
 
 	// 记录当前dc的timestamp到SensorCollectStatusKey中，task_worker会check是否异常
-	ts := time.Now().Unix()
-	if ts%10 == 0 {
-		_ = s.env.RedisCli.HSet(s.ctx, cache.SensorCollectStatusKey, "rawlog_"+hostname, ts).Err()
-	}
+	now := time.Now()
+	if now.Unix()%4 == 0 {
+		_ = s.env.RedisCli.HSet(s.ctx, cache.SensorCollectStatusKey, "winlog_"+hostname, now.Unix()).Err()
 
-	// 如果queue超过20W条，则清除5%旧数据。每个eventlog按4KB计算，4KB*200000 = 780MB
-	if s.env.RedisCli.LLen(s.ctx, eveLogQueueKey).Val() > maxLogQueueLen {
-		logger.Warnf("queue %s is full, will remove some old eventlog", eveLogQueueKey)
-		s.env.RedisCli.LTrim(s.ctx, eveLogQueueKey, 2000, -1)
+		// 如果queue超过52.4W条（约650M），则清除部分旧数据。实测20W条约占redis内存：250M
+		if s.env.RedisCli.LLen(s.ctx, eveLogQueueKey).Val() > maxLogQueueLen {
+			logger.Warnf("queue %s is full, will remove some old eventlog", eveLogQueueKey)
+			s.env.RedisCli.LTrim(s.ctx, eveLogQueueKey, 1024*10, -1)
+		}
 	}
 
 	content := event["content"].(string)
@@ -237,6 +242,10 @@ func (s *SyslogServer) syslogSync(event map[string]interface{}) {
 	}
 
 	// 记录stats
+	err := s.collectLogStats("winlog", hostname, now)
+	if err != nil {
+		logger.Warnf("collect evelog stats err:%v", err)
+	}
 
 	if !s.env.Cfg.ES.Enable {
 		return
@@ -259,7 +268,7 @@ func (s *SyslogServer) syslogSync(event map[string]interface{}) {
 			}
 		},
 	}
-	err := s.esBulker.Add(s.ctx, item)
+	err = s.esBulker.Add(s.ctx, item)
 	if err != nil {
 		logger.Errorf("bulk indexing document err:%v", err)
 		return
@@ -465,7 +474,7 @@ func (s *SyslogServer) PktlogServe() {
 			}
 			switch msg := msg.(type) {
 			case *redis.Message:
-				logger.Infof("channel: %s received:%s, ", msg.Channel, msg.Payload)
+				logger.Infof("channel: %s received: %s", msg.Channel, msg.Payload)
 				go s.pktlogSync(s.ctx, msg.Payload)
 			}
 		}
@@ -473,12 +482,29 @@ func (s *SyslogServer) PktlogServe() {
 }
 
 func (s *SyslogServer) pktlogSync(ctx context.Context, event string) {
-	if s.env.RedisCli.LLen(ctx, pktLogQueueKey).Val() > maxLogQueueLen {
-		logger.Warnf("queue %s is full, will remove some old packetlog", pktLogQueueKey)
-		s.env.RedisCli.LTrim(ctx, pktLogQueueKey, 2000, -1)
+	// event format: hostname::pktlog_json
+	pktlog := strings.SplitN(event, "::{", 2)
+	if len(pktlog) != 2 {
+		logger.Warnf("invalid pktlog event: %s", event)
+		return
 	}
 
-	// 记录stats
+	// 如果queue超过52.4W条（约200M），则清除部分旧数据。
+	now := time.Now()
+	if now.Unix()%4 == 0 {
+		_ = s.env.RedisCli.HSet(s.ctx, cache.SensorCollectStatusKey, "pktlog_"+pktlog[0], now.Unix()).Err()
+
+		if s.env.RedisCli.LLen(ctx, pktLogQueueKey).Val() > maxLogQueueLen {
+			logger.Warnf("queue %s is full, will remove some old packetlog", pktLogQueueKey)
+			s.env.RedisCli.LTrim(ctx, pktLogQueueKey, 1024*10, -1)
+		}
+	}
+
+	// --- Start pktlog stats logic ---
+	err := s.collectLogStats("pktlog", pktlog[0], now)
+	if err != nil {
+		logger.Warnf("collect pktlog stats err:%v", err)
+	}
 
 	if !s.env.Cfg.ES.Enable {
 		return
@@ -489,7 +515,7 @@ func (s *SyslogServer) pktlogSync(ctx context.Context, event string) {
 	item := esutil.BulkIndexerItem{
 		Action: "index",
 		Index:  s.pktLogIndexName,
-		Body:   strings.NewReader(event),
+		Body:   strings.NewReader(pktlog[1]),
 		// OnFailure is the optional callback for each failed operation
 		OnFailure: func(
 			ctx context.Context,
@@ -501,14 +527,67 @@ func (s *SyslogServer) pktlogSync(ctx context.Context, event string) {
 			}
 		},
 	}
-	err := s.esBulker.Add(s.ctx, item)
+	err = s.esBulker.Add(s.ctx, item)
 	if err != nil {
 		logger.Errorf("bulk indexing document err:%v", err)
 		return
 	}
 
 	logger.Debug("sotred pktlog into es succed")
+}
 
+func (s *SyslogServer) collectLogStats(logType string, hostname string, now time.Time) error {
+	// design a redis structure to store the stats info of ada:server:stats:pktlog:%s, count the logs every minute, and save the result to redis
+	// use zset to store the stats info, max count 60 *24 *7 days
+	// in apiserver, get the stats info by domain and send to frontend to show the line chart
+
+	var statsKey string
+
+	domain := strings.ToLower(base.GetDomainFromHostname(hostname))
+
+	switch logType {
+	case "winlog":
+		statsKey = fmt.Sprintf(cache.SysStatsWinLogKey, domain)
+	case "pktlog":
+		statsKey = fmt.Sprintf(cache.SysStatsPktLogKey, domain)
+	default:
+		return fmt.Errorf("invalid log type: %s", logType)
+	}
+
+	// get the current minute
+	minuteTs := now.Truncate(time.Minute).Unix()
+	statsCacheKey := fmt.Sprintf("%s:%d", statsKey, minuteTs)
+
+	// count the logs in the current minute
+	counts, exist := s.logStats.LoadOrStore(statsCacheKey, 1)
+	if exist {
+		s.logStats.Store(statsCacheKey, counts.(int64)+1)
+	} else {
+		// if the stats info not exist, it means a new stats cycle, save the old stats info to redis and delete it
+		oldMinuteTs := minuteTs - 60
+		oldStatsCacheKey := fmt.Sprintf("%s:%d", statsKey, oldMinuteTs)
+		oldCountsAny, exist := s.logStats.Load(oldStatsCacheKey)
+		if exist {
+			oldCounts, _ := oldCountsAny.(int64)
+			oldCountsStr := strconv.FormatInt(oldCounts, 10)
+			s.env.RedisCli.ZAdd(s.ctx, statsKey, redis.Z{Score: float64(oldMinuteTs), Member: oldCountsStr})
+			s.logStats.Delete(oldStatsCacheKey)
+
+			// Trim the ZSet if it exceeds the maximum length
+			count, err := s.env.RedisCli.ZCard(s.ctx, statsKey).Result()
+			if err == nil && count > statsListMaxLen {
+				// Remove the oldest entries beyond the max length
+				// ZREMRANGEBYRANK removes elements in the range [start, stop]
+				// To keep the newest 'statsListMaxLen' items, we remove from index 0 up to 'count - statsListMaxLen - 1'
+				remCount := count - statsListMaxLen
+				if remCount > 0 {
+					s.env.RedisCli.ZRemRangeByRank(s.ctx, statsKey, 0, remCount-1)
+				}
+			}
+		}
+	}
+
+	return nil
 }
 
 func (s *SyslogServer) checkIndex(logIndexPrefix string) {
