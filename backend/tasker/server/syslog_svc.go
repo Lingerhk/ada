@@ -559,30 +559,39 @@ func (s *SyslogServer) collectLogStats(logType string, hostname string, now time
 	statsCacheKey := fmt.Sprintf("%s:%d", statsKey, minuteTs)
 
 	// count the logs in the current minute
-	counts, exist := s.logStats.LoadOrStore(statsCacheKey, 1)
+	counts, exist := s.logStats.LoadOrStore(statsCacheKey, int64(1))
 	if exist {
-		s.logStats.Store(statsCacheKey, counts.(int64)+1)
+		if currentCount, ok := counts.(int64); ok {
+			s.logStats.Store(statsCacheKey, currentCount+1)
+		} else {
+			logger.Errorf("Type assertion failed for counts in statsCacheKey: %s. Expected int64, got %T", statsCacheKey, counts)
+			s.logStats.Store(statsCacheKey, int64(1))
+		}
 	} else {
 		// if the stats info not exist, it means a new stats cycle, save the old stats info to redis and delete it
 		oldMinuteTs := minuteTs - 60
 		oldStatsCacheKey := fmt.Sprintf("%s:%d", statsKey, oldMinuteTs)
 		oldCountsAny, exist := s.logStats.Load(oldStatsCacheKey)
 		if exist {
-			oldCounts, _ := oldCountsAny.(int64)
-			oldCountsStr := strconv.FormatInt(oldCounts, 10)
-			s.env.RedisCli.ZAdd(s.ctx, statsKey, redis.Z{Score: float64(oldMinuteTs), Member: oldCountsStr})
-			s.logStats.Delete(oldStatsCacheKey)
+			if oldCounts, ok := oldCountsAny.(int64); ok {
+				oldCountsStr := strconv.FormatInt(oldCounts, 10)
+				s.env.RedisCli.ZAdd(s.ctx, statsKey, redis.Z{Score: float64(oldMinuteTs), Member: oldCountsStr})
+				s.logStats.Delete(oldStatsCacheKey)
 
-			// Trim the ZSet if it exceeds the maximum length
-			count, err := s.env.RedisCli.ZCard(s.ctx, statsKey).Result()
-			if err == nil && count > statsListMaxLen {
-				// Remove the oldest entries beyond the max length
-				// ZREMRANGEBYRANK removes elements in the range [start, stop]
-				// To keep the newest 'statsListMaxLen' items, we remove from index 0 up to 'count - statsListMaxLen - 1'
-				remCount := count - statsListMaxLen
-				if remCount > 0 {
-					s.env.RedisCli.ZRemRangeByRank(s.ctx, statsKey, 0, remCount-1)
+				// Trim the ZSet if it exceeds the maximum length
+				count, err := s.env.RedisCli.ZCard(s.ctx, statsKey).Result()
+				if err == nil && count > statsListMaxLen {
+					// Remove the oldest entries beyond the max length
+					// ZREMRANGEBYRANK removes elements in the range [start, stop]
+					// To keep the newest 'statsListMaxLen' items, we remove from index 0 up to 'count - statsListMaxLen - 1'
+					remCount := count - statsListMaxLen
+					if remCount > 0 {
+						s.env.RedisCli.ZRemRangeByRank(s.ctx, statsKey, 0, remCount-1)
+					}
 				}
+			} else {
+				logger.Errorf("Type assertion failed for oldCounts in statsCacheKey: %s. Expected int64, got %T", oldStatsCacheKey, oldCountsAny)
+				s.logStats.Delete(oldStatsCacheKey)
 			}
 		}
 	}
