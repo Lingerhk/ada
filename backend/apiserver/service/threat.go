@@ -6,7 +6,6 @@ import (
 	"ada/backend/apiserver/common"
 	"ada/backend/apiserver/config"
 	"ada/backend/apiserver/server"
-	"ada/backend/apiserver/util"
 	"ada/backend/cache"
 	bCommon "ada/backend/common"
 	"ada/infra/base"
@@ -116,7 +115,7 @@ func (s *ADAServiceV2) ListThreat(ctx context.Context, in *v2.ListThreatReq) (*v
 				Desc:        r.Desc,
 				FlowId:      r.FlowId,
 				AttckId:     r.AttCkId,
-				Domain:      util.GetDomainFromHostname(r.DcHostname),
+				Domain:      base.GetDomainFromHostname(r.DcHostname),
 				DcHostname:  r.DcHostname,
 				Level:       r.Level,
 				Status:      r.Status,

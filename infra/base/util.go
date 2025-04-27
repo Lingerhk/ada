@@ -3,6 +3,7 @@ package base
 import (
 	"errors"
 	"reflect"
+	"strings"
 )
 
 // []string 去重
@@ -65,4 +66,15 @@ func Contain(obj interface{}, target interface{}) (bool, error) {
 	}
 
 	return false, errors.New("not in array")
+}
+
+// 从hostname中获取domain
+func GetDomainFromHostname(hostname string) string {
+	parts := strings.Split(hostname, ".")
+	if len(parts) < 2 {
+		return parts[0]
+	}
+
+	//A.B.C.D A:域控制器 B.C.D:域名
+	return strings.Join(parts[1:], ".")
 }
