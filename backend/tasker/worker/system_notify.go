@@ -269,7 +269,7 @@ func checkSystemStatusSensor(ctx context.Context, env *config.Env, statsCfg map[
 		}
 
 		// 说明：SensorCollectStatusKey 是redis中存储sensor采集状态，其来源为receiver 和 engine
-		// receiver中以 rawpkt_dcHostname 和 winlog_dcHostname 为key，记录最后一次收到数据的时间戳 (暂时不会用该值，但debug时可以用)
+		// task_server中以 pktlog_dcHostname 和 winlog_dcHostname 为key，记录最后一次收到数据的时间戳 (暂时不会用该值，但debug时可以用)
 		// engine中以 winlog_dcHostname 和 pktlog_dcHostname 为key，记录最后一次收到数据的时间戳
 
 		// 检查sensor采集的最后在线时间

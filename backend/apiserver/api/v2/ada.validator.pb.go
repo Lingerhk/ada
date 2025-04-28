@@ -1421,3 +1421,19 @@ func (this *DashboardTrendsReq) Validate() error {
 func (this *DashboardTrendsReply) Validate() error {
 	return nil
 }
+func (this *DashboardLogStatsReq) Validate() error {
+	return nil
+}
+func (this *DashboardLogStatsReply) Validate() error {
+	for _, item := range this.List {
+		if item != nil {
+			if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(item); err != nil {
+				return github_com_mwitkow_go_proto_validators.FieldError("List", err)
+			}
+		}
+	}
+	return nil
+}
+func (this *DashboardLogStatsReplyLogStatsList) Validate() error {
+	return nil
+}

@@ -16,7 +16,7 @@ import (
 
 const (
 	username = "admin"
-	grpcAddr = "192.168.18.4:8800"
+	grpcAddr = "192.168.6.4:8800"
 )
 
 var ADACli *ADAGrpcClient
