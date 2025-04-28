@@ -155,11 +155,10 @@ func (s *GrpcService) recovery() grpc.UnaryServerInterceptor {
 		handler grpc.UnaryHandler) (resp interface{}, err error) {
 		defer func() {
 			if rerr := recover(); rerr != nil {
-				const size = 64 << 10
-				buf := make([]byte, size)
+				buf := make([]byte, 1024*32) // 32KB
 				_ = runtime.Stack(buf, false)
 				logger.Errorf("grpc server panic: %v\n%v\n%s\n", req, rerr, buf)
-				err = status.Errorf(codes.Unknown, fmt.Sprintf("%v", rerr))
+				err = status.Errorf(codes.Unknown, "panic recovered: %v", rerr)
 			}
 		}()
 		resp, err = handler(ctx, req)

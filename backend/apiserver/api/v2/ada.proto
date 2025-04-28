@@ -145,6 +145,7 @@ service ADA {
   // 安全大盘
   rpc DashboardStats(DashboardStatsReq) returns (DashboardStatsReply) {} // dashboard 统计状态
   rpc DashboardTrends(DashboardTrendsReq) returns (DashboardTrendsReply) {} // dashboard 趋势图表
+  rpc DashboardLogStats(DashboardLogStatsReq) returns (DashboardLogStatsReply) {} // dashboard winlog/pktlog状态
 }
 
 // common page message struct
@@ -1583,4 +1584,18 @@ message DashboardTrendsReq{
 
 message DashboardTrendsReply{
 
+}
+
+message DashboardLogStatsReq {
+  string domain = 1; // 必选，all|domainX
+  int32 duration = 2; // 必选，时间范围/h， 可选值: 1/3/6/12/24 （默认为1hour）
+}
+
+message DashboardLogStatsReply {
+  message logStatsList {
+    int64 ts = 1;
+    int32 winlogCounts = 2;
+    int32 pktlogCounts = 3;
+  }
+  repeated logStatsList List = 1; // winlog/pktlog采集统计
 }

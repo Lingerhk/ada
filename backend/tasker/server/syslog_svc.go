@@ -28,7 +28,7 @@ const (
 	eveLogIndexPrefix = "ada-eventlog"
 	pktLogIndexPrefix = "ada-packetlog"
 	pktLogChannel     = "ada:pktlog_channel" // receive pktlog from zeek-redis
-	statsListMaxLen   = 60 * 24 * 7          // Max length for stats lists (7 days of minutely data)
+	statsListMaxLen   = 60 * 24              // Max length for stats lists (24 hours of minutely data)
 )
 
 const (
