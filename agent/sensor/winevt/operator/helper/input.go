@@ -15,7 +15,6 @@ import (
 func NewInputConfig(operatorID, operatorType string) InputConfig {
 	return InputConfig{
 		AttributerConfig: NewAttributerConfig(),
-		IdentifierConfig: NewIdentifierConfig(),
 		WriterConfig:     NewWriterConfig(operatorID, operatorType),
 	}
 }
@@ -23,7 +22,6 @@ func NewInputConfig(operatorID, operatorType string) InputConfig {
 // InputConfig provides a basic implementation of an input operator config.
 type InputConfig struct {
 	AttributerConfig `mapstructure:",squash"`
-	IdentifierConfig `mapstructure:",squash"`
 	WriterConfig     `mapstructure:",squash"`
 }
 
@@ -39,14 +37,8 @@ func (c InputConfig) Build(set operator.TelemetrySettings) (InputOperator, error
 		return InputOperator{}, errors.WithDetails(err, "operator_id", c.ID())
 	}
 
-	identifier, err := c.IdentifierConfig.Build()
-	if err != nil {
-		return InputOperator{}, errors.WithDetails(err, "operator_id", c.ID())
-	}
-
 	inputOperator := InputOperator{
 		Attributer:     attributer,
-		Identifier:     identifier,
 		WriterOperator: writerOperator,
 	}
 
@@ -56,7 +48,6 @@ func (c InputConfig) Build(set operator.TelemetrySettings) (InputOperator, error
 // InputOperator provides a basic implementation of an input operator.
 type InputOperator struct {
 	Attributer
-	Identifier
 	WriterOperator
 }
 
@@ -67,10 +58,6 @@ func (i *InputOperator) NewEntry(value any) (*entry.Entry, error) {
 
 	if err := i.Attribute(entry); err != nil {
 		return nil, errors.Wrap(err, "add attributes to entry")
-	}
-
-	if err := i.Identify(entry); err != nil {
-		return nil, errors.Wrap(err, "add resource keys to entry")
 	}
 
 	return entry, nil

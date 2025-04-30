@@ -27,7 +27,6 @@ type ParserConfig struct {
 	ParseFrom         entry.Field         `mapstructure:"parse_from"`
 	ParseTo           entry.RootableField `mapstructure:"parse_to"`
 	BodyField         *entry.Field        `mapstructure:"body"`
-	SeverityConfig    *SeverityConfig     `mapstructure:"severity,omitempty"`
 }
 
 // Build will build a parser operator.
@@ -48,24 +47,15 @@ func (c ParserConfig) Build(set operator.TelemetrySettings) (ParserOperator, err
 		BodyField:           c.BodyField,
 	}
 
-	if c.SeverityConfig != nil {
-		severityParser, err := c.SeverityConfig.Build(set)
-		if err != nil {
-			return ParserOperator{}, err
-		}
-		parserOperator.SeverityParser = &severityParser
-	}
-
 	return parserOperator, nil
 }
 
 // ParserOperator provides a basic implementation of a parser operator.
 type ParserOperator struct {
 	TransformerOperator
-	ParseFrom      entry.Field
-	ParseTo        entry.Field
-	BodyField      *entry.Field
-	SeverityParser *SeverityParser
+	ParseFrom entry.Field
+	ParseTo   entry.Field
+	BodyField *entry.Field
 }
 
 // ProcessWith will run ParseWith on the entry, then forward the entry on to the next operators.
@@ -125,16 +115,6 @@ func (p *ParserOperator) ParseWith(ctx context.Context, entry *entry.Entry, pars
 		if body, ok := p.BodyField.Get(entry); ok {
 			entry.Body = body
 		}
-	}
-
-	var severityParseErr error
-	if p.SeverityParser != nil {
-		severityParseErr = p.SeverityParser.Parse(entry)
-	}
-
-	// Handle parsing errors after attempting to parse all
-	if severityParseErr != nil {
-		return p.HandleEntryError(ctx, entry, errors.Wrap(severityParseErr, "severity parser"))
 	}
 
 	return nil
