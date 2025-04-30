@@ -331,13 +331,14 @@ func (i *Input) processEventWithRenderingInfo(ctx context.Context, event Event) 
 
 // sendEvent will send EventXML as an entry to the operator's output.
 func (i *Input) sendEvent(ctx context.Context, eventXML *EventXML) error {
+	// Apply event filter first
+	if !i.executeEventFilter(eventXML) {
+		return nil
+	}
+
 	var body any = eventXML.Original
 	if !i.raw {
 		body = formattedBody(eventXML)
-	}
-
-	if !i.executeEventFilter(eventXML) {
-		return nil
 	}
 
 	e, err := i.NewEntry(body)
@@ -345,7 +346,7 @@ func (i *Input) sendEvent(ctx context.Context, eventXML *EventXML) error {
 		return fmt.Errorf("create entry: %w", err)
 	}
 
-	e.Timestamp = parseTimestamp(eventXML.TimeCreated.SystemTime)
+	e.EventTime = parseTimestamp(eventXML.TimeCreated.SystemTime)
 
 	if i.remote.Server != "" {
 		e.Attributes["server.address"] = i.remote.Server

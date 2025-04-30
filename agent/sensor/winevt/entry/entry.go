@@ -4,6 +4,7 @@
 package entry
 
 import (
+	"encoding/json"
 	"fmt"
 	"time"
 )
@@ -12,9 +13,9 @@ var timeNow = time.Now
 
 // Entry is a flexible representation of log data associated with a timestamp.
 type Entry struct {
-	Timestamp  int64          `json:"timestamp"               yaml:"timestamp"` // collect time
+	Timestamp  int64          `json:"@timestamp"       yaml:"@timestamp"`       // collect time
 	EventTime  int64          `json:"EventTime"               yaml:"EventTime"` // event create time
-	Body       any            `json:"body"                    yaml:"body"`
+	Body       any            // `json:"body"                    yaml:"body"`
 	Attributes map[string]any `json:"attributes,omitempty"    yaml:"attributes,omitempty"`
 }
 
@@ -145,6 +146,35 @@ func (entry *Entry) readToStringMap(field FieldInterface, dest *map[string]strin
 	}
 
 	return nil
+}
+
+// MarshalJSON implements the json.Marshaler interface.
+// It flattens the Body (if map[string]any) and Attributes into the top-level JSON object.
+func (entry *Entry) MarshalJSON() ([]byte, error) {
+	m := make(map[string]any)
+
+	// Add struct fields first (highest precedence)
+	m["@timestamp"] = entry.Timestamp
+	m["EventReceivedTime"] = time.UnixMilli(entry.Timestamp).Format(time.RFC3339)
+	m["EventTime"] = entry.EventTime
+
+	// Add attributes (medium precedence)
+	for k, v := range entry.Attributes {
+		if _, exists := m[k]; !exists {
+			m[k] = v
+		} // Silently ignore attribute if key already exists from struct fields
+	}
+
+	// Add body fields (lowest precedence)
+	if bodyMap, ok := entry.Body.(map[string]any); ok {
+		for k, v := range bodyMap {
+			if _, exists := m[k]; !exists {
+				m[k] = v
+			} // Silently ignore body field if key already exists from struct or attributes
+		}
+	}
+
+	return json.Marshal(m)
 }
 
 // Copy will return a deep copy of the entry.
