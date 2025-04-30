@@ -7,8 +7,11 @@ package windows
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"fmt"
+	"reflect"
+	"strings"
 	"sync"
 	"time"
 
@@ -17,6 +20,12 @@ import (
 	"ada/agent/sensor/winevt/operator"
 	"ada/agent/sensor/winevt/operator/helper"
 )
+
+type eventFilters struct {
+	EventID []uint32            `json:"EventID"` // [4624, 4625]
+	Level   []uint8             `json:"Level"`   // [1,2,3]
+	Custom  []map[string]string `json:"Custom"`  // {"field":"AccountName", "value":"SYSTEM", "op":"eq"}
+}
 
 // Input is an operator that creates entries using the windows event log api.
 type Input struct {
@@ -28,6 +37,8 @@ type Input struct {
 	currentMaxReads     int
 	startAt             string
 	raw                 bool
+	eventFilter         string
+	eventFilterList     *eventFilters
 	excludeProviders    map[string]struct{}
 	pollInterval        time.Duration
 	persister           operator.Persister
@@ -109,6 +120,17 @@ func (i *Input) Start(persister operator.Persister) error {
 		if err := i.startRemoteSession(); err != nil {
 			return fmt.Errorf("failed to start remote session for server %s: %w", i.remote.Server, err)
 		}
+	}
+
+	// parse event filter
+	if i.eventFilter != "" {
+		// check event filter format: json {"ignores":[{"EventID":[1,2,3]}],"includes":[{"Level":[2,3]}]}
+		var filters eventFilters
+		err := json.Unmarshal([]byte(i.eventFilter), &filters)
+		if err != nil {
+			return fmt.Errorf("failed to parse event filter: %w", err)
+		}
+		i.eventFilterList = &filters
 	}
 
 	i.bookmark = NewBookmark()
@@ -314,6 +336,10 @@ func (i *Input) sendEvent(ctx context.Context, eventXML *EventXML) error {
 		body = formattedBody(eventXML)
 	}
 
+	if !i.executeEventFilter(eventXML) {
+		return nil
+	}
+
 	e, err := i.NewEntry(body)
 	if err != nil {
 		return fmt.Errorf("create entry: %w", err)
@@ -351,4 +377,67 @@ func (i *Input) updateBookmarkOffset(ctx context.Context, event Event) {
 		i.Logger().Errorf("failed to set offsets, error:%v", err)
 		return
 	}
+}
+
+// executeEventFilter will execute the event filter and return true if the event should be processed.
+func (i *Input) executeEventFilter(eventXML *EventXML) bool {
+	if i.eventFilterList == nil {
+		return true
+	}
+
+	// Check ignores
+	if len(i.eventFilterList.EventID) > 0 {
+		for _, eventid := range i.eventFilterList.EventID {
+			if eventid == eventXML.EventID.ID {
+				return false
+			}
+		}
+	}
+	if len(i.eventFilterList.Level) > 0 {
+		for _, level := range i.eventFilterList.Level {
+			if level == eventXML.Level {
+				return false
+			}
+		}
+	}
+
+	// Check custom filters
+	if len(i.eventFilterList.Custom) > 0 {
+		for _, custom := range i.eventFilterList.Custom {
+			field := custom["field"] // EventID, Level, etc.
+			value := custom["value"]
+			op := custom["op"] // eq, ne, startswith, endswith, contains
+
+			structValue := reflect.ValueOf(eventXML)
+			fieldValue := structValue.FieldByName(field)
+			if !fieldValue.IsValid() {
+				continue
+			}
+
+			switch op {
+			case "eq":
+				if fieldValue.String() == value {
+					return false
+				}
+			case "ne":
+				if fieldValue.String() != value {
+					return false
+				}
+			case "startswith":
+				if strings.HasPrefix(fieldValue.String(), value) {
+					return false
+				}
+			case "endswith":
+				if strings.HasSuffix(fieldValue.String(), value) {
+					return false
+				}
+			case "contains":
+				if strings.Contains(fieldValue.String(), value) {
+					return false
+				}
+			}
+		}
+	}
+
+	return true
 }

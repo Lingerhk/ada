@@ -171,7 +171,7 @@ type Sensor struct {
 	NetIface     map[string]string `bson:"net_iface"`      // 主机上网口列表
 	BindNetIface []string          `bson:"bind_net_iface"` // 接口名list： ["eth0", "eth1"]
 	PktBpfFilter string            `bson:"pkt_bpf_filter"` // 流量插件BPF过滤规则
-	LogEidFilter string            `bson:"log_eid_filter"` // 日志插件EventID过滤规则
+	LogEvtFilter string            `bson:"log_evt_filter"` // 日志插件Event字段过滤规则
 
 	DcIntervalTm int64 `bson:"dc_interval_tm"` // 域控时间与服务器时间的差值(秒)
 	// 资源限制&Sensor运行日志

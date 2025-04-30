@@ -30,6 +30,7 @@ func NewConfigWithID(operatorID string) *Config {
 type Config struct {
 	helper.InputConfig    `mapstructure:",squash"`
 	Channel               string        `mapstructure:"channel"`
+	EventFilter           string        `mapstructure:"event_filter,omitempty"`
 	MaxReads              int           `mapstructure:"max_reads,omitempty"`
 	StartAt               string        `mapstructure:"start_at,omitempty"`
 	PollInterval          time.Duration `mapstructure:"poll_interval,omitempty"`
