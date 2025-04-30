@@ -50,6 +50,7 @@ func (c *Config) Build(set operator.TelemetrySettings) (operator.Operator, error
 		raw:              c.Raw,
 		excludeProviders: excludeProvidersSet(c.ExcludeProviders),
 		remote:           c.Remote,
+		eventFilter:      c.EventFilter,
 	}
 	input.startRemoteSession = input.defaultStartRemoteSession
 

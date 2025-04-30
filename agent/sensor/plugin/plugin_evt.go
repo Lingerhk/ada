@@ -24,7 +24,7 @@ type evtPlugin struct {
 	SyslogAddress string
 	SyslogNetwork string
 	SyslogTag     string
-	EventidFilter []uint32 // EventID filter
+	EventFilter   string // Event filter
 
 	settings     operator.TelemetrySettings
 	syslogOutput operator.Operator
@@ -62,6 +62,7 @@ func (e *evtPlugin) createChannelInput(channel string) (operator.Operator, error
 	windowsConfig.StartAt = "end"
 	windowsConfig.PollInterval = e.PollInterval
 	windowsConfig.OutputIDs = []string{"syslog"}
+	windowsConfig.EventFilter = e.EventFilter
 
 	input, err := windowsConfig.Build(e.settings)
 	if err != nil {

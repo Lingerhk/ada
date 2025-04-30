@@ -146,7 +146,7 @@ func (s *SensorEvent) register(regMsg sCommon.AdaMessage) {
 	sensorInfo["limit_cpu_max"] = "0.15"
 	sensorInfo["bind_net_iface"] = ""
 	sensorInfo["pkt_bpf_filter"] = ""
-	sensorInfo["log_eid_filter"] = ""
+	sensorInfo["log_evt_filter"] = "{\"EventID\":[],\"Level\":[],\"Custom\":[]}"
 	sensorInfo["last_online_tm"] = sensor.LastOnlineTm
 
 	err = s.redisCli.HMSet(ctx, cache.SensorIDKey(sensor.ID), sensorInfo).Err()

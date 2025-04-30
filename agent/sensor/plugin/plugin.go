@@ -242,28 +242,23 @@ func (p *Plugin) loadConfigure() {
 	}
 
 	// 获取evt plugin 的配置
-	v, err = p.rdxCli.HGet(p.ctx, sensorIDKey, "log_eid_filter").Result()
+	v, err = p.rdxCli.HGet(p.ctx, sensorIDKey, "log_evt_filter").Result()
 	if err != nil && err != redis.Nil {
-		logger.Errorf("get log eventid filter err:%v", err)
+		logger.Errorf("get log event filter err:%v", err)
 	} else if err == redis.Nil {
-		logger.Debug("log eventid filter not set")
+		logger.Debug("log event filter not set")
 	} else if v != "" {
-		// v 格式为EventIDs："4624,4625". 多个EventID用逗号分隔, 转位 int 数组
-		parts := strings.Split(v, ",")
-		logEventidFilter := make([]uint32, len(parts))
-		for i, eid := range parts {
-			val, err := strconv.ParseUint(eid, 10, 32)
-			if err != nil {
-				logger.Errorf("convert eventid(%s) to int err:%v", eid, err)
-				continue
+		// check event filter format: json {"ignores":[{"EventID":[1,2,3]}],"includes":[{"Level":[2,3]}]}
+		var eventFilter map[string]interface{}
+		err = json.Unmarshal([]byte(v), &eventFilter)
+		if err != nil {
+			logger.Errorf("unmarshal event filter err:%v", err)
+		} else {
+			if p.plugEvtThread.EventFilter != v {
+				logger.Infof("log event filter changed to %v", v)
+				p.PlugConfigChangedMap[common.PlugEvtName] = true
+				p.plugEvtThread.EventFilter = v
 			}
-			logEventidFilter[i] = uint32(val)
-		}
-
-		if !reflect.DeepEqual(p.plugEvtThread.EventidFilter, logEventidFilter) {
-			logger.Infof("log eventid filter changed to %v", logEventidFilter)
-			p.PlugConfigChangedMap[common.PlugEvtName] = true
-			p.plugEvtThread.EventidFilter = logEventidFilter
 		}
 	}
 
