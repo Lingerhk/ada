@@ -115,7 +115,7 @@ func (s *SensorEvent) register(regMsg sCommon.AdaMessage) {
 	sensor.SensorMemUsed = "0%"
 
 	sensor.PktBpfFilter = ""
-	sensor.LogEidFilter = ""
+	sensor.LogEvtFilter = "{\"EventID\":[],\"Level\":[],\"Custom\":[]}"
 
 	sensor.PerfLimit = map[string]string{"limit_mem_max": "0.15", "limit_cpu_max": "0.15"}
 	sensor.Events = []map[string]string{}
