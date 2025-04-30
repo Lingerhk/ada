@@ -11,7 +11,6 @@ import (
 
 const (
 	AttributesPrefix = "attributes"
-	ResourcePrefix   = "resource"
 	BodyPrefix       = "body"
 )
 
@@ -111,11 +110,6 @@ func newField(s string, rootable bool) (Field, error) {
 			return Field{}, fmt.Errorf("attributes cannot be referenced without subfield")
 		}
 		return NewAttributeField(keys[1:]...), nil
-	case ResourcePrefix:
-		if !rootable && len(keys) == 1 {
-			return Field{}, fmt.Errorf("resource cannot be referenced without subfield")
-		}
-		return NewResourceField(keys[1:]...), nil
 	case BodyPrefix:
 		return NewBodyField(keys[1:]...), nil
 	default:

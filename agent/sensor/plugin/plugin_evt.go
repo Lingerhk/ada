@@ -24,7 +24,7 @@ type evtPlugin struct {
 	SyslogAddress string
 	SyslogNetwork string
 	SyslogTag     string
-	EventidFilter []int // 过滤的EventID
+	EventidFilter []uint32 // EventID filter
 
 	settings     operator.TelemetrySettings
 	syslogOutput operator.Operator

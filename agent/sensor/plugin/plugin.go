@@ -250,21 +250,21 @@ func (p *Plugin) loadConfigure() {
 	} else if v != "" {
 		// v 格式为EventIDs："4624,4625". 多个EventID用逗号分隔, 转位 int 数组
 		parts := strings.Split(v, ",")
-		logEventidFilter := make([]int, len(parts))
-		for i, idx := range parts {
-			logEventidFilter[i], err = strconv.Atoi(idx)
+		logEventidFilter := make([]uint32, len(parts))
+		for i, eid := range parts {
+			val, err := strconv.ParseUint(eid, 10, 32)
 			if err != nil {
-				logger.Errorf("convert eventid(%s) to int err:%v", idx, err)
+				logger.Errorf("convert eventid(%s) to int err:%v", eid, err)
 				continue
 			}
+			logEventidFilter[i] = uint32(val)
 		}
 
 		if !reflect.DeepEqual(p.plugEvtThread.EventidFilter, logEventidFilter) {
 			logger.Infof("log eventid filter changed to %v", logEventidFilter)
 			p.PlugConfigChangedMap[common.PlugEvtName] = true
+			p.plugEvtThread.EventidFilter = logEventidFilter
 		}
-
-		p.plugEvtThread.EventidFilter = logEventidFilter
 	}
 
 	v, err = p.rdxCli.HGet(p.ctx, sensorIDKey, "rpcfw_plugin_switch").Result()

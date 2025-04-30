@@ -320,7 +320,6 @@ func (i *Input) sendEvent(ctx context.Context, eventXML *EventXML) error {
 	}
 
 	e.Timestamp = parseTimestamp(eventXML.TimeCreated.SystemTime)
-	e.Severity = parseSeverity(eventXML.RenderedLevel, eventXML.Level)
 
 	if i.remote.Server != "" {
 		e.Attributes["server.address"] = i.remote.Server

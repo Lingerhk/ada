@@ -5,7 +5,6 @@ package entry
 
 import (
 	"fmt"
-	"os"
 	"time"
 )
 
@@ -13,26 +12,16 @@ var timeNow = time.Now
 
 // Entry is a flexible representation of log data associated with a timestamp.
 type Entry struct {
-	ObservedTimestamp int64          `json:"observed_timestamp"      yaml:"observed_timestamp"`
-	HostName          string         `json:"Hostname"               yaml:"Hostname"`
-	Timestamp         time.Time      `json:"timestamp"               yaml:"timestamp"`
-	Body              any            `json:"body"                    yaml:"body"`
-	Attributes        map[string]any `json:"attributes,omitempty"    yaml:"attributes,omitempty"`
-	Resource          map[string]any `json:"resource,omitempty"      yaml:"resource,omitempty"`
-	SeverityText      string         `json:"severity_text,omitempty" yaml:"severity_text,omitempty"`
-	Severity          Severity       `json:"severity"                yaml:"severity"`
+	Timestamp  int64          `json:"timestamp"               yaml:"timestamp"` // collect time
+	EventTime  int64          `json:"EventTime"               yaml:"EventTime"` // event create time
+	Body       any            `json:"body"                    yaml:"body"`
+	Attributes map[string]any `json:"attributes,omitempty"    yaml:"attributes,omitempty"`
 }
 
 // New will create a new log entry with current timestamp and an empty body.
 func New() *Entry {
-	hostname, err := os.Hostname()
-	if err != nil {
-		hostname = "unknown"
-	}
-
 	return &Entry{
-		ObservedTimestamp: timeNow().UnixMilli(), // 13-digit ms timestamp
-		HostName:          hostname,
+		Timestamp: timeNow().UnixMilli(), // 13-digit ms timestamp
 	}
 }
 
@@ -42,14 +31,6 @@ func (entry *Entry) AddAttribute(key, value string) {
 		entry.Attributes = make(map[string]any)
 	}
 	entry.Attributes[key] = value
-}
-
-// AddResourceKey wil add a key/value pair to the entry's resource.
-func (entry *Entry) AddResourceKey(key, value string) {
-	if entry.Resource == nil {
-		entry.Resource = make(map[string]any)
-	}
-	entry.Resource[key] = value
 }
 
 // Get will return the value of a field on the entry, including a boolean indicating if the field exists.
@@ -169,13 +150,9 @@ func (entry *Entry) readToStringMap(field FieldInterface, dest *map[string]strin
 // Copy will return a deep copy of the entry.
 func (entry *Entry) Copy() *Entry {
 	return &Entry{
-		ObservedTimestamp: entry.ObservedTimestamp,
-		Timestamp:         entry.Timestamp,
-		HostName:          entry.HostName,
-		Severity:          entry.Severity,
-		SeverityText:      entry.SeverityText,
-		Attributes:        copyInterfaceMap(entry.Attributes),
-		Resource:          copyInterfaceMap(entry.Resource),
-		Body:              copyValue(entry.Body),
+		Timestamp:  entry.Timestamp,
+		EventTime:  entry.EventTime,
+		Attributes: copyInterfaceMap(entry.Attributes),
+		Body:       copyValue(entry.Body),
 	}
 }

@@ -155,7 +155,7 @@ func GetExprEnv(e *entry.Entry) map[string]any {
 	env["$"] = e.Body
 	env["body"] = e.Body
 	env["attributes"] = e.Attributes
-	env["resource"] = e.Resource
+	env["event_time"] = e.EventTime
 	env["timestamp"] = e.Timestamp
 
 	return env
