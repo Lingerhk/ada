@@ -145,7 +145,12 @@ func parseWinMeta(e *EventXML) (string, string, string, []string) {
 	// Opcode
 	opcode := e.RenderedOpcode
 	if opcode == "" {
-		opcode = winMetaOpcodes[*e.Opcode]
+		if e.Opcode != nil {
+			opcode, _ = winMetaOpcodes[*e.Opcode]
+		} else {
+			zeroOpcode := uint8(0)
+			e.Opcode = &zeroOpcode
+		}
 	}
 
 	// Keywords
