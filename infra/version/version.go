@@ -33,6 +33,15 @@ func init() {
 	}
 }
 
+func PrintVersion() {
+	fmt.Println("name:", BuildName)
+	fmt.Println("version:", BuildVersion)
+	fmt.Println("commit version:", CommitVersion)
+	fmt.Println("build time:", BuildTime)
+	fmt.Println("commit time:", CommitTime)
+	fmt.Printf("© %d ADAegis(adaegis.net). All rights reserved.\n", time.Now().Year())
+}
+
 func GetBuildVersion() string {
 	return BuildVersion
 }
