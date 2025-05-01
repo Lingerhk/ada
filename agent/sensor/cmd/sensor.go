@@ -9,6 +9,7 @@ import (
 	"ada/agent/sensor/upgrade"
 	_ "ada/infra/version"
 	"context"
+	"encoding/json"
 	"flag"
 	"fmt"
 	"net"
@@ -23,6 +24,7 @@ import (
 
 var (
 	isRegister bool   // Existing flag, will be set by -r
+	listIfaces bool   // New flag for list ifaces, set by -l
 	managerIP  string // New flag for manager IP, set by -m
 )
 
@@ -30,7 +32,7 @@ func init() {
 	// Define flags
 	flag.BoolVar(&isRegister, "r", false, "Register the sensor")
 	flag.StringVar(&managerIP, "m", "", "Manager IP address")
-
+	flag.BoolVar(&listIfaces, "l", false, "List all network interfaces")
 	// Parse the flags
 	flag.Parse()
 }
@@ -50,6 +52,21 @@ func main() {
 			os.Exit(-1)
 		}
 		fmt.Printf("[sensor] set manager ip(%s) success!\n", managerIP)
+		os.Exit(0)
+	}
+
+	if listIfaces {
+		cardInfo, err := stats.GetNetDevices()
+		if err != nil {
+			fmt.Printf("[sensor] get net devices err:%v\n", err)
+			os.Exit(-1)
+		}
+
+		var ifaceMap map[string]string
+		json.Unmarshal([]byte(cardInfo), &ifaceMap)
+		for iface, ips := range ifaceMap {
+			fmt.Printf("[sensor] device id:%s, ip:%s\n", iface, ips)
+		}
 		os.Exit(0)
 	}
 
@@ -153,6 +170,8 @@ func launch(ctx context.Context, env *config.Env) {
 
 	s := stats.New(ctx, env.RedisCli, env.SensorId)
 	go s.Serve(wg, p.PlugProcessMap) // 上报状态
+
+	go p.AutoResLimit(wg, s) // 自动调整限速（自动停止/启动插件功能）
 
 	wg.Wait()
 }
