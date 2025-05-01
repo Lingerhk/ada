@@ -7,7 +7,6 @@ import (
 
 	logger "github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 func GetSensorByID(e *config.Env, id string) (*model.Sensor, error) {
@@ -81,15 +80,10 @@ func UpdateSensorConf(e *config.Env, Id, remark string, bindNetIface []string, p
 	return nil
 }
 
-func DeleteSensor(e *config.Env, sensorId string) error {
+func DeleteSensor(e *config.Env, Id string) error {
 	var sensor model.Sensor
 
-	objId, err := primitive.ObjectIDFromHex(sensorId)
-	if err != nil {
-		return err
-	}
-
-	err = e.MongoCli.RemoveById(sensor.CollectName(), objId)
+	err := e.MongoCli.RemoveById(sensor.CollectName(), Id)
 	if err != nil {
 		return err
 	}

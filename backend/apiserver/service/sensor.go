@@ -173,12 +173,13 @@ func (s *ADAServiceV2) CmdSensor(ctx context.Context, in *v2.CmdSensorReq) (*v2.
 		// delete 仅删除服务端配置
 		err := server.DeleteSensor(s.env, in.ID)
 		if err != nil {
-			logger.Errorf("uninstall sensor err:%v", err)
+			logger.Errorf("delete sensor err:%v", err)
+			return nil, status.Errorf(codes.Internal, "删除sensor失败")
 		}
 
 		err = s.env.RedisCli.Del(ctx, cache.SensorIDKey(in.ID)).Err()
 		if err != nil {
-			logger.Errorf("uninstall sensor err:%v", err)
+			logger.Errorf("delete sensor err:%v", err)
 			return nil, status.Errorf(codes.Internal, "删除sensor失败")
 		}
 		return &v2.CmdSensorReply{Result: aCommon.RESP_SUCCESS}, nil
