@@ -12,13 +12,14 @@ import (
 	"ada/infra/mongo"
 	"context"
 	"fmt"
+	"strings"
+	"time"
+
 	ldap3 "github.com/go-ldap/ldap/v3"
 	jsoniter "github.com/json-iterator/go"
 	logger "github.com/sirupsen/logrus"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
-	"strings"
-	"time"
 )
 
 func (s *ADAServiceV2) ListDomain(ctx context.Context, in *v2.ListDomainReq) (*v2.ListDomainReply, error) {
@@ -185,10 +186,9 @@ func (s *ADAServiceV2) UpdateDomainData(ctx context.Context, in *v2.UpdateDomain
 func (s *ADAServiceV2) TestDomain(ctx context.Context, in *v2.TestDomainReq) (*v2.TestDomainReply, error) {
 	//1、域服务器连接测试
 	ret := &v2.TestDomainReply{Status: 0}
-	ldapAddr := "ldap://" + in.LdapAddr
 	// 如果前端没有传递密码，则从数据库解析密码
 	if in.Password == "*******" {
-		domain, err := server.GetPwdByLdapAddr(s.env, ldapAddr)
+		domain, err := server.GetPwdByLdapAddr(s.env, in.LdapAddr)
 		if err != nil {
 			logger.Warnf("get domain password by ldap addr err:%v", err)
 			return ret, status.Error(codes.Internal, "用户名或密码不正确")
@@ -203,7 +203,7 @@ func (s *ADAServiceV2) TestDomain(ctx context.Context, in *v2.TestDomainReq) (*v
 	ch := make(chan error, 1)
 
 	go func() {
-		_, err := ldap.GetConn(ldapAddr, in.Username, in.Password, in.DNS)
+		_, err := ldap.GetConn(in.LdapAddr, in.Username, in.Password, in.DNS)
 		ch <- err
 	}()
 

@@ -6,110 +6,116 @@ package ldap
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"net"
-	"regexp"
+	"net/url"
 	"strings"
 	"time"
+
+	logger "github.com/sirupsen/logrus"
 
 	ldap3 "github.com/go-ldap/ldap/v3"
 )
 
-var ErrEmptyResult = fmt.Errorf("empty result")
+var (
+	ErrEmptyResult = errors.New("empty result")
+)
 
-const IPReg = `^((0|[1-9]\d?|1\d\d|2[0-4]\d|25[0-5])\.){3}(0|[1-9]\d?|1\d\d|2[0-4]\d|25[0-5])$`
-
-// 返回dialURL对应解析的可用IP地址
-func GetEnableIP(dialURL, dns string) (string, error) {
+// 返回host对应解析的可用IP地址
+func resolveHost(host, portStr, dns string) (string, error) {
+	// host is a domain name, resolve to IPs
 	var ips []string
-	var err error
 
-	if dns != "" {
-		// 如果dns指定，且DialURL为域名格式，则指定dns进行ldap查询
-		// DialURL格式: ldap[s]://host:port
-		parts := strings.SplitN(dialURL, "://", 2)
-		if len(parts) != 2 {
-			return "", fmt.Errorf("invalid ldap url format")
-		}
-		addr := strings.SplitN(parts[1], ":", 2)
-		host := addr[0] // 校验DialURL为ip格式，如果DialURL中存在port，取host部分
-
-		// 如果DialURL格式（ldap[s]://host:port）中的host为非IP格式（即域名格式），则进行dns解析
-		r, _ := regexp.Compile(IPReg)
-		if r.MatchString(host) {
-			// IP格式，直接返回
-			return host, nil
-		}
-
-		resolver := &net.Resolver{
-			PreferGo: true,
-			Dial: func(ctx context.Context, network, address string) (net.Conn, error) {
-				d := net.Dialer{Timeout: 10 * time.Second}
-				return d.DialContext(ctx, "udp", fmt.Sprintf("%s:53", dns))
-			},
-		}
-
-		ips, err = resolver.LookupHost(context.Background(), host)
-		if err != nil {
-			return "", err
-		}
-	} else {
-		ips, err = net.LookupHost(dialURL)
-		if err != nil {
-			return "", err
-		}
+	// Use custom DNS resolver
+	resolver := &net.Resolver{
+		PreferGo: true,
+		Dial: func(ctx context.Context, network, address string) (net.Conn, error) {
+			d := net.Dialer{Timeout: 10 * time.Second}
+			// Ensure custom DNS server address includes port 53
+			dnsAddr := dns
+			if !strings.Contains(dnsAddr, ":") {
+				dnsAddr = fmt.Sprintf("%s:53", dnsAddr)
+			}
+			return d.DialContext(ctx, "udp", dnsAddr)
+		},
+	}
+	ips, err := resolver.LookupHost(context.Background(), host)
+	if err != nil {
+		return "", fmt.Errorf("dns lookup failed for %s using %s: %v", host, dns, err)
 	}
 
-	// 判断可用IP即返回
+	if len(ips) == 0 {
+		return "", fmt.Errorf("no ips found for host %s", host)
+	}
+
+	// 4. Check reachability of resolved IPs
 	for _, ip := range ips {
-		_, err := net.DialTimeout("tcp", ip+":389", 2*time.Second)
-		if err != nil {
-			continue
+		addr := net.JoinHostPort(ip, portStr)
+		conn, err := net.DialTimeout("tcp", addr, 3*time.Second)
+		if err == nil {
+			conn.Close()
+			return ip, nil // Return the first reachable IP
 		}
-		return ip, nil
 	}
 
-	return "", fmt.Errorf("all ips unable to connect")
+	return "", fmt.Errorf("all resolved ips for %s are unable to connect", host)
 }
 
 // 创建ldap查询连接，dns为可选参数，DialURL格式为: ldap[s]://host:port(host可为ip或域名)
 func GetConn(DialURL, user, password, dns string) (*ldap3.Conn, error) {
-	var c *ldap3.Conn
-	var err error
-	if dns != "" {
-		// 如果dns指定，且DialURL为域名格式，则指定dns进行ldap查询
-		// DialURL格式: ldap[s]://host:port
-		parts := strings.SplitN(DialURL, "://", 2)
-		if len(parts) != 2 {
-			return nil, fmt.Errorf("invalid ldap url format")
-		}
-		addr := strings.SplitN(parts[1], ":", 2)
-		host := addr[0] // 校验DialURL为ip格式，如果DialURL中存在port，取host部分
-
-		// 如果DialURL格式（ldap[s]://host:port）中的host为非IP格式（即域名格式），则进行dns解析
-		r, _ := regexp.Compile(IPReg)
-		if !r.MatchString(host) {
-			ip, err := GetEnableIP(DialURL, dns)
-			if err != nil {
-				return nil, err
-			}
-
-			dialAddr := fmt.Sprintf("%s://%s", parts[0], ip)
-			c, err = ldap3.DialURL(dialAddr)
-		}
-	} else {
-		c, err = ldap3.DialURL(DialURL)
-	}
+	// 1. Parse DialURL
+	u, err := url.Parse(DialURL)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("invalid ldap url format '%s': %v", DialURL, err)
+	}
+	scheme := u.Scheme
+	host := u.Hostname()
+	portStr := u.Port()
+	if portStr == "" {
+		switch u.Scheme {
+		case "ldap":
+			portStr = "389"
+		case "ldaps":
+			portStr = "636"
+		default:
+			return nil, fmt.Errorf("unsupported scheme or missing port: %s", scheme)
+		}
 	}
 
+	dialHost := host // Start with the original host
+
+	// 2. Resolve IP if custom DNS is provided and host is a domain name
+	if dns != "" && net.ParseIP(host) == nil { // Use net.ParseIP to check if host is NOT an IP
+		resolvedIP, err := resolveHost(host, portStr, dns) // DialURL provides context for resolveHost
+		if err != nil {
+			return nil, fmt.Errorf("failed to get enable ip using custom dns %s for %s: %v", dns, host, err)
+		}
+		dialHost = resolvedIP // Use the resolved IP for dialing
+	}
+
+	// 3. Construct final dial address
+	dialAddr := fmt.Sprintf("%s://%s", scheme, net.JoinHostPort(dialHost, portStr))
+
+	// 4. Dial LDAP server
+	c, err := ldap3.DialURL(dialAddr)
+	if err != nil {
+		// Provide context about whether resolution was attempted
+		originalURLInfo := DialURL
+		if dialAddr != DialURL {
+			originalURLInfo = fmt.Sprintf("%s (original: %s)", dialAddr, DialURL)
+		}
+		return nil, fmt.Errorf("ldap dial failed for %s: %w", originalURLInfo, err)
+	}
+
+	// 5. Bind
 	// ldap3's error define from: github.com/go-ldap/ldap/v3/error.go
 	// https://ldap.com/ldap-result-code-reference/
 	// if Authenticate failed(such invalid password), the error is LDAPResultInvalidCredentials(result code is 49)
 	err = c.Bind(user, password)
 	if err != nil {
-		return nil, err
+		c.Close() // Ensure connection is closed if bind fails
+		return nil, fmt.Errorf("ldap bind failed for user %s on %s: %w", user, dialAddr, err)
 	}
 
 	return c, nil
