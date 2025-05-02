@@ -631,7 +631,7 @@ func (p *Plugin) AutoResLimit(wg *sync.WaitGroup) {
 				} else {
 					// reset plugProcessAutoResMap
 					for _, pluginName := range pluginStopPriority {
-						if _, exists := p.plugProcessAutoResMap[pluginName]; exists {
+						if autoStopped, exists := p.plugProcessAutoResMap[pluginName]; exists && autoStopped {
 							logger.Infof("AutoResLimit: Resetting plugin %s auto res limit flag", pluginName)
 							p.plugProcessAutoResMap[pluginName] = false
 						}
