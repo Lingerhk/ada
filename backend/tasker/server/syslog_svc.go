@@ -194,6 +194,12 @@ func (s *SyslogServer) syslogSync(event map[string]interface{}) {
 
 	hostname := event["hostname"].(string)
 	client := event["client"].(string)
+	tag := event["tag"].(string)
+
+	if tag != "ADASensor" {
+		logger.Infof("ignore syslog with tag:%s from %s, hostname:%s", tag, client, hostname)
+		return
+	}
 
 	c := strings.SplitN(client, ":", 2) // c[0]: client_ip, c[1]: client_port
 	if len(c) != 2 {

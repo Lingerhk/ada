@@ -3,6 +3,7 @@ package plugin
 import (
 	"ada/agent/sensor/common"
 	"ada/agent/sensor/config"
+	"ada/agent/sensor/stats"
 	"context"
 	"encoding/json"
 	"fmt"
@@ -25,21 +26,22 @@ type Plugin struct {
 	logPluginSwitch    bool
 	rpcFwPluginSwitch  bool
 	ldapFwPluginSwitch bool
-	cpuMaxLimit        float32
-	memMaxLimit        float32
+	cpuMaxLimit        float64
+	memMaxLimit        float64
 
-	plugEvtThread        *evtPlugin
-	plugPktThread        *pktPlugin
-	PlugProcessMap       map[string]uint32
-	PlugConfigChangedMap map[string]bool // 记录插件配置是否发生变化
+	plugEvtThread         *evtPlugin
+	plugPktThread         *pktPlugin
+	PlugProcessMap        map[string]uint32
+	PlugConfigChangedMap  map[string]bool // 记录插件配置是否发生变化
+	plugProcessAutoResMap map[string]bool // Track plugins stopped by AutoResLimit
 }
 
 func New(ctx context.Context, rdxCli *redis.Client, sensorId string, sensorCfg config.SensorCfg) (*Plugin, error) {
 	var err error
 
 	plug := Plugin{ctx: ctx, rdxCli: rdxCli, sensorId: sensorId, adaHost: sensorCfg.RegHost}
-	plug.cpuMaxLimit = float32(0.15)
-	plug.memMaxLimit = float32(0.15)
+	plug.cpuMaxLimit = float64(0.15 * 100) // 15%
+	plug.memMaxLimit = float64(0.15 * 100) // 15%
 
 	plugProcessMap := make(map[string]uint32)
 	plugProcessMap[common.SensorSvcName] = 0
@@ -55,6 +57,13 @@ func New(ctx context.Context, rdxCli *redis.Client, sensorId string, sensorCfg c
 	plugConfigChangedMap[common.PlugRpcFwName] = false
 	plugConfigChangedMap[common.PlugLdapFwName] = false
 	plug.PlugConfigChangedMap = plugConfigChangedMap
+
+	plugProcessAutoResMap := make(map[string]bool)
+	plugProcessAutoResMap[common.PlugPktName] = false
+	plugProcessAutoResMap[common.PlugEvtName] = false
+	plugProcessAutoResMap[common.PlugRpcFwName] = false
+	plugProcessAutoResMap[common.PlugLdapFwName] = false
+	plug.plugProcessAutoResMap = plugProcessAutoResMap
 
 	plug.plugEvtThread, err = NewEvtPlugin(sensorCfg.RegHost, sensorCfg.EvtSrvPort)
 	if err != nil {
@@ -183,6 +192,56 @@ func (p *Plugin) loadConfigure() {
 
 	sensorIDKey := fmt.Sprintf("%s:%s", common.SensorIDPrefixKey, p.sensorId)
 
+	if p.plugProcessAutoResMap[common.PlugPktName] {
+		logger.Infof("pkt plugin auto res limit flag is true, ignore load configure")
+	} else {
+		p.loadConfigurePktPlugin(sensorIDKey)
+	}
+
+	if p.plugProcessAutoResMap[common.PlugEvtName] {
+		logger.Infof("evt plugin auto res limit flag is true, ignore load configure")
+	} else {
+		p.loadConfigureEvtPlugin(sensorIDKey)
+	}
+
+	if p.plugProcessAutoResMap[common.PlugRpcFwName] {
+		logger.Infof("rpcfw plugin auto res limit flag is true, ignore load configure")
+	} else {
+		p.loadConfigureRpcFwPlugin(sensorIDKey)
+	}
+
+	if p.plugProcessAutoResMap[common.PlugLdapFwName] {
+		logger.Infof("ldapfw plugin auto res limit flag is true, ignore load configure")
+	} else {
+		p.loadConfigureLdapFwPlugin(sensorIDKey)
+	}
+
+	v, err := p.rdxCli.HGet(p.ctx, sensorIDKey, "limit_cpu_max").Result()
+	if err != nil {
+		logger.Errorf("get cpu limit err:%v", err)
+	} else {
+		value, err := strconv.ParseFloat(v, 32)
+		if err != nil {
+			logger.Errorf("get cpu limit err:%v", err)
+		} else {
+			p.cpuMaxLimit = float64(value * 100)
+		}
+	}
+
+	v, err = p.rdxCli.HGet(p.ctx, sensorIDKey, "limit_mem_max").Result()
+	if err != nil {
+		logger.Errorf("get mem limit err:%v", err)
+	} else {
+		value, err := strconv.ParseFloat(v, 32)
+		if err != nil {
+			logger.Errorf("get mem limit err:%v", err)
+		} else {
+			p.memMaxLimit = float64(value * 100)
+		}
+	}
+}
+
+func (p *Plugin) loadConfigurePktPlugin(sensorIDKey string) {
 	v, err := p.rdxCli.HGet(p.ctx, sensorIDKey, "pkt_plugin_switch").Result()
 	if err != nil {
 		logger.Errorf("get pkt switch err:%v", err)
@@ -193,7 +252,6 @@ func (p *Plugin) loadConfigure() {
 				logger.Infof("pkt plugin switch changed to %s", v)
 				p.PlugConfigChangedMap[common.PlugPktName] = true
 			}
-
 			p.pktPluginSwitch = pktPluginSwitch
 		}
 	}
@@ -210,7 +268,6 @@ func (p *Plugin) loadConfigure() {
 				logger.Infof("pkt bind iface names changed to %v", pktBindIfaceNames)
 				p.PlugConfigChangedMap[common.PlugPktName] = true
 			}
-
 			p.plugPktThread.IfaceNames = pktBindIfaceNames
 		}
 	}
@@ -226,8 +283,10 @@ func (p *Plugin) loadConfigure() {
 			logger.Errorf("set bpf filter err:%v", err)
 		}
 	}
+}
 
-	v, err = p.rdxCli.HGet(p.ctx, sensorIDKey, "log_plugin_switch").Result()
+func (p *Plugin) loadConfigureEvtPlugin(sensorIDKey string) {
+	v, err := p.rdxCli.HGet(p.ctx, sensorIDKey, "log_plugin_switch").Result()
 	if err != nil {
 		logger.Errorf("get log switch err:%v", err)
 	} else if v != "" {
@@ -236,7 +295,6 @@ func (p *Plugin) loadConfigure() {
 			if v != strconv.FormatBool(p.logPluginSwitch) {
 				logger.Infof("log plugin switch changed to %s", v)
 			}
-
 			p.logPluginSwitch = logPluginSwitch
 		}
 	}
@@ -261,8 +319,10 @@ func (p *Plugin) loadConfigure() {
 			}
 		}
 	}
+}
 
-	v, err = p.rdxCli.HGet(p.ctx, sensorIDKey, "rpcfw_plugin_switch").Result()
+func (p *Plugin) loadConfigureRpcFwPlugin(sensorIDKey string) {
+	v, err := p.rdxCli.HGet(p.ctx, sensorIDKey, "rpcfw_plugin_switch").Result()
 	if err != nil {
 		logger.Errorf("get rpcfw switch err:%v", err)
 	} else if v != "" {
@@ -271,12 +331,13 @@ func (p *Plugin) loadConfigure() {
 			if v != strconv.FormatBool(p.rpcFwPluginSwitch) {
 				logger.Infof("rpcfw plugin switch changed to %s", v)
 			}
-
 			p.rpcFwPluginSwitch = rpcFwPluginSwitch
 		}
 	}
+}
 
-	v, err = p.rdxCli.HGet(p.ctx, sensorIDKey, "ldapfw_plugin_switch").Result()
+func (p *Plugin) loadConfigureLdapFwPlugin(sensorIDKey string) {
+	v, err := p.rdxCli.HGet(p.ctx, sensorIDKey, "ldapfw_plugin_switch").Result()
 	if err != nil {
 		logger.Errorf("get ldapfw switch err:%v", err)
 	} else if v != "" {
@@ -285,32 +346,7 @@ func (p *Plugin) loadConfigure() {
 			if v != strconv.FormatBool(p.ldapFwPluginSwitch) {
 				logger.Infof("ldapfw plugin switch changed to %s", v)
 			}
-
 			p.ldapFwPluginSwitch = ldapFwPluginSwitch
-		}
-	}
-
-	v, err = p.rdxCli.HGet(p.ctx, sensorIDKey, "limit_cpu_max").Result()
-	if err != nil {
-		logger.Errorf("get cpu limit err:%v", err)
-	} else {
-		value, err := strconv.ParseFloat(v, 32)
-		if err != nil {
-			logger.Errorf("get cpu limit err:%v", err)
-		} else {
-			p.cpuMaxLimit = float32(value)
-		}
-	}
-
-	v, err = p.rdxCli.HGet(p.ctx, sensorIDKey, "limit_mem_max").Result()
-	if err != nil {
-		logger.Errorf("get mem limit err:%v", err)
-	} else {
-		value, err := strconv.ParseFloat(v, 32)
-		if err != nil {
-			logger.Errorf("get mem limit err:%v", err)
-		} else {
-			p.memMaxLimit = float32(value)
 		}
 	}
 }
@@ -318,140 +354,290 @@ func (p *Plugin) loadConfigure() {
 func (p *Plugin) runPlugin() {
 	var err error
 
-	plugs, err := p.getPluginStatus()
+	// check plugin process status
+	statusMap, err := p.getPluginStatus()
 	if err != nil {
-		logger.Errorf("get plugin svc status err:%v", err)
-		return
+		logger.Errorf("get plugin status err:%v", err)
+		// don't return here, maybe only part of service can't access
 	}
 
+	// check evt plugin thread
 	if p.logPluginSwitch {
-		// if plugin is installed and not running, start it
-		if !p.plugEvtThread.IsRunning() {
-			logger.Info("evt plugin is not running, start it")
-			if err = p.plugEvtThread.Start(); err != nil {
-				logger.Infof("start evt plugin err:%v", err)
+		if p.plugProcessAutoResMap[common.PlugEvtName] {
+			logger.Warnf("Plugin %s start skipped due to AutoResLimit", common.PlugEvtName)
+		} else if !p.plugEvtThread.IsRunning() {
+			logger.Infof("try start evt plugin thread")
+			if err := p.plugEvtThread.Start(); err != nil {
+				logger.Errorf("start evt plugin thread err:%v", err)
+			} else {
+				p.PlugProcessMap[common.PlugEvtName] = 1 // Mark as running (in-process)
+			}
+		} else {
+			// check config change
+			if p.PlugConfigChangedMap[common.PlugEvtName] {
+				logger.Infof("evt plugin config changed, reload evt plugin thread")
+				if err := p.plugEvtThread.Reload(); err != nil {
+					logger.Errorf("reload evt plugin thread err:%v", err)
+				} else {
+					p.PlugProcessMap[common.PlugEvtName] = 1 // Mark as running (in-process)
+				}
 			}
 		}
-
-		if p.PlugConfigChangedMap[common.PlugEvtName] { // only log_eid_filter changed, need reload
-			logger.Info("evt plugin config changed, reload it")
-			// if plugin is installed and running, reload it
-			if err = p.plugEvtThread.Reload(); err != nil {
-				logger.Infof("reload evt plugin err:%v", err)
-			}
-		}
-
-		p.PlugProcessMap[common.PlugEvtName] = 1
-
 	} else {
-		// if plugin is installed and running, stop it
 		if p.plugEvtThread.IsRunning() {
-			if err = p.plugEvtThread.Stop(); err != nil {
-				logger.Infof("stop evt plugin err:%v", err)
+			logger.Infof("try stop evt plugin thread")
+			if err := p.plugEvtThread.Stop(); err != nil {
+				logger.Errorf("stop evt plugin thread err:%v", err)
 			}
+			p.PlugProcessMap[common.PlugEvtName] = 0
 		}
-
-		p.PlugProcessMap[common.PlugEvtName] = 0
 	}
 
+	// check pkt plugin thread
 	if p.pktPluginSwitch {
-		// if plugin is installed and not running, start it
-		if !p.plugPktThread.IsRunning() {
-			if err = p.plugPktThread.Start(); err != nil {
-				logger.Infof("start pkt plugin err:%v", err)
+		if p.plugProcessAutoResMap[common.PlugPktName] {
+			logger.Warnf("Plugin %s start skipped due to AutoResLimit", common.PlugPktName)
+		} else if !p.plugPktThread.IsRunning() {
+			logger.Infof("try start pkt plugin thread")
+			if err := p.plugPktThread.Start(); err != nil {
+				logger.Errorf("start pkt plugin thread err:%v", err)
+			} else {
+				p.PlugProcessMap[common.PlugPktName] = 1 // Mark as running (in-process)
+			}
+		} else {
+			// check config change
+			if p.PlugConfigChangedMap[common.PlugPktName] {
+				logger.Infof("pkt plugin config changed, reload pkt plugin thread")
+				if err := p.plugPktThread.Reload(); err != nil {
+					logger.Errorf("reload pkt plugin thread err:%v", err)
+				} else {
+					p.PlugProcessMap[common.PlugPktName] = 1 // Mark as running (in-process)
+				}
 			}
 		}
-
-		if p.PlugConfigChangedMap[common.PlugPktName] {
-			// if plugin is installed and running, reload it
-			logger.Info("reload pkt plugin by config changed")
-			if err = p.plugPktThread.Reload(); err != nil {
-				logger.Infof("reload pkt plugin err:%v", err)
-			}
-		}
-
-		p.PlugProcessMap[common.PlugPktName] = 1
 	} else {
-		// if plugin is installed and running, stop it
 		if p.plugPktThread.IsRunning() {
-			if err = p.plugPktThread.Stop(); err != nil {
-				logger.Infof("stop pkt plugin err:%v", err)
+			logger.Infof("try stop pkt plugin thread")
+			if err := p.plugPktThread.Stop(); err != nil {
+				logger.Errorf("stop pkt plugin thread err:%v", err)
 			}
+			p.PlugProcessMap[common.PlugPktName] = 0
 		}
-
-		p.PlugProcessMap[common.PlugPktName] = 0
 	}
 
+	// check rpc firewall plugin process
 	if p.rpcFwPluginSwitch {
-		// if plugin is installed and not running, start it
-		if isRunning, ok := plugs[common.PlugRpcFwName]; ok && !isRunning {
-			if err = startRpcFwPlugin(false); err != nil {
-				logger.Infof("try to start rpcfw svc err:%v", err)
+		if !isRpcFwInstalled() {
+			logger.Warnf("rpc firewall plugin not installed, ignore start")
+		} else {
+			if p.plugProcessAutoResMap[common.PlugRpcFwName] {
+				logger.Warnf("Plugin %s start skipped due to AutoResLimit", common.PlugRpcFwName)
+			} else if statusMap[common.PlugRpcFwName] == false {
+				logger.Infof("try start rpc firewall plugin")
+				if err = startRpcFwPlugin(false); err != nil {
+					logger.Errorf("start rpc firewall plugin err:%v", err)
+				}
+			} else {
+				if p.PlugConfigChangedMap[common.PlugRpcFwName] {
+					logger.Infof("rpc firewall plugin config changed, restart rpc firewall plugin")
+					if err = startRpcFwPlugin(true); err != nil {
+						logger.Errorf("restart rpc firewall plugin err:%v", err)
+					}
+				}
 			}
 		}
-		if p.PlugConfigChangedMap[common.PlugRpcFwName] {
-			// if plugin's config changed, reload it
-			logger.Info("reload rpcfw plugin by config changed")
-			if err = reloadRpcFwPlugin(); err != nil {
-				logger.Infof("reload rpcfw plugin err:%v", err)
-			}
-		}
-
-		p.PlugProcessMap[common.PlugRpcFwName] = 1
 	} else {
-		// is installed and running, stop it
-		if isRunning, ok := plugs[common.PlugRpcFwName]; ok && isRunning {
+		if isRpcFwInstalled() && statusMap[common.PlugRpcFwName] == true {
+			logger.Infof("try stop rpc firewall plugin")
 			if err = stopRpcFwPlugin(); err != nil {
-				logger.Infof("try to stop rpcfw svc err:%v", err)
+				logger.Errorf("stop rpc firewall plugin err:%v", err)
 			}
 		}
-
-		p.PlugProcessMap[common.PlugRpcFwName] = 0
 	}
 
+	// check ldap firewall plugin process
 	if p.ldapFwPluginSwitch {
-		// is installed and not running, start it
-		if isRunning, ok := plugs[common.PlugLdapFwName]; ok && !isRunning {
-			if err = startLdapFwPlugin(false); err != nil {
-				logger.Infof("try to start ldapfw svc err:%v", err)
+		if !isLdapFwInstalled() {
+			logger.Warnf("ldap firewall plugin not installed, ignore start")
+		} else {
+			if p.plugProcessAutoResMap[common.PlugLdapFwName] {
+				logger.Warnf("Plugin %s start skipped due to AutoResLimit", common.PlugLdapFwName)
+			} else if statusMap[common.PlugLdapFwName] == false {
+				logger.Infof("try start ldap firewall plugin")
+				if err = startLdapFwPlugin(false); err != nil {
+					logger.Errorf("start ldap firewall plugin err:%v", err)
+				}
+			} else {
+				if p.PlugConfigChangedMap[common.PlugLdapFwName] {
+					logger.Infof("ldap firewall plugin config changed, restart ldap firewall plugin")
+					if err = startLdapFwPlugin(true); err != nil {
+						logger.Errorf("restart ldap firewall plugin err:%v", err)
+					}
+				}
 			}
 		}
-
-		if p.PlugConfigChangedMap[common.PlugLdapFwName] {
-			// if plugin's config changed, reload it
-			logger.Info("reload ldapfw plugin by config changed")
-			if err = reloadLdapFwPlugin(); err != nil {
-				logger.Infof("reload ldapfw plugin err:%v", err)
-			}
-		}
-
-		p.PlugProcessMap[common.PlugLdapFwName] = 1
 	} else {
-		// is installed and running, stop it
-		if isRunning, ok := plugs[common.PlugLdapFwName]; ok && isRunning {
+		if isLdapFwInstalled() && statusMap[common.PlugLdapFwName] == true {
+			logger.Infof("try stop ldap firewall plugin")
 			if err = stopLdapFwPlugin(); err != nil {
-				logger.Infof("try to stop ldapfw svc err:%v", err)
+				logger.Errorf("stop ldap firewall plugin err:%v", err)
 			}
 		}
-
-		p.PlugProcessMap[common.PlugLdapFwName] = 0
 	}
 }
 
 func (p *Plugin) stopAllPlugin() {
-	if isLdapFwInstalled() {
-		stopLdapFwPlugin()
+	for pluginName, _ := range p.PlugProcessMap {
+		if p.PlugProcessMap[pluginName] > 0 {
+			p.stopPlugin(pluginName)
+		}
+	}
+}
+
+func (p *Plugin) stopPlugin(pluginName string) error {
+	logger.Infof("Attempting to stop plugin: %s", pluginName)
+	var err error
+	switch pluginName {
+	case common.PlugPktName:
+		if p.plugPktThread.IsRunning() {
+			err = p.plugPktThread.Stop()
+		}
+	case common.PlugEvtName:
+		if p.plugEvtThread.IsRunning() {
+			err = p.plugEvtThread.Stop()
+		}
+	case common.PlugRpcFwName:
+		if isRpcFwInstalled() {
+			// Check status before stopping (optional, but good practice)
+			statusMap, _ := p.getPluginStatus() // Ignore error for this check
+			if statusMap[common.PlugRpcFwName] {
+				err = stopRpcFwPlugin()
+			}
+		}
+	case common.PlugLdapFwName:
+		if isLdapFwInstalled() {
+			// Check status before stopping (optional, but good practice)
+			statusMap, _ := p.getPluginStatus() // Ignore error for this check
+			if statusMap[common.PlugLdapFwName] {
+				err = stopLdapFwPlugin()
+			}
+		}
+	default:
+		err = fmt.Errorf("unknown plugin name: %s", pluginName)
 	}
 
-	if isRpcFwInstalled() {
-		stopRpcFwPlugin()
+	if err == nil {
+		// Mark as stopped in the main process map as well
+		p.PlugProcessMap[pluginName] = 0
+		logger.Infof("Plugin %s stopped.", pluginName)
+	} else {
+		logger.Errorf("Failed to stop plugin %s: %v", pluginName, err)
+	}
+	return err
+}
+
+// AutoResLimit check sensor resource usage, if over limit, stop plugin by priority
+// Priority: PlugPktName, PlugLdapFwName, PlugRpcFwName, PlugEvtName
+func (p *Plugin) AutoResLimit(wg *sync.WaitGroup) {
+	defer wg.Done()
+
+	time.Sleep(60 * time.Second) // Initial delay
+	logger.Info("start auto resources limit checker")
+
+	// Priority order for stopping plugins
+	pluginStopPriority := []string{
+		common.PlugPktName,
+		common.PlugLdapFwName,
+		common.PlugRpcFwName,
+		common.PlugEvtName,
 	}
 
-	if p.plugPktThread.IsRunning() {
-		p.plugPktThread.Stop()
-	}
+	for {
+		select {
+		case <-p.ctx.Done():
+			logger.Info("received sensor stop signal, stop auto resources limit checker!")
+			return
+		case <-time.After(60 * time.Second):
+			{
+				// Make sure PlugProcessMap is up-to-date before checking stats
+				p.getPluginStatus() // Updates p.PlugProcessMap internally
 
-	if p.plugEvtThread.IsRunning() {
-		p.plugEvtThread.Stop()
+				// Pass the interval duration and context to GetSensorResUsed
+				cpuUsed, memUsed, rpcfwCpuUsed, ldapfwCpuUsed, _, _, err := stats.GetSensorResUsed(p.ctx, p.PlugProcessMap, 30*time.Second)
+				if err != nil {
+					// Handle context cancellation potentially returned from GetSensorResUsed
+					if err == context.Canceled || err == context.DeadlineExceeded {
+						logger.Infof("AutoResLimit check cancelled: %v", err)
+						return // Exit AutoResLimit loop if context is done
+					}
+					logger.Warnf("get sensor resources used err:%v, ignore check!", err)
+					continue // Skip this check if we can't get stats for other reasons
+				}
+
+				limitExceeded := false
+				// Compare cpuUsed with p.cpuMaxLimit
+				if cpuUsed > p.cpuMaxLimit {
+					logger.Warnf("Sensor CPU usage(%f) over than max limit(%f)", cpuUsed, p.cpuMaxLimit)
+					limitExceeded = true
+				}
+
+				// Compare memUsed with p.memMaxLimit
+				if memUsed > p.memMaxLimit {
+					logger.Warnf("Sensor Memory usage(%f) over than max limit(%f)", memUsed, p.memMaxLimit)
+					limitExceeded = true
+				}
+
+				if limitExceeded {
+					logger.Warnf("Resource limit exceeded, attempting to stop a plugin...")
+					pluginStopped := false
+
+					// if rpcfw or ldapfw plugin cpu/mem usage over limit, stop it first
+					if p.PlugProcessMap[common.PlugRpcFwName] > 0 && rpcfwCpuUsed > p.cpuMaxLimit {
+						p.stopPlugin(common.PlugRpcFwName)
+						logger.Infof("AutoResLimit: Plugin %s stopped successfully.", common.PlugRpcFwName)
+						p.plugProcessAutoResMap[common.PlugRpcFwName] = true // Mark as stopped by AutoResLimit
+						pluginStopped = true
+					}
+
+					if p.PlugProcessMap[common.PlugLdapFwName] > 0 && ldapfwCpuUsed > p.cpuMaxLimit {
+						p.stopPlugin(common.PlugLdapFwName)
+						logger.Infof("AutoResLimit: Plugin %s stopped successfully.", common.PlugLdapFwName)
+						p.plugProcessAutoResMap[common.PlugLdapFwName] = true // Mark as stopped by AutoResLimit
+						pluginStopped = true
+					}
+
+					for _, pluginName := range pluginStopPriority {
+						// Check if plugin is running and not already stopped by this mechanism
+						// For in-process plugins (pkt, evt), pid might be 1, for others it's a real PID or 0.
+						if pid, running := p.PlugProcessMap[pluginName]; running && pid != 0 {
+							if autoStopped, exists := p.plugProcessAutoResMap[pluginName]; exists && !autoStopped {
+								logger.Infof("AutoResLimit: Stopping plugin %s (priority) due to resource limits.", pluginName)
+								// Correctly handle the error returned by stopPlugin
+								if err := p.stopPlugin(pluginName); err != nil {
+									logger.Errorf("AutoResLimit: Failed to stop plugin %s: %v", pluginName, err)
+									// Continue trying to stop the next lower priority plugin
+								} else {
+									logger.Infof("AutoResLimit: Plugin %s stopped successfully.", pluginName)
+									p.plugProcessAutoResMap[pluginName] = true // Mark as stopped by AutoResLimit
+									pluginStopped = true
+									break // Stop only one plugin per check cycle
+								}
+							}
+						}
+					}
+					if !pluginStopped {
+						logger.Warn("AutoResLimit: Resource limit exceeded, but no running plugins available to stop according to priority.")
+					}
+				} else {
+					// reset plugProcessAutoResMap
+					for _, pluginName := range pluginStopPriority {
+						if _, exists := p.plugProcessAutoResMap[pluginName]; exists {
+							logger.Infof("AutoResLimit: Resetting plugin %s auto res limit flag", pluginName)
+							p.plugProcessAutoResMap[pluginName] = false
+						}
+					}
+				}
+			}
+		}
 	}
 }
