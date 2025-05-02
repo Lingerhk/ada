@@ -105,7 +105,7 @@ func (r *LDAPSearch) LdapSearchByCN(cn, attributes string) (*ldap3.Entry, error)
 func (r *LDAPSearch) LdapSearchDomainController() ([]*ldap3.Entry, error) {
 	// 此处查询的filter进行了优化
 	//filter := fmt.Sprint("(&(objectCategory=computer)(objectClass=computer))")
-	filter := fmt.Sprint("(|(primarygroupid=516)(primarygroupid=521))")
+	filter := "(|(primarygroupid=516)(primarygroupid=521))"
 	result, err := r.BasicSearch(filter, "cn,dnsHostName,objectSid,operatingSystem,operatingSystemVersion")
 	if err != nil {
 		return nil, err
