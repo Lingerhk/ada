@@ -88,6 +88,7 @@ func (e *evtPlugin) Start() error {
 	syslogConfig.Network = e.SyslogNetwork
 	syslogConfig.Address = e.SyslogAddress
 	syslogConfig.Tag = e.SyslogTag
+	syslogConfig.Hostname = getFQDNName()
 
 	var err error
 	e.syslogOutput, err = syslogConfig.Build(e.settings)

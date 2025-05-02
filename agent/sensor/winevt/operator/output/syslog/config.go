@@ -4,8 +4,8 @@
 package syslog
 
 import (
-	"encoding/json"
 	"ada/agent/sensor/winevt/operator/output/syslog/wsyslog"
+	"encoding/json"
 
 	"ada/agent/sensor/winevt/operator"
 	"ada/agent/sensor/winevt/operator/helper"
@@ -31,6 +31,7 @@ type Config struct {
 	Address             string           `mapstructure:"address"` // "localhost:514"
 	Priority            wsyslog.Priority `mapstructure:"priority"`
 	Tag                 string           `mapstructure:"tag"`
+	Hostname            string           `mapstructure:"hostname"`
 }
 
 // Build will build a syslog operator.
@@ -46,6 +47,7 @@ func (c Config) Build(set operator.TelemetrySettings) (operator.Operator, error)
 	if err != nil {
 		return nil, err
 	}
+	writer.SetHostname(c.Hostname)
 
 	return &Output{
 		OutputOperator: outputOperator,
