@@ -48,6 +48,7 @@ func (c Config) Build(set operator.BaseSettings) (operator.Operator, error) {
 		return nil, err
 	}
 	writer.SetHostname(c.Hostname)
+	writer.SetFormatter(wsyslog.RFC3164Formatter)
 
 	return &Output{
 		OutputOperator: outputOperator,
