@@ -35,7 +35,7 @@ type Config struct {
 }
 
 // Build will build a syslog operator.
-func (c Config) Build(set operator.TelemetrySettings) (operator.Operator, error) {
+func (c Config) Build(set operator.BaseSettings) (operator.Operator, error) {
 	outputOperator, err := c.OutputConfig.Build(set)
 	if err != nil {
 		return nil, err

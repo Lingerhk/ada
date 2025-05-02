@@ -26,7 +26,7 @@ type InputConfig struct {
 }
 
 // Build will build a base producer.
-func (c InputConfig) Build(set operator.TelemetrySettings) (InputOperator, error) {
+func (c InputConfig) Build(set operator.BaseSettings) (InputOperator, error) {
 	writerOperator, err := c.WriterConfig.Build(set)
 	if err != nil {
 		return InputOperator{}, errors.WithDetails(err, "operator_id", c.ID())

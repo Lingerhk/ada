@@ -21,7 +21,7 @@ type OutputConfig struct {
 }
 
 // Build will build an output operator.
-func (c OutputConfig) Build(set operator.TelemetrySettings) (OutputOperator, error) {
+func (c OutputConfig) Build(set operator.BaseSettings) (OutputOperator, error) {
 	basicOperator, err := c.BasicConfig.Build(set)
 	if err != nil {
 		return OutputOperator{}, err

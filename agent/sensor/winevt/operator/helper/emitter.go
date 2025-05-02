@@ -67,7 +67,7 @@ func (o flushIntervalOption) apply(e *BatchingLogEmitter) {
 }
 
 // NewBatchingLogEmitter creates a new receiver output
-func NewBatchingLogEmitter(set operator.TelemetrySettings, consumerFunc func(context.Context, []*entry.Entry), opts ...EmitterOption) *BatchingLogEmitter {
+func NewBatchingLogEmitter(set operator.BaseSettings, consumerFunc func(context.Context, []*entry.Entry), opts ...EmitterOption) *BatchingLogEmitter {
 	op, _ := NewOutputConfig("log_emitter", "log_emitter").Build(set)
 	e := &BatchingLogEmitter{
 		OutputOperator: op,
@@ -202,7 +202,7 @@ type SynchronousLogEmitter struct {
 	consumerFunc func(context.Context, []*entry.Entry)
 }
 
-func NewSynchronousLogEmitter(set operator.TelemetrySettings, consumerFunc func(context.Context, []*entry.Entry)) *SynchronousLogEmitter {
+func NewSynchronousLogEmitter(set operator.BaseSettings, consumerFunc func(context.Context, []*entry.Entry)) *SynchronousLogEmitter {
 	op, _ := NewOutputConfig("log_emitter", "log_emitter").Build(set)
 	return &SynchronousLogEmitter{
 		OutputOperator: op,

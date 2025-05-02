@@ -22,7 +22,7 @@ func NewConfig(b Builder) Config {
 type Builder interface {
 	ID() string
 	Type() string
-	Build(TelemetrySettings) (Operator, error)
+	Build(BaseSettings) (Operator, error)
 	SetID(string)
 }
 

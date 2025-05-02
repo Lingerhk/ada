@@ -53,7 +53,7 @@ type Input struct {
 }
 
 // newInput creates a new Input operator.
-func newInput(settings operator.TelemetrySettings) *Input {
+func newInput(settings operator.BaseSettings) *Input {
 	basicConfig := helper.NewBasicConfig("windowseventlog", "input")
 	basicOperator, _ := basicConfig.Build(settings)
 
