@@ -187,8 +187,8 @@ func (s *SyslogServer) syslogSync(event map[string]interface{}) {
 	// "hostname":"DC2019-02.china.com",
 	// "priority":14,
 	// "severity":6,
-	// "tag":"Microsoft-Windows-Security-Auditing",
-	// "timestamp":time.Date(2023, time.December, 31, 14, 43, 49, 0, time.UTC),
+	// "tag":"ADASensor",
+	// "timestamp":time.Date(2023, time.December, 31, 14, 43, 49, 0, time.Local),
 
 	logger.Debugf("recv syslog:%#v", event)
 
