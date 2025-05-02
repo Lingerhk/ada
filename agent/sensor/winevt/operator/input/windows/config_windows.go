@@ -16,7 +16,7 @@ func init() {
 }
 
 // Build will build a windows event log operator.
-func (c *Config) Build(set operator.TelemetrySettings) (operator.Operator, error) {
+func (c *Config) Build(set operator.BaseSettings) (operator.Operator, error) {
 	inputOperator, err := c.InputConfig.Build(set)
 	if err != nil {
 		return nil, err

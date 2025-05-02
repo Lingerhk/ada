@@ -5,7 +5,7 @@ package operator
 
 import "github.com/sirupsen/logrus"
 
-// TelemetrySettings contains components for telemetry.
-type TelemetrySettings struct {
+// BaseSettings contains components for telemetry.
+type BaseSettings struct {
 	Logger *logrus.Logger
 }

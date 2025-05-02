@@ -30,7 +30,7 @@ type ParserConfig struct {
 }
 
 // Build will build a parser operator.
-func (c ParserConfig) Build(set operator.TelemetrySettings) (ParserOperator, error) {
+func (c ParserConfig) Build(set operator.BaseSettings) (ParserOperator, error) {
 	transformerOperator, err := c.TransformerConfig.Build(set)
 	if err != nil {
 		return ParserOperator{}, err

@@ -43,7 +43,7 @@ func (c BasicConfig) Type() string {
 }
 
 // Build will build a basic operator.
-func (c BasicConfig) Build(set operator.TelemetrySettings) (BasicOperator, error) {
+func (c BasicConfig) Build(set operator.BaseSettings) (BasicOperator, error) {
 	if c.OperatorType == "" {
 		return BasicOperator{}, errors.NewError(
 			"missing required `type` field.",
@@ -75,7 +75,7 @@ func (c BasicConfig) Build(set operator.TelemetrySettings) (BasicOperator, error
 type BasicOperator struct {
 	OperatorID   string
 	OperatorType string
-	set          operator.TelemetrySettings
+	set          operator.BaseSettings
 }
 
 // ID will return the operator id.
