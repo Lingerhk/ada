@@ -167,11 +167,10 @@ func launch(ctx context.Context, env *config.Env) {
 	}
 	go p.Event(wg) // 监听插件事件
 	go p.Serve(wg) //监听插件启停
+	go p.AutoResLimit(wg) // 自动调整限速（自动停止/启动插件功能）
 
 	s := stats.New(ctx, env.RedisCli, env.SensorId)
 	go s.Serve(wg, p.PlugProcessMap) // 上报状态
-
-	go p.AutoResLimit(wg, s) // 自动调整限速（自动停止/启动插件功能）
 
 	wg.Wait()
 }

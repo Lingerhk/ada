@@ -26,7 +26,7 @@ type evtPlugin struct {
 	SyslogTag     string
 	EventFilter   string // Event filter
 
-	settings     operator.TelemetrySettings
+	settings     operator.BaseSettings
 	syslogOutput operator.Operator
 	inputs       []operator.Operator
 	persister    operator.Persister
@@ -50,7 +50,7 @@ func NewEvtPlugin(adaHost string, evtSrvPort int) (*evtPlugin, error) {
 		SyslogNetwork: "udp",
 		SyslogAddress: fmt.Sprintf("%s:%d", adaHost, evtSrvPort),
 		SyslogTag:     "ADASensor",
-		settings:      operator.TelemetrySettings{Logger: logger},
+		settings:      operator.BaseSettings{Logger: logger},
 		persister:     operator.NewScopedPersister("ada", &operator.NoopPersister{}),
 		inputs:        make([]operator.Operator, 0),
 	}, nil
