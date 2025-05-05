@@ -25,7 +25,7 @@ const tokenExpired = 60 * 5
 const fileMaxSize = 512 * 1024
 
 // needChangePwdTm 提醒用户修改密码周期
-const needChangePwdTm = 60 * 24 * time.Hour
+const needChangePwdTm = 90 * 24 * time.Hour
 
 var UserLoginCountInfo model.UserBucket
 
@@ -36,22 +36,22 @@ func init() {
 func (s *ADAServiceV2) Login(ctx context.Context, in *v2.LoginReq) (*v2.LoginReply, error) {
 	user, err := server.GetUser(s.env, in.Username)
 	if err != nil {
-		return nil, status.Errorf(codes.Unauthenticated, "无效的用户名或密码")
+		return nil, status.Error(codes.Unauthenticated, s.I18n("User.Login.InvalidCredentials"))
 	}
 
 	clt := UserLoginCountInfo.Get(in.Username)
 	if clt.LoginErrCount >= common.LoginErrorCount {
-		return nil, status.Errorf(codes.PermissionDenied, "登录错误锁定五分钟")
+		return nil, status.Error(codes.PermissionDenied, s.I18n("User.LoginErrorLocked"))
 	}
 
 	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(in.Password))
 	if err != nil {
 		_ = UserLoginCountInfo.SetLoginErrCount(in.Username, 1)
-		return nil, status.Errorf(codes.Unauthenticated, "无效的用户名或密码")
+		return nil, status.Error(codes.Unauthenticated, s.I18n("User.Login.InvalidCredentials"))
 	}
 
 	if user.MfaStatus == "enable" && in.TotpCode == "" {
-		return nil, status.Error(codes.PermissionDenied, "未输入二次验证")
+		return nil, status.Error(codes.PermissionDenied, s.I18n("User.Login.EmptyMfaCode"))
 	}
 
 	// 新增二次验证判断
@@ -59,14 +59,14 @@ func (s *ADAServiceV2) Login(ctx context.Context, in *v2.LoginReq) (*v2.LoginRep
 		totpCode, err := strconv.Atoi(in.TotpCode)
 		if err != nil {
 			logger.Errorf("strconv atoi err:%v", err)
-			return nil, status.Error(codes.Unauthenticated, "输入的验证码错误")
+			return nil, status.Error(codes.Unauthenticated, s.I18n("User.Login.MfaCodeError"))
 		}
 
 		check := util.TotpCheck(user.Secret, totpCode)
 		if !check {
 			_ = UserLoginCountInfo.SetLoginErrCount(in.Username, 1)
 
-			return nil, status.Error(codes.Unauthenticated, "验证码错误")
+			return nil, status.Error(codes.Unauthenticated, s.I18n("User.Login.MfaCodeError"))
 		}
 	}
 
@@ -78,17 +78,17 @@ func (s *ADAServiceV2) Login(ctx context.Context, in *v2.LoginReq) (*v2.LoginRep
 	// Write LastLoginExpireTime
 	UserLoginCountInfo.SetLastLoginExpireTime(in.Username, exp)
 	if err != nil {
-		return nil, status.Error(codes.Internal, "验证生成异常")
+		return nil, status.Error(codes.Internal, s.I18n("User.Login.MfaCodeGenerateError"))
 	}
 
 	licer, err := license.NewAdaLicense(s.env.RedisCli)
 	if err != nil {
 		logger.Errorf("new license client err:%v", err)
-		return nil, status.Error(codes.Internal, "服务器内部错误")
+		return nil, status.Error(codes.Internal, s.I18n("InternalError"))
 	}
 	if licer.Expired() {
 		logger.Errorf("license expired, will exit!")
-		return nil, status.Error(codes.Aborted, "许可证已过期")
+		return nil, status.Error(codes.Aborted, s.I18n("LicenseExpired"))
 	}
 
 	var needChangePwd bool
@@ -97,7 +97,7 @@ func (s *ADAServiceV2) Login(ctx context.Context, in *v2.LoginReq) (*v2.LoginRep
 		t = user.CreateTm
 	}
 	if time.Since(t) >= needChangePwdTm {
-		logger.Debugf("用户[%s]已超过60天未更新密码", user.UserName)
+		logger.Debugf("user(%s) password has not updated for more than 90 days", user.UserName)
 		needChangePwd = true
 	}
 
@@ -133,7 +133,7 @@ func (s *ADAServiceV2) ListUser(ctx context.Context, in *v2.ListUserReq) (*v2.Li
 	res, total, err := server.FindAllUser(s.env, limit, offset, in.Search, username, in.FilterRole, in.FilterMfaStatus, in.FilterPassStrength, in.FilterStartCreateTm, in.FilterEndCreateTm, in.FilterStartPassTm, in.FilterEndPassTm, in.Sort)
 	if err != nil {
 		logger.Errorf("Query ListUser err:%v", err)
-		return nil, status.Error(codes.Internal, "查询用户列表发生错误")
+		return nil, status.Error(codes.Internal, s.I18n("QueryFailed"))
 	}
 
 	ret := v2.ListUserReply{}
@@ -175,10 +175,10 @@ func (s *ADAServiceV2) ListUser(ctx context.Context, in *v2.ListUserReq) (*v2.Li
 
 func (s *ADAServiceV2) AddUser(ctx context.Context, in *v2.AddUserReq) (*v2.AddUserReply, error) {
 	if in.Username == "" || in.Password == "" {
-		return nil, status.Errorf(codes.Internal, "用户名和密码不能为空")
+		return nil, status.Error(codes.InvalidArgument, s.I18n("User.AddUser.UsernameAndPasswordEmpty"))
 	}
 	if in.Role == "" {
-		return nil, status.Errorf(codes.PermissionDenied, "权限不能为空")
+		return nil, status.Error(codes.InvalidArgument, s.I18n("User.AddUser.RoleEmpty"))
 	}
 
 	var pri int32 = common.PrivUser
@@ -187,27 +187,27 @@ func (s *ADAServiceV2) AddUser(ctx context.Context, in *v2.AddUserReq) (*v2.AddU
 	}
 
 	if !s.IsSuper(ctx) {
-		return nil, status.Error(codes.PermissionDenied, "没有操作权限")
+		return nil, status.Error(codes.PermissionDenied, s.I18n("NoPermission"))
 	}
 	_, err := server.GetUser(s.env, in.Username)
 	if err == nil {
-		return nil, status.Error(codes.Internal, "用户名已存在")
+		return nil, status.Error(codes.AlreadyExists, s.I18n("User.UsernameExists"))
 	}
 	if len(in.Password) < 8 {
-		return nil, status.Error(codes.Internal, "密码长度不符合要求，请输入8位以上密码")
+		return nil, status.Error(codes.Internal, s.I18n("User.PasswordLengthError"))
 	}
 
 	plainPwd, err := bcrypt.GenerateFromPassword([]byte(in.Password), bcrypt.DefaultCost)
 	if err != nil {
 		logger.Errorf("encrypt password err:%v", err)
-		return nil, status.Error(codes.Internal, "服务端内部错误")
+		return nil, status.Error(codes.Internal, s.I18n("InternalError"))
 	}
 
 	passStrength := util.CheckPassStrength(in.Password)
 	err = server.AddUser(s.env, in.Username, string(plainPwd), passStrength, in.Role, in.Mobile, in.Email, in.Remark, in.RealName, in.Department, in.Address, in.Post, pri)
 	if err != nil {
 		logger.Errorf("add user err:%v", err)
-		return nil, status.Errorf(codes.Internal, "新增用户失败")
+		return nil, status.Error(codes.Internal, s.I18n("User.AddUser.AddUserFailed"))
 	}
 
 	return &v2.AddUserReply{Result: common.RESP_SUCCESS}, nil
@@ -216,13 +216,13 @@ func (s *ADAServiceV2) AddUser(ctx context.Context, in *v2.AddUserReq) (*v2.AddU
 func (s *ADAServiceV2) UpdateUser(ctx context.Context, in *v2.UpdateUserReq) (*v2.UpdateUserReply, error) {
 	_, err := server.GetUser(s.env, in.Username)
 	if err != nil {
-		return nil, status.Errorf(codes.Unauthenticated, "无效的用户名或密码")
+		return nil, status.Error(codes.Unauthenticated, s.I18n("User.InvalidUsernameOrPassword"))
 	}
 
 	user, err := server.FindUserByName(s.env, in.Username)
 	if err != nil {
 		logger.Errorf("find user by name err:%v", err)
-		return nil, status.Errorf(codes.Unauthenticated, "获取用户信息失败")
+		return nil, status.Error(codes.Unauthenticated, s.I18n("User.UpdateUser.GetUserInfoFailed"))
 	}
 	user.Role = in.Role
 	user.Mobile = in.Mobile
@@ -235,7 +235,7 @@ func (s *ADAServiceV2) UpdateUser(ctx context.Context, in *v2.UpdateUserReq) (*v
 	err = server.UpdateUser(s.env, user)
 	if err != nil {
 		logger.Errorf("update user err:%v", err)
-		return nil, status.Errorf(codes.Internal, "更新用户信息失败")
+		return nil, status.Error(codes.Internal, s.I18n("User.UpdateUser.UpdateUserFailed"))
 	}
 	return &v2.UpdateUserReply{Result: common.RESP_SUCCESS}, nil
 }
@@ -251,44 +251,44 @@ func (s *ADAServiceV2) UpdateUserPassword(ctx context.Context, in *v2.UpdateUser
 	//get user info and checkout old password
 	user, err := server.GetUser(s.env, userName)
 	if err != nil {
-		return nil, status.Errorf(codes.Internal, "无效的用户名或密码")
+		return nil, status.Error(codes.Internal, s.I18n("User.InvalidUsernameOrPassword"))
 	}
 	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(in.OldPassword))
 	if err != nil {
-		return nil, status.Errorf(codes.Internal, "无效的用户名或密码")
+		return nil, status.Error(codes.Internal, s.I18n("User.InvalidUsernameOrPassword"))
 	}
 	if len(in.NewPassword) < 8 {
-		return nil, status.Errorf(codes.InvalidArgument, "密码长度过短，请输入8位以上密码")
+		return nil, status.Error(codes.Internal, s.I18n("User.PasswordLengthError"))
 	}
 	passwordHash, err := bcrypt.GenerateFromPassword([]byte(in.NewPassword), bcrypt.MinCost)
 	if err != nil {
 		logger.Errorf("encrypt password err:%v", err)
-		return nil, status.Errorf(codes.Internal, "加密过程异常，请重试")
+		return nil, status.Error(codes.Internal, s.I18n("User.UpdateUserPassword.EncryptPasswordError"))
 	}
 	passStrength := util.CheckPassStrength(in.NewPassword)
 	err = server.UpdateUserPassword(s.env, in.Username, string(passwordHash), passStrength)
 	if err != nil {
 		logger.Errorf("update password err:%v", err)
-		return nil, status.Errorf(codes.Internal, "修改密码失败")
+		return nil, status.Error(codes.Internal, s.I18n("User.UpdateUserPassword.UpdatePasswordFailed"))
 	}
 	return &v2.UpdateUserPasswordReply{Result: common.RESP_SUCCESS}, nil
 }
 
 func (s *ADAServiceV2) DeleteUser(ctx context.Context, in *v2.DeleteUserReq) (*v2.DeleteUserReply, error) {
 	if !s.IsSuper(ctx) {
-		return nil, status.Errorf(codes.PermissionDenied, "没有操作权限")
+		return nil, status.Error(codes.PermissionDenied, s.I18n("NoPermission"))
 	}
 	users, err := server.GetUser(s.env, in.Username)
 	if err != nil || users == nil {
-		return nil, status.Errorf(codes.Unauthenticated, "用户名已存在")
+		return nil, status.Error(codes.NotFound, s.I18n("User.UsernameExists"))
 	}
 	selfName := s.GetUser(ctx)
 	if selfName == in.Username {
-		return nil, status.Errorf(codes.Internal, "不能删除自己")
+		return nil, status.Error(codes.PermissionDenied, s.I18n("User.DeleteUser.CannotDeleteSelf"))
 	}
 	err = server.DeleteUser(s.env, in.Username)
 	if err != nil {
-		return nil, status.Errorf(codes.Internal, "删除用户失败")
+		return nil, status.Error(codes.Internal, s.I18n("User.DeleteUser.DeleteUserFailed"))
 	}
 	return &v2.DeleteUserReply{Result: common.RESP_SUCCESS}, nil
 }
@@ -296,20 +296,20 @@ func (s *ADAServiceV2) DeleteUser(ctx context.Context, in *v2.DeleteUserReq) (*v
 func (s *ADAServiceV2) CheckMfa(ctx context.Context, in *v2.CheckMfaReq) (*v2.CheckMfaReply, error) {
 	user, err := server.GetUser(s.env, in.Username)
 	if err != nil {
-		return nil, status.Errorf(codes.Unauthenticated, "无效的用户名或密码")
+		return nil, status.Error(codes.Unauthenticated, s.I18n("User.InvalidUsernameOrPassword"))
 	}
 
 	clt := UserLoginCountInfo.Get(in.Username)
 
 	if clt.LoginErrCount >= common.LoginErrorCount {
-		return nil, status.Errorf(codes.PermissionDenied, "登录错误次数达到上限,您的账户被锁五分钟")
+		return nil, status.Error(codes.PermissionDenied, s.I18n("User.LoginErrorLocked"))
 	}
 
 	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(in.Password))
 	if err != nil {
 		_ = UserLoginCountInfo.SetLoginErrCount(in.Username, 1)
 
-		return nil, status.Error(codes.Unauthenticated, "无效的用户名或密码")
+		return nil, status.Error(codes.Unauthenticated, s.I18n("User.InvalidUsernameOrPassword"))
 	}
 
 	// 如果该字段存在值，则说明需要输入code
@@ -327,33 +327,33 @@ func (s *ADAServiceV2) EnableMfa(ctx context.Context, in *v2.EnableMfaReq) (*v2.
 	passWord := in.Password
 
 	if len(code) < 6 {
-		return nil, status.Errorf(codes.Internal, "参数异常")
+		return nil, status.Error(codes.InvalidArgument, s.I18n("InvalidArgument"))
 	}
 
 	user, err := server.GetUser(s.env, userName)
 	if err != nil {
-		return nil, status.Errorf(codes.Internal, "账户异常，请重试")
+		return nil, status.Error(codes.Internal, s.I18n("User.InvalidUsername"))
 	}
 
 	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(passWord))
 	if err != nil {
-		return nil, status.Errorf(codes.Internal, "用户密码错误")
+		return nil, status.Error(codes.Internal, s.I18n("User.InvalidPassword"))
 	}
 
 	mfaCode, err := strconv.Atoi(in.MfaCode)
 	if err != nil {
-		return nil, status.Errorf(codes.InvalidArgument, "参数异常")
+		return nil, status.Error(codes.InvalidArgument, s.I18n("InvalidArgument"))
 	}
 	ok := util.TotpCheck(secret, mfaCode)
 	if !ok {
-		return nil, status.Errorf(codes.Internal, "验证码错误")
+		return nil, status.Error(codes.Internal, s.I18n("User.InvalidMfaCode"))
 	}
 
 	user.Secret = secret
 	err = server.UpdateUserSecret(s.env, user)
 	if err != nil {
 		logger.Errorf("update user secret err:%v", err)
-		return nil, err
+		return nil, status.Error(codes.Internal, s.I18n("User.EnableMfa.UpdateSecretFailed"))
 	}
 
 	return &v2.EnableMfaReply{Result: "SUCCESS"}, nil
@@ -363,17 +363,17 @@ func (s *ADAServiceV2) DisableMfa(ctx context.Context, in *v2.DisableMfaReq) (*v
 	username := in.Username
 
 	if username == "" {
-		return nil, status.Errorf(codes.Unauthenticated, "无效的用户名")
+		return nil, status.Error(codes.Unauthenticated, s.I18n("User.InvalidUsername"))
 	}
 
 	user, err := server.GetUser(s.env, username)
 	if err != nil {
-		return nil, status.Errorf(codes.Unauthenticated, "无效的用户名")
+		return nil, status.Error(codes.Unauthenticated, s.I18n("User.InvalidUsername"))
 	}
 
 	err = server.DisableMfa(s.env, user)
 	if err != nil {
-		return nil, status.Errorf(codes.Unauthenticated, "禁用失败")
+		return nil, status.Error(codes.Internal, s.I18n("User.DisableMfa.DisableFailed"))
 	}
 
 	return &v2.DisableMfaReply{}, nil
@@ -394,24 +394,24 @@ func (s *ADAServiceV2) UpdateAvatar(ctx context.Context, in *v2.UpdateAvatarReq)
 	bytes, err := base64.StdEncoding.DecodeString(file)
 	if err != nil {
 		logger.Errorf("decode string err: %s", err)
-		return ret, status.Error(codes.Internal, "上传头像失败")
+		return ret, status.Error(codes.Internal, s.I18n("User.UpdateAvatar.UploadFailed"))
 	}
 
 	if len(bytes)/8 > fileMaxSize {
-		return ret, status.Error(codes.Internal, "上传头像文件过大，请上传小于512Kb的图片文件")
+		return ret, status.Error(codes.InvalidArgument, s.I18n("User.UpdateAvatar.FileTooLarge"))
 	}
 
 	// 类型限制
 	contentType := http.DetectContentType(bytes)
 	fileType := strings.Split(contentType, "/")[1]
 	if _, ok := allowFileType[strings.ToUpper(fileType)]; !ok {
-		return ret, status.Error(codes.Internal, "仅限上传JPG，JPEG，PNG格式的图片文件")
+		return ret, status.Error(codes.InvalidArgument, s.I18n("User.UpdateAvatar.InvalidFileType"))
 	}
 
 	err = server.UpdateUserAvatar(s.env, in.UserId, file)
 	if err != nil {
 		logger.Errorf("update avatar err:%v", err)
-		return ret, status.Error(codes.Internal, "修改头像失败")
+		return ret, status.Error(codes.Internal, s.I18n("UpdateFailed"))
 	}
 
 	ret.Result = common.RESP_SUCCESS
@@ -421,24 +421,24 @@ func (s *ADAServiceV2) UpdateAvatar(ctx context.Context, in *v2.UpdateAvatarReq)
 
 func (s *ADAServiceV2) ResetPassword(ctx context.Context, in *v2.ResetPasswordReq) (*v2.ResetPasswordReply, error) {
 	if !s.IsSuper(ctx) {
-		return nil, status.Errorf(codes.Internal, "没有操作权限")
+		return nil, status.Error(codes.PermissionDenied, s.I18n("NoPermission"))
 	}
 
 	if len(in.NewPassword) < 8 {
-		return nil, status.Errorf(codes.Internal, "请输入长度大于8位的密码")
+		return nil, status.Error(codes.InvalidArgument, s.I18n("User.PasswordLengthError"))
 	}
 
 	passwordHash, err := bcrypt.GenerateFromPassword([]byte(in.NewPassword), bcrypt.MinCost)
 	if err != nil {
 		logger.Errorf("encrypt password err:%v", err)
-		return nil, status.Errorf(codes.Internal, "修改密码失败")
+		return nil, status.Error(codes.Internal, s.I18n("User.UpdateUserPassword.EncryptPasswordError"))
 	}
 
 	passStrength := util.CheckPassStrength(in.NewPassword)
 	err = server.UpdateUserPassword(s.env, in.Username, string(passwordHash), passStrength)
 	if err != nil {
 		logger.Errorf("update password err:%v", err)
-		return nil, status.Errorf(codes.Internal, "修改密码失败")
+		return nil, status.Error(codes.Internal, s.I18n("UpdateFailed"))
 	}
 
 	return &v2.ResetPasswordReply{Result: common.RESP_SUCCESS}, nil
@@ -448,7 +448,7 @@ func (s *ADAServiceV2) GetPwdUpdateTm(ctx context.Context, in *v2.GetPwdUpdateTm
 	user, err := server.GetUser(s.env, in.GetUserName())
 	if err != nil {
 		logger.Errorf("get user info by name fail. error: %s", err)
-		return nil, status.Errorf(codes.Internal, "未能找到用户信息")
+		return nil, status.Error(codes.Internal, s.I18n("User.GetPwdUpdateTm.UserNotFound"))
 	}
 	var b bool
 	if user.PwdUpdateTm.IsZero() {

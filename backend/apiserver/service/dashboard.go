@@ -30,7 +30,7 @@ func (s *ADAServiceV2) DashboardLogStats(ctx context.Context, in *v2.DashboardLo
 		domainList, err := server.GetDomainList(s.env)
 		if err != nil {
 			logger.Errorf("get domain list err:%v", err)
-			return nil, status.Errorf(codes.Internal, "Internal Error")
+			return nil, status.Error(codes.Internal, s.I18n("InternalError"))
 		}
 		for _, dm := range domainList {
 			if dm.Status == baseCommon.DomainStatusInit {

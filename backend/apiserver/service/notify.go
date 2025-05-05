@@ -29,7 +29,7 @@ func (s *ADAServiceV2) ListNotify(ctx context.Context, in *v2.ListNotifyReq) (*v
 	notifyList, total, err := server.FindAllNotify(s.env, in.MsgType, in.Status, in.StartTm, in.EndTm, in.OrderCreateTm, limit, offset)
 	if err != nil {
 		logger.Errorf("find notify failed,err:%v", err)
-		return ret, status.Errorf(codes.Internal, "获取消息列表失败")
+		return ret, status.Error(codes.Internal, s.I18n("QueryFailed"))
 	}
 
 	for _, n := range notifyList {
@@ -56,7 +56,7 @@ func (s *ADAServiceV2) UpdateNotify(ctx context.Context, in *v2.UpdateNotifyReq)
 	err := server.UpdateNotifyStatus(s.env, in.IDs)
 	if err != nil {
 		logger.Errorf("update notify status err:%v", err)
-		return &ret, status.Errorf(codes.Internal, "更新消息状态失败")
+		return &ret, status.Error(codes.Internal, s.I18n("UpdateFailed"))
 	}
 
 	ret.Result = RESP_SUCCESS
@@ -74,7 +74,7 @@ func (s *ADAServiceV2) ListNotifyConf(ctx context.Context, in *v2.ListNotifyConf
 	notifyConfList, count, err := server.FindAllNotifyConf(s.env, in.ModuleName, in.NotifyType, in.Endpoint, in.Enable, in.SortTime, limit, offset)
 	if err != nil {
 		logger.Errorf("find notify email conf failed,err:%v", err)
-		return nil, status.Errorf(codes.Internal, "获取告警配置列表失败")
+		return nil, status.Error(codes.Internal, s.I18n("QueryFailed"))
 	}
 
 	var ret v2.ListNotifyConfReply
@@ -107,11 +107,11 @@ func (s *ADAServiceV2) UpdateNotifyConf(ctx context.Context, in *v2.UpdateNotify
 	nc, err := server.GetNotifyConf(s.env, in.Id)
 	if err != nil {
 		logger.Errorf("get notigy conf by id fail. error: %s", err)
-		return &ret, status.Errorf(codes.Internal, "未能找到该通知模版")
+		return &ret, status.Error(codes.Internal, s.I18n("GetFailed"))
 	}
 
 	if !checkNotifyMetadata(nc.NotifyType, in.Metadata) {
-		return &ret, status.Errorf(codes.Internal, "通知信息Metadata不合法")
+		return &ret, status.Error(codes.InvalidArgument, s.I18n("InvalidArgument"))
 	}
 
 	nc.Enable = in.Enable
@@ -122,7 +122,7 @@ func (s *ADAServiceV2) UpdateNotifyConf(ctx context.Context, in *v2.UpdateNotify
 	err = server.UpdateNotifyConf(s.env, nc)
 	if err != nil {
 		logger.Errorf("UpdateNotifyConf err:%v", err)
-		return &ret, status.Errorf(codes.Internal, "更新告警通知失败")
+		return &ret, status.Error(codes.Internal, s.I18n("UpdateFailed"))
 	}
 
 	ret.Result = RESP_SUCCESS
@@ -131,7 +131,7 @@ func (s *ADAServiceV2) UpdateNotifyConf(ctx context.Context, in *v2.UpdateNotify
 
 func (s *ADAServiceV2) EnableNotifyConf(ctx context.Context, in *v2.EnableNotifyConfReq) (*v2.EnableNotifyConfReply, error) {
 	if !s.IsSuper(ctx) {
-		return nil, status.Errorf(codes.Internal, "没有操作权限")
+		return nil, status.Error(codes.Internal, s.I18n("NoPermission"))
 	}
 
 	ret := v2.EnableNotifyConfReply{Result: RESP_FAILED}
@@ -139,14 +139,14 @@ func (s *ADAServiceV2) EnableNotifyConf(ctx context.Context, in *v2.EnableNotify
 	nc, err := server.GetNotifyConf(s.env, in.Id)
 	if err != nil {
 		logger.Errorf("get notigy conf by id fail. error: %s", err)
-		return &ret, status.Errorf(codes.Internal, "未能找到告警配置信息")
+		return &ret, status.Error(codes.Internal, s.I18n("GetFailed"))
 	}
 
 	nc.Enable = in.Enable
 	err = server.UpdateNotifyConf(s.env, nc)
 	if err != nil {
 		logger.Errorf("update user err:%v", err)
-		return &ret, status.Errorf(codes.Internal, "更新用户信息失败")
+		return &ret, status.Error(codes.Internal, s.I18n("UpdateFailed"))
 	}
 
 	ret.Result = RESP_SUCCESS
@@ -185,11 +185,11 @@ func (s *ADAServiceV2) TestNotifyConf(ctx context.Context, in *v2.TestNotifyConf
 	case "email":
 		host, ok := in.Metadata["server"]
 		if !ok {
-			return &ret, status.Error(codes.Internal, "未传入服务器地址")
+			return &ret, status.Error(codes.InvalidArgument, s.I18n("InvalidArgument"))
 		}
 		port, ok := in.Metadata["port"]
 		if !ok {
-			return &ret, status.Error(codes.Internal, "未传入服务器端口")
+			return &ret, status.Error(codes.InvalidArgument, s.I18n("InvalidArgument"))
 		}
 		address := net.JoinHostPort(host, port)
 		_, err := net.DialTimeout("tcp", address, time.Second*20)
@@ -201,9 +201,8 @@ func (s *ADAServiceV2) TestNotifyConf(ctx context.Context, in *v2.TestNotifyConf
 		err = email.SendEmailV2(in.Metadata, "ADA-System", "<html><body><h3>"+testMessage+"/<h3></body></html>")
 		if err != nil {
 			logger.Infof("test send alarm email failed: %v", err)
-			logger.Debugf("eq %t?", strings.ContainsAny(err.Error(), "too many message send today"))
-			if err.Error() == "550 too many message send today." {
-				ret.Msg = fmt.Sprintf("（%s邮箱）每日接收邮件数量达到上限", in.Metadata["username"])
+			if strings.Contains(err.Error(), "too many message") {
+				ret.Msg = s.I18n("Notify.TestNotifyConf.EmailDailyLimit", in.Metadata["username"])
 				return &ret, nil
 			}
 			ret.Msg = err.Error()
@@ -226,13 +225,13 @@ func (s *ADAServiceV2) TestNotifyConf(ctx context.Context, in *v2.TestNotifyConf
 		defer resp.Body.Close()
 		if resp.StatusCode != 200 {
 			logger.Errorf("send webhook request(%s) done, but response code:%d", in.Endpoint, resp.StatusCode)
-			ret.Msg = fmt.Sprintf("请求已发送，但是响应Code异常：%d", resp.StatusCode)
+			ret.Msg = s.I18n("Notify.TestNotifyConf.WebhookResponseCodeError", resp.StatusCode)
 			return &ret, nil
 		}
 	}
 
 	ret.Result = RESP_SUCCESS
-	ret.Msg = "发送成功"
+	ret.Msg = s.I18n("Success")
 	return &ret, nil
 }
 
