@@ -38,7 +38,7 @@ func (s *ADAServiceV2) ScanRiskStats(ctx context.Context, in *v2.ScanRiskStatsRe
 		domainList, err := server.GetDomainList(s.env)
 		if err != nil {
 			logger.Errorf("get domain list err:%v", err)
-			return nil, status.Errorf(codes.Internal, "Internal Error")
+			return nil, status.Error(codes.Internal, s.I18n("InternalError"))
 		}
 		for _, dm := range domainList {
 			if dm.Status == baseCommon.DomainStatusInit {
@@ -56,7 +56,7 @@ func (s *ADAServiceV2) ScanRiskStats(ctx context.Context, in *v2.ScanRiskStatsRe
 		subTasks, err := server.GetLatestSubTaskByDomain(s.env, dName, in.Type)
 		if err != nil {
 			logger.Warnf("get latest scan task by domain err:%v", err)
-			return nil, status.Errorf(codes.Internal, "Internal Error")
+			return nil, status.Error(codes.Internal, s.I18n("InternalError"))
 		}
 		if subTasks == nil || len(subTasks) == 0 {
 			continue
@@ -109,7 +109,7 @@ func (s *ADAServiceV2) ListBaseline(ctx context.Context, in *v2.ListBaselineReq)
 	baseline, err := server.GetLatestTaskByType(s.env, "baseline")
 	if err != nil {
 		logger.Errorf("get latest baseline err:%v", err)
-		return ret, status.Errorf(codes.Internal, "获取基线错误")
+		return ret, status.Error(codes.Internal, s.I18n("ScanRisk.ListBaseline.GetBaselineFailed"))
 	}
 	if baseline == nil {
 		ret.List = nil
@@ -121,7 +121,7 @@ func (s *ADAServiceV2) ListBaseline(ctx context.Context, in *v2.ListBaselineReq)
 	subTasks, total, err := server.FindBaselineListSelect(s.env, baseline.ID.Hex(), in.Domain, in.SubType, in.Level, in.Result, in.Search, in.OrderUpdateTm, limit, offset)
 	if err != nil {
 		logger.Errorf("find baseline list err:%v", err)
-		return ret, status.Errorf(codes.Internal, "查询基线列表错误")
+		return ret, status.Error(codes.Internal, s.I18n("ScanRisk.ListBaseline.GetBaselineListFailed"))
 	}
 
 	var instanceList []map[string]interface{}
@@ -131,7 +131,7 @@ func (s *ADAServiceV2) ListBaseline(ctx context.Context, in *v2.ListBaselineReq)
 		err = json.Unmarshal(byteData, &instanceList)
 		if err != nil {
 			logger.Errorf("json unmarshal reuslt.data.instance_list err:%v", err)
-			return ret, status.Errorf(codes.Internal, "数据解析出错")
+			return ret, status.Error(codes.Internal, s.I18n("ScanRisk.DataParseError"))
 		}
 
 		ret.List = append(ret.List, &v2.ListBaselineReply_Details{
@@ -157,7 +157,7 @@ func (s *ADAServiceV2) GetBaseline(ctx context.Context, in *v2.GetBaselineReq) (
 	subTask, err := server.GetScanSubTaskById(s.env, in.ID)
 	if err != nil {
 		logger.Errorf("get baseline err:%v", err)
-		return nil, status.Errorf(codes.Internal, "获取基线错误")
+		return nil, status.Error(codes.Internal, s.I18n("ScanRisk.GetBaseline.GetBaselineFailed"))
 	}
 
 	var instanceList []map[string]interface{}
@@ -165,7 +165,7 @@ func (s *ADAServiceV2) GetBaseline(ctx context.Context, in *v2.GetBaselineReq) (
 	err = json.Unmarshal(byteData, &instanceList)
 	if err != nil {
 		logger.Errorf("json unmarshal reuslt.data.instance_list err:%v", err)
-		return nil, status.Errorf(codes.Internal, "数据解析出错")
+		return nil, status.Error(codes.Internal, s.I18n("ScanRisk.DataParseError"))
 	}
 
 	var entries []*v2.GetBaselineReplyEntryInfo
@@ -203,7 +203,7 @@ func (s *ADAServiceV2) ListLeak(ctx context.Context, in *v2.ListLeakReq) (*v2.Li
 	leak, err := server.GetLatestTaskByType(s.env, "leak")
 	if err != nil {
 		logger.Errorf("get latest leak err:%v", err)
-		return ret, status.Errorf(codes.Internal, "获取漏洞错误")
+		return ret, status.Error(codes.Internal, s.I18n("ScanRisk.ListLeak.GetLeakFailed"))
 	}
 	if leak == nil {
 		ret.List = nil
@@ -215,7 +215,7 @@ func (s *ADAServiceV2) ListLeak(ctx context.Context, in *v2.ListLeakReq) (*v2.Li
 	subTasks, total, err := server.FindLeakListSelect(s.env, leak.ID.Hex(), in.Domain, in.SubType, in.Level, in.Result, in.Search, in.StartTm, in.EndTm, in.OrderUpdateTm, limit, offset)
 	if err != nil {
 		logger.Errorf("find leak list err:%v", err)
-		return ret, status.Errorf(codes.Internal, "查询漏洞列表错误")
+		return ret, status.Error(codes.Internal, s.I18n("ScanRisk.ListLeak.GetLeakListFailed"))
 	}
 
 	for _, t := range subTasks {
@@ -251,7 +251,7 @@ func (s *ADAServiceV2) ListWeakPwd(ctx context.Context, in *v2.ListWeakPwdReq) (
 	weakPwd, err := server.GetLatestTaskByType(s.env, "weakpwd")
 	if err != nil {
 		logger.Errorf("get latest weakpwd err:%v", err)
-		return ret, status.Errorf(codes.Internal, "获取弱口令列表错误")
+		return ret, status.Error(codes.Internal, s.I18n("ScanRisk.ListWeakPwd.GetWeakPwdFailed"))
 	}
 	if weakPwd == nil {
 		ret.List = nil
@@ -263,7 +263,7 @@ func (s *ADAServiceV2) ListWeakPwd(ctx context.Context, in *v2.ListWeakPwdReq) (
 	subTasks, total, err := server.FindWeakPwdListSelect(s.env, weakPwd.ID.Hex(), in.Domain, limit, offset)
 	if err != nil {
 		logger.Errorf("find weakpwd list err:%v", err)
-		return ret, status.Errorf(codes.Internal, "查询弱口令列表错误")
+		return ret, status.Error(codes.Internal, s.I18n("ScanRisk.ListWeakPwd.GetWeakPwdListFailed"))
 	}
 
 	// debug
@@ -277,7 +277,7 @@ func (s *ADAServiceV2) ListWeakPwd(ctx context.Context, in *v2.ListWeakPwdReq) (
 		err = json.Unmarshal(byteData, &userList)
 		if err != nil {
 			logger.Errorf("json unmarshal reuslt.data.users err:%v", err)
-			return ret, status.Errorf(codes.Internal, "数据解析出错")
+			return ret, status.Error(codes.Internal, s.I18n("ScanRisk.DataParseError"))
 		}
 
 		if len(in.Domain) > 0 {
@@ -342,7 +342,7 @@ func (s *ADAServiceV2) ListScanTask(ctx context.Context, in *v2.ListScanTaskReq)
 	taskList, total, err := server.FindScanTasksSelect(s.env, in.Type, in.Status, in.Cycle, in.StartTm, in.EndTm, in.OrderCreateTm, in.OrderUpdateTm, limit, offset)
 	if err != nil {
 		logger.Errorf("find alert activity by event id :%v", err)
-		return ret, status.Errorf(codes.Internal, "查询告警行为异常")
+		return ret, status.Error(codes.Internal, s.I18n("ScanRisk.GetScanTaskListFailed"))
 	}
 
 	for _, t := range taskList {
@@ -371,7 +371,7 @@ func (s *ADAServiceV2) GetScanTask(ctx context.Context, in *v2.GetScanTaskReq) (
 	task, err := server.GetScanTasksById(s.env, in.ID)
 	if err != nil {
 		logger.Errorf("get scan task by id(%s) err:%v", in.ID, err)
-		return nil, status.Errorf(codes.Internal, "获取任务失败")
+		return nil, status.Error(codes.Internal, s.I18n("ScanRisk.GetScanTaskFailed"))
 	}
 
 	ret := &v2.GetScanTaskReply{
@@ -394,7 +394,7 @@ func (s *ADAServiceV2) GetScanTask(ctx context.Context, in *v2.GetScanTaskReq) (
 	subTasks, total, err := server.FindSubScanTasks(s.env, task.ID.Hex(), limit, offset)
 	if err != nil {
 		logger.Errorf("find sub tasks list err:%v", err)
-		return nil, status.Errorf(codes.Internal, "查询子任务列表错误")
+		return nil, status.Error(codes.Internal, s.I18n("ScanRisk.GetScanTaskListFailed"))
 	}
 
 	for _, t := range subTasks {
@@ -492,18 +492,18 @@ func (s *ADAServiceV2) AddScanTask(ctx context.Context, in *v2.AddScanTaskReq) (
 		dm, _ := server.GetDomainByName(s.env, domain)
 		if dm == nil {
 			logger.Errorf("get domain(name:%s) by name failed", domain)
-			return &ret, status.Errorf(codes.InvalidArgument, "无效的参数")
+			return &ret, status.Error(codes.InvalidArgument, s.I18n("InvalidArgument"))
 		}
 
 		// check scan tmpl exist by id
 		tmplIns, _ := server.GetScanTmplById(s.env, tmplId)
 		if tmplIns == nil {
 			logger.Warnf("get scan tmpl(id:%s) by id faild", tmplId)
-			return &ret, status.Errorf(codes.InvalidArgument, "无效的参数")
+			return &ret, status.Error(codes.InvalidArgument, s.I18n("InvalidArgument"))
 		}
 		if tmplIns.Type != in.Type {
 			logger.Warnf("get scan tmpl(id:%s) faild, it's type is:%s", tmplId, tmplIns.Type)
-			return &ret, status.Errorf(codes.InvalidArgument, "无效的参数")
+			return &ret, status.Error(codes.InvalidArgument, s.I18n("InvalidArgument"))
 		}
 
 		plans[domain] = tmplId
@@ -557,7 +557,7 @@ func (s *ADAServiceV2) RecheckScanTask(ctx context.Context, in *v2.RecheckScanTa
 
 func (s *ADAServiceV2) DeleteScanTask(ctx context.Context, in *v2.DeleteScanTaskReq) (*v2.DeleteScanTaskReply, error) {
 	if !s.IsSuper(ctx) {
-		return nil, status.Errorf(codes.PermissionDenied, "没有操作权限")
+		return nil, status.Error(codes.PermissionDenied, s.I18n("NoPermission"))
 	}
 
 	ret := v2.DeleteScanTaskReply{Result: RESP_FAILED}
@@ -565,7 +565,7 @@ func (s *ADAServiceV2) DeleteScanTask(ctx context.Context, in *v2.DeleteScanTask
 	task, err := server.GetScanTasksById(s.env, in.ID)
 	if err != nil {
 		logger.Errorf("get scan task by id(%s) err:%v", in.ID, err)
-		return &ret, status.Errorf(codes.Internal, "获取任务失败")
+		return &ret, status.Error(codes.Internal, s.I18n("ScanRisk.GetScanTaskFailed"))
 	}
 
 	// 如果是weakpwd类型的，需要删除tb_domain_xxx_hash表
@@ -579,7 +579,7 @@ func (s *ADAServiceV2) DeleteScanTask(ctx context.Context, in *v2.DeleteScanTask
 	err = server.DeleteScanTasks(s.env, in.ID)
 	if err != nil {
 		logger.Errorf("get scan task by id(%s) err:%v", in.ID, err)
-		return &ret, status.Errorf(codes.Internal, "获取任务失败")
+		return &ret, status.Error(codes.Internal, s.I18n("ScanRisk.GetScanTaskFailed"))
 	}
 
 	ret.Result = RESP_SUCCESS
@@ -590,7 +590,7 @@ func (s *ADAServiceV2) ListScanConf(ctx context.Context, in *v2.ListScanConfReq)
 	cnfList, err := server.FindAllScanConf(s.env)
 	if err != nil {
 		logger.Errorf("get scan conf err:%v", err)
-		return nil, status.Errorf(codes.Internal, "获取条目失败")
+		return nil, status.Error(codes.Internal, s.I18n("ScanRisk.ScanConf.GetScanConfFailed"))
 	}
 
 	var ret v2.ListScanConfReply
@@ -621,7 +621,7 @@ func (s *ADAServiceV2) ListScanConf(ctx context.Context, in *v2.ListScanConfReq)
 
 func (s *ADAServiceV2) SetScanConf(ctx context.Context, in *v2.SetScanConfReq) (*v2.SetScanConfReply, error) {
 	if !s.IsSuper(ctx) {
-		return nil, status.Errorf(codes.PermissionDenied, "没有操作权限")
+		return nil, status.Error(codes.PermissionDenied, s.I18n("NoPermission"))
 	}
 
 	ret := v2.SetScanConfReply{Result: RESP_FAILED}
@@ -630,7 +630,7 @@ func (s *ADAServiceV2) SetScanConf(ctx context.Context, in *v2.SetScanConfReq) (
 	err := server.UpdateScanConf(s.env, in.ID, updater)
 	if err != nil {
 		logger.Errorf("update scan conf err:%v", err)
-		return nil, status.Errorf(codes.Internal, "更新失败")
+		return nil, status.Error(codes.Internal, s.I18n("ScanRisk.ScanConf.UpdateFailed"))
 	}
 
 	ret.Result = common.RESP_SUCCESS
@@ -641,7 +641,7 @@ func (s *ADAServiceV2) GetScanConf(ctx context.Context, in *v2.GetScanConfReq) (
 	cnf, err := server.GetScanConfById(s.env, in.ID)
 	if err != nil {
 		logger.Errorf("get scan conf(id:%s) err:%v", in.ID, err)
-		return nil, status.Errorf(codes.Internal, "获取条目失败")
+		return nil, status.Error(codes.Internal, s.I18n("ScanRisk.ScanConf.GetScanConfFailed"))
 	}
 
 	ret := v2.GetScanConfReply{
@@ -664,7 +664,7 @@ func (s *ADAServiceV2) GetScanConf(ctx context.Context, in *v2.GetScanConfReq) (
 
 func (s *ADAServiceV2) UpdateScanConf(ctx context.Context, in *v2.UpdateScanConfReq) (*v2.UpdateScanConfReply, error) {
 	if !s.IsSuper(ctx) {
-		return nil, status.Errorf(codes.PermissionDenied, "没有操作权限")
+		return nil, status.Error(codes.PermissionDenied, s.I18n("NoPermission"))
 	}
 
 	ret := v2.UpdateScanConfReply{Result: RESP_FAILED}
@@ -672,7 +672,7 @@ func (s *ADAServiceV2) UpdateScanConf(ctx context.Context, in *v2.UpdateScanConf
 	_, err := server.GetScanConfById(s.env, in.ID)
 	if err != nil {
 		logger.Errorf("get scan conf(id:%s) err:%v", in.ID, err)
-		return &ret, status.Errorf(codes.Internal, "获取条目失败")
+		return &ret, status.Error(codes.Internal, s.I18n("ScanRisk.ScanConf.GetScanConfFailed"))
 	}
 
 	var plans = make(map[string]string)
@@ -693,14 +693,14 @@ func (s *ADAServiceV2) UpdateScanConf(ctx context.Context, in *v2.UpdateScanConf
 	}
 
 	if len(plans) == 0 {
-		return &ret, status.Errorf(codes.InvalidArgument, "无效的参数")
+		return &ret, status.Error(codes.InvalidArgument, s.I18n("InvalidArgument"))
 	}
 
 	updater := bson.M{"plans": plans, "update_tm": time.Now()}
 	err = server.UpdateScanConf(s.env, in.ID, updater)
 	if err != nil {
 		logger.Errorf("update scan conf err:%v", err)
-		return nil, status.Errorf(codes.Internal, "更新失败")
+		return nil, status.Error(codes.Internal, s.I18n("ScanRisk.ScanConf.UpdateFailed"))
 	}
 
 	ret.Result = common.RESP_SUCCESS
@@ -711,7 +711,7 @@ func (s *ADAServiceV2) GetScanTmplNames(ctx context.Context, in *v2.GetScanTmplN
 	tmplList, err := server.FindScanTmplSelect(s.env, in.Type, 100, 0)
 	if err != nil {
 		logger.Errorf("list scan tmpl err:%v", err)
-		return nil, status.Errorf(codes.Internal, "获取条目失败")
+		return nil, status.Error(codes.Internal, s.I18n("ScanRisk.ScanTmpl.GetScanTmplNamesFailed"))
 	}
 
 	var ret v2.GetScanTmplNamesReply
@@ -727,7 +727,7 @@ func (s *ADAServiceV2) ListScanTmpl(ctx context.Context, in *v2.ListScanTmplReq)
 	tmplList, err := server.FindScanTmplSelect(s.env, in.Type, int64(limit), int64(offset))
 	if err != nil {
 		logger.Errorf("list scan tmpl err:%v", err)
-		return nil, status.Errorf(codes.Internal, "获取条目失败")
+		return nil, status.Error(codes.Internal, s.I18n("ScanRisk.ScanTmpl.GetScanTmplFailed"))
 	}
 
 	var ret v2.ListScanTmplReply
@@ -755,7 +755,7 @@ func (s *ADAServiceV2) GetScanTmpl(ctx context.Context, in *v2.GetScanTmplReq) (
 	tmpl, err := server.GetScanTmplById(s.env, in.ID)
 	if err != nil {
 		logger.Errorf("get scan tmpl by id(%s) err:%v", in.ID, err)
-		return nil, status.Errorf(codes.Internal, "获取条目失败")
+		return nil, status.Error(codes.Internal, s.I18n("ScanRisk.ScanTmpl.GetScanTmplFailed"))
 	}
 
 	var plugins []*v2.PluginInfo
@@ -787,24 +787,24 @@ func (s *ADAServiceV2) UpdateScanTmpl(ctx context.Context, in *v2.UpdateScanTmpl
 	ret := v2.UpdateScanTmplReply{Result: RESP_FAILED}
 
 	if !s.IsSuper(ctx) {
-		return &ret, status.Errorf(codes.PermissionDenied, "没有操作权限")
+		return &ret, status.Error(codes.PermissionDenied, s.I18n("NoPermission"))
 	}
 
 	tmpl, err := server.GetScanTmplById(s.env, in.ID)
 	if err != nil {
-		return &ret, status.Errorf(codes.Internal, "条目不存在")
+		return &ret, status.Error(codes.Internal, s.I18n("ScanRisk.ScanTmpl.GetScanTmplFailed"))
 	}
 
 	plugins, err := getPluginList(s.env, tmpl.Type, in.Plugins)
 	if err != nil {
 		logger.Errorf("get plugin list err:%v", err)
-		return &ret, status.Errorf(codes.Internal, "更新添加失败")
+		return &ret, status.Error(codes.Internal, s.I18n("ScanRisk.ScanTmpl.UpdateFailed"))
 	}
 
 	err = server.UpdateScanTmpl(s.env, in.ID, in.Name, plugins)
 	if err != nil {
 		logger.Errorf("update scan tmpl err:%v", err)
-		return &ret, status.Errorf(codes.Internal, "更新添加失败")
+		return &ret, status.Error(codes.Internal, s.I18n("ScanRisk.ScanTmpl.UpdateFailed"))
 	}
 
 	ret.Result = common.RESP_SUCCESS
@@ -815,17 +815,17 @@ func (s *ADAServiceV2) DeleteScanTmpl(ctx context.Context, in *v2.DeleteScanTmpl
 	ret := v2.DeleteScanTmplReply{Result: RESP_FAILED}
 
 	if !s.IsSuper(ctx) {
-		return &ret, status.Errorf(codes.PermissionDenied, "没有操作权限")
+		return &ret, status.Error(codes.PermissionDenied, s.I18n("NoPermission"))
 	}
 
 	tmpl, err := server.GetScanTmplById(s.env, in.ID)
 	if err != nil {
 		logger.Errorf("get scan tmpl by id(%s) err:%v", in.ID, err)
-		return &ret, status.Errorf(codes.Internal, "获取条目失败")
+		return &ret, status.Error(codes.Internal, s.I18n("ScanRisk.ScanTmpl.GetScanTmplFailed"))
 	}
 
 	if tmpl.TmplType == 1 {
-		return &ret, status.Errorf(codes.Canceled, "默认模板不可删除")
+		return &ret, status.Error(codes.Canceled, s.I18n("ScanRisk.ScanTmpl.DefaultTmplNotDelete"))
 	}
 
 	// TODO: delete the scan tmpl related domain in scan conf.
@@ -833,7 +833,7 @@ func (s *ADAServiceV2) DeleteScanTmpl(ctx context.Context, in *v2.DeleteScanTmpl
 	err = server.DeleteScanTmpl(s.env, in.ID)
 	if err != nil {
 		logger.Errorf("delete scan tmpl err:%v", err)
-		return &ret, status.Errorf(codes.Internal, "删除条目失败")
+		return &ret, status.Error(codes.Internal, s.I18n("ScanRisk.ScanTmpl.DeleteFailed"))
 	}
 
 	ret.Result = common.RESP_SUCCESS
@@ -844,24 +844,24 @@ func (s *ADAServiceV2) AddScanTmpl(ctx context.Context, in *v2.AddScanTmplReq) (
 	ret := v2.AddScanTmplReply{Result: RESP_FAILED}
 
 	if !s.IsSuper(ctx) {
-		return &ret, status.Errorf(codes.PermissionDenied, "没有操作权限")
+		return &ret, status.Error(codes.PermissionDenied, s.I18n("NoPermission"))
 	}
 
 	tmpl, _ := server.GetScanTmplByName(s.env, in.Name)
 	if tmpl != nil {
-		return &ret, status.Errorf(codes.Internal, "条目名称已存在")
+		return &ret, status.Error(codes.Internal, s.I18n("ScanRisk.ScanTmpl.NameExists"))
 	}
 
 	plugins, err := getPluginList(s.env, in.Type, in.Plugins)
 	if err != nil {
 		logger.Errorf("get plugin list err:%v", err)
-		return &ret, status.Errorf(codes.Internal, "条目添加失败")
+		return &ret, status.Error(codes.Internal, s.I18n("ScanRisk.ScanTmpl.AddFailed"))
 	}
 
 	err = server.AddScanTmpl(s.env, in.Name, in.Type, plugins)
 	if err != nil {
 		logger.Errorf("add scan tmpl err:%v", err)
-		return &ret, status.Errorf(codes.Internal, "条目添加失败")
+		return &ret, status.Error(codes.Internal, s.I18n("ScanRisk.ScanTmpl.AddFailed"))
 	}
 
 	ret.Result = common.RESP_SUCCESS
@@ -872,7 +872,7 @@ func (s *ADAServiceV2) ListScanPlugin(ctx context.Context, in *v2.ListScanPlugin
 	plugins, err := server.FindScanPluginSelect(s.env, in.Type)
 	if err != nil {
 		logger.Errorf("get scan plugins by type(%s) err:%v", in.Type, err)
-		return nil, status.Errorf(codes.Internal, "获取条目失败")
+		return nil, status.Error(codes.Internal, s.I18n("ScanRisk.ScanPlugin.GetScanPluginFailed"))
 	}
 
 	ret := v2.ListScanPluginReply{}

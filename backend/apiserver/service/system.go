@@ -33,7 +33,7 @@ func (s *ADAServiceV2) GetSystemInfo(ctx context.Context, in *v2.GetSystemInfoRe
 	sys, err := server.GetSystemInfo(s.env)
 	if err != nil {
 		logger.Errorf("get system info err: %s", err)
-		return nil, status.Errorf(codes.Internal, "未能找信息")
+		return nil, status.Error(codes.Internal, s.I18n("System.GetSystemInfoFailed"))
 	}
 
 	cpuTotal := s.env.RedisCli.HGet(ctx, cache.SysStatsInfoKey, "cpu_cores").Val()
@@ -80,7 +80,7 @@ func (s *ADAServiceV2) GetCompanyIcon(ctx context.Context, in *v2.GetCompanyIcon
 	si, err := server.GetSystemInfo(s.env)
 	if err != nil {
 		logger.Errorf("get system info err:%v", err)
-		return nil, status.Error(codes.Internal, "获取系统信息异常")
+		return nil, status.Error(codes.Internal, s.I18n("System.GetSystemInfoFailed"))
 	}
 
 	if si.CompanyIcon == "" {
@@ -88,13 +88,13 @@ func (s *ADAServiceV2) GetCompanyIcon(ctx context.Context, in *v2.GetCompanyIcon
 		fCnt, err := os.ReadFile(originIcon)
 		if err != nil {
 			logger.Warnf("read file err:%v", err)
-			return nil, status.Error(codes.Internal, "获取原始图标异常")
+			return nil, status.Error(codes.Internal, s.I18n("System.GetCompanyIconFailed"))
 		}
 		iconB64 := base64.StdEncoding.EncodeToString(fCnt)
 		err = server.UpdateCompanyIcon(s.env, si.ID, iconB64)
 		if err != nil {
 			logger.Warnf("update system info err:%v", err)
-			return nil, status.Error(codes.Internal, "更新图标异常")
+			return nil, status.Error(codes.Internal, s.I18n("System.UpdateCompanyIconFailed"))
 		}
 		return &v2.GetCompanyIconReply{Icon: si.CompanyIcon}, nil
 	}
@@ -112,12 +112,12 @@ func (s *ADAServiceV2) UpdateCompanyIcon(ctx context.Context, in *v2.UpdateCompa
 	iconByte, err := base64.StdEncoding.DecodeString(in.File)
 	if err != nil {
 		logger.Warnf("decode string err: %s", err)
-		return ret, status.Error(codes.Internal, "上传图标失败")
+		return ret, status.Error(codes.Internal, s.I18n("System.UpdateCompanyIconFailed"))
 	}
 
 	// 限制大小
 	if len(iconByte)/8 > fileMaxSize {
-		return ret, status.Error(codes.Internal, "请上传小于512KB的图片文件")
+		return ret, status.Error(codes.Internal, s.I18n("System.UpdateIconTooLarge"))
 	}
 
 	// Icon类型判断
@@ -133,19 +133,19 @@ func (s *ADAServiceV2) UpdateCompanyIcon(ctx context.Context, in *v2.UpdateCompa
 	}
 	if !allowExt {
 		logger.Warnf("invalid icon type %s", fileExt)
-		return ret, status.Error(codes.Internal, "仅限上传jpg/jpeg/png格式的图片文件")
+		return ret, status.Error(codes.Internal, s.I18n("System.UpdateIconInvalidType"))
 	}
 
 	si, err := server.GetSystemInfo(s.env)
 	if err != nil {
 		logger.Warnf("get system info err:%v", err)
-		return ret, status.Error(codes.Internal, "获取系统信息失败")
+		return ret, status.Error(codes.Internal, s.I18n("System.GetSystemInfoFailed"))
 	}
 
 	err = server.UpdateCompanyIcon(s.env, si.ID, in.File)
 	if err != nil {
 		logger.Warnf("get system info err:%v", err)
-		return ret, status.Error(codes.Internal, "更新图标失败")
+		return ret, status.Error(codes.Internal, s.I18n("System.UpdateCompanyIconFailed"))
 	}
 
 	ret.Result = RESP_SUCCESS
@@ -162,21 +162,21 @@ func (s *ADAServiceV2) UpdateNtpAddress(ctx context.Context, in *v2.UpdateNtpAdd
 	domainRegex := regexp.MustCompile(domainReg)
 	if net.ParseIP(in.Ntp) == nil && !domainRegex.MatchString(in.Ntp) {
 		logger.Infof("invalid ntp address %s", in.Ntp)
-		return ret, status.Error(codes.InvalidArgument, "无效的NTP地址")
+		return ret, status.Error(codes.InvalidArgument, s.I18n("System.UpdateNtpAddressFailed"))
 	}
 
 	// call system command to update ntp address
 	out, err := exec.Command("sudo", "ntpdate", in.Ntp).Output()
 	if err != nil {
 		logger.Warnf("update ntp(%s) err:%v, stdout:%s", in.Ntp, err, out)
-		return ret, status.Error(codes.Internal, "更新NTP地址失败")
+		return ret, status.Error(codes.Internal, s.I18n("System.UpdateNtpAddressFailed"))
 	}
 
 	// update ntp address in db
 	err = server.UpdateNtpAddress(s.env, in.Ntp)
 	if err != nil {
 		logger.Warnf("update ntp address(%s) err:%v", in.Ntp, err)
-		return ret, status.Error(codes.Internal, "更新NTP地址失败")
+		return ret, status.Error(codes.Internal, s.I18n("System.UpdateNtpAddressFailed"))
 	}
 
 	ret.Result = RESP_SUCCESS
@@ -193,7 +193,7 @@ func (s *ADAServiceV2) UpdateSystemLanguage(ctx context.Context, in *v2.UpdateSy
 	err := server.UpdateLanguage(s.env, in.Language)
 	if err != nil {
 		logger.Warnf("update system language err:%v", err)
-		return ret, status.Error(codes.Internal, "更新语言失败")
+		return ret, status.Error(codes.Internal, s.I18n("System.UpdateSystemLanguageFailed"))
 	}
 
 	s.language = in.Language
@@ -215,7 +215,7 @@ func (s *ADAServiceV2) GetSystemStats(ctx context.Context, in *v2.GetSystemStats
 	length, err := s.env.RedisCli.LLen(ctx, rdxKey).Result()
 	if err != nil {
 		logger.Errorf("redis get length(%s) err: %s", rdxKey, err)
-		return nil, status.Errorf(codes.Internal, "内部错误")
+		return nil, status.Error(codes.Internal, s.I18n("InternalError"))
 	}
 
 	start := 0
@@ -225,7 +225,7 @@ func (s *ADAServiceV2) GetSystemStats(ctx context.Context, in *v2.GetSystemStats
 	vals, err := s.env.RedisCli.LRange(ctx, rdxKey, int64(start), -1).Result()
 	if err != nil {
 		logger.Errorf("redis get stats err: %s", err)
-		return nil, status.Errorf(codes.Internal, "内部错误")
+		return nil, status.Error(codes.Internal, s.I18n("InternalError"))
 	}
 
 	ret := v2.GetSystemStatsReply{}
@@ -295,7 +295,7 @@ func (s *ADAServiceV2) ListAuditLog(ctx context.Context, in *v2.ListAuditLogReq)
 	res, total, err := server.FindAllAuditLog(s.env, query, sort, limit, offset)
 	if err != nil {
 		logger.Errorf("query listAuditLog err:%v", err)
-		return nil, status.Errorf(codes.Internal, "查询审核日志失败")
+		return nil, status.Error(codes.Internal, s.I18n("InternalError"))
 	}
 	ret := v2.ListAuditLogReply{}
 	for _, r := range res {
@@ -322,13 +322,13 @@ func (s *ADAServiceV2) ListAuditLog(ctx context.Context, in *v2.ListAuditLogReq)
 func (s *ADAServiceV2) NetworkDebug(ctx context.Context, in *v2.NetworkDebugReq) (*v2.NetworkDebugReply, error) {
 	//校验提交参数非法
 	// 如果存在特殊字符，抛出异常，防止系统命令执行
-	for _, ch := range []string{" ", "|", "&", ">", ">>", ";", ",", "^", "*", "$", "%", "/"} {
+	for _, ch := range []string{" ", "|", "&", ">", ">>", ";", ",", "^", "*", "$", "%", "/", ".."} {
 		if strings.Contains(in.Target, ch) {
-			return nil, status.Error(codes.InvalidArgument, "包含非法字符串")
+			return nil, status.Error(codes.InvalidArgument, s.I18n("System.NetworkDebug.InvalidTarget"))
 		}
 	}
 	if len(in.Target) > 25 {
-		return nil, status.Error(codes.InvalidArgument, "Target太长(超过25字符)")
+		return nil, status.Error(codes.InvalidArgument, s.I18n("System.NetworkDebug.TargetTooLong"))
 	}
 
 	diagCmd := &cmd.Cmd{}
@@ -342,7 +342,7 @@ func (s *ADAServiceV2) NetworkDebug(ctx context.Context, in *v2.NetworkDebugReq)
 	case "nc":
 		parts := strings.Split(in.Target, ":")
 		if len(parts) != 2 {
-			return nil, status.Error(codes.InvalidArgument, "NC命令语法为IP:Port")
+			return nil, status.Error(codes.InvalidArgument, s.I18n("System.NetworkDebug.NcSyntax"))
 		}
 		diagCmd = cmd.NewCmd("nc", "-vz", "-w", "10", parts[0], parts[1])
 	}
@@ -360,7 +360,7 @@ func (s *ADAServiceV2) NetworkDebug(ctx context.Context, in *v2.NetworkDebugReq)
 	select {
 	case <-timeoutCh:
 		//timeout
-		return nil, status.Error(codes.InvalidArgument, "请求命令超时(限制60秒)")
+		return nil, status.Error(codes.DeadlineExceeded, s.I18n("System.NetworkDebug.Timeout"))
 	case <-statusChan:
 		// done
 	default:
@@ -379,7 +379,7 @@ func (s *ADAServiceV2) GetLicense(ctx context.Context, in *v2.GetLicenseReq) (*v
 	licer, err := license.NewAdaLicense(s.env.RedisCli)
 	if err != nil {
 		logger.Errorf("new license client err:%v", err)
-		return &ret, status.Error(codes.Internal, "服务器内部错误")
+		return &ret, status.Error(codes.Internal, s.I18n("System.License.GetLicenseFailed"))
 	}
 
 	licInfo := licer.GetInfo()
@@ -401,19 +401,19 @@ func (s *ADAServiceV2) UpdateLicense(ctx context.Context, in *v2.UpdateLicenseRe
 
 	if len(in.LicenseKey) != 336 {
 		logger.Warnf("invalid license key:%s", in.LicenseKey)
-		return &ret, status.Error(codes.Internal, "License长度错误")
+		return &ret, status.Error(codes.Internal, s.I18n("System.License.InvalidLicenseKey"))
 	}
 
 	licer, err := license.NewAdaLicense(s.env.RedisCli)
 	if err != nil {
 		logger.Errorf("new license client err:%v", err)
-		return &ret, status.Error(codes.Internal, "服务器内部错误")
+		return &ret, status.Error(codes.Internal, s.I18n("System.License.UpdateLicenseFailed"))
 	}
 
 	err = licer.UpdateCnt(in.LicenseKey)
 	if err != nil {
 		logger.Errorf("update license cnt(%s) err:%v", in.LicenseKey, err)
-		return &ret, status.Error(codes.Internal, "更新License失败")
+		return &ret, status.Error(codes.Internal, s.I18n("System.License.UpdateLicenseFailed"))
 	}
 
 	ret.Result = RESP_SUCCESS
@@ -424,7 +424,7 @@ func (s *ADAServiceV2) SetSystemStatsCfg(ctx context.Context, in *v2.SetSystemSt
 	sys, err := server.GetSystemInfo(s.env)
 	if err != nil {
 		logger.Errorf("get system info err: %s", err)
-		return nil, status.Errorf(codes.Internal, "未能找信息")
+		return nil, status.Error(codes.Internal, s.I18n("System.GetSystemInfoFailed"))
 	}
 
 	var ret = v2.SetSystemStatsCfgReply{Result: RESP_FAILED}
@@ -433,7 +433,7 @@ func (s *ADAServiceV2) SetSystemStatsCfg(ctx context.Context, in *v2.SetSystemSt
 		exist, err := base.Contain(statsKey, sys.StatsCfg)
 		if err != nil || !exist {
 			logger.Warnf("invalid stats item %s", statsKey)
-			return &ret, status.Error(codes.InvalidArgument, "无效的监控项:"+statsKey)
+			return &ret, status.Error(codes.InvalidArgument, s.I18n("System.InvalidStatsItem", statsKey))
 		}
 
 		// update stats cfg
@@ -443,14 +443,14 @@ func (s *ADAServiceV2) SetSystemStatsCfg(ctx context.Context, in *v2.SetSystemSt
 	err = server.UpdateStatsCfg(s.env, sys.StatsCfg)
 	if err != nil {
 		logger.Errorf("update stats cfg err: %s", err)
-		return &ret, status.Errorf(codes.Internal, "更新监控配置失败")
+		return &ret, status.Error(codes.Internal, s.I18n("System.UpdateStatsCfgFailed"))
 	}
 
 	// update stats cfg in redis
 	err = s.env.RedisCli.HMSet(ctx, cache.SysStatsCfgKey, sys.StatsCfg).Err()
 	if err != nil {
 		logger.Errorf("update stats cfg cache err: %s", err)
-		return &ret, status.Errorf(codes.Internal, "更新监控配置失败")
+		return &ret, status.Error(codes.Internal, s.I18n("System.UpdateStatsCfgFailed"))
 	}
 
 	ret.Result = RESP_SUCCESS
