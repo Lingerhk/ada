@@ -3179,7 +3179,7 @@ type GetSystemInfoReply struct {
 	SystemName        string            `protobuf:"bytes,5,opt,name=systemName,proto3" json:"systemName,omitempty"`                                                                                      // 系统名称
 	CompanyName       string            `protobuf:"bytes,6,opt,name=companyName,proto3" json:"companyName,omitempty"`                                                                                    // 名称
 	CompanyWebsite    string            `protobuf:"bytes,7,opt,name=companyWebsite,proto3" json:"companyWebsite,omitempty"`                                                                              // 官网
-	CompanyIcon       string            `protobuf:"bytes,8,opt,name=companyIcon,proto3" json:"companyIcon,omitempty"`                                                                                    // Logo
+	ProductIcon       string            `protobuf:"bytes,8,opt,name=productIcon,proto3" json:"productIcon,omitempty"`                                                                                    // Logo
 	SystemVersion     string            `protobuf:"bytes,9,opt,name=systemVersion,proto3" json:"systemVersion,omitempty"`                                                                                // 系统版本
 	SystemInstallTm   string            `protobuf:"bytes,10,opt,name=systemInstallTm,proto3" json:"systemInstallTm,omitempty"`                                                                           // 安装时间
 	SystemUpgradeTm   string            `protobuf:"bytes,11,opt,name=systemUpgradeTm,proto3" json:"systemUpgradeTm,omitempty"`                                                                           // 上次升级时间
@@ -3276,9 +3276,9 @@ func (x *GetSystemInfoReply) GetCompanyWebsite() string {
 	return ""
 }
 
-func (x *GetSystemInfoReply) GetCompanyIcon() string {
+func (x *GetSystemInfoReply) GetProductIcon() string {
 	if x != nil {
-		return x.CompanyIcon
+		return x.ProductIcon
 	}
 	return ""
 }
@@ -3374,14 +3374,14 @@ func (x *GetSystemInfoReply) GetStatsCfg() map[string]string {
 	return nil
 }
 
-type GetCompanyIconReq struct {
+type GetProductIconReq struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 }
 
-func (x *GetCompanyIconReq) Reset() {
-	*x = GetCompanyIconReq{}
+func (x *GetProductIconReq) Reset() {
+	*x = GetProductIconReq{}
 	if protoimpl.UnsafeEnabled {
 		mi := &file_ada_proto_msgTypes[53]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -3389,13 +3389,13 @@ func (x *GetCompanyIconReq) Reset() {
 	}
 }
 
-func (x *GetCompanyIconReq) String() string {
+func (x *GetProductIconReq) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*GetCompanyIconReq) ProtoMessage() {}
+func (*GetProductIconReq) ProtoMessage() {}
 
-func (x *GetCompanyIconReq) ProtoReflect() protoreflect.Message {
+func (x *GetProductIconReq) ProtoReflect() protoreflect.Message {
 	mi := &file_ada_proto_msgTypes[53]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -3407,12 +3407,12 @@ func (x *GetCompanyIconReq) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use GetCompanyIconReq.ProtoReflect.Descriptor instead.
-func (*GetCompanyIconReq) Descriptor() ([]byte, []int) {
+// Deprecated: Use GetProductIconReq.ProtoReflect.Descriptor instead.
+func (*GetProductIconReq) Descriptor() ([]byte, []int) {
 	return file_ada_proto_rawDescGZIP(), []int{53}
 }
 
-type GetCompanyIconReply struct {
+type GetProductIconReply struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
@@ -3420,8 +3420,8 @@ type GetCompanyIconReply struct {
 	Icon string `protobuf:"bytes,1,opt,name=icon,proto3" json:"icon,omitempty"`
 }
 
-func (x *GetCompanyIconReply) Reset() {
-	*x = GetCompanyIconReply{}
+func (x *GetProductIconReply) Reset() {
+	*x = GetProductIconReply{}
 	if protoimpl.UnsafeEnabled {
 		mi := &file_ada_proto_msgTypes[54]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -3429,13 +3429,13 @@ func (x *GetCompanyIconReply) Reset() {
 	}
 }
 
-func (x *GetCompanyIconReply) String() string {
+func (x *GetProductIconReply) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*GetCompanyIconReply) ProtoMessage() {}
+func (*GetProductIconReply) ProtoMessage() {}
 
-func (x *GetCompanyIconReply) ProtoReflect() protoreflect.Message {
+func (x *GetProductIconReply) ProtoReflect() protoreflect.Message {
 	mi := &file_ada_proto_msgTypes[54]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -3447,19 +3447,19 @@ func (x *GetCompanyIconReply) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use GetCompanyIconReply.ProtoReflect.Descriptor instead.
-func (*GetCompanyIconReply) Descriptor() ([]byte, []int) {
+// Deprecated: Use GetProductIconReply.ProtoReflect.Descriptor instead.
+func (*GetProductIconReply) Descriptor() ([]byte, []int) {
 	return file_ada_proto_rawDescGZIP(), []int{54}
 }
 
-func (x *GetCompanyIconReply) GetIcon() string {
+func (x *GetProductIconReply) GetIcon() string {
 	if x != nil {
 		return x.Icon
 	}
 	return ""
 }
 
-type UpdateCompanyIconReq struct {
+type UpdateProductIconReq struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
@@ -3467,8 +3467,8 @@ type UpdateCompanyIconReq struct {
 	File string `protobuf:"bytes,1,opt,name=file,proto3" json:"file,omitempty"` // 将文件转为base64字符串传过来
 }
 
-func (x *UpdateCompanyIconReq) Reset() {
-	*x = UpdateCompanyIconReq{}
+func (x *UpdateProductIconReq) Reset() {
+	*x = UpdateProductIconReq{}
 	if protoimpl.UnsafeEnabled {
 		mi := &file_ada_proto_msgTypes[55]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -3476,13 +3476,13 @@ func (x *UpdateCompanyIconReq) Reset() {
 	}
 }
 
-func (x *UpdateCompanyIconReq) String() string {
+func (x *UpdateProductIconReq) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*UpdateCompanyIconReq) ProtoMessage() {}
+func (*UpdateProductIconReq) ProtoMessage() {}
 
-func (x *UpdateCompanyIconReq) ProtoReflect() protoreflect.Message {
+func (x *UpdateProductIconReq) ProtoReflect() protoreflect.Message {
 	mi := &file_ada_proto_msgTypes[55]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -3494,19 +3494,19 @@ func (x *UpdateCompanyIconReq) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use UpdateCompanyIconReq.ProtoReflect.Descriptor instead.
-func (*UpdateCompanyIconReq) Descriptor() ([]byte, []int) {
+// Deprecated: Use UpdateProductIconReq.ProtoReflect.Descriptor instead.
+func (*UpdateProductIconReq) Descriptor() ([]byte, []int) {
 	return file_ada_proto_rawDescGZIP(), []int{55}
 }
 
-func (x *UpdateCompanyIconReq) GetFile() string {
+func (x *UpdateProductIconReq) GetFile() string {
 	if x != nil {
 		return x.File
 	}
 	return ""
 }
 
-type UpdateCompanyIconReply struct {
+type UpdateProductIconReply struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
@@ -3514,8 +3514,8 @@ type UpdateCompanyIconReply struct {
 	Result string `protobuf:"bytes,1,opt,name=result,proto3" json:"result,omitempty"` //  success failed
 }
 
-func (x *UpdateCompanyIconReply) Reset() {
-	*x = UpdateCompanyIconReply{}
+func (x *UpdateProductIconReply) Reset() {
+	*x = UpdateProductIconReply{}
 	if protoimpl.UnsafeEnabled {
 		mi := &file_ada_proto_msgTypes[56]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -3523,13 +3523,13 @@ func (x *UpdateCompanyIconReply) Reset() {
 	}
 }
 
-func (x *UpdateCompanyIconReply) String() string {
+func (x *UpdateProductIconReply) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*UpdateCompanyIconReply) ProtoMessage() {}
+func (*UpdateProductIconReply) ProtoMessage() {}
 
-func (x *UpdateCompanyIconReply) ProtoReflect() protoreflect.Message {
+func (x *UpdateProductIconReply) ProtoReflect() protoreflect.Message {
 	mi := &file_ada_proto_msgTypes[56]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -3541,12 +3541,12 @@ func (x *UpdateCompanyIconReply) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use UpdateCompanyIconReply.ProtoReflect.Descriptor instead.
-func (*UpdateCompanyIconReply) Descriptor() ([]byte, []int) {
+// Deprecated: Use UpdateProductIconReply.ProtoReflect.Descriptor instead.
+func (*UpdateProductIconReply) Descriptor() ([]byte, []int) {
 	return file_ada_proto_rawDescGZIP(), []int{56}
 }
 
-func (x *UpdateCompanyIconReply) GetResult() string {
+func (x *UpdateProductIconReply) GetResult() string {
 	if x != nil {
 		return x.Result
 	}
@@ -15786,9 +15786,9 @@ var file_ada_proto_rawDesc = []byte{
 	0x0b, 0x63, 0x6f, 0x6d, 0x70, 0x61, 0x6e, 0x79, 0x4e, 0x61, 0x6d, 0x65, 0x12, 0x26, 0x0a, 0x0e,
 	0x63, 0x6f, 0x6d, 0x70, 0x61, 0x6e, 0x79, 0x57, 0x65, 0x62, 0x73, 0x69, 0x74, 0x65, 0x18, 0x07,
 	0x20, 0x01, 0x28, 0x09, 0x52, 0x0e, 0x63, 0x6f, 0x6d, 0x70, 0x61, 0x6e, 0x79, 0x57, 0x65, 0x62,
-	0x73, 0x69, 0x74, 0x65, 0x12, 0x20, 0x0a, 0x0b, 0x63, 0x6f, 0x6d, 0x70, 0x61, 0x6e, 0x79, 0x49,
-	0x63, 0x6f, 0x6e, 0x18, 0x08, 0x20, 0x01, 0x28, 0x09, 0x52, 0x0b, 0x63, 0x6f, 0x6d, 0x70, 0x61,
-	0x6e, 0x79, 0x49, 0x63, 0x6f, 0x6e, 0x12, 0x24, 0x0a, 0x0d, 0x73, 0x79, 0x73, 0x74, 0x65, 0x6d,
+	0x73, 0x69, 0x74, 0x65, 0x12, 0x20, 0x0a, 0x0b, 0x70, 0x72, 0x6f, 0x64, 0x75, 0x63, 0x74, 0x49,
+	0x63, 0x6f, 0x6e, 0x18, 0x08, 0x20, 0x01, 0x28, 0x09, 0x52, 0x0b, 0x70, 0x72, 0x6f, 0x64, 0x75,
+	0x63, 0x74, 0x49, 0x63, 0x6f, 0x6e, 0x12, 0x24, 0x0a, 0x0d, 0x73, 0x79, 0x73, 0x74, 0x65, 0x6d,
 	0x56, 0x65, 0x72, 0x73, 0x69, 0x6f, 0x6e, 0x18, 0x09, 0x20, 0x01, 0x28, 0x09, 0x52, 0x0d, 0x73,
 	0x79, 0x73, 0x74, 0x65, 0x6d, 0x56, 0x65, 0x72, 0x73, 0x69, 0x6f, 0x6e, 0x12, 0x28, 0x0a, 0x0f,
 	0x73, 0x79, 0x73, 0x74, 0x65, 0x6d, 0x49, 0x6e, 0x73, 0x74, 0x61, 0x6c, 0x6c, 0x54, 0x6d, 0x18,
@@ -15827,15 +15827,15 @@ var file_ada_proto_rawDesc = []byte{
 	0x74, 0x73, 0x43, 0x66, 0x67, 0x45, 0x6e, 0x74, 0x72, 0x79, 0x12, 0x10, 0x0a, 0x03, 0x6b, 0x65,
 	0x79, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x03, 0x6b, 0x65, 0x79, 0x12, 0x14, 0x0a, 0x05,
 	0x76, 0x61, 0x6c, 0x75, 0x65, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x05, 0x76, 0x61, 0x6c,
-	0x75, 0x65, 0x3a, 0x02, 0x38, 0x01, 0x22, 0x13, 0x0a, 0x11, 0x47, 0x65, 0x74, 0x43, 0x6f, 0x6d,
-	0x70, 0x61, 0x6e, 0x79, 0x49, 0x63, 0x6f, 0x6e, 0x52, 0x65, 0x71, 0x22, 0x29, 0x0a, 0x13, 0x47,
-	0x65, 0x74, 0x43, 0x6f, 0x6d, 0x70, 0x61, 0x6e, 0x79, 0x49, 0x63, 0x6f, 0x6e, 0x52, 0x65, 0x70,
+	0x75, 0x65, 0x3a, 0x02, 0x38, 0x01, 0x22, 0x13, 0x0a, 0x11, 0x47, 0x65, 0x74, 0x50, 0x72, 0x6f,
+	0x64, 0x75, 0x63, 0x74, 0x49, 0x63, 0x6f, 0x6e, 0x52, 0x65, 0x71, 0x22, 0x29, 0x0a, 0x13, 0x47,
+	0x65, 0x74, 0x50, 0x72, 0x6f, 0x64, 0x75, 0x63, 0x74, 0x49, 0x63, 0x6f, 0x6e, 0x52, 0x65, 0x70,
 	0x6c, 0x79, 0x12, 0x12, 0x0a, 0x04, 0x69, 0x63, 0x6f, 0x6e, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09,
 	0x52, 0x04, 0x69, 0x63, 0x6f, 0x6e, 0x22, 0x2a, 0x0a, 0x14, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65,
-	0x43, 0x6f, 0x6d, 0x70, 0x61, 0x6e, 0x79, 0x49, 0x63, 0x6f, 0x6e, 0x52, 0x65, 0x71, 0x12, 0x12,
+	0x50, 0x72, 0x6f, 0x64, 0x75, 0x63, 0x74, 0x49, 0x63, 0x6f, 0x6e, 0x52, 0x65, 0x71, 0x12, 0x12,
 	0x0a, 0x04, 0x66, 0x69, 0x6c, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x66, 0x69,
-	0x6c, 0x65, 0x22, 0x30, 0x0a, 0x16, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x43, 0x6f, 0x6d, 0x70,
-	0x61, 0x6e, 0x79, 0x49, 0x63, 0x6f, 0x6e, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x12, 0x16, 0x0a, 0x06,
+	0x6c, 0x65, 0x22, 0x30, 0x0a, 0x16, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x50, 0x72, 0x6f, 0x64,
+	0x75, 0x63, 0x74, 0x49, 0x63, 0x6f, 0x6e, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x12, 0x16, 0x0a, 0x06,
 	0x72, 0x65, 0x73, 0x75, 0x6c, 0x74, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x06, 0x72, 0x65,
 	0x73, 0x75, 0x6c, 0x74, 0x22, 0x27, 0x0a, 0x13, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x4e, 0x74,
 	0x70, 0x41, 0x64, 0x64, 0x72, 0x65, 0x73, 0x73, 0x52, 0x65, 0x71, 0x12, 0x10, 0x0a, 0x03, 0x6e,
@@ -17337,15 +17337,15 @@ var file_ada_proto_rawDesc = []byte{
 	0x2e, 0x47, 0x65, 0x74, 0x53, 0x79, 0x73, 0x74, 0x65, 0x6d, 0x49, 0x6e, 0x66, 0x6f, 0x52, 0x65,
 	0x71, 0x1a, 0x17, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x47, 0x65, 0x74, 0x53, 0x79, 0x73, 0x74, 0x65,
 	0x6d, 0x49, 0x6e, 0x66, 0x6f, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x44, 0x0a, 0x0e,
-	0x47, 0x65, 0x74, 0x43, 0x6f, 0x6d, 0x70, 0x61, 0x6e, 0x79, 0x49, 0x63, 0x6f, 0x6e, 0x12, 0x16,
-	0x2e, 0x61, 0x64, 0x61, 0x2e, 0x47, 0x65, 0x74, 0x43, 0x6f, 0x6d, 0x70, 0x61, 0x6e, 0x79, 0x49,
+	0x47, 0x65, 0x74, 0x50, 0x72, 0x6f, 0x64, 0x75, 0x63, 0x74, 0x49, 0x63, 0x6f, 0x6e, 0x12, 0x16,
+	0x2e, 0x61, 0x64, 0x61, 0x2e, 0x47, 0x65, 0x74, 0x50, 0x72, 0x6f, 0x64, 0x75, 0x63, 0x74, 0x49,
 	0x63, 0x6f, 0x6e, 0x52, 0x65, 0x71, 0x1a, 0x18, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x47, 0x65, 0x74,
-	0x43, 0x6f, 0x6d, 0x70, 0x61, 0x6e, 0x79, 0x49, 0x63, 0x6f, 0x6e, 0x52, 0x65, 0x70, 0x6c, 0x79,
-	0x22, 0x00, 0x12, 0x4d, 0x0a, 0x11, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x43, 0x6f, 0x6d, 0x70,
-	0x61, 0x6e, 0x79, 0x49, 0x63, 0x6f, 0x6e, 0x12, 0x19, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x55, 0x70,
-	0x64, 0x61, 0x74, 0x65, 0x43, 0x6f, 0x6d, 0x70, 0x61, 0x6e, 0x79, 0x49, 0x63, 0x6f, 0x6e, 0x52,
-	0x65, 0x71, 0x1a, 0x1b, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x43,
-	0x6f, 0x6d, 0x70, 0x61, 0x6e, 0x79, 0x49, 0x63, 0x6f, 0x6e, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22,
+	0x50, 0x72, 0x6f, 0x64, 0x75, 0x63, 0x74, 0x49, 0x63, 0x6f, 0x6e, 0x52, 0x65, 0x70, 0x6c, 0x79,
+	0x22, 0x00, 0x12, 0x4d, 0x0a, 0x11, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x50, 0x72, 0x6f, 0x64,
+	0x75, 0x63, 0x74, 0x49, 0x63, 0x6f, 0x6e, 0x12, 0x19, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x55, 0x70,
+	0x64, 0x61, 0x74, 0x65, 0x50, 0x72, 0x6f, 0x64, 0x75, 0x63, 0x74, 0x49, 0x63, 0x6f, 0x6e, 0x52,
+	0x65, 0x71, 0x1a, 0x1b, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x50,
+	0x72, 0x6f, 0x64, 0x75, 0x63, 0x74, 0x49, 0x63, 0x6f, 0x6e, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22,
 	0x00, 0x12, 0x4a, 0x0a, 0x10, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x4e, 0x74, 0x70, 0x41, 0x64,
 	0x64, 0x72, 0x65, 0x73, 0x73, 0x12, 0x18, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x55, 0x70, 0x64, 0x61,
 	0x74, 0x65, 0x4e, 0x74, 0x70, 0x41, 0x64, 0x64, 0x72, 0x65, 0x73, 0x73, 0x52, 0x65, 0x71, 0x1a,
@@ -17715,10 +17715,10 @@ var file_ada_proto_goTypes = []interface{}{
 	(*UpdateSensorVersionReply)(nil),                 // 50: ada.UpdateSensorVersionReply
 	(*GetSystemInfoReq)(nil),                         // 51: ada.GetSystemInfoReq
 	(*GetSystemInfoReply)(nil),                       // 52: ada.GetSystemInfoReply
-	(*GetCompanyIconReq)(nil),                        // 53: ada.GetCompanyIconReq
-	(*GetCompanyIconReply)(nil),                      // 54: ada.GetCompanyIconReply
-	(*UpdateCompanyIconReq)(nil),                     // 55: ada.UpdateCompanyIconReq
-	(*UpdateCompanyIconReply)(nil),                   // 56: ada.UpdateCompanyIconReply
+	(*GetProductIconReq)(nil),                        // 53: ada.GetProductIconReq
+	(*GetProductIconReply)(nil),                      // 54: ada.GetProductIconReply
+	(*UpdateProductIconReq)(nil),                     // 55: ada.UpdateProductIconReq
+	(*UpdateProductIconReply)(nil),                   // 56: ada.UpdateProductIconReply
 	(*UpdateNtpAddressReq)(nil),                      // 57: ada.UpdateNtpAddressReq
 	(*UpdateNtpAddressReply)(nil),                    // 58: ada.UpdateNtpAddressReply
 	(*UpdateSystemLanguageReq)(nil),                  // 59: ada.UpdateSystemLanguageReq
@@ -18050,8 +18050,8 @@ var file_ada_proto_depIdxs = []int32{
 	47,  // 119: ada.ADA.CmdSensor:input_type -> ada.CmdSensorReq
 	49,  // 120: ada.ADA.UpdateSensorVersion:input_type -> ada.UpdateSensorVersionReq
 	51,  // 121: ada.ADA.GetSystemInfo:input_type -> ada.GetSystemInfoReq
-	53,  // 122: ada.ADA.GetCompanyIcon:input_type -> ada.GetCompanyIconReq
-	55,  // 123: ada.ADA.UpdateCompanyIcon:input_type -> ada.UpdateCompanyIconReq
+	53,  // 122: ada.ADA.GetProductIcon:input_type -> ada.GetProductIconReq
+	55,  // 123: ada.ADA.UpdateProductIcon:input_type -> ada.UpdateProductIconReq
 	57,  // 124: ada.ADA.UpdateNtpAddress:input_type -> ada.UpdateNtpAddressReq
 	59,  // 125: ada.ADA.UpdateSystemLanguage:input_type -> ada.UpdateSystemLanguageReq
 	61,  // 126: ada.ADA.GetSystemStats:input_type -> ada.GetSystemStatsReq
@@ -18146,8 +18146,8 @@ var file_ada_proto_depIdxs = []int32{
 	48,  // 215: ada.ADA.CmdSensor:output_type -> ada.CmdSensorReply
 	50,  // 216: ada.ADA.UpdateSensorVersion:output_type -> ada.UpdateSensorVersionReply
 	52,  // 217: ada.ADA.GetSystemInfo:output_type -> ada.GetSystemInfoReply
-	54,  // 218: ada.ADA.GetCompanyIcon:output_type -> ada.GetCompanyIconReply
-	56,  // 219: ada.ADA.UpdateCompanyIcon:output_type -> ada.UpdateCompanyIconReply
+	54,  // 218: ada.ADA.GetProductIcon:output_type -> ada.GetProductIconReply
+	56,  // 219: ada.ADA.UpdateProductIcon:output_type -> ada.UpdateProductIconReply
 	58,  // 220: ada.ADA.UpdateNtpAddress:output_type -> ada.UpdateNtpAddressReply
 	60,  // 221: ada.ADA.UpdateSystemLanguage:output_type -> ada.UpdateSystemLanguageReply
 	63,  // 222: ada.ADA.GetSystemStats:output_type -> ada.GetSystemStatsReply
@@ -18866,7 +18866,7 @@ func file_ada_proto_init() {
 			}
 		}
 		file_ada_proto_msgTypes[53].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*GetCompanyIconReq); i {
+			switch v := v.(*GetProductIconReq); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -18878,7 +18878,7 @@ func file_ada_proto_init() {
 			}
 		}
 		file_ada_proto_msgTypes[54].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*GetCompanyIconReply); i {
+			switch v := v.(*GetProductIconReply); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -18890,7 +18890,7 @@ func file_ada_proto_init() {
 			}
 		}
 		file_ada_proto_msgTypes[55].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*UpdateCompanyIconReq); i {
+			switch v := v.(*UpdateProductIconReq); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -18902,7 +18902,7 @@ func file_ada_proto_init() {
 			}
 		}
 		file_ada_proto_msgTypes[56].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*UpdateCompanyIconReply); i {
+			switch v := v.(*UpdateProductIconReply); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -21054,8 +21054,8 @@ type ADAClient interface {
 	// 系统信息
 	// 1.基本信息
 	GetSystemInfo(ctx context.Context, in *GetSystemInfoReq, opts ...grpc.CallOption) (*GetSystemInfoReply, error)
-	GetCompanyIcon(ctx context.Context, in *GetCompanyIconReq, opts ...grpc.CallOption) (*GetCompanyIconReply, error)
-	UpdateCompanyIcon(ctx context.Context, in *UpdateCompanyIconReq, opts ...grpc.CallOption) (*UpdateCompanyIconReply, error)
+	GetProductIcon(ctx context.Context, in *GetProductIconReq, opts ...grpc.CallOption) (*GetProductIconReply, error)
+	UpdateProductIcon(ctx context.Context, in *UpdateProductIconReq, opts ...grpc.CallOption) (*UpdateProductIconReply, error)
 	UpdateNtpAddress(ctx context.Context, in *UpdateNtpAddressReq, opts ...grpc.CallOption) (*UpdateNtpAddressReply, error)
 	UpdateSystemLanguage(ctx context.Context, in *UpdateSystemLanguageReq, opts ...grpc.CallOption) (*UpdateSystemLanguageReply, error)
 	// 2.系统监控: load|cpu|mem|net_rx|net_tx
@@ -21385,18 +21385,18 @@ func (c *aDAClient) GetSystemInfo(ctx context.Context, in *GetSystemInfoReq, opt
 	return out, nil
 }
 
-func (c *aDAClient) GetCompanyIcon(ctx context.Context, in *GetCompanyIconReq, opts ...grpc.CallOption) (*GetCompanyIconReply, error) {
-	out := new(GetCompanyIconReply)
-	err := c.cc.Invoke(ctx, "/ada.ADA/GetCompanyIcon", in, out, opts...)
+func (c *aDAClient) GetProductIcon(ctx context.Context, in *GetProductIconReq, opts ...grpc.CallOption) (*GetProductIconReply, error) {
+	out := new(GetProductIconReply)
+	err := c.cc.Invoke(ctx, "/ada.ADA/GetProductIcon", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *aDAClient) UpdateCompanyIcon(ctx context.Context, in *UpdateCompanyIconReq, opts ...grpc.CallOption) (*UpdateCompanyIconReply, error) {
-	out := new(UpdateCompanyIconReply)
-	err := c.cc.Invoke(ctx, "/ada.ADA/UpdateCompanyIcon", in, out, opts...)
+func (c *aDAClient) UpdateProductIcon(ctx context.Context, in *UpdateProductIconReq, opts ...grpc.CallOption) (*UpdateProductIconReply, error) {
+	out := new(UpdateProductIconReply)
+	err := c.cc.Invoke(ctx, "/ada.ADA/UpdateProductIcon", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -22049,8 +22049,8 @@ type ADAServer interface {
 	// 系统信息
 	// 1.基本信息
 	GetSystemInfo(context.Context, *GetSystemInfoReq) (*GetSystemInfoReply, error)
-	GetCompanyIcon(context.Context, *GetCompanyIconReq) (*GetCompanyIconReply, error)
-	UpdateCompanyIcon(context.Context, *UpdateCompanyIconReq) (*UpdateCompanyIconReply, error)
+	GetProductIcon(context.Context, *GetProductIconReq) (*GetProductIconReply, error)
+	UpdateProductIcon(context.Context, *UpdateProductIconReq) (*UpdateProductIconReply, error)
 	UpdateNtpAddress(context.Context, *UpdateNtpAddressReq) (*UpdateNtpAddressReply, error)
 	UpdateSystemLanguage(context.Context, *UpdateSystemLanguageReq) (*UpdateSystemLanguageReply, error)
 	// 2.系统监控: load|cpu|mem|net_rx|net_tx
@@ -22220,11 +22220,11 @@ func (*UnimplementedADAServer) UpdateSensorVersion(context.Context, *UpdateSenso
 func (*UnimplementedADAServer) GetSystemInfo(context.Context, *GetSystemInfoReq) (*GetSystemInfoReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetSystemInfo not implemented")
 }
-func (*UnimplementedADAServer) GetCompanyIcon(context.Context, *GetCompanyIconReq) (*GetCompanyIconReply, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetCompanyIcon not implemented")
+func (*UnimplementedADAServer) GetProductIcon(context.Context, *GetProductIconReq) (*GetProductIconReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetProductIcon not implemented")
 }
-func (*UnimplementedADAServer) UpdateCompanyIcon(context.Context, *UpdateCompanyIconReq) (*UpdateCompanyIconReply, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method UpdateCompanyIcon not implemented")
+func (*UnimplementedADAServer) UpdateProductIcon(context.Context, *UpdateProductIconReq) (*UpdateProductIconReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateProductIcon not implemented")
 }
 func (*UnimplementedADAServer) UpdateNtpAddress(context.Context, *UpdateNtpAddressReq) (*UpdateNtpAddressReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateNtpAddress not implemented")
@@ -22903,38 +22903,38 @@ func _ADA_GetSystemInfo_Handler(srv interface{}, ctx context.Context, dec func(i
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_GetCompanyIcon_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetCompanyIconReq)
+func _ADA_GetProductIcon_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetProductIconReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ADAServer).GetCompanyIcon(ctx, in)
+		return srv.(ADAServer).GetProductIcon(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/ada.ADA/GetCompanyIcon",
+		FullMethod: "/ada.ADA/GetProductIcon",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ADAServer).GetCompanyIcon(ctx, req.(*GetCompanyIconReq))
+		return srv.(ADAServer).GetProductIcon(ctx, req.(*GetProductIconReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_UpdateCompanyIcon_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UpdateCompanyIconReq)
+func _ADA_UpdateProductIcon_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateProductIconReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ADAServer).UpdateCompanyIcon(ctx, in)
+		return srv.(ADAServer).UpdateProductIcon(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/ada.ADA/UpdateCompanyIcon",
+		FullMethod: "/ada.ADA/UpdateProductIcon",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ADAServer).UpdateCompanyIcon(ctx, req.(*UpdateCompanyIconReq))
+		return srv.(ADAServer).UpdateProductIcon(ctx, req.(*UpdateProductIconReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -24272,12 +24272,12 @@ var _ADA_serviceDesc = grpc.ServiceDesc{
 			Handler:    _ADA_GetSystemInfo_Handler,
 		},
 		{
-			MethodName: "GetCompanyIcon",
-			Handler:    _ADA_GetCompanyIcon_Handler,
+			MethodName: "GetProductIcon",
+			Handler:    _ADA_GetProductIcon_Handler,
 		},
 		{
-			MethodName: "UpdateCompanyIcon",
-			Handler:    _ADA_UpdateCompanyIcon_Handler,
+			MethodName: "UpdateProductIcon",
+			Handler:    _ADA_UpdateProductIcon_Handler,
 		},
 		{
 			MethodName: "UpdateNtpAddress",

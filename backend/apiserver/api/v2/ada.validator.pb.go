@@ -326,16 +326,16 @@ func (this *GetSystemInfoReply) Validate() error {
 	// Validation of proto3 map<> fields is unsupported.
 	return nil
 }
-func (this *GetCompanyIconReq) Validate() error {
+func (this *GetProductIconReq) Validate() error {
 	return nil
 }
-func (this *GetCompanyIconReply) Validate() error {
+func (this *GetProductIconReply) Validate() error {
 	return nil
 }
-func (this *UpdateCompanyIconReq) Validate() error {
+func (this *UpdateProductIconReq) Validate() error {
 	return nil
 }
-func (this *UpdateCompanyIconReply) Validate() error {
+func (this *UpdateProductIconReply) Validate() error {
 	return nil
 }
 func (this *UpdateNtpAddressReq) Validate() error {

@@ -178,8 +178,8 @@ var I18nLangEnMap = map[string]any{
 	// System module
 	"System": map[string]any{
 		"GetSystemInfoFailed":        "Get system info failed",
-		"GetCompanyIconFailed":       "Get company icon failed",
-		"UpdateCompanyIconFailed":    "Update company icon failed",
+		"GetProductIconFailed":       "Get product icon failed",
+		"UpdateProductIconFailed":    "Update product icon failed",
 		"UpdateIconTooLarge":         "Upload icon file too large, please upload an image smaller than 512KB",
 		"UpdateIconInvalidType":      "Upload icon file type not supported (only jpg/jpeg/png format)",
 		"UpdateNtpAddressFailed":     "Update ntp address failed",
