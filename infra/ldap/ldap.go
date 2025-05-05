@@ -13,8 +13,6 @@ import (
 	"strings"
 	"time"
 
-	logger "github.com/sirupsen/logrus"
-
 	ldap3 "github.com/go-ldap/ldap/v3"
 )
 
