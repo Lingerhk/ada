@@ -95,7 +95,6 @@ func (s *ADAServiceV2) ListThreat(ctx context.Context, in *v2.ListThreatReq) (*v
 	}
 
 	ret := v2.ListThreatReply{}
-	langType := s.getSysLanguage(ctx)
 
 	for _, r := range events {
 		ad, err := server.GetThreatDescByID(s.env, r.FlowId)
@@ -104,7 +103,7 @@ func (s *ADAServiceV2) ListThreat(ctx context.Context, in *v2.ListThreatReq) (*v
 			continue
 		}
 		eventTmpl := ad.EventTmplZH
-		if langType == bCommon.LangEn {
+		if s.language == bCommon.LangEn {
 			eventTmpl = ad.EventTmplEN
 		}
 
@@ -155,8 +154,6 @@ func (s *ADAServiceV2) GetThreat(ctx context.Context, in *v2.GetThreatReq) (*v2.
 		return nil, status.Errorf(codes.Internal, "查询告警事件异常")
 	}
 
-	langType := s.getSysLanguage(ctx)
-
 	var activities []*v2.ActivityDetails
 	for _, activityId := range ae.ActivityIds {
 		// 根据activityID获取activity
@@ -185,7 +182,7 @@ func (s *ADAServiceV2) GetThreat(ctx context.Context, in *v2.GetThreatReq) (*v2.
 	eventTmpl := ad.EventTmplZH
 	suggestion := ad.SuggestionZH
 	verifyDesc := ad.VerifyDescZH
-	if langType == bCommon.LangEn {
+	if s.language == bCommon.LangEn {
 		eventTmpl = ad.EventTmplEN
 		suggestion = ad.SuggestionEN
 		verifyDesc = ad.VerifyDescEN
@@ -366,12 +363,10 @@ func (s *ADAServiceV2) ListThreatRule(ctx context.Context, in *v2.ListThreatRule
 		return nil, status.Errorf(codes.Internal, "获取规则名称失败")
 	}
 
-	langType := s.getSysLanguage(ctx)
-
 	var ret v2.ListThreatRuleReply
 	for _, desc := range descList {
 		var name, typ string
-		if langType == bCommon.LangEn {
+		if s.language == bCommon.LangEn {
 			name = desc.NameEN
 			typ = desc.TypeEN
 		} else {
@@ -419,15 +414,13 @@ func (s *ADAServiceV2) ActionThreatRule(ctx context.Context, in *v2.ActionThreat
 func (s *ADAServiceV2) GetThreatNames(ctx context.Context, in *v2.GetThreatNamesReq) (*v2.GetThreatNamesReply, error) {
 	var mameMap = make(map[string]string)
 
-	langType := s.getSysLanguage(ctx)
-
 	if in.RuleId != "" {
 		desc, err := server.GetThreatDescByID(s.env, in.RuleId)
 		if err != nil {
 			logger.Errorf("get threat desc by id(%s) err:%v", in.RuleId, err)
 			return nil, status.Errorf(codes.Internal, "获取威胁名称失败")
 		}
-		if langType == bCommon.LangEn {
+		if s.language == bCommon.LangEn {
 			mameMap[desc.ID] = desc.NameEN
 		} else {
 			mameMap[desc.ID] = desc.NameZH
@@ -443,7 +436,7 @@ func (s *ADAServiceV2) GetThreatNames(ctx context.Context, in *v2.GetThreatNames
 	}
 
 	for _, desc := range descList {
-		if langType == bCommon.LangEn {
+		if s.language == bCommon.LangEn {
 			mameMap[desc.ID] = desc.NameEN
 		} else {
 			mameMap[desc.ID] = desc.NameZH
@@ -739,7 +732,7 @@ func (s *ADAServiceV2) AddThreatWhitelist(ctx context.Context, in *v2.AddThreatW
 	}
 
 	var wId string
-	if s.getSysLanguage(ctx) == bCommon.LangEn {
+	if s.language == bCommon.LangEn {
 		wId, err = server.AddThreatWhitelist(s.env, rule.ID, rule.NameEN, rule.TypeEN, in.Domain, in.Remark, in.Origin, rules)
 	} else {
 		wId, err = server.AddThreatWhitelist(s.env, rule.ID, rule.NameZH, rule.TypeZH, in.Domain, in.Remark, in.Origin, rules)

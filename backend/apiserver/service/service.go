@@ -55,7 +55,8 @@ var (
 
 // ADA grpc service struct
 type ADAServiceV2 struct {
-	env *config.Env
+	env      *config.Env
+	language string // system language: EN/ZH
 }
 
 // GrpcService is the grpc server and its configurations.
@@ -78,6 +79,8 @@ func New(env *config.Env, opt ...grpc.ServerOption) *GrpcService {
 	s := new(GrpcService)
 	s.env = env
 
+	lang := getSysLanguage(env)
+
 	opt = append(opt, keepAlive, grpc.UnaryInterceptor(s.interceptor))
 	opt = append(opt, grpc.MaxRecvMsgSize(1024*1024*32))
 	opt = append(opt, grpc.MaxSendMsgSize(1024*1024*32))
@@ -85,7 +88,7 @@ func New(env *config.Env, opt ...grpc.ServerOption) *GrpcService {
 	s.server = grpc.NewServer(opt...)
 	s.Use(s.recovery(), s.handle(), s.logging(), s.validate())
 
-	v2.RegisterADAServer(s.server, &ADAServiceV2{env})
+	v2.RegisterADAServer(s.server, &ADAServiceV2{env, lang})
 
 	return s
 }
@@ -261,11 +264,11 @@ func (s *GrpcService) logging() grpc.UnaryServerInterceptor {
 		argsStr := req.(fmt.Stringer).String()
 		fullMethod := args.FullMethod
 		logFields := logger.Fields{
-			"ip":            addr,
-			"path":          fullMethod,
-			"ts":            duration.Seconds(),
-			"timeout_quota": quota,
-			"args":          argsStr,
+			"ip":      addr,
+			"path":    fullMethod,
+			"ts":      duration.Seconds(),
+			"timeout": quota,
+			"args":    argsStr,
 		}
 		// add audit log
 		eventResult := "成功"
@@ -327,15 +330,6 @@ func (h *ADAServiceV2) IsSuper(ctx context.Context) bool {
 	}
 }
 
-// GetSysLanguage is ADAServiceV2's system language: EN/ZH
-func (h *ADAServiceV2) getSysLanguage(ctx context.Context) string {
-	lang := h.env.RedisCli.Get(ctx, "ada:server:system_language").Val()
-	if lang == "" {
-		return bCommon.LangZh
-	}
-	return lang
-}
-
 // 鉴权
 func authentication(u *util.UserClaim, fullMethod string) (bool, error) {
 	if u.Priv == common.PrivSuper {
@@ -377,4 +371,14 @@ func (s *GrpcService) validate() grpc.UnaryServerInterceptor {
 		}
 		return handler(ctx, req)
 	}
+}
+
+// get system language
+func getSysLanguage(env *config.Env) string {
+	sysInfo, err := server.GetSystemInfo(env)
+	if err != nil {
+		return bCommon.LangZh
+	}
+
+	return sysInfo.SystemLanguage
 }

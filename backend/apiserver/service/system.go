@@ -196,13 +196,7 @@ func (s *ADAServiceV2) UpdateSystemLanguage(ctx context.Context, in *v2.UpdateSy
 		return ret, status.Error(codes.Internal, "更新语言失败")
 	}
 
-	// update language in redis
-	err = s.env.RedisCli.Set(ctx, "ada:server:system_language", in.Language, 0).Err()
-	if err != nil {
-		logger.Warnf("update system language err:%v", err)
-		return ret, status.Error(codes.Internal, "更新语言失败")
-	}
-
+	s.language = in.Language
 	ret.Result = RESP_SUCCESS
 
 	return ret, nil
