@@ -47,8 +47,8 @@ service ADA {
   // 系统信息
   // 1.基本信息
   rpc GetSystemInfo(GetSystemInfoReq) returns (GetSystemInfoReply) {} //获取系统信息
-  rpc GetCompanyIcon(GetCompanyIconReq)returns(GetCompanyIconReply) {}
-  rpc UpdateCompanyIcon(UpdateCompanyIconReq)returns(UpdateCompanyIconReply) {}
+  rpc GetProductIcon(GetProductIconReq)returns(GetProductIconReply) {}
+  rpc UpdateProductIcon(UpdateProductIconReq)returns(UpdateProductIconReply) {}
   rpc UpdateNtpAddress(UpdateNtpAddressReq)returns(UpdateNtpAddressReply) {}
   rpc UpdateSystemLanguage(UpdateSystemLanguageReq)returns(UpdateSystemLanguageReply) {}
 
@@ -526,7 +526,7 @@ message GetSystemInfoReply {
   string systemName = 5; // 系统名称
   string companyName = 6; // 名称
   string companyWebsite = 7; // 官网
-  string companyIcon = 8; // Logo
+  string productIcon = 8; // Logo
   string systemVersion = 9; // 系统版本
   string systemInstallTm = 10; // 安装时间
   string systemUpgradeTm = 11; // 上次升级时间
@@ -542,15 +542,15 @@ message GetSystemInfoReply {
   map<string, string> statsCfg = 21; // 系统监控参数
 }
 
-message GetCompanyIconReq {}
-message GetCompanyIconReply {
+message GetProductIconReq {}
+message GetProductIconReply {
   string icon = 1;
 }
 
-message UpdateCompanyIconReq {
+message UpdateProductIconReq {
   string file = 1; // 将文件转为base64字符串传过来
 }
-message UpdateCompanyIconReply {
+message UpdateProductIconReply {
   string result = 1; //  success failed
 }
 

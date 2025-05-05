@@ -87,7 +87,7 @@ type SystemInfo struct {
 	SystemName      string             `bson:"system_name"`       // 系统名称
 	CompanyName     string             `bson:"company_name"`      // 公司名称
 	CompanyWebsite  string             `bson:"company_website"`   // 公司官网
-	CompanyIcon     string             `bson:"company_icon"`      // 公司Logo
+	ProductIcon     string             `bson:"product_icon"`      // 产品Logo
 	SystemVersion   string             `bson:"system_version"`    // 系统版本
 	UpgradeCheckUrl string             `bson:"upgrade_check_url"` // 新版本检测
 	NtpAddress      string             `bson:"ntp_address"`       // NTP服务器地址

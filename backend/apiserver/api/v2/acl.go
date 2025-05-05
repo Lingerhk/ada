@@ -4,8 +4,9 @@ package v2
 
 import (
 	"ada/backend/apiserver/common"
-	logger "github.com/sirupsen/logrus"
 	"strings"
+
+	logger "github.com/sirupsen/logrus"
 )
 
 var serviceName = _ADA_serviceDesc.ServiceName
@@ -67,7 +68,7 @@ var URLEventMap = map[string]string{
 	"/" + serviceName + "/" + "ResetPasswordReq":   "重置密码",
 
 	// 系统信息
-	"/" + serviceName + "/" + "UpdateCompanyIcon":    "更新产品Logo",
+	"/" + serviceName + "/" + "UpdateProductIcon":    "更新产品Logo",
 	"/" + serviceName + "/" + "UpdateNtpAddress":     "更新NTP地址",
 	"/" + serviceName + "/" + "UpdateSystemLanguage": "修改系统语言",
 	"/" + serviceName + "/" + "UpdateLicense":        "更新授权许可",

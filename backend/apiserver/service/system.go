@@ -57,7 +57,7 @@ func (s *ADAServiceV2) GetSystemInfo(ctx context.Context, in *v2.GetSystemInfoRe
 		SystemName:        sys.SystemName,
 		CompanyName:       sys.CompanyName,
 		CompanyWebsite:    sys.CompanyWebsite,
-		CompanyIcon:       sys.CompanyIcon,
+		ProductIcon:       sys.ProductIcon,
 		SystemVersion:     sys.SystemVersion,
 		SystemInstallTm:   sys.CreateTm.String(),
 		SystemUpgradeTm:   sys.UpgradeTm.String(),
@@ -76,43 +76,43 @@ func (s *ADAServiceV2) GetSystemInfo(ctx context.Context, in *v2.GetSystemInfoRe
 	return &ret, nil
 }
 
-func (s *ADAServiceV2) GetCompanyIcon(ctx context.Context, in *v2.GetCompanyIconReq) (*v2.GetCompanyIconReply, error) {
+func (s *ADAServiceV2) GetProductIcon(ctx context.Context, in *v2.GetProductIconReq) (*v2.GetProductIconReply, error) {
 	si, err := server.GetSystemInfo(s.env)
 	if err != nil {
 		logger.Errorf("get system info err:%v", err)
 		return nil, status.Error(codes.Internal, s.I18n("System.GetSystemInfoFailed"))
 	}
 
-	if si.CompanyIcon == "" {
+	if si.ProductIcon == "" {
 		originIcon := path.Join(common.RESOURCE_PATH, "image", "favicon.png")
 		fCnt, err := os.ReadFile(originIcon)
 		if err != nil {
 			logger.Warnf("read file err:%v", err)
-			return nil, status.Error(codes.Internal, s.I18n("System.GetCompanyIconFailed"))
+			return nil, status.Error(codes.Internal, s.I18n("System.GetProductIconFailed"))
 		}
 		iconB64 := base64.StdEncoding.EncodeToString(fCnt)
-		err = server.UpdateCompanyIcon(s.env, si.ID, iconB64)
+		err = server.UpdateProductIcon(s.env, si.ID, iconB64)
 		if err != nil {
 			logger.Warnf("update system info err:%v", err)
-			return nil, status.Error(codes.Internal, s.I18n("System.UpdateCompanyIconFailed"))
+			return nil, status.Error(codes.Internal, s.I18n("System.UpdateProductIconFailed"))
 		}
-		return &v2.GetCompanyIconReply{Icon: si.CompanyIcon}, nil
+		return &v2.GetProductIconReply{Icon: si.ProductIcon}, nil
 	}
 
-	return &v2.GetCompanyIconReply{Icon: si.CompanyIcon}, nil
+	return &v2.GetProductIconReply{Icon: si.ProductIcon}, nil
 }
 
-func (s *ADAServiceV2) UpdateCompanyIcon(ctx context.Context, in *v2.UpdateCompanyIconReq) (*v2.UpdateCompanyIconReply, error) {
+func (s *ADAServiceV2) UpdateProductIcon(ctx context.Context, in *v2.UpdateProductIconReq) (*v2.UpdateProductIconReply, error) {
 	var iconTypes = []string{"jpg", "jpeg", "png"}
 
-	ret := &v2.UpdateCompanyIconReply{
+	ret := &v2.UpdateProductIconReply{
 		Result: RESP_FAILED,
 	}
 
 	iconByte, err := base64.StdEncoding.DecodeString(in.File)
 	if err != nil {
 		logger.Warnf("decode string err: %s", err)
-		return ret, status.Error(codes.Internal, s.I18n("System.UpdateCompanyIconFailed"))
+		return ret, status.Error(codes.Internal, s.I18n("System.UpdateProductIconFailed"))
 	}
 
 	// 限制大小
@@ -142,10 +142,10 @@ func (s *ADAServiceV2) UpdateCompanyIcon(ctx context.Context, in *v2.UpdateCompa
 		return ret, status.Error(codes.Internal, s.I18n("System.GetSystemInfoFailed"))
 	}
 
-	err = server.UpdateCompanyIcon(s.env, si.ID, in.File)
+	err = server.UpdateProductIcon(s.env, si.ID, in.File)
 	if err != nil {
 		logger.Warnf("get system info err:%v", err)
-		return ret, status.Error(codes.Internal, s.I18n("System.UpdateCompanyIconFailed"))
+		return ret, status.Error(codes.Internal, s.I18n("System.UpdateProductIconFailed"))
 	}
 
 	ret.Result = RESP_SUCCESS
