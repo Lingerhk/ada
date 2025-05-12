@@ -352,6 +352,18 @@ message ListDomainReq {
 
 message ListDomainReply {
   ModelPage page = 1;
+  message dcList {
+    string hostname = 1;
+    string platform = 2;
+    string ips = 3;
+    string timeout = 4;
+    string status = 5;
+    bool hasSensor = 6;
+    bool isMaster = 7;
+    string fsmoRole = 8;
+    string errMsg = 9;
+    string lastOnlineTm = 10;
+  }
   message Details {
     string ID = 1;
     string name = 2;
@@ -360,6 +372,7 @@ message ListDomainReply {
     map <string, string> domainInfo = 5;
     string createTm = 6;
     string errMsg = 7;
+    repeated dcList DCs = 8;
   }
   repeated Details List = 2;
   bool exhausted = 3; // if this is last page
