@@ -33,17 +33,41 @@ func (s *ADAServiceV2) ListDomain(ctx context.Context, in *v2.ListDomainReq) (*v
 	ret := v2.ListDomainReply{}
 	for _, r := range res {
 		r.LdapConf["password"] = "*******"
-		ret.List = append(ret.List,
-			&v2.ListDomainReply_Details{
-				ID:         r.ID.Hex(),
-				Name:       r.Name,
-				DcHostname: r.DCHostName,
-				Status:     r.Status,
-				DomainInfo: r.LdapConf,
-				CreateTm:   r.CreateTm.String(),
-				ErrMsg:     r.ErrMsg,
-			})
+
+		// Create domain details
+		domainDetails := &v2.ListDomainReply_Details{
+			ID:         r.ID.Hex(),
+			Name:       r.Name,
+			DcHostname: r.DCHostName,
+			Status:     r.Status,
+			DomainInfo: r.LdapConf,
+			CreateTm:   r.CreateTm.String(),
+			ErrMsg:     r.ErrMsg,
+		}
+
+		// Add DC list if available
+		if len(r.DCList) > 0 {
+			for _, dc := range r.DCList {
+				dcItem := &v2.ListDomainReplyDcList{
+					Hostname:     dc.HostName,
+					Platform:     dc.Platform,
+					Ips:          strings.Join(dc.IPList, ","),
+					Timeout:      dc.Timeout,
+					Status:       dc.Status,
+					HasSensor:    dc.HasSensor,
+					IsMaster:     dc.IsMaster,
+					FsmoRole:     dc.FsmoRole,
+					ErrMsg:       dc.ErrMsg,
+					LastOnlineTm: dc.LastOnlineTm.String(),
+				}
+
+				domainDetails.DCs = append(domainDetails.DCs, dcItem)
+			}
+		}
+
+		ret.List = append(ret.List, domainDetails)
 	}
+
 	ret.Page = &v2.ModelPage{PageSize: in.PageSize, PageIdx: in.PageIdx, Total: int32(total)}
 	if (limit + offset) < int32(total) {
 		ret.Exhausted = false
