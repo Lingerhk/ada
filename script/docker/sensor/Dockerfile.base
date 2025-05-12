@@ -1,0 +1,14 @@
+# Note: This Dockerfile must run in windows
+#
+# Build the sensor base image
+# docker build -f Dockerfile.base -t ada_sensor:base .
+
+# Stage 1: Build the Go application
+ARG IMAGE=golang:1.24.2-windowsservercore-ltsc2022
+FROM ${IMAGE}
+
+# Set the working directory inside the container
+WORKDIR /app
+
+# Copy the entire source code (including make.bat in cmd/)
+COPY vendor vendor

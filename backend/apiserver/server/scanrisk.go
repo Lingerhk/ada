@@ -4,10 +4,11 @@ import (
 	"ada/backend/apiserver/config"
 	"ada/backend/model"
 	utime "ada/infra/time"
+	"time"
+
 	logger "github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
-	"time"
 )
 
 func GetLatestTaskByType(e *config.Env, typ string) (*model.ScanTasks, error) {
@@ -34,16 +35,16 @@ func FindBaselineListSelect(e *config.Env, groupId string, domains, subTypes []s
 	query := bson.D{}
 	query = append(query, bson.E{Key: "group_id", Value: groupId})
 	if len(domains) > 0 {
-		query = append(query, bson.E{Key: "params.domain", Value: bson.D{{"$in", domains}}})
+		query = append(query, bson.E{Key: "params.domain", Value: bson.D{{Key: "$in", Value: domains}}})
 	}
 	if len(subTypes) > 0 {
-		query = append(query, bson.E{Key: "result.plugin.type", Value: bson.D{{"$in", subTypes}}})
+		query = append(query, bson.E{Key: "result.plugin.type", Value: bson.D{{Key: "$in", Value: subTypes}}})
 	}
 	if len(levels) > 0 {
-		query = append(query, bson.E{Key: "result.plugin.risk_level", Value: bson.D{{"$in", levels}}})
+		query = append(query, bson.E{Key: "result.plugin.risk_level", Value: bson.D{{Key: "$in", Value: levels}}})
 	}
 	if len(results) > 0 {
-		query = append(query, bson.E{Key: "result.status", Value: bson.D{{"$in", results}}})
+		query = append(query, bson.E{Key: "result.status", Value: bson.D{{Key: "$in", Value: results}}})
 	}
 	if search != "" {
 		query = append(query, bson.E{Key: "result.plugin.display", Value: bson.M{"$regex": escaping(search), "$options": "i"}})
@@ -69,7 +70,7 @@ func FindWeakPwdListSelect(e *config.Env, groupId string, domains []string, limi
 	query := bson.D{}
 	query = append(query, bson.E{Key: "group_id", Value: groupId})
 	if len(domains) > 0 {
-		query = append(query, bson.E{Key: "params.domain", Value: bson.D{{"$in", domains}}})
+		query = append(query, bson.E{Key: "params.domain", Value: bson.D{{Key: "$in", Value: domains}}})
 	}
 
 	sort := bson.M{"update_tm": -1}
@@ -88,16 +89,16 @@ func FindLeakListSelect(e *config.Env, groupId string, domains, subTypes []strin
 	query := bson.D{}
 	query = append(query, bson.E{Key: "group_id", Value: groupId})
 	if len(domains) > 0 {
-		query = append(query, bson.E{Key: "params.domain", Value: bson.D{{"$in", domains}}})
+		query = append(query, bson.E{Key: "params.domain", Value: bson.D{{Key: "$in", Value: domains}}})
 	}
 	if len(subTypes) > 0 {
-		query = append(query, bson.E{Key: "result.plugin.type", Value: bson.D{{"$in", subTypes}}})
+		query = append(query, bson.E{Key: "result.plugin.type", Value: bson.D{{Key: "$in", Value: subTypes}}})
 	}
 	if len(levels) > 0 {
-		query = append(query, bson.E{Key: "result.plugin.risk_level", Value: bson.D{{"$in", levels}}})
+		query = append(query, bson.E{Key: "result.plugin.risk_level", Value: bson.D{{Key: "$in", Value: levels}}})
 	}
 	if len(results) > 0 {
-		query = append(query, bson.E{Key: "result.status", Value: bson.D{{"$in", results}}})
+		query = append(query, bson.E{Key: "result.status", Value: bson.D{{Key: "$in", Value: results}}})
 	}
 	if startTm != "" && endTm != "" {
 		startTime, endTime, err := initTimeInterval(startTm, endTm)
@@ -458,11 +459,10 @@ func UpdateScanConfByDomainV2(e *config.Env, oldDomain, domain string) error {
 	}
 
 	for _, sc := range scList {
-		for dm, _ := range sc.Plans {
+		for dm := range sc.Plans {
 			// remove old domain
 			if dm == oldDomain {
 				delete(sc.Plans, dm)
-				continue
 			}
 		}
 		// add new domain

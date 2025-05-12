@@ -15,8 +15,8 @@ const (
 
 	FlowInstancePrefixKey = "ada:engine:instance"
 
-	EveLogQueueKey = "ada:evelog_queue" // same with receiver module
-	PktLogQueueKey = "ada:pktlog_queue" // same with receiver module
+	EveLogQueueKey = "ada:evelog_queue" // same with task_server module
+	PktLogQueueKey = "ada:pktlog_queue" // same with task_server module
 
 	AlertActivityIndexKey = "ada-activity" // ES索引: 攻击活动表
 

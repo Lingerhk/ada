@@ -6,13 +6,14 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"runtime"
+	"sync"
+	"time"
+
 	"github.com/google/uuid"
 	"github.com/redis/go-redis/v9"
 	"github.com/shirou/gopsutil/mem"
 	logger "github.com/sirupsen/logrus"
-	"runtime"
-	"sync"
-	"time"
 )
 
 type State struct {
@@ -38,13 +39,16 @@ func (s *State) Serve(wg *sync.WaitGroup, plugProcessMap map[string]uint32) {
 			return
 		case <-stateTicker.C:
 			{
-				msg, err := s.getSensorState(plugProcessMap)
+				msg, err := s.getSensorState(s.ctx, plugProcessMap)
 				if err != nil {
+					if err == context.Canceled || err == context.DeadlineExceeded {
+						logger.Infof("getSensorState cancelled: %v", err)
+						return
+					}
 					logger.Warningf("get sensor state err:%v, continue", err)
 					continue
 				}
 
-				// push to redis queue
 				if err := s.pushSensorState(msg); err != nil {
 					logger.Warningf("push sensor state err:%v, continue", err)
 					continue
@@ -69,7 +73,13 @@ func (s *State) pushSensorState(msg *sCommon.AdaMessage) error {
 	return nil
 }
 
-func (s *State) getSensorState(plugProcessMap map[string]uint32) (*sCommon.AdaMessage, error) {
+func (s *State) getSensorState(ctx context.Context, plugProcessMap map[string]uint32) (*sCommon.AdaMessage, error) {
+	select {
+	case <-ctx.Done():
+		return nil, ctx.Err()
+	default:
+	}
+
 	msg := sCommon.AdaMessage{
 		AgentID: s.sensorId,
 		MsgType: sCommon.T_CONF_STATE,
@@ -90,17 +100,12 @@ func (s *State) getSensorState(plugProcessMap map[string]uint32) (*sCommon.AdaMe
 	msg.Data["mem_total"] = ""
 	memary, err := mem.VirtualMemory()
 	if err == nil {
-		msg.Data["mem_total"] = fmt.Sprintf("%d", memary.Total)
+		msg.Data["mem_total"] = humanReadableBytes(memary.Total)
 	}
 	msg.Data["cpu_total"] = fmt.Sprintf("%d", runtime.NumCPU())
 
 	msg.Data["pkt_status"] = sCommon.SensorStatusStop
-	msg.Data["pkt_cpu_used"] = "0%"
-	msg.Data["pkt_mem_used"] = "0%"
-
 	msg.Data["log_status"] = sCommon.SensorStatusStop
-	msg.Data["log_cpu_used"] = "0%"
-	msg.Data["log_mem_used"] = "0%"
 
 	msg.Data["rpcfw_status"] = sCommon.SensorStatusStop
 	msg.Data["rpcfw_cpu_used"] = "0%"
@@ -110,69 +115,107 @@ func (s *State) getSensorState(plugProcessMap map[string]uint32) (*sCommon.AdaMe
 	msg.Data["ldapfw_cpu_used"] = "0%"
 	msg.Data["ldapfw_mem_used"] = "0%"
 
-	var sensorCpuUsed float64
-	var sensorMemUsed float32
-
-	ntapPid := plugProcessMap[sCommon.PlugNtapName]
-	if ntapPid > 0 {
-		cpu, mem, err := getProcessCpuMemPercent(3*time.Second, ntapPid)
-		if err == nil {
-			msg.Data["pkt_status"] = sCommon.SensorStatusRun
-			msg.Data["pkt_cpu_used"] = fmt.Sprintf("%f%%", cpu)
-			msg.Data["pkt_mem_used"] = fmt.Sprintf("%f%%", mem)
-			sensorCpuUsed += cpu
-			sensorMemUsed += mem
-		}
+	if val, ok := plugProcessMap[sCommon.PlugPktName]; ok && val > 0 {
+		msg.Data["pkt_status"] = sCommon.SensorStatusRun
 	}
 
-	nxlogPid := plugProcessMap[sCommon.PlugNxlogName]
-	if nxlogPid > 0 {
-		cpu, mem, err := getProcessCpuMemPercent(3*time.Second, nxlogPid)
-		if err == nil {
-			msg.Data["log_status"] = sCommon.SensorStatusRun
-			msg.Data["log_cpu_used"] = fmt.Sprintf("%f%%", cpu)
-			msg.Data["log_mem_used"] = fmt.Sprintf("%f%%", mem)
-			sensorCpuUsed += cpu
-			sensorMemUsed += mem
-		}
+	if val, ok := plugProcessMap[sCommon.PlugEvtName]; ok && val > 0 {
+		msg.Data["log_status"] = sCommon.SensorStatusRun
 	}
 
-	rpcfwPid := plugProcessMap[sCommon.PlugRpcFwName]
-	if rpcfwPid > 0 {
-		cpu, mem, err := getProcessCpuMemPercent(3*time.Second, rpcfwPid)
-		if err == nil {
-			msg.Data["rpcfw_status"] = sCommon.SensorStatusRun
-			msg.Data["rpcfw_cpu_used"] = fmt.Sprintf("%f%%", cpu)
-			msg.Data["rpcfw_mem_used"] = fmt.Sprintf("%f%%", mem)
-			sensorCpuUsed += cpu
-			sensorMemUsed += mem
-		}
+	sensorCpuUsed, sensorMemUsed, rpcfwCpuUsed, ldapfwCpuUsed, rpcfwMemUsed, ldapfwMemUsed, err := GetSensorResUsed(ctx, plugProcessMap, 3*time.Second)
+	if err != nil {
+		return nil, err
 	}
 
-	ldapfwPid := plugProcessMap[sCommon.PlugLdapFwName]
-	if ldapfwPid > 0 {
-		cpu, mem, err := getProcessCpuMemPercent(3*time.Second, ldapfwPid)
-		if err == nil {
-			msg.Data["ldapfw_status"] = sCommon.SensorStatusRun
-			msg.Data["ldapfw_cpu_used"] = fmt.Sprintf("%f%%", cpu)
-			msg.Data["ldapfw_mem_used"] = fmt.Sprintf("%f%%", mem)
-			sensorCpuUsed += cpu
-			sensorMemUsed += mem
-		}
+	if rpcfwMemUsed > 0 {
+		msg.Data["rpcfw_status"] = sCommon.SensorStatusRun
+		msg.Data["rpcfw_cpu_used"] = fmt.Sprintf("%f%%", rpcfwCpuUsed)
+		msg.Data["rpcfw_mem_used"] = fmt.Sprintf("%f%%", rpcfwMemUsed)
 	}
 
-	sensorPid := plugProcessMap["self"]
-	if sensorPid > 0 {
-		cpu, mem, err := getProcessCpuMemPercent(3*time.Second, sensorPid)
-		if err == nil {
-			sensorCpuUsed += cpu
-			sensorMemUsed += mem
-		}
+	if ldapfwMemUsed > 0 {
+		msg.Data["ldapfw_status"] = sCommon.SensorStatusRun
+		msg.Data["ldapfw_cpu_used"] = fmt.Sprintf("%f%%", ldapfwCpuUsed)
+		msg.Data["ldapfw_mem_used"] = fmt.Sprintf("%f%%", ldapfwMemUsed)
 	}
 
-	// no used currently
 	msg.Data["sensor_cpu_used"] = fmt.Sprintf("%f%%", sensorCpuUsed)
 	msg.Data["sensor_mem_used"] = fmt.Sprintf("%f%%", sensorMemUsed)
 
 	return &msg, nil
+}
+
+func GetSensorResUsed(ctx context.Context, plugProcessMap map[string]uint32, interval time.Duration) (float64, float64, float64, float64, float64, float64, error) {
+	var sensorCpuUsed float64
+	var sensorMemUsed float64
+
+	var rpcfwCpuUsed float64
+	var ldapfwCpuUsed float64
+	var rpcfwMemUsed float64
+	var ldapfwMemUsed float64
+
+	select {
+	case <-ctx.Done():
+		return 0, 0, 0, 0, 0, 0, ctx.Err()
+	default:
+	}
+
+	rpcfwPid, ok := plugProcessMap[sCommon.PlugRpcFwName]
+	if ok && rpcfwPid > 0 {
+		cpu, mem, err := getProcessCpuMemPercent(ctx, interval, rpcfwPid)
+		if err != nil {
+			if err == context.Canceled || err == context.DeadlineExceeded {
+				return 0, 0, 0, 0, 0, 0, err
+			}
+			logger.Warnf("Error getting rpcfw resource usage (pid: %d): %v", rpcfwPid, err)
+		} else {
+			sensorCpuUsed += cpu
+			sensorMemUsed += mem
+			rpcfwCpuUsed += cpu
+			rpcfwMemUsed += mem
+		}
+	}
+
+	ldapfwPid, ok := plugProcessMap[sCommon.PlugLdapFwName]
+	if ok && ldapfwPid > 0 {
+		select {
+		case <-ctx.Done():
+			return 0, 0, 0, 0, 0, 0, ctx.Err()
+		default:
+		}
+		cpu, mem, err := getProcessCpuMemPercent(ctx, interval, ldapfwPid)
+		if err != nil {
+			if err == context.Canceled || err == context.DeadlineExceeded {
+				return 0, 0, 0, 0, 0, 0, err
+			}
+			logger.Warnf("Error getting ldapfw resource usage (pid: %d): %v", ldapfwPid, err)
+		} else {
+			sensorCpuUsed += cpu
+			sensorMemUsed += mem
+			ldapfwCpuUsed += cpu
+			ldapfwMemUsed += mem
+		}
+	}
+
+	sensorPid, ok := plugProcessMap[sCommon.SensorSvcName]
+	if ok && sensorPid > 0 {
+		select {
+		case <-ctx.Done():
+			return 0, 0, 0, 0, 0, 0, ctx.Err()
+		default:
+		}
+		cpu, mem, err := getProcessCpuMemPercent(ctx, interval, sensorPid)
+		if err != nil {
+			if err == context.Canceled || err == context.DeadlineExceeded {
+				return 0, 0, 0, 0, 0, 0, err
+			}
+			logger.Warnf("Error getting sensor resource usage (pid: %d): %v", sensorPid, err)
+		} else {
+			sensorCpuUsed += cpu
+			sensorMemUsed += mem
+		}
+	}
+
+	return sensorCpuUsed, sensorMemUsed, rpcfwCpuUsed, ldapfwCpuUsed, rpcfwMemUsed, ldapfwMemUsed, nil
 }

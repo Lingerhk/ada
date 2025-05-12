@@ -41,7 +41,7 @@ func TestNetworkDebug(t *testing.T) {
 		t.Error(err.Error())
 	}
 
-	t.Logf(resp.Result)
+	t.Logf("Result: %s", resp.Result)
 }
 
 func TestGetLicense(t *testing.T) {
@@ -68,7 +68,7 @@ func TestUpdateLicense(t *testing.T) {
 		t.Error(err.Error())
 	}
 
-	t.Logf(resp.Result)
+	t.Logf("Result: %s", resp.Result)
 }
 
 func TestUpdateNtpAddress(t *testing.T) {

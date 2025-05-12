@@ -10,16 +10,17 @@ import (
 	"ada/infra/version"
 	"context"
 	"fmt"
-	"github.com/google/uuid"
-	jsoniter "github.com/json-iterator/go"
-	logger "github.com/sirupsen/logrus"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
 	"io"
 	"os"
 	"path"
 	"strings"
 	"time"
+
+	"github.com/google/uuid"
+	jsoniter "github.com/json-iterator/go"
+	logger "github.com/sirupsen/logrus"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 func (s *ADAServiceV2) ListSensor(ctx context.Context, in *v2.ListSensorReq) (*v2.ListSensorReply, error) {
@@ -27,7 +28,7 @@ func (s *ADAServiceV2) ListSensor(ctx context.Context, in *v2.ListSensorReq) (*v
 	sensorList, total, err := server.FindAllSensor(s.env, in.Keyword, in.Status, in.Domain, int64(limit), int64(offset), in.TmSort)
 	if err != nil {
 		logger.Errorf("query ListSensor err:%v", err)
-		return nil, status.Errorf(codes.Internal, "查询失败")
+		return nil, status.Error(codes.Internal, s.I18n("QueryFailed"))
 	}
 
 	newVer, err := s.getSensorVersion()
@@ -71,14 +72,12 @@ func (s *ADAServiceV2) ListSensor(ctx context.Context, in *v2.ListSensorReq) (*v
 			LogPluginStatus:    sensor.LogPluginStatus,
 			RpcFwPluginStatus:  sensor.RpcFwPluginStatus,
 			LdapFwPluginStatus: sensor.LdapFwPluginStatus,
-			PktCpuUsed:         sensor.PktCpuUsed,
-			PktMemUsed:         sensor.PktMemUsed,
-			LogCpuUsed:         sensor.LogCpuUsed,
-			LogMemUsed:         sensor.LogMemUsed,
 			RpcFWCpuUsed:       sensor.RpcFwCpuUsed,
 			RpcFWMemUsed:       sensor.RpcFwMemUsed,
 			LdapFwCpuUsed:      sensor.LdapFwCpuUsed,
 			LdapFwMemUsed:      sensor.LdapFwMemUsed,
+			SensorCpuUsed:      sensor.SensorCpuUsed,
+			SensorMemUsed:      sensor.SensorMemUsed,
 
 			Platform:     sensor.Platform,
 			KernelVer:    sensor.KernelVer,
@@ -109,7 +108,7 @@ func (s *ADAServiceV2) UpdateSensor(ctx context.Context, in *v2.UpdateSensorReq)
 	sensor, err := server.GetSensorByID(s.env, in.ID)
 	if err != nil {
 		logger.Errorf("get sensor err:%v", err)
-		return nil, status.Errorf(codes.Internal, "获取传感器状态失败")
+		return nil, status.Error(codes.Internal, s.I18n("QueryFailed"))
 	}
 
 	var cfgPerfLimitOpt = make(map[string]string)
@@ -140,7 +139,7 @@ func (s *ADAServiceV2) UpdateSensor(ctx context.Context, in *v2.UpdateSensorReq)
 
 	if len(in.BindNetIface) < 1 {
 		logger.Error("empty iface to bind!")
-		return nil, status.Errorf(codes.Internal, "网卡不能为空")
+		return nil, status.Error(codes.Internal, s.I18n("Sensor.UpdateSensor.EmptyIface"))
 	}
 
 	var cfgOpt = make(map[string]string)
@@ -155,13 +154,13 @@ func (s *ADAServiceV2) UpdateSensor(ctx context.Context, in *v2.UpdateSensorReq)
 	err = server.UpdateSensorConf(s.env, in.ID, in.Remark, in.BindNetIface, cfgPerfLimitOpt, switchOpt)
 	if err != nil {
 		logger.Errorf("update sensor config err:%v", err)
-		return nil, status.Errorf(codes.Internal, "更新传感器配置失败")
+		return nil, status.Error(codes.Internal, s.I18n("UpdateFailed"))
 	}
 
 	err = s.updateSensorCache(ctx, cache.SensorIDKey(in.ID), cfgOpt)
 	if err != nil {
 		logger.Errorf("update sensor cache err:%v", err)
-		return nil, status.Errorf(codes.InvalidArgument, "更新传感器配置失败")
+		return nil, status.Error(codes.InvalidArgument, s.I18n("UpdateFailed"))
 	}
 
 	return &v2.UpdateSensorReply{Result: aCommon.RESP_SUCCESS}, nil
@@ -174,26 +173,27 @@ func (s *ADAServiceV2) CmdSensor(ctx context.Context, in *v2.CmdSensorReq) (*v2.
 		// delete 仅删除服务端配置
 		err := server.DeleteSensor(s.env, in.ID)
 		if err != nil {
-			logger.Errorf("uninstall sensor err:%v", err)
+			logger.Errorf("delete sensor err:%v", err)
+			return nil, status.Error(codes.Internal, s.I18n("DeleteFailed"))
 		}
 
 		err = s.env.RedisCli.Del(ctx, cache.SensorIDKey(in.ID)).Err()
 		if err != nil {
-			logger.Errorf("uninstall sensor err:%v", err)
-			return nil, status.Errorf(codes.Internal, "删除sensor失败")
+			logger.Errorf("delete sensor err:%v", err)
+			return nil, status.Error(codes.Internal, s.I18n("DeleteFailed"))
 		}
 		return &v2.CmdSensorReply{Result: aCommon.RESP_SUCCESS}, nil
 	case "uninstall":
 		err := server.DeleteSensor(s.env, in.ID)
 		if err != nil {
 			logger.Errorf("uninstall sensor err:%v", err)
-			return nil, status.Errorf(codes.Internal, "卸载sensor失败")
+			return nil, status.Error(codes.Internal, s.I18n("Sensor.CmdSensor.UninstallFailed"))
 		}
 
 		err = s.env.RedisCli.Del(ctx, cache.SensorIDKey(in.ID)).Err()
 		if err != nil {
 			logger.Errorf("uninstall sensor err:%v", err)
-			return nil, status.Errorf(codes.Internal, "卸载sensor失败")
+			return nil, status.Error(codes.Internal, s.I18n("Sensor.CmdSensor.UninstallFailed"))
 		}
 
 		var adaMsg sCommon.AdaMessage
@@ -205,7 +205,8 @@ func (s *ADAServiceV2) CmdSensor(ctx context.Context, in *v2.CmdSensorReq) (*v2.
 		adaMsg.Data = map[string]string{"plugin": "all"}
 
 		if err := s.pushCmdSensor(ctx, adaMsg, true); err != nil {
-			return nil, status.Errorf(codes.InvalidArgument, "下发命令(%s)失败:%v", in.Cmd, err)
+			logger.Errorf("push cmd(%s) sensor(id:%s) err:%v", in.Cmd, in.ID, err)
+			return nil, status.Error(codes.InvalidArgument, s.I18n("CommandFailed"))
 		}
 	default:
 		return &v2.CmdSensorReply{Result: aCommon.RESP_FAILED}, nil
@@ -218,7 +219,7 @@ func (s *ADAServiceV2) DownloadSensor(ctx context.Context, in *v2.DownloadSensor
 	newVer, err := s.getSensorVersion()
 	if err != nil {
 		logger.Errorf("get latest sensor version err:%v", err)
-		return nil, status.Errorf(codes.Internal, "获取传感器失败")
+		return nil, status.Error(codes.Internal, s.I18n("QueryFailed"))
 	}
 
 	sensorName := fmt.Sprintf("ada_sensor_installer_%s_%s.exe", in.Type, newVer)
@@ -226,7 +227,7 @@ func (s *ADAServiceV2) DownloadSensor(ctx context.Context, in *v2.DownloadSensor
 	sensorFile, err := os.Open(sensorPath)
 	if err != nil {
 		logger.Errorf("sensor not found err:%v", err)
-		return nil, status.Errorf(codes.Internal, "获取传感器失败")
+		return nil, status.Error(codes.Internal, s.I18n("GetFailed"))
 	}
 	defer sensorFile.Close()
 
@@ -234,14 +235,14 @@ func (s *ADAServiceV2) DownloadSensor(ctx context.Context, in *v2.DownloadSensor
 	newFile, err := os.Create(newPath)
 	if err != nil {
 		logger.Errorf("create file err:%v", err)
-		return nil, status.Errorf(codes.Internal, "获取传感器失败")
+		return nil, status.Error(codes.Internal, s.I18n("GetFailed"))
 	}
 	defer newFile.Close()
 
 	_, err = io.Copy(newFile, sensorFile)
 	if err != nil {
 		logger.Errorf("copy file err:%v", err)
-		return nil, status.Errorf(codes.Internal, "获取传感器失败")
+		return nil, status.Error(codes.Internal, s.I18n("GetFailed"))
 	}
 
 	return &v2.DownloadSensorReply{Path: sensorName}, nil
@@ -255,22 +256,22 @@ func (s *ADAServiceV2) UpdateSensorVersion(ctx context.Context, in *v2.UpdateSen
 	sensor, err := server.GetSensorByID(s.env, in.SensorId)
 	if err != nil {
 		logger.Errorf("get agent err:%v", err)
-		return nil, status.Errorf(codes.Internal, "获取域控传感器状态失败")
+		return nil, status.Error(codes.Internal, s.I18n("QueryFailed"))
 	}
 	if sensor.Version > in.Version {
-		logger.Errorf("version err")
-		return nil, status.Errorf(codes.Internal, "版本异常")
+		logger.Errorf("version err, sensor_id:%s, sensor_version:%s, update_version:%s", in.SensorId, sensor.Version, in.Version)
+		return nil, status.Error(codes.InvalidArgument, s.I18n("Sensor.UpdateSensorVersion.VersionError"))
 	}
 
 	// 判断状态
 	if sensor.Status != sCommon.SensorStatusRun {
-		return nil, status.Errorf(codes.Internal, "域控传感器未处于运行中")
+		return nil, status.Error(codes.Internal, s.I18n("Sensor.UpdateSensorVersion.SensorNotRunning"))
 	}
 
 	newVer, err := s.getSensorVersion()
 	if err != nil {
 		logger.Errorf("get latest sensor version err:%v", err)
-		return nil, status.Errorf(codes.Internal, "获取传感器失败")
+		return nil, status.Error(codes.Internal, s.I18n("Sensor.UpdateSensorVersion.GetLatestVersionFailed"))
 	}
 
 	// 根据sensorID 更新的sensor
@@ -286,7 +287,7 @@ func (s *ADAServiceV2) UpdateSensorVersion(ctx context.Context, in *v2.UpdateSen
 
 	if err := s.pushCmdSensor(ctx, adaMsg, true); err != nil {
 		logger.Errorf("redis public err:%v", err)
-		return nil, status.Errorf(codes.Internal, "下发更新失败")
+		return nil, status.Error(codes.Internal, s.I18n("CommandFailed"))
 	}
 
 	// TODO: sensor 配置是否需要更新？？

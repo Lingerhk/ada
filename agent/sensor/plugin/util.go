@@ -7,11 +7,9 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
-	"strings"
 
-	sigar "github.com/cloudfoundry/gosigar"
-	"github.com/shirou/gopsutil/process"
 	logger "github.com/sirupsen/logrus"
+	"golang.org/x/sys/windows"
 	"golang.org/x/sys/windows/svc"
 	"golang.org/x/sys/windows/svc/mgr"
 )
@@ -29,19 +27,21 @@ func (p *Plugin) getPluginStatus() (map[string]bool, error) {
 	defer m.Disconnect()
 
 	statusMap := make(map[string]bool)
-	statusMap["self"] = false // ADA Sensor(ada_sensor)
-	statusMap[common.PlugNxlogName] = false
-	statusMap[common.PlugRpcFwName] = false  // RPC Firewall
-	statusMap[common.PlugLdapFwName] = false // LDAP Firewall
+	statusMap[common.SensorSvcName] = false // ADA Sensor(ada_sensor)
+
+	if isRpcFwInstalled() {
+		statusMap[common.PlugRpcFwName] = false // RPC Firewall
+	}
+	if isLdapFwInstalled() {
+		statusMap[common.PlugLdapFwName] = false // LDAP Firewall
+	}
 
 	var s *mgr.Service
 	var svcFindName string
 	for svcName, _ := range statusMap {
 		switch svcName {
-		case "self":
+		case common.SensorSvcName:
 			svcFindName = common.SensorSvcName
-		case common.PlugNxlogName:
-			svcFindName = common.PlugNxlogSvcName
 		case common.PlugRpcFwName:
 			svcFindName = common.PlugRpcFwSvcName
 		case common.PlugLdapFwName:
@@ -54,6 +54,16 @@ func (p *Plugin) getPluginStatus() (map[string]bool, error) {
 
 		s, err = m.OpenService(svcFindName)
 		if err != nil {
+			// if the ada sensor run in terminal, the service is not running
+			if svcName == common.SensorSvcName {
+				statusMap[svcName] = true
+
+				// get self process id
+				pid := os.Getpid()
+				p.PlugProcessMap[svcName] = uint32(pid)
+				continue
+			}
+
 			logger.Warnf("open service %s err:%v", svcName, err)
 			continue
 		}
@@ -73,18 +83,13 @@ func (p *Plugin) getPluginStatus() (map[string]bool, error) {
 	return statusMap, nil
 }
 
-func startNxlogPlugin(restart bool) error {
-	cmd := exec.Command("powershell.exe", "-Command", "Start-Service", "-Name", "nxlog")
-	if restart {
-		cmd = exec.Command("powershell.exe", "-Command", "Restart-Service", "-Name", "nxlog")
+func isRpcFwInstalled() bool {
+	_, err := os.Stat(rpcFwBinPath)
+	if err != nil && !os.IsExist(err) {
+		return false
 	}
 
-	return cmd.Start()
-}
-
-func stopNxlogPlugin() error {
-	cmd := exec.Command("powershell.exe", "-Command", "Stop-Service", "-Name", "nxlog")
-	return cmd.Start()
+	return true
 }
 
 func startRpcFwPlugin(restart bool) error {
@@ -105,6 +110,15 @@ func stopRpcFwPlugin() error {
 func reloadRpcFwPlugin() error {
 	cmd := exec.Command(rpcFwBinPath, "/update")
 	return cmd.Start()
+}
+
+func isLdapFwInstalled() bool {
+	_, err := os.Stat(ldapFwBinPath)
+	if err != nil && !os.IsExist(err) {
+		return false
+	}
+
+	return true
 }
 
 func startLdapFwPlugin(restart bool) error {
@@ -153,26 +167,10 @@ func (p *Plugin) sensorConfUpdate(data map[string]string) error {
 
 // pluginConfUpdate 执行plugin的配置文件更新
 // 支持的配置文件:
-// nxlog: nxlog.conf
 // rpcfw: RpcFw.conf
 // ldapfw: config.json
 func (p *Plugin) pluginConfUpdate(data map[string]string) error {
 	var err error
-
-	if nxlogCfg, ok := data["nxlog.conf"]; ok {
-		if !p.checkFileSum(nxlogCfg, data["nxlog.conf.sha256"]) {
-			logger.Error("check file(nxlog.conf) sum failed")
-		} else {
-			nxlogCfgFile := filepath.Join(common.SensorDir, "nxlog", "conf", "nxlog.conf")
-			if err = os.WriteFile(nxlogCfgFile, []byte(nxlogCfg), 0644); err != nil {
-				logger.Errorf("write %s file err:%v", nxlogCfgFile, err)
-			} else {
-				if err = startNxlogPlugin(true); err != nil {
-					logger.Errorf("reload nxlog plugin err:%v", err)
-				}
-			}
-		}
-	}
 
 	if rpcfwCfg, ok := data["rpcFw.conf"]; ok {
 		if !p.checkFileSum(rpcfwCfg, data["rpcFw.conf.sha256"]) {
@@ -243,34 +241,10 @@ func (p *Plugin) pluginBinUpdate(data map[string]string) error {
 	return nil
 }
 
-// Try to kill the orphan process(windows)
-func TryKillProcess(processName string) error {
-	processPid, err := getProcessPidByName(processName)
-	if err != nil {
-		return err
-	}
-	if processPid == -1 {
-		return nil
-	}
-
-	proc, err := process.NewProcess(int32(processPid))
-	if err != nil {
-		return err
-	}
-
-	if err := proc.Kill(); err != nil {
-		return err
-	}
-
-	return nil
-}
-
 // Try to kill the orphan service(windows)
 func TryStopService(serviceName string) error {
 	var err error
 	switch serviceName {
-	case common.PlugNxlogName:
-		err = stopNxlogPlugin()
 	case common.PlugRpcFwName:
 		err = stopRpcFwPlugin()
 	case common.PlugLdapFwName:
@@ -280,30 +254,33 @@ func TryStopService(serviceName string) error {
 	return err
 }
 
-func getProcessPidByName(processName string) (int, error) {
-	pids := sigar.ProcList{}
-	err := pids.Get()
-	if err != nil {
-		return 0, err
-	}
-
-	for _, pid := range pids.List {
-		state := sigar.ProcState{}
-		if err := state.Get(pid); err != nil {
-			continue
-		}
-		if strings.ToUpper(state.Name) == strings.ToUpper(processName) {
-			return pid, nil
-		}
-	}
-
-	return -1, nil
-}
-
 func (p *Plugin) checkFileSum(fileCnt, sha265sum string) bool {
 	hash := sha256.New()
 	hash.Write([]byte(fileCnt))
 	sumStr := fmt.Sprintf("%x", hash.Sum(nil))
 
 	return sumStr == sha265sum
+}
+
+func getFQDNName() string {
+	hostname, _ := os.Hostname()
+
+	// 1st call: get required buffer size
+	var size uint32
+	// COMPUTER_NAME_DNS_FULLY_QUALIFIED == 3
+	err := windows.GetComputerNameEx(windows.ComputerNameDnsFullyQualified, nil, &size)
+	if err != nil && err != windows.ERROR_MORE_DATA {
+		logger.Errorf("get computer name ex err:%v", err)
+		return hostname
+	}
+
+	// allocate buffer of UTF-16 words
+	buf := make([]uint16, size)
+	// 2nd call: actually fetch the name
+	if err := windows.GetComputerNameEx(windows.ComputerNameDnsFullyQualified, &buf[0], &size); err != nil {
+		logger.Errorf("get computer name ex err:%v", err)
+		return hostname
+	}
+
+	return windows.UTF16ToString(buf[:size])
 }

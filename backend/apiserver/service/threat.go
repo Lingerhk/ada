@@ -6,7 +6,6 @@ import (
 	"ada/backend/apiserver/common"
 	"ada/backend/apiserver/config"
 	"ada/backend/apiserver/server"
-	"ada/backend/apiserver/util"
 	"ada/backend/cache"
 	bCommon "ada/backend/common"
 	"ada/infra/base"
@@ -67,7 +66,7 @@ func (s *ADAServiceV2) ListThreat(ctx context.Context, in *v2.ListThreatReq) (*v
 		filter, err = server.ThreatEventFilter(in.IDs, in.Level, in.EventStatus, in.StartTm, in.EndTm)
 		if err != nil {
 			logger.Errorf("therat event filter failed,err:%v", err)
-			return nil, status.Errorf(codes.Internal, "解析检索条件异常")
+			return nil, status.Error(codes.Internal, s.I18n("Threat.ParseFilterFailed"))
 		}
 	} else {
 		var req []server.AdvancedSearchReq
@@ -85,18 +84,17 @@ func (s *ADAServiceV2) ListThreat(ctx context.Context, in *v2.ListThreatReq) (*v
 		filter, err = server.AdvancedSearch(req)
 		if err != nil {
 			logger.Errorf("get advanced search failed,err:%v", err)
-			return nil, status.Errorf(codes.Internal, "解析检索条件异常")
+			return nil, status.Error(codes.Internal, s.I18n("Threat.ParseFilterFailed"))
 		}
 	}
 
 	events, total, err := server.FindThreatEventLikePattern(s.env, filter, in.SortTm, limit, offset)
 	if err != nil {
 		logger.Errorf("query list threat err:%v", err)
-		return nil, status.Errorf(codes.Internal, "查询列表异常，请重试")
+		return nil, status.Error(codes.Internal, s.I18n("Threat.QueryFailed"))
 	}
 
 	ret := v2.ListThreatReply{}
-	langType := s.getSysLanguage(ctx)
 
 	for _, r := range events {
 		ad, err := server.GetThreatDescByID(s.env, r.FlowId)
@@ -105,7 +103,7 @@ func (s *ADAServiceV2) ListThreat(ctx context.Context, in *v2.ListThreatReq) (*v
 			continue
 		}
 		eventTmpl := ad.EventTmplZH
-		if langType == bCommon.LangEn {
+		if s.language == bCommon.LangEn {
 			eventTmpl = ad.EventTmplEN
 		}
 
@@ -116,7 +114,7 @@ func (s *ADAServiceV2) ListThreat(ctx context.Context, in *v2.ListThreatReq) (*v
 				Desc:        r.Desc,
 				FlowId:      r.FlowId,
 				AttckId:     r.AttCkId,
-				Domain:      util.GetDomainFromHostname(r.DcHostname),
+				Domain:      base.GetDomainFromHostname(r.DcHostname),
 				DcHostname:  r.DcHostname,
 				Level:       r.Level,
 				Status:      r.Status,
@@ -142,21 +140,19 @@ func (s *ADAServiceV2) ListThreat(ctx context.Context, in *v2.ListThreatReq) (*v
 // GetThreat 威胁事件详情
 func (s *ADAServiceV2) GetThreat(ctx context.Context, in *v2.GetThreatReq) (*v2.GetThreatReply, error) {
 	if len(in.ID) != 24 {
-		return nil, status.Errorf(codes.InvalidArgument, "无效ID")
+		return nil, status.Error(codes.InvalidArgument, s.I18n("Threat.InvalidID"))
 	}
 	ae, err := server.GetThreatEventByID(s.env, in.ID)
 	if err != nil {
 		logger.Errorf("GetThreatEventByID(%s) err:%v", in.ID, err)
-		return nil, status.Errorf(codes.Internal, "查询告警事件异常")
+		return nil, status.Error(codes.Internal, s.I18n("Threat.QueryFailed"))
 	}
 
 	ad, err := server.GetThreatDescByID(s.env, ae.FlowId)
 	if err != nil {
 		logger.Errorf("GetThreatDescByID(%s) err:%v", in.ID, err)
-		return nil, status.Errorf(codes.Internal, "查询告警事件异常")
+		return nil, status.Error(codes.Internal, s.I18n("Threat.QueryFailed"))
 	}
-
-	langType := s.getSysLanguage(ctx)
 
 	var activities []*v2.ActivityDetails
 	for _, activityId := range ae.ActivityIds {
@@ -186,7 +182,7 @@ func (s *ADAServiceV2) GetThreat(ctx context.Context, in *v2.GetThreatReq) (*v2.
 	eventTmpl := ad.EventTmplZH
 	suggestion := ad.SuggestionZH
 	verifyDesc := ad.VerifyDescZH
-	if langType == bCommon.LangEn {
+	if s.language == bCommon.LangEn {
 		eventTmpl = ad.EventTmplEN
 		suggestion = ad.SuggestionEN
 		verifyDesc = ad.VerifyDescEN
@@ -222,22 +218,22 @@ func (s *ADAServiceV2) GetThreat(ctx context.Context, in *v2.GetThreatReq) (*v2.
 // ActionThreat 威胁事件操作: ignore/finish
 func (s *ADAServiceV2) ActionThreat(ctx context.Context, in *v2.ActionThreatReq) (*v2.ActionThreatReply, error) {
 	if len(in.ID) != 24 {
-		return nil, status.Errorf(codes.InvalidArgument, "无效ID")
+		return nil, status.Error(codes.InvalidArgument, s.I18n("Threat.InvalidID"))
 	}
 	ae, err := server.GetThreatEventByID(s.env, in.ID)
 	if err != nil {
 		logger.Errorf("GetThreatEventByID(%s) err:%v", in.ID, err)
-		return nil, status.Errorf(codes.Internal, "无效ID")
+		return nil, status.Error(codes.Internal, s.I18n("Threat.InvalidID"))
 	}
 
 	if ae.EventStatus != common.RiskStatusPending {
-		return nil, status.Errorf(codes.Internal, "事件已处理")
+		return nil, status.Error(codes.Internal, s.I18n("Threat.EventProcessed"))
 	}
 
 	err = server.UpdateThreatEventStatus(s.env, in.ID, in.EventStatus, in.Remark)
 	if err != nil {
 		logger.Errorf("UpdateThreatEventStatus by id(%s) err:%v", in.ID, err)
-		return nil, status.Errorf(codes.Internal, "更新失败")
+		return nil, status.Error(codes.Internal, s.I18n("UpdateFailed"))
 	}
 
 	return &v2.ActionThreatReply{Result: common.RESP_SUCCESS}, nil
@@ -255,7 +251,7 @@ func (s *ADAServiceV2) ListActivity(ctx context.Context, in *v2.ListActivityReq)
 		aa, err := server.GetThreatActivityByID(s.env, in.ID)
 		if err != nil {
 			logger.Errorf("find alert activity by id :%v", err)
-			return ret, status.Errorf(codes.Internal, "查询告警行为异常")
+			return ret, status.Error(codes.Internal, s.I18n("Threat.Activity.QueryFailed"))
 		}
 		ret.List = append(ret.List, &v2.ActivityDetails{
 			ID:             aa.ID.Hex(),
@@ -280,13 +276,13 @@ func (s *ADAServiceV2) ListActivity(ctx context.Context, in *v2.ListActivityReq)
 	filter, err := server.ThreatActivityFilter(in.Level, in.DcHostname, in.Title, in.StartTm, in.EndTm)
 	if err != nil {
 		logger.Errorf("parse therat activity filter err:%v", err)
-		return nil, status.Errorf(codes.Internal, "查询条件错误")
+		return nil, status.Error(codes.Internal, s.I18n("Threat.Activity.ParseFilterFailed"))
 	}
 
 	activities, total, err := server.FindThreatActivitySelect(s.env, filter, in.OrderCreateTm, limit, offset)
 	if err != nil {
 		logger.Errorf("find alert activity by event id :%v", err)
-		return ret, status.Errorf(codes.Internal, "查询告警行为异常")
+		return ret, status.Error(codes.Internal, s.I18n("Threat.Activity.QueryFailed"))
 	}
 
 	for _, aa := range activities {
@@ -321,7 +317,7 @@ func (s *ADAServiceV2) GetActivityNames(ctx context.Context, in *v2.GetActivityN
 	names, err := server.GetThreatActivityAggNames(s.env, in.DcHostname, in.StartTm, in.EndTm)
 	if err != nil {
 		logger.Errorf("get threat activity names err:%v", err)
-		return nil, status.Errorf(codes.Internal, "获取告警行为名称失败")
+		return nil, status.Error(codes.Internal, s.I18n("Threat.Activity.GetActivityNamesFailed"))
 	}
 
 	return &v2.GetActivityNamesReply{Names: names}, nil
@@ -330,14 +326,14 @@ func (s *ADAServiceV2) GetActivityNames(ctx context.Context, in *v2.GetActivityN
 // GetActivity 威胁行为详情
 func (s *ADAServiceV2) GetActivity(ctx context.Context, in *v2.GetActivityReq) (*v2.GetActivityReply, error) {
 	if len(in.ID) != 24 {
-		return nil, status.Errorf(codes.InvalidArgument, "无效ID")
+		return nil, status.Error(codes.InvalidArgument, s.I18n("Threat.InvalidID"))
 	}
 
 	// 根据activityID获取activity
 	aa, err := server.GetThreatActivityByID(s.env, in.ID)
 	if err != nil {
 		logger.Errorf("find alert activity by id :%v", err)
-		return nil, status.Errorf(codes.Internal, "查询告警行为异常")
+		return nil, status.Error(codes.Internal, s.I18n("Threat.Activity.QueryFailed"))
 	}
 
 	ret := v2.GetActivityReply{}
@@ -364,15 +360,13 @@ func (s *ADAServiceV2) ListThreatRule(ctx context.Context, in *v2.ListThreatRule
 	descList, err := server.FindThreatDescSelect(s.env, in.Level, in.Enable)
 	if err != nil {
 		logger.Errorf("get all threat desc err:%v", err)
-		return nil, status.Errorf(codes.Internal, "获取规则名称失败")
+		return nil, status.Error(codes.Internal, s.I18n("Threat.ThreatRule.GetThreatRuleNamesFailed"))
 	}
-
-	langType := s.getSysLanguage(ctx)
 
 	var ret v2.ListThreatRuleReply
 	for _, desc := range descList {
 		var name, typ string
-		if langType == bCommon.LangEn {
+		if s.language == bCommon.LangEn {
 			name = desc.NameEN
 			typ = desc.TypeEN
 		} else {
@@ -396,10 +390,10 @@ func (s *ADAServiceV2) ListThreatRule(ctx context.Context, in *v2.ListThreatRule
 
 func (s *ADAServiceV2) ActionThreatRule(ctx context.Context, in *v2.ActionThreatRuleReq) (*v2.ActionThreatRuleReply, error) {
 	if !s.IsSuper(ctx) {
-		return nil, status.Errorf(codes.PermissionDenied, "没有操作权限")
+		return nil, status.Error(codes.PermissionDenied, s.I18n("NoPermission"))
 	}
 	if in.ID == "" {
-		return nil, status.Errorf(codes.InvalidArgument, "规则ID不能为空")
+		return nil, status.Error(codes.InvalidArgument, s.I18n("Threat.InvalidID"))
 	}
 
 	ret := v2.ActionThreatRuleReply{
@@ -409,7 +403,7 @@ func (s *ADAServiceV2) ActionThreatRule(ctx context.Context, in *v2.ActionThreat
 	err := server.UpdateThreatDesc(s.env, in.ID, in.Type, in.Switch)
 	if err != nil {
 		logger.Errorf("update threat desc err:%v", err)
-		return nil, status.Errorf(codes.Internal, "更新规则状态失败")
+		return nil, status.Error(codes.Internal, s.I18n("Threat.UpdateFailed"))
 	}
 
 	ret.Result = common.RESP_SUCCESS
@@ -420,15 +414,13 @@ func (s *ADAServiceV2) ActionThreatRule(ctx context.Context, in *v2.ActionThreat
 func (s *ADAServiceV2) GetThreatNames(ctx context.Context, in *v2.GetThreatNamesReq) (*v2.GetThreatNamesReply, error) {
 	var mameMap = make(map[string]string)
 
-	langType := s.getSysLanguage(ctx)
-
 	if in.RuleId != "" {
 		desc, err := server.GetThreatDescByID(s.env, in.RuleId)
 		if err != nil {
 			logger.Errorf("get threat desc by id(%s) err:%v", in.RuleId, err)
-			return nil, status.Errorf(codes.Internal, "获取威胁名称失败")
+			return nil, status.Error(codes.Internal, s.I18n("Threat.GetThreatNamesFailed"))
 		}
-		if langType == bCommon.LangEn {
+		if s.language == bCommon.LangEn {
 			mameMap[desc.ID] = desc.NameEN
 		} else {
 			mameMap[desc.ID] = desc.NameZH
@@ -440,11 +432,11 @@ func (s *ADAServiceV2) GetThreatNames(ctx context.Context, in *v2.GetThreatNames
 	descList, err := server.GetAllThreatDesc(s.env)
 	if err != nil {
 		logger.Errorf("get all threat desc err:%v", err)
-		return nil, status.Errorf(codes.Internal, "获取威胁名称失败")
+		return nil, status.Error(codes.Internal, s.I18n("Threat.GetThreatNamesFailed"))
 	}
 
 	for _, desc := range descList {
-		if langType == bCommon.LangEn {
+		if s.language == bCommon.LangEn {
 			mameMap[desc.ID] = desc.NameEN
 		} else {
 			mameMap[desc.ID] = desc.NameZH
@@ -472,7 +464,7 @@ func (s *ADAServiceV2) ListSensitiveEntry(ctx context.Context, in *v2.ListSensit
 	entries, total, err := server.FindSensitiveEntryList(s.env, in.Type, in.Domain, in.Origin, in.StartTm, in.EndTm, in.OrderCreateTm, in.OrderUpdateTm, limit, offset)
 	if err != nil {
 		logger.Errorf("find sensitive entry list err:%v", err)
-		return nil, status.Errorf(codes.Internal, "获取敏感配置失败")
+		return nil, status.Error(codes.Internal, s.I18n("Threat.SensitiveEntry.GetSensitiveEntryListFailed"))
 	}
 
 	var ret v2.ListSensitiveEntryReply
@@ -508,16 +500,16 @@ func (s *ADAServiceV2) ListSensitiveEntry(ctx context.Context, in *v2.ListSensit
 // AddSensitiveEntry 增加敏感条目
 func (s *ADAServiceV2) AddSensitiveEntry(ctx context.Context, in *v2.AddSensitiveEntryReq) (*v2.AddSensitiveEntryReply, error) {
 	if !s.IsSuper(ctx) {
-		return nil, status.Errorf(codes.PermissionDenied, "没有操作权限")
+		return nil, status.Error(codes.PermissionDenied, s.I18n("NoPermission"))
 	}
 
 	if in.Domain == "" || in.Name == "" {
-		return nil, status.Errorf(codes.InvalidArgument, "选择域和名称条目不能为空")
+		return nil, status.Error(codes.InvalidArgument, s.I18n("Threat.SensitiveEntry.DomainNameEmpty"))
 	}
 
 	_, err := server.GetSensitiveEntryByName(s.env, in.Name, in.Type, in.Domain)
 	if err == nil {
-		return nil, status.Errorf(codes.InvalidArgument, "新增域列表已存在")
+		return nil, status.Error(codes.AlreadyExists, s.I18n("Threat.SensitiveEntry.AlreadyExists"))
 	}
 
 	// TODO: get sid by entry name.
@@ -526,14 +518,14 @@ func (s *ADAServiceV2) AddSensitiveEntry(ctx context.Context, in *v2.AddSensitiv
 	err = server.AddSensitiveEntry(s.env, in.Name, sid, in.Type, in.Domain)
 	if err != nil {
 		logger.Errorf("add sensitive entry err:%v", err)
-		return nil, status.Errorf(codes.Internal, "新增条目失败")
+		return nil, status.Error(codes.Internal, s.I18n("Threat.SensitiveEntry.AddSensitiveEntryFailed"))
 	}
 
 	key := cache.SensitiveEntryKey(in.Domain, in.Type)
 	err = s.env.RedisCli.SAdd(ctx, key, []string{in.Name}).Err()
 	if err != nil {
 		logger.Warnf("redis cli save sensitive entry cache err:%v", err)
-		return nil, status.Errorf(codes.Internal, "新增条目缓存失败")
+		return nil, status.Error(codes.Internal, s.I18n("InternalError"))
 	}
 
 	return &v2.AddSensitiveEntryReply{Result: common.RESP_SUCCESS}, nil
@@ -541,7 +533,7 @@ func (s *ADAServiceV2) AddSensitiveEntry(ctx context.Context, in *v2.AddSensitiv
 
 func (s *ADAServiceV2) ListDomainEntry(ctx context.Context, in *v2.ListDomainEntryReq) (*v2.ListDomainEntryReply, error) {
 	if in.Type != "user" {
-		return nil, status.Errorf(codes.InvalidArgument, "类型错误,当前仅支持user")
+		return nil, status.Error(codes.InvalidArgument, s.I18n("Threat.SensitiveEntry.TypeInvalid"))
 	}
 
 	var err error
@@ -556,7 +548,7 @@ func (s *ADAServiceV2) ListDomainEntry(ctx context.Context, in *v2.ListDomainEnt
 	}
 	if err != nil {
 		logger.Errorf("find domain entry err:%v", err)
-		return nil, status.Errorf(codes.Internal, "获取域内Entry失败")
+		return nil, status.Error(codes.Internal, s.I18n("Threat.SensitiveEntry.GetDomainEntryFailed"))
 	}
 
 	return &v2.ListDomainEntryReply{
@@ -569,13 +561,13 @@ func (s *ADAServiceV2) DeleteSensitiveEntry(ctx context.Context, in *v2.DeleteSe
 	ret := v2.DeleteSensitiveEntryReply{Result: RESP_FAILED}
 
 	if !s.IsSuper(ctx) {
-		return &ret, status.Errorf(codes.PermissionDenied, "没有操作权限")
+		return &ret, status.Error(codes.PermissionDenied, s.I18n("NoPermission"))
 	}
 
 	entry, err := server.GetSensitiveEntryById(s.env, in.ID)
 	if err != nil {
 		logger.Errorf("get sensitive entry by id(%s) err:%v", in.ID, err)
-		return &ret, status.Errorf(codes.Internal, "获取条目失败")
+		return &ret, status.Error(codes.Internal, s.I18n("Threat.SensitiveEntry.GetSensitiveEntryFailed"))
 	}
 
 	if name, ok := entry.Content["name"]; ok {
@@ -583,14 +575,14 @@ func (s *ADAServiceV2) DeleteSensitiveEntry(ctx context.Context, in *v2.DeleteSe
 		err = s.env.RedisCli.SRem(ctx, key, []string{name}).Err()
 		if err != nil {
 			logger.Warnf("redis cli delete sensitive entry cache err:%v", err)
-			return &ret, status.Errorf(codes.Internal, "删除条目缓存失败")
+			return &ret, status.Error(codes.Internal, s.I18n("InternalError"))
 		}
 	}
 
 	err = server.DeleteSensitiveEntry(s.env, in.ID)
 	if err != nil {
 		logger.Errorf("delete sensitive entry err:%v", err)
-		return &ret, status.Errorf(codes.Internal, "删除条目失败")
+		return &ret, status.Error(codes.Internal, s.I18n("Threat.SensitiveEntry.DeleteSensitiveEntryFailed"))
 	}
 
 	ret.Result = common.RESP_SUCCESS
@@ -602,7 +594,7 @@ func (s *ADAServiceV2) ThreatTops(ctx context.Context, in *v2.ThreatTopsReq) (*v
 	results, err := server.ThreatTops(s.env, in.Domain, in.Type, in.Duration)
 	if err != nil {
 		logger.Errorf("get threat tops err:%v", err)
-		return nil, status.Errorf(codes.Internal, "获取失败")
+		return nil, status.Error(codes.Internal, s.I18n("QueryFailed"))
 	}
 
 	var ret v2.ThreatTopsReply
@@ -622,7 +614,7 @@ func (s *ADAServiceV2) ThreatTrends(ctx context.Context, in *v2.ThreatTrendsReq)
 	results, err := server.ThreatTrends(s.env, in.Domain, in.Level, in.Duration)
 	if err != nil {
 		logger.Errorf("get threat trends err:%v", err)
-		return nil, status.Errorf(codes.Internal, "获取失败")
+		return nil, status.Error(codes.Internal, s.I18n("QueryFailed"))
 	}
 
 	var ret v2.ThreatTrendsReply
@@ -644,7 +636,7 @@ func (s *ADAServiceV2) ListThreatWhitelist(ctx context.Context, in *v2.ListThrea
 	whitelist, total, err := server.FindAllThreatWhitelist(s.env, in.RuleId, in.Domain, in.Origin, in.Search, in.StartTm, in.EndTm, in.OrderUpdateTm, int64(limit), int64(offset))
 	if err != nil {
 		logger.Errorf("query whitelist err:%v", err)
-		return nil, status.Errorf(codes.Internal, "查询失败")
+		return nil, status.Error(codes.Internal, s.I18n("QueryFailed"))
 	}
 
 	var ret v2.ListThreatWhitelistReply
@@ -687,13 +679,13 @@ func (s *ADAServiceV2) GetThreatWhitelistField(ctx context.Context, in *v2.GetTh
 	_, err := server.GetThreatDescByID(s.env, in.RuleId)
 	if err != nil {
 		logger.Errorf("get threat desc by id(%s) err:%v", in.RuleId, err)
-		return nil, status.Errorf(codes.Internal, "获取规则失败")
+		return nil, status.Error(codes.InvalidArgument, s.I18n("InvalidArgument"))
 	}
 
 	fields, err := getThreatWhitelistFields(ctx, s.env, in.RuleId)
 	if err != nil {
 		logger.Errorf("get threat whitelist fields err:%v", err)
-		return nil, status.Errorf(codes.Internal, "获取规则字段失败")
+		return nil, status.Error(codes.Internal, s.I18n("QueryFailed"))
 	}
 
 	return &v2.GetThreatWhitelistFieldReply{Fields: fields}, err
@@ -701,7 +693,7 @@ func (s *ADAServiceV2) GetThreatWhitelistField(ctx context.Context, in *v2.GetTh
 
 func (s *ADAServiceV2) AddThreatWhitelist(ctx context.Context, in *v2.AddThreatWhitelistReq) (*v2.AddThreatWhitelistReply, error) {
 	if !s.IsSuper(ctx) {
-		return nil, status.Errorf(codes.PermissionDenied, "没有操作权限")
+		return nil, status.Error(codes.PermissionDenied, s.I18n("NoPermission"))
 	}
 
 	var ret = v2.AddThreatWhitelistReply{
@@ -711,14 +703,14 @@ func (s *ADAServiceV2) AddThreatWhitelist(ctx context.Context, in *v2.AddThreatW
 	rule, err := server.GetThreatDescByID(s.env, in.RuleId)
 	if err != nil {
 		logger.Errorf("get threat desc by id(%s) err:%v", in.RuleId, err)
-		return &ret, status.Errorf(codes.Internal, "获取规则失败")
+		return &ret, status.Error(codes.Internal, s.I18n("QueryFailed"))
 	}
 
 	// get rule fields from redis
 	fields, err := getThreatWhitelistFields(ctx, s.env, in.RuleId)
 	if err != nil {
 		logger.Errorf("get threat whitelist fields err:%v", err)
-		return &ret, status.Errorf(codes.Internal, "获取规则字段失败")
+		return &ret, status.Error(codes.Internal, s.I18n("QueryFailed"))
 	}
 
 	var rules []map[string]string
@@ -726,7 +718,7 @@ func (s *ADAServiceV2) AddThreatWhitelist(ctx context.Context, in *v2.AddThreatW
 		// 进行字段校验,确保各字段有效，提高engine侧处理效率
 		ok, errStr := checkThreatWhitelistFields(r.Info, fields)
 		if !ok {
-			return &ret, status.Errorf(codes.InvalidArgument, errStr)
+			return &ret, status.Error(codes.InvalidArgument, errStr)
 		}
 
 		rules = append(rules, r.Info)
@@ -736,18 +728,18 @@ func (s *ADAServiceV2) AddThreatWhitelist(ctx context.Context, in *v2.AddThreatW
 
 	// check if this rule already exists
 	if checkThreatWhitelistExist(ctx, s.env, in.RuleId, ruleMd5) {
-		return &ret, status.Errorf(codes.InvalidArgument, "规则已存在")
+		return &ret, status.Error(codes.InvalidArgument, s.I18n("Threat.Whitelist.RuleExists"))
 	}
 
 	var wId string
-	if s.getSysLanguage(ctx) == bCommon.LangEn {
+	if s.language == bCommon.LangEn {
 		wId, err = server.AddThreatWhitelist(s.env, rule.ID, rule.NameEN, rule.TypeEN, in.Domain, in.Remark, in.Origin, rules)
 	} else {
 		wId, err = server.AddThreatWhitelist(s.env, rule.ID, rule.NameZH, rule.TypeZH, in.Domain, in.Remark, in.Origin, rules)
 	}
 	if err != nil {
 		logger.Errorf("delete whitelist err:%v", err)
-		return &ret, status.Errorf(codes.Internal, "删除失败")
+		return &ret, status.Error(codes.Internal, s.I18n("DeleteFailed"))
 	}
 
 	// update whitelist cache in redis, for engine.
@@ -755,7 +747,7 @@ func (s *ADAServiceV2) AddThreatWhitelist(ctx context.Context, in *v2.AddThreatW
 	err = s.env.RedisCli.HSetNX(ctx, whitelistKey, wId, ruleCnt).Err()
 	if err != nil && err != redis.Nil {
 		logger.Errorf("set threat whitelist fields from redis err:%v", err)
-		return &ret, status.Errorf(codes.Internal, "删除失败")
+		return &ret, status.Error(codes.Internal, s.I18n("DeleteFailed"))
 	}
 
 	ret.Result = common.RESP_SUCCESS
@@ -764,7 +756,7 @@ func (s *ADAServiceV2) AddThreatWhitelist(ctx context.Context, in *v2.AddThreatW
 
 func (s *ADAServiceV2) UpdateThreatWhitelist(ctx context.Context, in *v2.UpdateThreatWhitelistReq) (*v2.UpdateThreatWhitelistReply, error) {
 	if !s.IsSuper(ctx) {
-		return nil, status.Errorf(codes.PermissionDenied, "没有操作权限")
+		return nil, status.Error(codes.PermissionDenied, s.I18n("NoPermission"))
 	}
 
 	var ret = v2.UpdateThreatWhitelistReply{
@@ -774,14 +766,14 @@ func (s *ADAServiceV2) UpdateThreatWhitelist(ctx context.Context, in *v2.UpdateT
 	wl, err := server.GetThreatWhitelistById(s.env, in.ID)
 	if err != nil {
 		logger.Errorf("get threat whitelist by id(%s) err:%v", in.ID, err)
-		return &ret, status.Errorf(codes.Internal, "获取规则失败")
+		return &ret, status.Error(codes.Internal, s.I18n("QueryFailed"))
 	}
 
 	// get rule fields from redis
 	fields, err := getThreatWhitelistFields(ctx, s.env, wl.RuleId)
 	if err != nil {
 		logger.Errorf("get threat whitelist fields err:%v", err)
-		return &ret, status.Errorf(codes.Internal, "获取规则字段失败")
+		return &ret, status.Error(codes.Internal, s.I18n("QueryFailed"))
 	}
 
 	// update whitelist cache in redis, for engine.
@@ -790,7 +782,7 @@ func (s *ADAServiceV2) UpdateThreatWhitelist(ctx context.Context, in *v2.UpdateT
 		// 进行字段校验,确保各字段有效，提高engine侧处理效率
 		ok, errStr := checkThreatWhitelistFields(r.Info, fields)
 		if !ok {
-			return &ret, status.Errorf(codes.InvalidArgument, errStr)
+			return &ret, status.Error(codes.InvalidArgument, errStr)
 		}
 
 		rules = append(rules, r.Info)
@@ -800,7 +792,7 @@ func (s *ADAServiceV2) UpdateThreatWhitelist(ctx context.Context, in *v2.UpdateT
 
 	// check if this rule already exists
 	if checkThreatWhitelistExist(ctx, s.env, wl.RuleId, ruleMd5) {
-		return &ret, status.Errorf(codes.InvalidArgument, "规则已存在")
+		return &ret, status.Error(codes.InvalidArgument, s.I18n("Threat.Whitelist.RuleExists"))
 	}
 
 	// update whitelist cache in redis, for engine.
@@ -809,13 +801,13 @@ func (s *ADAServiceV2) UpdateThreatWhitelist(ctx context.Context, in *v2.UpdateT
 	err = s.env.RedisCli.HSetNX(ctx, whitelistKey, wl.ID.Hex(), ruleCnt).Err()
 	if err != nil && err != redis.Nil {
 		logger.Errorf("set threat whitelist into redis err:%v", err)
-		return &ret, status.Errorf(codes.Internal, "更新规则缓存失败")
+		return &ret, status.Error(codes.Internal, s.I18n("UpdateFailed"))
 	}
 
 	err = server.UpdateThreatWhitelist(s.env, in.ID, in.Remark, rules)
 	if err != nil {
 		logger.Errorf("update whitelist(ruleId:%s,wId:%s) err:%v", wl.RuleId, in.ID, err)
-		return &ret, status.Errorf(codes.Internal, "更新规则白名单失败")
+		return &ret, status.Error(codes.Internal, s.I18n("UpdateFailed"))
 	}
 
 	ret.Result = common.RESP_SUCCESS
@@ -824,7 +816,7 @@ func (s *ADAServiceV2) UpdateThreatWhitelist(ctx context.Context, in *v2.UpdateT
 
 func (s *ADAServiceV2) DeleteThreatWhitelist(ctx context.Context, in *v2.DeleteThreatWhitelistReq) (*v2.DeleteThreatWhitelistReply, error) {
 	if !s.IsSuper(ctx) {
-		return nil, status.Errorf(codes.PermissionDenied, "没有操作权限")
+		return nil, status.Error(codes.PermissionDenied, s.I18n("NoPermission"))
 	}
 
 	var ret = v2.DeleteThreatWhitelistReply{
@@ -834,7 +826,7 @@ func (s *ADAServiceV2) DeleteThreatWhitelist(ctx context.Context, in *v2.DeleteT
 	wl, err := server.GetThreatWhitelistById(s.env, in.ID)
 	if err != nil {
 		logger.Errorf("get threat whitelist by id(%s) err:%v", in.ID, err)
-		return &ret, status.Errorf(codes.Internal, "获取规则失败")
+		return &ret, status.Error(codes.Internal, s.I18n("QueryFailed"))
 	}
 
 	// delete whitelist cache in redis, for engine.
@@ -842,13 +834,13 @@ func (s *ADAServiceV2) DeleteThreatWhitelist(ctx context.Context, in *v2.DeleteT
 	err = s.env.RedisCli.HDel(ctx, whitelistKey, in.ID).Err()
 	if err != nil {
 		logger.Errorf("del whitelist(ruleId:%s, wId:%s) from redis err:%v", wl.RuleId, in.ID, err)
-		return &ret, status.Errorf(codes.Internal, "删除规则缓存失败")
+		return &ret, status.Error(codes.Internal, s.I18n("UpdateFailed"))
 	}
 
 	err = server.DeleteThreatWhitelist(s.env, in.ID)
 	if err != nil {
 		logger.Errorf("delete whitelist err:%v", err)
-		return &ret, status.Errorf(codes.Internal, "删除失败")
+		return &ret, status.Error(codes.Internal, s.I18n("DeleteFailed"))
 	}
 
 	ret.Result = common.RESP_SUCCESS
@@ -911,36 +903,36 @@ func checkThreatWhitelistExist(ctx context.Context, env *config.Env, ruleId stri
 }
 
 func checkThreatWhitelistFields(ruleInfo map[string]string, fields []string) (bool, string) {
-	if ruleInfo == nil || len(ruleInfo) == 0 {
-		return false, "无效的规则"
+	if len(ruleInfo) == 0 {
+		return false, "Invalid rule"
 	}
 	filed, ok := ruleInfo["field"]
 	if !ok {
-		return false, "规则字段field不存在"
+		return false, "Field field not exist"
 	}
-	if base.InArray(filed, fields) == false {
-		return false, fmt.Sprintf("无效的规则字段field:%s", filed)
+	if !base.InArray(filed, fields) {
+		return false, fmt.Sprintf("Invalid rule field:%s", filed)
 	}
 
 	op, ok := ruleInfo["op"]
 	if !ok {
-		return false, "规则字段op不存在"
+		return false, "Rule field op not exist"
 	}
-	if base.InArray(op, []string{"==", "!=", ">", "<", ">=", "<=", "in", "not_in", "contain", "not_contain", "regex"}) == false {
-		return false, fmt.Sprintf("无效的规则字段op:%s", op)
+	if !base.InArray(op, []string{"==", "!=", ">", "<", ">=", "<=", "in", "not_in", "contain", "not_contain", "regex"}) {
+		return false, fmt.Sprintf("Invalid rule field op:%s", op)
 	}
 
 	value, ok := ruleInfo["value"]
 	if !ok {
-		return false, "规则字段value不存在"
+		return false, "Rule field value not exist"
 	}
 	if strings.Contains(value, "[AND]") {
-		return false, fmt.Sprintf("不合法的规则字段value:%s", value)
+		return false, fmt.Sprintf("Invalid rule field value:%s", value)
 	}
 	if op == "regex" {
 		_, err := regexp.Compile(value)
 		if err != nil {
-			return false, fmt.Sprintf("不合法的正则表达式:%s", value)
+			return false, fmt.Sprintf("Invalid regex:%s", value)
 		}
 	}
 
@@ -954,7 +946,7 @@ func (s *ADAServiceV2) ListThreatBlock(ctx context.Context, in *v2.ListThreatBlo
 	policies, total, err := server.FindAllThreatBlock(s.env, in.Domain, in.Origin, in.Search, in.StartTm, in.EndTm, int64(limit), int64(offset))
 	if err != nil {
 		logger.Errorf("query block policy err:%v", err)
-		return nil, status.Errorf(codes.Internal, "查询失败")
+		return nil, status.Error(codes.Internal, s.I18n("QueryFailed"))
 	}
 
 	var ret v2.ListThreatBlockReply
@@ -996,7 +988,7 @@ func (s *ADAServiceV2) ListThreatBlock(ctx context.Context, in *v2.ListThreatBlo
 
 func (s *ADAServiceV2) AddThreatBlock(ctx context.Context, in *v2.AddThreatBlockReq) (*v2.AddThreatBlockReply, error) {
 	if !s.IsSuper(ctx) {
-		return nil, status.Errorf(codes.PermissionDenied, "没有操作权限")
+		return nil, status.Error(codes.PermissionDenied, s.I18n("NoPermission"))
 	}
 
 	var ret = v2.AddThreatBlockReply{
@@ -1004,20 +996,20 @@ func (s *ADAServiceV2) AddThreatBlock(ctx context.Context, in *v2.AddThreatBlock
 	}
 
 	if checkSensorOffline(s.env, in.Domain) {
-		return &ret, status.Errorf(codes.Canceled, "域名下的传感器全部离线")
+		return &ret, status.Error(codes.Canceled, s.I18n("Threat.ThreatBlock.SensorOffline"))
 	}
 
 	if in.IpBlock && len(in.IpList) == 0 {
-		return &ret, status.Errorf(codes.InvalidArgument, "IP阻断列表不能为空")
+		return &ret, status.Error(codes.InvalidArgument, s.I18n("Threat.ThreatBlock.IpListEmpty"))
 	}
 	if in.UserBlock && len(in.UserList) == 0 {
-		return &ret, status.Errorf(codes.InvalidArgument, "用户阻断列表不能为空")
+		return &ret, status.Error(codes.InvalidArgument, s.I18n("Threat.ThreatBlock.UserListEmpty"))
 	}
 
 	sensors, err := server.FindAllSensorByDomain(s.env, in.Domain)
 	if err != nil {
 		logger.Errorf("get domain by name(%s) err:%v", in.Domain, err)
-		return &ret, status.Errorf(codes.InvalidArgument, "域名不存在")
+		return &ret, status.Error(codes.InvalidArgument, s.I18n("Threat.ThreatBlock.DomainNotExist"))
 	}
 
 	var results []map[string]string // 阻断结果
@@ -1064,7 +1056,7 @@ func (s *ADAServiceV2) AddThreatBlock(ctx context.Context, in *v2.AddThreatBlock
 	err = server.AddThreatBlock(s.env, in.Name, in.Domain, in.Remark, in.UserBlock, in.IpBlock, in.UserList, in.IpList, results)
 	if err != nil {
 		logger.Errorf("add block policy err:%v", err)
-		return &ret, status.Errorf(codes.Internal, "新增失败")
+		return &ret, status.Error(codes.Internal, s.I18n("Threat.ThreatBlock.AddFailed"))
 	}
 
 	ret.Result = common.RESP_SUCCESS
@@ -1073,7 +1065,7 @@ func (s *ADAServiceV2) AddThreatBlock(ctx context.Context, in *v2.AddThreatBlock
 
 func (s *ADAServiceV2) UpdateThreatBlock(ctx context.Context, in *v2.UpdateThreatBlockReq) (*v2.UpdateThreatBlockReply, error) {
 	if !s.IsSuper(ctx) {
-		return nil, status.Errorf(codes.PermissionDenied, "没有操作权限")
+		return nil, status.Error(codes.PermissionDenied, s.I18n("NoPermission"))
 	}
 
 	var ret = v2.UpdateThreatBlockReply{
@@ -1083,11 +1075,11 @@ func (s *ADAServiceV2) UpdateThreatBlock(ctx context.Context, in *v2.UpdateThrea
 	ab, err := server.GetThreatBlock(s.env, in.ID)
 	if err != nil {
 		logger.Errorf("get block policy by id(%s) err:%v", in.ID, err)
-		return &ret, status.Errorf(codes.Internal, "获取失败")
+		return &ret, status.Error(codes.Internal, s.I18n("QueryFailed"))
 	}
 
 	if checkSensorOffline(s.env, ab.Domain) {
-		return &ret, status.Errorf(codes.Canceled, "域名下的传感器全部离线")
+		return &ret, status.Error(codes.Canceled, s.I18n("Threat.ThreatBlock.SensorOffline"))
 	}
 
 	var cmdData = make(map[string]string)
@@ -1153,7 +1145,7 @@ func (s *ADAServiceV2) UpdateThreatBlock(ctx context.Context, in *v2.UpdateThrea
 	}
 
 	if len(cmdData) == 0 {
-		return &ret, status.Errorf(codes.InvalidArgument, "没有变化")
+		return &ret, status.Error(codes.InvalidArgument, s.I18n("Threat.ThreatBlock.NoChange"))
 	}
 
 	var results []map[string]string // 阻断结果
@@ -1212,7 +1204,7 @@ func (s *ADAServiceV2) UpdateThreatBlock(ctx context.Context, in *v2.UpdateThrea
 	err = server.UpdateThreatBlock(s.env, in.ID, in.Name, in.Remark, in.UserBlock, in.IpBlock, in.UserList, in.IpList, results)
 	if err != nil {
 		logger.Errorf("update block policy err:%v", err)
-		return &ret, status.Errorf(codes.Internal, "更新失败")
+		return &ret, status.Error(codes.Internal, s.I18n("Threat.ThreatBlock.UpdateFailed"))
 	}
 
 	ret.Result = common.RESP_SUCCESS
@@ -1221,7 +1213,7 @@ func (s *ADAServiceV2) UpdateThreatBlock(ctx context.Context, in *v2.UpdateThrea
 
 func (s *ADAServiceV2) DeleteThreatBlock(ctx context.Context, in *v2.DeleteThreatBlockReq) (*v2.DeleteThreatBlockReply, error) {
 	if !s.IsSuper(ctx) {
-		return nil, status.Errorf(codes.PermissionDenied, "没有操作权限")
+		return nil, status.Error(codes.PermissionDenied, s.I18n("NoPermission"))
 	}
 
 	var ret = v2.DeleteThreatBlockReply{
@@ -1231,11 +1223,11 @@ func (s *ADAServiceV2) DeleteThreatBlock(ctx context.Context, in *v2.DeleteThrea
 	ab, err := server.GetThreatBlock(s.env, in.ID)
 	if err != nil {
 		logger.Errorf("get block policy by id(%s) err:%v", in.ID, err)
-		return &ret, status.Errorf(codes.Internal, "获取失败")
+		return &ret, status.Error(codes.Internal, s.I18n("QueryFailed"))
 	}
 
 	if checkSensorOffline(s.env, ab.Domain) {
-		return &ret, status.Errorf(codes.Canceled, "域名下的传感器全部离线")
+		return &ret, status.Error(codes.Canceled, s.I18n("Threat.ThreatBlock.SensorOffline"))
 	}
 
 	var adaMsg sCommon.AdaMessage
@@ -1281,7 +1273,7 @@ func (s *ADAServiceV2) DeleteThreatBlock(ctx context.Context, in *v2.DeleteThrea
 	err = server.DeleteThreatBlock(s.env, in.ID)
 	if err != nil {
 		logger.Errorf("delete block policy err:%v", err)
-		return &ret, status.Errorf(codes.Internal, "删除失败")
+		return &ret, status.Error(codes.Internal, s.I18n("Threat.ThreatBlock.DeleteFailed"))
 	}
 
 	ret.Result = common.RESP_SUCCESS
@@ -1303,11 +1295,7 @@ func checkSensorOffline(env *config.Env, domain string) bool {
 			break
 		}
 	}
-	if !anySensorOnline {
-		return true
-	}
-
-	return false
+	return !anySensorOnline
 }
 
 func pushThreatPolicy(ctx context.Context, rdxCli *redis.Client, cmdMsg sCommon.AdaMessage) error {

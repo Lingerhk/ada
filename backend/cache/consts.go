@@ -2,12 +2,15 @@ package cache
 
 const (
 	SysStatsInfoKey  = "ada:server:stats:info"   // hash
-	SysStatsLoadKey  = "ada:server:stats:load"   // hash
-	SysStatsCpuKey   = "ada:server:stats:cpu"    // hash
-	SysStatsMemKey   = "ada:server:stats:mem"    // hash
-	SysStatsNetRxKey = "ada:server:stats:net_rx" // hash
-	SysStatsNetTxKey = "ada:server:stats:net_tx" // hash
+	SysStatsLoadKey  = "ada:server:stats:load"   // list
+	SysStatsCpuKey   = "ada:server:stats:cpu"    // list
+	SysStatsMemKey   = "ada:server:stats:mem"    // list
+	SysStatsNetRxKey = "ada:server:stats:net_rx" // list
+	SysStatsNetTxKey = "ada:server:stats:net_tx" // list
 	SysStatsCfgKey   = "ada:server:stats:cfg"    // hash 监控阈值配置
+
+	SysStatsPktLogKey = "ada:server:stats:pktlog:%s" // 流量日志统计(domain)
+	SysStatsWinLogKey = "ada:server:stats:winlog:%s" // 事件日志统计(domain)
 )
 
 const (

@@ -1,0 +1,6 @@
+
+# Options for the TrafficReceiver packet receiver.
+
+module TrafficReceiver;
+
+const buffer_size: count;

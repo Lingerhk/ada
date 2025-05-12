@@ -1,7 +1,7 @@
 
 #### ADA Sensor模块
 
-- 启动plugin (nxlog\ntap\frc-firewall)
+- 启动plugin (rpc-firewall/ldap-firewall)
 - 接收下发指令，启动/停止plugin
 - 监控DC Server状态
 - 监控ADA Sensor（资源占用），
@@ -18,22 +18,6 @@
 2.下载installer.exe到DC端执行，它会从ADA Redis下载Sensor各组件到本地并安装
 
 3.installer.exe执行Sensot注册逻辑，并check各服务都已正常运行
-```
-
-
-#### nxlog安装
-https://docs.nxlog.co/userguide/deploy/windows.html
-```shell
-Start-Process C:\Windows\System32\msiexec.exe -ArgumentList "/i C:\nxlog-ce-3.2.2329.msi /q INSTALLDIR=" C:\Program Files\ada_sensor\nxlog"" -wait
-Restart-Service -Name nxlog
-
-```
-
-#### Windows Debug支持
-- 查看进程启动参数
-```
-# https://superuser.com/questions/1003921/how-to-show-full-command-line-of-all-processes-in-windows
-wmic process where "name like '%ntap_remote.exe%'" get processid,commandline
 ```
 
 #### 代码签名

@@ -4,8 +4,9 @@ package v2
 
 import (
 	"ada/backend/apiserver/common"
-	logger "github.com/sirupsen/logrus"
 	"strings"
+
+	logger "github.com/sirupsen/logrus"
 )
 
 var serviceName = _ADA_serviceDesc.ServiceName
@@ -25,6 +26,9 @@ var URLEventMap = map[string]string{
 	"/" + serviceName + "/" + "AddThreatWhitelist":    "添加告警规则白名单",
 	"/" + serviceName + "/" + "DeleteThreatWhitelist": "删除告警规则白名单",
 	"/" + serviceName + "/" + "UpdateThreatWhitelist": "更新告警规则白名单",
+	"/" + serviceName + "/" + "AddThreatBlock":        "添加威胁阻断",
+	"/" + serviceName + "/" + "UpdateThreatBlock":     "更新威胁阻断",
+	"/" + serviceName + "/" + "DeleteThreatBlock":     "删除威胁阻断",
 
 	// scanrisk主动检测
 	"/" + serviceName + "/" + "AddScanTask":     "添加扫描任务",
@@ -54,22 +58,19 @@ var URLEventMap = map[string]string{
 	"/" + serviceName + "/" + "UpdateUserPassword": "修改密码",
 	"/" + serviceName + "/" + "UpdateUser":         "修改用户信息",
 	"/" + serviceName + "/" + "UpdateAvatar":       "上传头像",
-	"/" + serviceName + "/" + "EnableMfa":          "开启登录二次校验",
-	"/" + serviceName + "/" + "DisableMfa":         "关闭登录二次校验",
+	"/" + serviceName + "/" + "EnableMfa":          "开启/关闭登录二次校验",
+	"/" + serviceName + "/" + "DisableMfa":         "开启/关闭登录二次校验",
 
 	// 子账户管理
-	"/" + serviceName + "/" + "AddUser":            "创建账户",
-	"/" + serviceName + "/" + "UpdateUser":         "更新账户信息",
-	"/" + serviceName + "/" + "UpdateUserPassword": "更新账户密码",
-	"/" + serviceName + "/" + "DeleteUser":         "删除账户",
-	"/" + serviceName + "/" + "EnableMfa":          "开启二次认证",
-	"/" + serviceName + "/" + "EnableMfa":          "禁用二次认证",
-	"/" + serviceName + "/" + "ResetPasswordReq":   "重置密码",
+	"/" + serviceName + "/" + "AddUser":       "创建账户",
+	"/" + serviceName + "/" + "DeleteUser":    "删除账户",
+	"/" + serviceName + "/" + "ResetPassword": "重置密码",
 
 	// 系统信息
-	"/" + serviceName + "/" + "UpdateCompanyIcon":    "更新产品Logo",
+	"/" + serviceName + "/" + "UpdateProductIcon":    "更新产品Logo",
 	"/" + serviceName + "/" + "UpdateNtpAddress":     "更新NTP地址",
 	"/" + serviceName + "/" + "UpdateSystemLanguage": "修改系统语言",
+	"/" + serviceName + "/" + "SetSystemStatsCfg":    "更新系统监控配置",
 	"/" + serviceName + "/" + "UpdateLicense":        "更新授权许可",
 	"/" + serviceName + "/" + "NetworkDebug":         "执行网络调试",
 
@@ -78,9 +79,10 @@ var URLEventMap = map[string]string{
 	"/" + serviceName + "/" + "DeleteAuditLog": "清空审计日志",
 
 	// 通知模块
-	"/" + serviceName + "/" + "UpdateNotifyConf": "修改通知信息",
+	"/" + serviceName + "/" + "UpdateNotifyConf": "修改通知配置",
 	"/" + serviceName + "/" + "EnableNotifyConf": "开关通知配置",
-	"/" + serviceName + "/" + "TestNotifyConf":   "测试通知信息",
+	"/" + serviceName + "/" + "TestNotifyConf":   "测试通知配置",
+	"/" + serviceName + "/" + "UpdateNotify":     "更新通知状态",
 
 	// 报表报告
 	"/" + serviceName + "/" + "AddExportTask":    "添加导出任务",
@@ -89,89 +91,129 @@ var URLEventMap = map[string]string{
 
 // URL事件脱敏参数定义
 var URLEventMaskingMap = map[string][]string{
-	"/" + serviceName + "/" + "Login":              []string{"password"},
-	"/" + serviceName + "/" + "AddUser":            []string{"password"},
-	"/" + serviceName + "/" + "UpdateUser":         []string{"password"},
-	"/" + serviceName + "/" + "UpdateUserPassword": []string{"oldPassword", "newPassword"},
-	"/" + serviceName + "/" + "AddDomain":          []string{"password"},
-	"/" + serviceName + "/" + "UpdateDomain":       []string{"password"},
-	"/" + serviceName + "/" + "TestDomain":         []string{"password"},
-	"/" + serviceName + "/" + "ResetPassword":      []string{"newPassword"},
-	"/" + serviceName + "/" + "UpdateNotifyConf":   []string{"metadata"},
+	"/" + serviceName + "/" + "Login":              {"password"},
+	"/" + serviceName + "/" + "AddUser":            {"password"},
+	"/" + serviceName + "/" + "UpdateUser":         {"password"},
+	"/" + serviceName + "/" + "UpdateUserPassword": {"oldPassword", "newPassword"},
+	"/" + serviceName + "/" + "AddDomain":          {"password"},
+	"/" + serviceName + "/" + "UpdateDomain":       {"password"},
+	"/" + serviceName + "/" + "TestDomain":         {"password"},
+	"/" + serviceName + "/" + "ResetPassword":      {"newPassword"},
+	"/" + serviceName + "/" + "UpdateNotifyConf":   {"metadata"},
 }
 
 var moduleMap = map[string][]string{
-	// 风险大盘
-	"RiskMarket": []string{"StatsAlertActivity", "StatsRiskAssets", "StatsAlertEvents", "StatsScanEvents", "StatsAssets", "AlarmAnalysis", "RiskTrend", "ListStatsAlertName", "ListStatsAlertType"},
-	//告警列表
-	"ThreatEventFind": []string{"ListThreatEvent", "ListThreatActivity", "ListThreatRawLog", "GetRuleInfo", "GetDCNameList", "GetTarget", "GetDomainFromAlert", "ListThreatEventSearch", "ListRuleTypes", "StateAlertEventByRule", "GetThreatEventByUniqueID"},
-	// 告警列表操作
-	"ThreatEventOperating": []string{"UpdateThreatEvent", "ExportThreatEvent"},
-	// 主动检测
-	"Scanner": []string{"GetScanRule", "ScanInspection", "GetScanTaskState", "GetScanScore", "SetCronTask", "ListCronTask", "EventList", "EventDetails",
-		"LastScanInfo", "StopScan", "ListOnlineDomain", "ListDomainByScanEvent", "ExportScanEvent", "GetInstanceList", "ListTaskManagerGroup",
-		"DetailTaskManagerGroup", "DeleteTaskManagerGroup", "ProtectInfo"},
-	// 事件列表
-	"ThreatList": []string{"ListRuleTypes", "ListDomainByThreat", "ListDCByThreat", "ListTypeByThreat", "ListLevelByThreat", "GetThreatList"},
-	// 敏感组配置,蜜罐账户
-	"SensitiveGroup": []string{"AddDomainEntry", "DeleteDomainEntry", "ListDomainEntry"},
-	// 告警配置
-	"Kerberos": []string{"GetKerberosConf", "UpdateKerberosConf", "ListKerberosConf"},
-	// 白名单管理
-	"RuleWhite": []string{"AddRuleWhitelist", "DeleteRuleWhitelist", "UpdateRuleWhitelist", "GetRuleWhitelist", "ListRuleWhitelist", "GetRuleWhitelistInfo", "ListWhiteField", "GetWhiteFieldValue"},
-	// 联动配置
-	"AlertConf": []string{"GetAlertConf", "SetAlertConf", "TestEmailSend"},
-	// 通知模块
-	"NotifyConf": []string{"ListNotifyConf", "UpdateNotifyConf", "UpdateNotifyConfEnable", "GetNotifyConfInfo", "ListNotifyTarget", "TestEmail", "SelectOptionNotify"},
-	//域服务器配置
-	"Domain": []string{"ListDomain", "AddDomain", "TestDomain", "UpdateDomain", "DeleteDomain", "GetDomainObjectInfo", "UpdateDomainData", "GetDomainInfo", "SetMsRCP"},
-	// 运维管理员的域配置
-	"OpsDomain": []string{"ListDomain", "AddDomain", "TestDomain", "UpdateDomain", "GetDomainObjectInfo", "UpdateDomainData", "GetDomainInfo", "SetMsRCP"},
-	// 安全管理员的域配置
-	"SecDomain": []string{"ListDomain", "GetDomainObjectInfo", "GetDomainInfo"},
-	//传感器管理
-	"Agent": []string{"UpdateAgent", "CmdAgent", "DownloadAgent", "DownCertificate",
-		"DeleteAgent", "ListGateway", "ListWecBeat", "UpdateAgentVersion", "DeleteWecBeat", "GetDCList", "AddWecConf", "WecBeatInfo", "ListWecBeatEventInfo"},
-	// 日志审计
-	"AuditLog":       []string{"ListAuditLog", "ExportAuditLog"},
-	"AuditLogDelete": []string{"DeleteAuditLog"},
-	// 系统信息
-	"System": []string{"GetSystemInfo", "DownloadSystemLog", "GetSystemLog", "GetLicence", "UpdateLicence", "UpdateSystemIcon", "GetSystemIcon", "NetworkDiag", "SetSystemTime"},
-	// 帮助中心
-	"Help": []string{},
-	// 个人中心
-	"User": []string{"Login", "Logout", "ListUser", "AddUser", "UpdateUser", "UpdateUserPassword",
-		"CheckMfa", "EnableMfa", "DisableMfa", "UpdateAvatar", "GetPwdUpdateTm"},
-	"AccountManagement": []string{"DeleteUser", "ResetPassword"},
-	//	消息模块
-	"MessageNotify": []string{"ListNotify", "UpdateNotify", "AddNotifyEmailConf", "DeleteNotifyEmailConf", "UpdateNotifyEmailConf", "ListNotifyEmailConf", "StatsNotify"},
-	// 事件报表
-	"EventReport": []string{"GenerateEventReport", "ListEventReport", "StatusEventReport", "DownloadEventReport", "DeleteEventReport"},
-	// 通用接口
-	"All": {"ListAgent", "ListStatsAlertCount", "ListDomainNameForEventList", "ListDomainNameFromAgent", "ListDomain", "ListWhiteField", "ListDomainName", "GetDomainObject", "GetTaskState", "ListThreatEventSearch", "StateAlertEventByRule", "ListScanPluginType"},
-	// 数据检索
-	"Search": {"ListSearchLogEvent", "GetSearchLogField", "GetSearchChartData", "GetSearchFieldInfo", "AddSearchTemplate", "ListSearchTemplate", "DeleteSearchTemplate"},
-	// 资产相关接口
-	"Assets": {"ListAssetsUser", "ListAssetsComputer", "ListAssetsGroup", "GetAssetsDetailsByAlert", "ListGroupByAssets",
-		"GetAssetsActivities", "GetAssetsEntry", "GetAssetsLabel", "GetAssetsLabelInfo", "ListUsersSensitiveGroup", "StatsAssetsActivitiesLevel", "GetAssetsSensitiveGroupLabelInfo"},
-	// 攻击路径
-	"AttackPath": {"ListAttackPath", "ExportAttackPath"},
-	// 漏洞检测
-	"LeakEvent": {"ScanLeakEvent", "StatsLeakEvent", "ListLeakEvent", "ListScanPlugin", "UpdateScanPluginEnable", "UpdateScanPluginMetaData", "GetScanLeakEventStatus"},
+	// User Management & Personal Center
+	"User": {
+		"Login", "Logout", "ListUser", "AddUser", "UpdateUser", "UpdateUserPassword",
+		"DeleteUser", "UserExists", "CheckMfa", "EnableMfa", "DisableMfa", "UpdateAvatar",
+		"ResetPassword", "GetPwdUpdateTm",
+	},
+	// Domain Management
+	"Domain": {
+		"ListDomain", "AddDomain", "TestDomain", "UpdateDomain", "DeleteDomain", "UpdateDomainData",
+	},
+	// Sensor Management
+	"Sensor": {
+		"ListSensor", "UpdateSensor", "DownloadSensor", "CmdSensor", "UpdateSensorVersion",
+	},
+	// System Management & Information
+	"System": {
+		"GetSystemInfo", "GetProductIcon", "UpdateProductIcon", "UpdateNtpAddress",
+		"UpdateSystemLanguage", "GetSystemStats", "SetSystemStatsCfg", "GetLicense",
+		"UpdateLicense", "NetworkDebug",
+	},
+	// Notification Configuration
+	"NotifyConf": {
+		"ListNotifyConf", "UpdateNotifyConf", "EnableNotifyConf", "TestNotifyConf",
+	},
+	// Export Task Management
+	"ExportTask": {
+		"ListExportTask", "AddExportTask", "DeleteExportTask",
+	},
+	// Notification Center
+	"Notify": {
+		"ListNotify", "UpdateNotify", "StatsNotify",
+	},
+	// Audit Log
+	"AuditLog": {
+		"ListAuditLog",
+	},
+	// Threat Detection (Events, Rules, Config, Whitelists, Blocking etc.)
+	"Threat": {
+		"ListThreat", "GetThreatNames", "ListThreatRule", "ActionThreatRule", "GetThreat",
+		"ActionThreat", "ListActivity", "GetActivityNames", "GetActivity", "ListThreatConf",
+		"UpdateThreatConf", "ListSensitiveEntry", "AddSensitiveEntry", "ListDomainEntry",
+		"DeleteSensitiveEntry", "ListThreatWhitelist", "GetThreatWhitelistField",
+		"AddThreatWhitelist", "UpdateThreatWhitelist", "DeleteThreatWhitelist",
+		"ListThreatBlock", "AddThreatBlock", "UpdateThreatBlock", "DeleteThreatBlock",
+	},
+	// Threat Detection Dashboard
+	"ThreatDashboard": {
+		"ThreatTops", "ThreatTrends",
+	},
+	// Scan Risk (Baseline, Leak, WeakPwd)
+	"ScanRisk": {
+		"ListBaseline", "GetBaseline", "ListLeak", "ListWeakPwd",
+	},
+	// Scan Risk Dashboard
+	"ScanRiskDashboard": {
+		"ScanRiskStats",
+	},
+	// Scan Task Management
+	"ScanTask": {
+		"ListScanTask", "GetScanTask", "AddScanTask", "RecheckScanTask", "DeleteScanTask",
+	},
+	// Scan Configuration
+	"ScanConf": {
+		"ListScanConf", "SetScanConf", "GetScanConf", "GetScanTmplNames", "UpdateScanConf",
+	},
+	// Scan Templates & Plugins
+	"ScanTmpl": {
+		"ListScanTmpl", "GetScanTmpl", "UpdateScanTmpl", "DeleteScanTmpl", "AddScanTmpl",
+		"ListScanPlugin",
+	},
+	// Main Dashboard
+	"Dashboard": {
+		"DashboardStats", "DashboardTrends", "DashboardLogStats",
+	},
 }
 
-func moduleMapJoin(strList ...string) string {
-	str := ""
-	for _, v := range strList {
-		str += strings.Join(moduleMap[v], ",") + ","
+func moduleMapJoin(modules ...string) string {
+	var methods []string
+	for _, moduleName := range modules {
+		if moduleMethods, ok := moduleMap[moduleName]; ok {
+			methods = append(methods, moduleMethods...)
+		} else {
+			logger.Warnf("ACL moduleMap referenced non-existent module: %s", moduleName)
+		}
 	}
-	return str
+	return strings.Join(methods, ",")
 }
 
+// UserACL defines the allowed methods for each role based on the moduleMap.
 var UserACL = map[string]string{
-	common.RoleMgr: moduleMapJoin("All", "AccountManagement", "Agent", "AlertConf", "AttackPath", "AuditLog", "AuditLogDelete", "Domain", "EventReport", "LeakEvent", "Help", "Honeypot", "Kerberos", "MessageNotify", "RiskMarket", "RuleWhite", "Scanner", "SensitiveGroup", "System", "ThreatEventFind", "ThreatEventOperating", "ThreatList", "User", "Search", "Assets", "SetSystemTime"),
-	common.RoleSec: moduleMapJoin("All", "Agent", "AlertConf", "AttackPath", "AuditLog", "AuditLogDelete", "EventReport", "Help", "Honeypot", "Kerberos", "LeakEvent", "MessageNotify", "RiskMarket", "RuleWhite", "Scanner", "SensitiveGroup", "SecDomain", "System", "ThreatEventFind", "ThreatEventOperating", "ThreatList", "User", "Search", "Assets"),
-	common.RoleOps: moduleMapJoin("All", "Agent", "AlertConf", "AttackPath", "AuditLog", "AuditLogDelete", "EventReport", "Help", "LeakEvent", "MessageNotify", "OpsDomain", "RiskMarket", "Scanner", "System", "ThreatEventFind", "ThreatList", "User", "Search", "Assets"),
+	// Manager has access to all modules.
+	common.RoleMgr: moduleMapJoin(
+		"User", "Domain", "Sensor", "System", "NotifyConf", "ExportTask", "Notify",
+		"AuditLog", "Threat", "ThreatDashboard", "ScanRisk", "ScanRiskDashboard",
+		"ScanTask", "ScanConf", "ScanTmpl", "Dashboard",
+	),
+	// Security role has access to threat/scan related modules, dashboards, audit, notifications, and limited system/user access.
+	common.RoleSec: moduleMapJoin(
+		"Threat", "ThreatDashboard", "ScanRisk", "ScanRiskDashboard", "ScanTask",
+		"ScanConf", "ScanTmpl", "Dashboard", "ExportTask", "Notify",
+		"AuditLog", "System", // System access might need further refinement (read-only?)
+		"Sensor", "Domain", // Sensor/Domain access might need refinement (read-only?)
+		"User", // Assumed personal user access + relevant read operations
+	),
+	// Operations role has access to system/sensor/domain management, audit, notifications, dashboard, and personal user access.
+	common.RoleOps: moduleMapJoin(
+		"Domain", "Sensor", "System", "NotifyConf", "ExportTask", "Notify",
+		"Threat", "ThreatDashboard", "ScanRisk", "ScanRiskDashboard", "ScanTask",
+		"ScanConf", "ScanTmpl", "Dashboard", "AuditLog",
+		"User", // Assumed personal user access + relevant read operations
+	),
 }
 
 func CheckUserAccess(role, fullMethod string) bool {

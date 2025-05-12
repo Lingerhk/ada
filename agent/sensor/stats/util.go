@@ -1,26 +1,26 @@
 package stats
 
 import (
-	"ada/agent/sensor/common"
+	"context"
 	"encoding/json"
-	"github.com/go-cmd/cmd"
+	"fmt"
+	"strings"
+	"time"
+
 	"github.com/google/gopacket/pcap"
 	"github.com/shirou/gopsutil/process"
 	"github.com/sirupsen/logrus"
-	"path/filepath"
-	"strings"
-	"time"
 )
 
-func getNetIface() (map[string]string, error) {
+func GetNetDevices() (string, error) {
 	ifaceMap := make(map[string]string)
 
 	devices, err := pcap.FindAllDevs()
 	if err != nil {
-		return nil, err
+		return "", err
 	}
 	if len(devices) == 0 {
-		return ifaceMap, nil
+		return "", nil
 	}
 
 	for _, dev := range devices {
@@ -40,56 +40,7 @@ func getNetIface() (map[string]string, error) {
 		ifaceMap[dev.Name] = strings.Join(ips, ",")
 	}
 
-	return ifaceMap, nil
-}
-
-func getNtapIfaceList() (map[string]string, error) {
-	ntapBin := filepath.Join(common.SensorDir, "ntap", common.PlugNtapProcName)
-	ntapProc := cmd.NewCmd(ntapBin)
-	ntapProc.Args = []string{"/c"}
-	status := <-ntapProc.Start()
-
-	var firstLine bool
-	ifaceIdxMap := make(map[string]string)
-	for _, line := range status.Stdout {
-		if strings.HasPrefix(line, "Available interfaces:") {
-			firstLine = true
-			continue
-		}
-		if firstLine && strings.Contains(line, "[index=") {
-			parts := strings.Fields(line)
-			IdxDesc := strings.SplitN(parts[0], "[index=", 2)
-			idxNum := string(IdxDesc[1][0])
-			devName := parts[1]
-			ifaceIdxMap[idxNum] = devName[1 : len(devName)-1]
-		}
-	}
-
-	return ifaceIdxMap, nil
-}
-
-func GetNetDevices() (string, error) {
-	ifaceMap, err := getNetIface()
-	if err != nil {
-		return "", err
-	}
-
-	ifaceIdxMap, err := getNtapIfaceList()
-	if err != nil {
-		return "", err
-	}
-
-	var cardMap = make(map[string]string)
-	for devName, ips := range ifaceMap {
-		for idNum, ifaceName := range ifaceIdxMap {
-			if ifaceName == devName {
-				cardMap[idNum] = ips
-				break
-			}
-		}
-	}
-
-	cardInfo, err := json.Marshal(&cardMap)
+	cardInfo, err := json.Marshal(&ifaceMap)
 	if err != nil {
 		return "", err
 	}
@@ -97,106 +48,112 @@ func GetNetDevices() (string, error) {
 	return string(cardInfo), nil
 }
 
-// 获取的驱动列表
-//func GetNetDevices() (string, error) {
-//	// 多次尝试获取，失败重试
-//	cardIPMap := map[string]string{}
-//	for i := 0; i < 5; i++ {
-//		devices, err := pcap.FindAllDevs()
-//		if err != nil {
-//			return "", err
-//		}
-//		if len(devices) == 0 {
-//			time.Sleep(2 * time.Second)
-//			continue
-//		}
-//
-//		var idx = 0
-//		for _, dev := range devices {
-//			name := dev.Name
-//			var ips string
-//			if len(dev.Addresses) > 0 {
-//				ips = ""
-//				for i, address := range dev.Addresses {
-//					if i > 0 {
-//						ips += " "
-//					}
-//					ips += fmt.Sprintf("%s", address.IP.String())
-//				}
-//				name += fmt.Sprintf(" (%s)", ips)
-//			}
-//			cardIPMap[strconv.Itoa(idx)] = name
-//			idx++
-//		}
-//		break
-//	}
-//
-//	cardInfo, err := json.Marshal(&cardIPMap)
-//	if err != nil {
-//		return "", err
-//	}
-//
-//	return string(cardInfo), nil
-//}
-
 // 根据pid获取进程CPU(单核利用率)/MEM信息
 // 如果传入interval 则计算一段时间内的均值
-func getProcessCpuMemPercent(interval time.Duration, pid uint32) (float64, float32, error) {
+// Add context for cancellation
+func getProcessCpuMemPercent(ctx context.Context, interval time.Duration, pid uint32) (float64, float64, error) {
+	// Check context immediately if interval is 0
 	if interval <= 0 {
+		select {
+		case <-ctx.Done():
+			return 0, 0, ctx.Err()
+		default:
+		}
 		p, err := process.NewProcess(int32(pid))
 		if err != nil {
 			logrus.Errorf("get process info by pid:%d err:%v", pid, err)
 			return 0, 0, err
 		}
+		// Use CPUPercentWithContext if possible (depends on gopsutil version, fallback otherwise)
+		// Assuming standard CPUPercent for simplicity here, but context version is better.
 		cpuPercent, _ := p.CPUPercent()
 		memPercent, _ := p.MemoryPercent()
 
-		return cpuPercent, memPercent, nil
+		return cpuPercent, float64(memPercent), nil
 	}
 
+	// For interval > 0, use a cancellable goroutine
 	var hasErr error
 	var cpuPercent float64
-	var memPercent float32
-	timeout := time.After(interval)
+	var memPercent float64
 	finish := make(chan bool)
+
+	// Determine polling interval, ensure it's reasonable
+	pollingInterval := interval / 60
+	if pollingInterval < 100*time.Millisecond { // Avoid excessive polling
+		pollingInterval = 100 * time.Millisecond
+	}
+
 	go func() {
-		var n float32
+		defer func() { finish <- true }() // Ensure finish is signaled
+		var n float64
+		ticker := time.NewTicker(pollingInterval)
+		defer ticker.Stop()
+		intervalTimeout := time.After(interval)
+
 		for {
 			select {
-			case <-timeout:
-				finish <- true
+			case <-ctx.Done(): // Check for context cancellation
+				hasErr = ctx.Err()
 				return
-			default:
+			case <-intervalTimeout: // Check for interval timeout
+				return // Interval completed normally
+			case <-ticker.C: // Poll at ticker interval
 				//执行轮询查询操作
 				p, err := process.NewProcess(int32(pid))
 				if err != nil {
-					hasErr = err
-					return
+					hasErr = fmt.Errorf("get process handle pid %d: %w", pid, err)
+					return // Exit goroutine on process error
 				}
+				// Note: CPUPercent itself can block for a duration on first call or based on system load.
+				// Using CPUPercentWithContext(ctx) would be ideal if available.
 				curCpuPercent, err := p.CPUPercent()
 				if err != nil {
-					hasErr = err
-					return
+					// Ignore CPU calculation error for this sample? Or return error?
+					// Let's log and continue for now, maybe the next sample works.
+					logrus.Warnf("get cpu percent pid %d err: %v", pid, err)
+					continue
 				}
 				curMem, err := p.MemoryPercent()
 				if err != nil {
-					hasErr = err
-					return
+					logrus.Warnf("get memory percent pid %d err: %v", pid, err)
+					continue
 				}
 
 				n++
 				//根据历史 统计均值
-				cpuPercent = (cpuPercent*float64(n-1) + curCpuPercent) / float64(n)
-				memPercent = (memPercent*(n-1) + curMem) / n
+				cpuPercent = (cpuPercent*float64(n-1) + curCpuPercent) / n
+				memPercent = (memPercent*float64(n-1) + float64(curMem)) / n
 			}
-			time.Sleep(interval / 60)
 		}
 	}()
-	<-finish
 
-	if hasErr != nil {
-		return 0, 0, hasErr
+	// Wait for the goroutine to finish or be cancelled
+	select {
+	case <-ctx.Done():
+		<-finish // Wait for goroutine cleanup if context cancelled first
+		return 0, 0, ctx.Err()
+	case <-finish:
+		// Goroutine finished (normally or due to internal error/timeout)
+		if hasErr != nil {
+			// Return 0s and the specific error (could be context cancellation or process error)
+			return 0, 0, hasErr
+		}
+		// Normal completion
+		return cpuPercent, memPercent, nil
 	}
+}
 
-	return cpuPercent, memPercent, nil
+// Add helper function for human-readable bytes
+func humanReadableBytes(bytes uint64) string {
+	const unit = 1024
+	if bytes < unit {
+		return fmt.Sprintf("%d B", bytes)
+	}
+	div, exp := uint64(unit), 0
+	for n := bytes / unit; n >= unit; n /= unit {
+		div *= unit
+		exp++
+	}
+	return fmt.Sprintf("%.1f %cB", float64(bytes)/float64(div), "KMGTPE"[exp])
 }

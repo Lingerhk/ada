@@ -19,6 +19,7 @@ Mongodb :
   PoolLimit : 100
 
 ES:
+  Enable: true # the same as tasker.yaml
   Addresses: ["http://127.0.0.1:9200"]
   Username: elastic
   Password: "nX0ZIN0AIfFs5x=fZfuE"

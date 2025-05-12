@@ -5,11 +5,11 @@ package v2
 
 import (
 	fmt "fmt"
+	math "math"
 	proto "github.com/golang/protobuf/proto"
 	_ "github.com/mwitkow/go-proto-validators"
-	github_com_mwitkow_go_proto_validators "github.com/mwitkow/go-proto-validators"
-	math "math"
 	regexp "regexp"
+	github_com_mwitkow_go_proto_validators "github.com/mwitkow/go-proto-validators"
 )
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -326,16 +326,16 @@ func (this *GetSystemInfoReply) Validate() error {
 	// Validation of proto3 map<> fields is unsupported.
 	return nil
 }
-func (this *GetCompanyIconReq) Validate() error {
+func (this *GetProductIconReq) Validate() error {
 	return nil
 }
-func (this *GetCompanyIconReply) Validate() error {
+func (this *GetProductIconReply) Validate() error {
 	return nil
 }
-func (this *UpdateCompanyIconReq) Validate() error {
+func (this *UpdateProductIconReq) Validate() error {
 	return nil
 }
-func (this *UpdateCompanyIconReply) Validate() error {
+func (this *UpdateProductIconReply) Validate() error {
 	return nil
 }
 func (this *UpdateNtpAddressReq) Validate() error {
@@ -1419,5 +1419,21 @@ func (this *DashboardTrendsReq) Validate() error {
 	return nil
 }
 func (this *DashboardTrendsReply) Validate() error {
+	return nil
+}
+func (this *DashboardLogStatsReq) Validate() error {
+	return nil
+}
+func (this *DashboardLogStatsReply) Validate() error {
+	for _, item := range this.List {
+		if item != nil {
+			if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(item); err != nil {
+				return github_com_mwitkow_go_proto_validators.FieldError("List", err)
+			}
+		}
+	}
+	return nil
+}
+func (this *DashboardLogStatsReplyLogStatsList) Validate() error {
 	return nil
 }

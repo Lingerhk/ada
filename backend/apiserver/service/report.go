@@ -7,12 +7,13 @@ import (
 	baseCommon "ada/backend/common"
 	"context"
 	"fmt"
+	"os"
+	"path/filepath"
+
 	"github.com/google/uuid"
 	logger "github.com/sirupsen/logrus"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
-	"os"
-	"path/filepath"
 )
 
 func (s *ADAServiceV2) ListExportTask(ctx context.Context, in *v2.ListExportTaskReq) (*v2.ListExportTaskReply, error) {
@@ -20,7 +21,7 @@ func (s *ADAServiceV2) ListExportTask(ctx context.Context, in *v2.ListExportTask
 	tasks, total, err := server.FindExportTask(s.env, in.Type, in.Status, in.StartTm, in.EndTm, in.SortTime, limit, offset)
 	if err != nil {
 		logger.Errorf("find export task err:%v", err)
-		return nil, status.Error(codes.Internal, "查询列表失败")
+		return nil, status.Error(codes.Internal, s.I18n("QueryFailed"))
 	}
 
 	var ret v2.ListExportTaskReply
@@ -51,7 +52,7 @@ func (s *ADAServiceV2) ListExportTask(ctx context.Context, in *v2.ListExportTask
 
 func (s *ADAServiceV2) AddExportTask(ctx context.Context, in *v2.AddExportTaskReq) (*v2.AddExportTaskReply, error) {
 	if !s.IsSuper(ctx) {
-		return nil, status.Errorf(codes.PermissionDenied, "没有操作权限")
+		return nil, status.Error(codes.PermissionDenied, s.I18n("NoPermission"))
 	}
 
 	ret := v2.AddExportTaskReply{Result: RESP_FAILED}
@@ -59,7 +60,7 @@ func (s *ADAServiceV2) AddExportTask(ctx context.Context, in *v2.AddExportTaskRe
 	client, err := rpc.NewClient(ctx, s.env.Cfg.BindSrv.TaskAddr)
 	if err != nil {
 		logger.Errorf("new rpc client err:%v", err)
-		return &ret, status.Errorf(codes.Internal, "初始化任务失败")
+		return &ret, status.Error(codes.Internal, s.I18n("RpcClientFailed"))
 	}
 	defer client.Close()
 
@@ -68,14 +69,14 @@ func (s *ADAServiceV2) AddExportTask(ctx context.Context, in *v2.AddExportTaskRe
 	_, err = client.ExportReportTask(taskId, in.Type, in.Params)
 	if err != nil {
 		logger.Warnf("send domain status sync task err:%v", err)
-		return &ret, status.Errorf(codes.Internal, "发送导出任务失败")
+		return &ret, status.Error(codes.Internal, s.I18n("RpcTaskFailed"))
 	}
 
 	// 向ExportTask表中插入一条记录
 	err = server.AddExportTask(s.env, in.Name, in.Type, taskId, in.Params)
 	if err != nil {
 		logger.Errorf("add export report task err:%v", err)
-		return &ret, status.Errorf(codes.Internal, "添加导出任务失败")
+		return &ret, status.Error(codes.Internal, s.I18n("Report.AddExportTask.AddFailed"))
 	}
 
 	ret.Result = RESP_SUCCESS
@@ -84,7 +85,7 @@ func (s *ADAServiceV2) AddExportTask(ctx context.Context, in *v2.AddExportTaskRe
 
 func (s *ADAServiceV2) DeleteExportTask(ctx context.Context, in *v2.DeleteExportTaskReq) (*v2.DeleteExportTaskReply, error) {
 	if !s.IsSuper(ctx) {
-		return nil, status.Errorf(codes.PermissionDenied, "没有操作权限")
+		return nil, status.Error(codes.PermissionDenied, s.I18n("NoPermission"))
 	}
 
 	ret := v2.DeleteExportTaskReply{Result: RESP_FAILED}
@@ -92,7 +93,7 @@ func (s *ADAServiceV2) DeleteExportTask(ctx context.Context, in *v2.DeleteExport
 	tk, err := server.DeleteExportTaskByID(s.env, in.ID)
 	if err != nil {
 		logger.Errorf("find export task err:%v", err)
-		return &ret, status.Error(codes.Internal, "删除任务失败")
+		return &ret, status.Error(codes.Internal, s.I18n("Report.DeleteExportTask.DeleteFailed"))
 	}
 
 	if tk.Status == "finish" {

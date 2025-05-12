@@ -1,0 +1,53 @@
+package test
+
+import (
+	v2 "ada/backend/apiserver/api/v2"
+	"fmt"
+	"testing"
+
+	. "github.com/smartystreets/goconvey/convey"
+)
+
+func TestDashboardLogStats(t *testing.T) {
+	// It's assumed ADACli and ADACli.ctx are initialized similarly to domain_test.go
+	// You might need a setup function (e.g., TestMain) if not already present.
+
+	req := v2.DashboardLogStatsReq{
+		Domain:   "all", // Or a specific domain known to exist in your test environment
+		Duration: 3,     // Request stats for the last 1 hour, valid values: 1/3/6/12/24
+	}
+
+	Convey("Test API DashboardLogStats", t, func() {
+		resp, err := ADACli.cli.DashboardLogStats(ADACli.ctx, &req)
+
+		Convey("Check for gRPC errors", func() {
+			So(err, ShouldBeNil)
+		})
+
+		Convey("Check response validity", func() {
+			So(resp, ShouldNotBeNil)
+			So(resp.List, ShouldNotBeNil)
+
+			// Optional: Check if the list length matches the expected duration (in minutes)
+			// This might be brittle depending on data availability.
+			expectedLen := req.Duration*60 + 1
+			So(len(resp.List), ShouldEqual, expectedLen)
+
+			// Optional: Check individual items if needed
+			if len(resp.List) > 0 {
+				firstItem := resp.List[0]
+				So(firstItem, ShouldNotBeNil)
+				So(firstItem.Ts, ShouldBeGreaterThan, 0) // Timestamp should be positive
+				So(firstItem.WinlogCounts, ShouldBeGreaterThanOrEqualTo, 0)
+				So(firstItem.PktlogCounts, ShouldBeGreaterThanOrEqualTo, 0)
+			}
+		})
+
+		for _, item := range resp.List {
+			fmt.Printf("Timestamp: %d, Winlog Counts: %d, Pktlog Counts: %d\n", item.Ts, item.WinlogCounts, item.PktlogCounts)
+		}
+
+		// Log the response for inspection
+		//t.Logf("DashboardLogStats Response: %+v", resp)
+	})
+}
