@@ -4,6 +4,7 @@ import (
 	"ada/backend/apiserver/config"
 	"ada/backend/model"
 	utime "ada/infra/time"
+
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
@@ -49,10 +50,10 @@ func GetSystemInfo(e *config.Env) (*model.SystemInfo, error) {
 	return &s, nil
 }
 
-func UpdateCompanyIcon(e *config.Env, id primitive.ObjectID, iconB64 string) error {
+func UpdateProductIcon(e *config.Env, id primitive.ObjectID, iconB64 string) error {
 	var sc model.SystemInfo
 	query := bson.M{"_id": id}
-	update := bson.M{"$set": bson.M{"company_icon": iconB64}}
+	update := bson.M{"$set": bson.M{"product_icon": iconB64}}
 	err := e.MongoCli.UpdateRaw(sc.CollectName(), query, &update, false)
 	if err != nil {
 		return err

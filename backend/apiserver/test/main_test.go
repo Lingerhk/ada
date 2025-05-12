@@ -11,12 +11,13 @@ import (
 	"ada/backend/apiserver/util"
 
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/grpc/metadata"
 )
 
 const (
 	username = "admin"
-	grpcAddr = "192.168.18.4:8800"
+	grpcAddr = "192.168.6.4:8800"
 )
 
 var ADACli *ADAGrpcClient
@@ -27,7 +28,7 @@ type ADAGrpcClient struct {
 }
 
 func TestMain(m *testing.M) {
-	conn, err := grpc.Dial(grpcAddr, grpc.WithInsecure())
+	conn, err := grpc.Dial(grpcAddr, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		panic(err)
 	}

@@ -55,7 +55,8 @@ var (
 
 // ADA grpc service struct
 type ADAServiceV2 struct {
-	env *config.Env
+	env      *config.Env
+	language string // system language: EN/ZH
 }
 
 // GrpcService is the grpc server and its configurations.
@@ -78,6 +79,8 @@ func New(env *config.Env, opt ...grpc.ServerOption) *GrpcService {
 	s := new(GrpcService)
 	s.env = env
 
+	lang := getSysLanguage(env)
+
 	opt = append(opt, keepAlive, grpc.UnaryInterceptor(s.interceptor))
 	opt = append(opt, grpc.MaxRecvMsgSize(1024*1024*32))
 	opt = append(opt, grpc.MaxSendMsgSize(1024*1024*32))
@@ -85,7 +88,7 @@ func New(env *config.Env, opt ...grpc.ServerOption) *GrpcService {
 	s.server = grpc.NewServer(opt...)
 	s.Use(s.recovery(), s.handle(), s.logging(), s.validate())
 
-	v2.RegisterADAServer(s.server, &ADAServiceV2{env})
+	v2.RegisterADAServer(s.server, &ADAServiceV2{env, lang})
 
 	return s
 }
@@ -155,11 +158,10 @@ func (s *GrpcService) recovery() grpc.UnaryServerInterceptor {
 		handler grpc.UnaryHandler) (resp interface{}, err error) {
 		defer func() {
 			if rerr := recover(); rerr != nil {
-				const size = 64 << 10
-				buf := make([]byte, size)
+				buf := make([]byte, 1024*32) // 32KB
 				_ = runtime.Stack(buf, false)
 				logger.Errorf("grpc server panic: %v\n%v\n%s\n", req, rerr, buf)
-				err = status.Errorf(codes.Unknown, fmt.Sprintf("%v", rerr))
+				err = status.Errorf(codes.Unknown, "panic recovered: %v", rerr)
 			}
 		}()
 		resp, err = handler(ctx, req)
@@ -183,7 +185,7 @@ func (s *GrpcService) handle() grpc.UnaryServerInterceptor {
 
 		md, ok := metadata.FromIncomingContext(ctx)
 		if !ok {
-			return nil, status.Errorf(codes.InvalidArgument, "空数据")
+			return nil, status.Error(codes.InvalidArgument, "Invalid Argument")
 		}
 
 		// 获取 header 的`authorization: Bearer token`字段的值
@@ -191,7 +193,7 @@ func (s *GrpcService) handle() grpc.UnaryServerInterceptor {
 		if val, ok := md[_headerAuthz]; ok {
 			splits := strings.SplitN(val[0], " ", 2)
 			if len(splits) < 2 || splits[0] != _bearer {
-				return nil, status.Errorf(codes.Unauthenticated, "授权失败")
+				return nil, status.Error(codes.Unauthenticated, "Unauthenticated")
 			}
 			token = splits[1]
 		}
@@ -199,23 +201,23 @@ func (s *GrpcService) handle() grpc.UnaryServerInterceptor {
 		// 解析jwt-token进行认证
 		u, err := util.ParseToken(token, common.JWT_SECRET)
 		if err != nil {
-			return nil, status.Errorf(codes.Unauthenticated, "登录过期，请重新登录")
+			return nil, status.Error(codes.Unauthenticated, "Login expired")
 		}
 
 		// 检测单用户登录
 		value := UserLoginCountInfo.Get(u.User)
 		if value.LastLoginExpireTime > u.Expired {
-			return nil, status.Errorf(codes.Unauthenticated, "已有其他用户登录，请重新登录")
+			return nil, status.Error(codes.Unauthenticated, "Already logged")
 		}
 
 		// 接口鉴权
 		ok, err = authentication(u, args.FullMethod)
 		if err != nil {
-			return nil, status.Errorf(codes.Internal, "授权失败:%v", err)
+			return nil, status.Errorf(codes.Internal, "Authorization failed:%v", err)
 		}
 		if !ok {
 			logger.Debugf("user(%s) has no permission: %s", u.User, args.FullMethod)
-			return nil, status.Errorf(codes.PermissionDenied, "没有访问权限")
+			return nil, status.Error(codes.PermissionDenied, "No permission")
 		}
 
 		md.Append("token", token)
@@ -262,18 +264,18 @@ func (s *GrpcService) logging() grpc.UnaryServerInterceptor {
 		argsStr := req.(fmt.Stringer).String()
 		fullMethod := args.FullMethod
 		logFields := logger.Fields{
-			"ip":            addr,
-			"path":          fullMethod,
-			"ts":            duration.Seconds(),
-			"timeout_quota": quota,
-			"args":          argsStr,
+			"ip":      addr,
+			"path":    fullMethod,
+			"ts":      duration.Seconds(),
+			"timeout": quota,
+			"args":    argsStr,
 		}
 		// add audit log
-		eventResult := "成功"
+		eventResult := "Success"
 		if err != nil {
 			logFields["error"] = err.Error()
 			logFields["stack"] = fmt.Sprintf("%+v", err)
-			eventResult = "失败"
+			eventResult = "Failed"
 		}
 		username := ""
 		if len(md["user"]) > 0 {
@@ -328,15 +330,6 @@ func (h *ADAServiceV2) IsSuper(ctx context.Context) bool {
 	}
 }
 
-// GetSysLanguage is ADAServiceV2's system language: EN/ZH
-func (h *ADAServiceV2) getSysLanguage(ctx context.Context) string {
-	lang := h.env.RedisCli.Get(ctx, "ada:server:system_language").Val()
-	if lang == "" {
-		return bCommon.LangZh
-	}
-	return lang
-}
-
 // 鉴权
 func authentication(u *util.UserClaim, fullMethod string) (bool, error) {
 	if u.Priv == common.PrivSuper {
@@ -373,9 +366,81 @@ func (s *GrpcService) validate() grpc.UnaryServerInterceptor {
 		if v, ok := req.(validator); ok {
 			if err := v.Validate(); err != nil {
 				logger.Infof("middleware validate parameter err(path:%s):%v", info.FullMethod, err)
-				return nil, status.Errorf(codes.InvalidArgument, "参数错误")
+				return nil, status.Error(codes.InvalidArgument, "Invalid argument")
 			}
 		}
 		return handler(ctx, req)
 	}
+}
+
+// get system language
+func getSysLanguage(env *config.Env) string {
+	sysInfo, err := server.GetSystemInfo(env)
+	if err != nil {
+		return bCommon.LangZh
+	}
+
+	return sysInfo.SystemLanguage
+}
+
+func (h *ADAServiceV2) I18n(m string, args ...interface{}) string {
+	// param: Key1 OR Key1.Key2 OR Key1.Key3
+
+	var langMap map[string]any
+	switch h.language {
+	case bCommon.LangEn:
+		langMap = v2.I18nLangEnMap
+	case bCommon.LangZh:
+		langMap = v2.I18nLangZhMap
+	default:
+		logger.Warnf("Unsupported system language for i18n: %s", h.language)
+		langMap = v2.I18nLangEnMap // Default to English
+	}
+
+	parts := strings.Split(m, ".")
+	currentLevel := langMap // Start at the top level
+
+	var baseMsg string // Variable to store the retrieved base message
+	found := false
+
+	for i, part := range parts {
+		if i == len(parts)-1 { // Last part, expect a string
+			if msg, ok := currentLevel[part].(string); ok {
+				baseMsg = msg
+				found = true
+			} else {
+				logger.Debugf("i18n key not found or not a string at final level: %s (part: %s)", m, part)
+				baseMsg = m // Use original key as fallback message
+			}
+			break // Found the final part (or failed)
+		} else { // Intermediate part, expect a map
+			if nextLevel, ok := currentLevel[part].(map[string]any); ok {
+				currentLevel = nextLevel
+			} else {
+				logger.Debugf("i18n key not found or not a map at intermediate level: %s (part: %s)", m, part)
+				baseMsg = m // Use original key as fallback message
+				break       // Stop searching if intermediate path is wrong
+			}
+		}
+	}
+
+	if !found && baseMsg == "" { // If loop didn't set baseMsg (e.g., empty key)
+		logger.Warnf("i18n lookup failed unexpectedly for key: %s", m)
+		baseMsg = m
+	}
+
+	// Format the message if arguments are provided
+	if len(args) > 0 {
+		// Basic check to see if the message looks like a format string
+		// This isn't foolproof but avoids unnecessary Sprintf calls
+		if strings.Contains(baseMsg, "%") {
+			return fmt.Sprintf(baseMsg, args...)
+		} else {
+			// Log a warning if args are provided but the base message isn't a format string
+			logger.Warnf("i18n key '%s' received arguments but message '%s' doesn't contain format specifiers", m, baseMsg)
+			return baseMsg // Return unformatted message
+		}
+	}
+
+	return baseMsg // Return the base message if no args
 }

@@ -14,10 +14,10 @@ func FindAllNotify(env *config.Env, msgType []string, status []int32, startTm, e
 
 	query := bson.D{}
 	if len(msgType) > 0 {
-		query = append(query, bson.E{Key: "msg_type", Value: bson.D{{"$in", msgType}}})
+		query = append(query, bson.E{Key: "msg_type", Value: bson.D{{Key: "$in", Value: msgType}}})
 	}
 	if len(status) > 0 {
-		query = append(query, bson.E{Key: "status", Value: bson.D{{"$in", status}}})
+		query = append(query, bson.E{Key: "status", Value: bson.D{{Key: "$in", Value: status}}})
 	}
 	if startTm != "" && endTm != "" {
 		startTime, endTime, err := initTimeInterval(startTm, endTm)

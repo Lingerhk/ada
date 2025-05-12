@@ -4,11 +4,12 @@ import (
 	"ada/backend/apiserver/config"
 	"ada/backend/model"
 	utime "ada/infra/time"
+	"net/url"
+	"strings"
+
 	logger "github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
-	"net/url"
-	"strings"
 )
 
 func GetDomainList(env *config.Env) ([]*model.Domain, error) {
@@ -49,7 +50,7 @@ func FindAllDomain(e *config.Env, limit, skip int64, FilterDomain string, Filter
 			"ldap_conf.user": bson.M{"$regex": escaping(KeyWord), "$options": "i"},
 		})
 
-		query = append(query, bson.E{"$or", b})
+		query = append(query, bson.E{Key: "$or", Value: b})
 	}
 
 	total, err := e.MongoCli.FindCount(tb, query)
@@ -146,7 +147,7 @@ func CheckDomain(env *config.Env, hostname, domainName string) (*model.Domain, e
 	domain := &model.Domain{}
 
 	tb := domain.CollectName()
-	query := bson.D{{"name", primitive.Regex{Pattern: domainName, Options: "i"}}, {"dc_hostname", primitive.Regex{Pattern: hostname, Options: "i"}}}
+	query := bson.D{{Key: "name", Value: primitive.Regex{Pattern: domainName, Options: "i"}}, {Key: "dc_hostname", Value: primitive.Regex{Pattern: hostname, Options: "i"}}}
 
 	err, _ := env.MongoCli.FindOne(tb, query, &domain)
 	if err != nil {

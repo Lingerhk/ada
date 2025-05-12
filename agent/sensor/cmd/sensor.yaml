@@ -6,9 +6,12 @@ Log:
   IsStdOut: false
 
 Redis:
-  Password: "1pa2YgE3jfTbVVpn06CN"
+  Username: "ada_sensor"
+  Password: "MeZP9WZH05u5ynP3jkB"
   Port: 9091
 
 Sensor:
   RegHost: "192.168.18.4"
+  EvtSrvPort: 9092 # 9092/udp for evt server
+  PktSrvPort: 9093 # 9093/udp for pkt server
   RegCode: "xxx-xxx-xxx-xxx"

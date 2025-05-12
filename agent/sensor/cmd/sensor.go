@@ -9,30 +9,67 @@ import (
 	"ada/agent/sensor/upgrade"
 	_ "ada/infra/version"
 	"context"
+	"encoding/json"
+	"flag"
 	"fmt"
-	winsvc "github.com/kardianos/service"
-	logger "github.com/sirupsen/logrus"
+	"net"
 	"os"
 	"runtime"
 	"sync"
 	"time"
+
+	winsvc "github.com/kardianos/service"
+	logger "github.com/sirupsen/logrus"
 )
 
-var isRegister bool
+var (
+	isRegister bool   // Existing flag, will be set by -r
+	listIfaces bool   // New flag for list ifaces, set by -l
+	managerIP  string // New flag for manager IP, set by -m
+)
 
 func init() {
-	runtime.GOMAXPROCS(2) // 限制CPU
-
-	args := os.Args
-	if nil == args || len(args) < 2 {
-		return
-	}
-	if "-r" == args[1] {
-		isRegister = true
-	}
+	// Define flags
+	flag.BoolVar(&isRegister, "r", false, "Register the sensor")
+	flag.StringVar(&managerIP, "m", "", "Manager IP address")
+	flag.BoolVar(&listIfaces, "l", false, "List all network interfaces")
+	// Parse the flags
+	flag.Parse()
 }
 
 func main() {
+	runtime.GOMAXPROCS(4) // 限制CPU
+
+	if managerIP != "" {
+		// check if managerIP is valid
+		if net.ParseIP(managerIP) == nil {
+			fmt.Printf("[sensor] invalid manager ip:%s\n", managerIP)
+			os.Exit(-1)
+		}
+
+		if err := config.SetManagerIP(managerIP); err != nil {
+			fmt.Printf("[sensor] set manager ip(%s) err:%v\n", managerIP, err)
+			os.Exit(-1)
+		}
+		fmt.Printf("[sensor] set manager ip(%s) success!\n", managerIP)
+		os.Exit(0)
+	}
+
+	if listIfaces {
+		cardInfo, err := stats.GetNetDevices()
+		if err != nil {
+			fmt.Printf("[sensor] get net devices err:%v\n", err)
+			os.Exit(-1)
+		}
+
+		var ifaceMap map[string]string
+		json.Unmarshal([]byte(cardInfo), &ifaceMap)
+		for iface, ips := range ifaceMap {
+			fmt.Printf("[sensor] device id:%s, ip:%s\n", iface, ips)
+		}
+		os.Exit(0)
+	}
+
 	env, err := config.Init()
 	if err != nil {
 		panic(err)
@@ -41,16 +78,18 @@ func main() {
 	// if using -r in command, then start register this sensor
 	if isRegister {
 		if err := register.Register(env.RedisCli, env.Cfg.Sensor.RegCode); err != nil {
-			fmt.Printf("[sensor] register sensor err:%v\n", err)
+			fmt.Printf("[sensor] register sensor(srv:%s) err:%v\n", env.Cfg.Sensor.RegHost, err)
 			os.Exit(-1)
+		} else {
+			fmt.Printf("[sensor] register sensor(srv:%s) success!\n", env.Cfg.Sensor.RegHost)
 		}
 		os.Exit(0)
 	}
 
 	svcConfig := &winsvc.Config{
 		Name:        common.SensorSvcName,
-		DisplayName: "Active Directory Protection Sensor",
-		Description: "Active Directory Protection Sensor",
+		DisplayName: "ADAegis Sensor",
+		Description: "ADAegis Sensor for Active Directory Protection",
 	}
 
 	prg := &adaSensorSvc{env: env, exit: make(chan struct{})}
@@ -71,8 +110,6 @@ type adaSensorSvc struct {
 }
 
 func (p *adaSensorSvc) Start(s winsvc.Service) error {
-	plugin.TryKillProcess(common.PlugNtapProcName)
-	plugin.TryStopService(common.PlugNxlogSvcName)
 	plugin.TryStopService(common.PlugRpcFwSvcName)
 	plugin.TryStopService(common.PlugLdapFwSvcName)
 
@@ -123,10 +160,14 @@ func launch(ctx context.Context, env *config.Env) {
 	}
 	go u.Serve(wg) // 监听升级
 
-	p := plugin.New(ctx, env.RedisCli, env.SensorId, env.Cfg.Sensor.RegHost)
-	go p.Event(wg)   // 监听插件事件
-	go p.Serve(wg)   //监听插件启停
-	go p.RunNtap(wg) //监听插件启停
+	p, err := plugin.New(ctx, env.RedisCli, env.SensorId, env.Cfg.Sensor)
+	if err != nil {
+		logger.Errorf("new plugin err:%v", err)
+		return
+	}
+	go p.Event(wg) // 监听插件事件
+	go p.Serve(wg) //监听插件启停
+	go p.AutoResLimit(wg) // 自动调整限速（自动停止/启动插件功能）
 
 	s := stats.New(ctx, env.RedisCli, env.SensorId)
 	go s.Serve(wg, p.PlugProcessMap) // 上报状态

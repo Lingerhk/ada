@@ -8,11 +8,12 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"strconv"
+	"time"
+
 	"github.com/redis/go-redis/v9"
 	logger "github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/bson"
-	"strconv"
-	"time"
 )
 
 type SensorEvent struct {
@@ -81,19 +82,19 @@ func (s *SensorEvent) register(regMsg sCommon.AdaMessage) {
 
 	// insert sensor info
 	sensor.ID = regMsg.AgentID
-	sensor.IP, _ = regMsg.Data["ip"]
-	sensor.Version = regMsg.Version
+	sensor.IP = regMsg.Data["ip"]
+	sensor.Version = regMsg.Data["version"]
 	sensor.Timestamp = strconv.FormatInt(regMsg.Timestamp, 10)
-	sensor.Domain, _ = regMsg.Data["domain"]
-	sensor.DCHostName, _ = regMsg.Data["dc_hostname"]
-	sensor.Platform, _ = regMsg.Data["platform"]
-	sensor.KernelVer, _ = regMsg.Data["kernel_version"]
+	sensor.Domain = regMsg.Data["domain"]
+	sensor.DCHostName = regMsg.Data["dc_hostname"]
+	sensor.Platform = regMsg.Data["platform"]
+	sensor.KernelVer = regMsg.Data["kernel_version"]
 	sensor.Status = sCommon.SensorStatusInit
 	sensor.Remark = "--"
-	sensor.MemTotal, _ = regMsg.Data["mem_total"]
-	sensor.CpuTotal, _ = regMsg.Data["cpu_total"]
+	sensor.MemTotal = regMsg.Data["mem_total"]
+	sensor.CpuTotal = regMsg.Data["cpu_total"]
 	sensor.NetIface = cardInfo
-	sensor.BindNetIface = []string{"0"}
+	sensor.BindNetIface = []string{}
 	sensor.DcIntervalTm = time.Now().Unix() - regMsg.Timestamp
 	sensor.PktStatus = sCommon.SensorStatusInit
 	sensor.LogStatus = sCommon.SensorStatusInit
@@ -106,16 +107,17 @@ func (s *SensorEvent) register(regMsg sCommon.AdaMessage) {
 	sensor.LogPluginStatus = sCommon.SensorStatusInit
 	sensor.RpcFwPluginStatus = sCommon.SensorStatusInit
 	sensor.LdapFwPluginStatus = sCommon.SensorStatusInit
-	sensor.PktCpuUsed = "0%"
-	sensor.PktMemUsed = "0%"
-	sensor.LogCpuUsed = "0%"
-	sensor.LogMemUsed = "0%"
 	sensor.RpcFwCpuUsed = "0%"
 	sensor.RpcFwMemUsed = "0%"
 	sensor.LdapFwCpuUsed = "0%"
 	sensor.LdapFwMemUsed = "0%"
+	sensor.SensorCpuUsed = "0%"
+	sensor.SensorMemUsed = "0%"
 
-	sensor.PerfLimit = map[string]string{"limit_mem_max": "0.05", "limit_cpu_max": "0.05"}
+	sensor.PktBpfFilter = ""
+	sensor.LogEvtFilter = "{\"EventID\":[],\"Level\":[],\"Custom\":[]}"
+
+	sensor.PerfLimit = map[string]string{"limit_mem_max": "0.15", "limit_cpu_max": "0.15"}
 	sensor.Events = []map[string]string{}
 	sensor.CreateTm = time.Now()
 	sensor.LastOnlineTm = time.Now()
@@ -140,9 +142,11 @@ func (s *SensorEvent) register(regMsg sCommon.AdaMessage) {
 	sensorInfo["rpcfw_plugin_switch"] = sensor.RpcFwPluginSwitch
 	sensorInfo["ldapfw_plugin_switch"] = sensor.LdapFwPluginSwitch
 	sensorInfo["ldapfw_plugin_switch"] = sensor.LdapFwPluginSwitch
-	sensorInfo["limit_mem_max"] = "0.05"
-	sensorInfo["limit_cpu_max"] = "0.05"
-	sensorInfo["bind_net_iface"] = "0"
+	sensorInfo["limit_mem_max"] = "0.15"
+	sensorInfo["limit_cpu_max"] = "0.15"
+	sensorInfo["bind_net_iface"] = ""
+	sensorInfo["pkt_bpf_filter"] = ""
+	sensorInfo["log_evt_filter"] = "{\"EventID\":[],\"Level\":[],\"Custom\":[]}"
 	sensorInfo["last_online_tm"] = sensor.LastOnlineTm
 
 	err = s.redisCli.HMSet(ctx, cache.SensorIDKey(sensor.ID), sensorInfo).Err()
@@ -195,7 +199,7 @@ func (s *SensorEvent) state(stateMsg sCommon.AdaMessage) {
 	}
 
 	sensor.Version = stateMsg.Version
-	sensor.Status, _ = stateMsg.Data["status"]
+	sensor.Status = stateMsg.Data["status"]
 
 	var cardInfo map[string]string
 	err = json.Unmarshal([]byte(stateMsg.Data["net_iface"]), &cardInfo)
@@ -206,18 +210,17 @@ func (s *SensorEvent) state(stateMsg sCommon.AdaMessage) {
 	sensor.NetIface = cardInfo
 	sensor.Timestamp = strconv.FormatInt(stateMsg.Timestamp, 10)
 
-	sensor.MemTotal, _ = stateMsg.Data["mem_total"]
-	sensor.CpuTotal, _ = stateMsg.Data["cpu_total"]
-	sensor.PktCpuUsed, _ = stateMsg.Data["pkt_cpu_used"]
-	sensor.PktMemUsed, _ = stateMsg.Data["pkt_mem_used"]
-	sensor.LogCpuUsed, _ = stateMsg.Data["log_cpu_used"]
-	sensor.LogMemUsed, _ = stateMsg.Data["log_mem_used"]
-	sensor.RpcFwCpuUsed, _ = stateMsg.Data["rpcfw_cpu_used"]
-	sensor.RpcFwMemUsed, _ = stateMsg.Data["rpcfw_mem_used"]
-	sensor.LdapFwCpuUsed, _ = stateMsg.Data["ldapfw_cpu_used"]
-	sensor.LdapFwMemUsed, _ = stateMsg.Data["ldapfw_mem_used"]
-	sensor.LdapFwMemUsed, _ = stateMsg.Data["ldapfw_mem_used"]
-	sensor.LdapFwMemUsed, _ = stateMsg.Data["ldapfw_mem_used"]
+	sensor.MemTotal = stateMsg.Data["mem_total"]
+	sensor.CpuTotal = stateMsg.Data["cpu_total"]
+	sensor.RpcFwCpuUsed = stateMsg.Data["rpcfw_cpu_used"]
+	sensor.RpcFwMemUsed = stateMsg.Data["rpcfw_mem_used"]
+	sensor.LdapFwCpuUsed = stateMsg.Data["ldapfw_cpu_used"]
+	sensor.LdapFwMemUsed = stateMsg.Data["ldapfw_mem_used"]
+	sensor.LdapFwMemUsed = stateMsg.Data["ldapfw_mem_used"]
+	sensor.LdapFwMemUsed = stateMsg.Data["ldapfw_mem_used"]
+
+	sensor.SensorCpuUsed = stateMsg.Data["sensor_cpu_used"]
+	sensor.SensorMemUsed = stateMsg.Data["sensor_mem_used"]
 
 	if val, ok := stateMsg.Data["pkt_status"]; ok {
 		sensor.PktStatus = val

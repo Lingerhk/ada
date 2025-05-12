@@ -1,8 +1,9 @@
 package model
 
 import (
-	"go.mongodb.org/mongo-driver/bson/primitive"
 	"time"
+
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 // 用户表
@@ -86,7 +87,7 @@ type SystemInfo struct {
 	SystemName      string             `bson:"system_name"`       // 系统名称
 	CompanyName     string             `bson:"company_name"`      // 公司名称
 	CompanyWebsite  string             `bson:"company_website"`   // 公司官网
-	CompanyIcon     string             `bson:"company_icon"`      // 公司Logo
+	ProductIcon     string             `bson:"product_icon"`      // 产品Logo
 	SystemVersion   string             `bson:"system_version"`    // 系统版本
 	UpgradeCheckUrl string             `bson:"upgrade_check_url"` // 新版本检测
 	NtpAddress      string             `bson:"ntp_address"`       // NTP服务器地址
@@ -156,22 +157,23 @@ type Sensor struct {
 	LogPluginStatus    string `bson:"log_plugin_status"`    // 日志插件状态 Init|Running|Stopped|Error
 	RpcFwPluginStatus  string `bson:"rpcfw_plugin_status"`  // rpcfw插件状态 Init|Running|Stopped|Error
 	LdapFwPluginStatus string `bson:"ldapfw_plugin_status"` // ldapfw插件状态 Init|Running|Stopped|Error
-	PktCpuUsed         string `bson:"pkt_cpu_used"`
-	PktMemUsed         string `bson:"pkt_mem_used"`
-	LogCpuUsed         string `bson:"log_cpu_used"`
-	LogMemUsed         string `bson:"log_mem_used"`
 	RpcFwCpuUsed       string `bson:"rpcfw_cpu_used"`
 	RpcFwMemUsed       string `bson:"rpcfw_mem_used"`
 	LdapFwCpuUsed      string `bson:"ldapfw_cpu_used"`
 	LdapFwMemUsed      string `bson:"ldapfw_mem_used"`
+	SensorCpuUsed      string `bson:"sensor_cpu_used"` // Sensor CPU使用率
+	SensorMemUsed      string `bson:"sensor_mem_used"` // Sensor 内存使用率
 	// DC宿主机信息
 	Platform     string            `bson:"platform"`       // DC 平台
 	KernelVer    string            `bson:"kernel_version"` // DC内核版本
 	MemTotal     string            `bson:"mem_total"`      // 内存大小(DC)
 	CpuTotal     string            `bson:"cpu_total"`      // CPU核数
 	NetIface     map[string]string `bson:"net_iface"`      // 主机上网口列表
-	BindNetIface []string          `bson:"bind_net_iface"` // 接口名list： ["0", "1"]
-	DcIntervalTm int64             `bson:"dc_interval_tm"` // 域控时间与服务器时间的差值(秒)
+	BindNetIface []string          `bson:"bind_net_iface"` // 接口名list： ["eth0", "eth1"]
+	PktBpfFilter string            `bson:"pkt_bpf_filter"` // 流量插件BPF过滤规则
+	LogEvtFilter string            `bson:"log_evt_filter"` // 日志插件Event字段过滤规则
+
+	DcIntervalTm int64 `bson:"dc_interval_tm"` // 域控时间与服务器时间的差值(秒)
 	// 资源限制&Sensor运行日志
 	PerfLimit map[string]string   `bson:"perf_limit"` // 资源占用限制
 	Events    []map[string]string `bson:"events"`     // 运行日志

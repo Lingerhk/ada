@@ -5,13 +5,14 @@ import (
 	"ada/backend/model"
 	utime "ada/infra/time"
 	"fmt"
+	"strconv"
+	"strings"
+	"time"
+
 	logger "github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
-	"strconv"
-	"strings"
-	"time"
 )
 
 // 高级检索结构
@@ -65,10 +66,10 @@ func FindThreatEventLikePattern(e *config.Env, query bson.D, sortTm int32, limit
 func ThreatEventFilter(threatIDList []string, levels []int32, eventStatus int32, startTm, endTm string) (bson.D, error) {
 	query := bson.D{}
 	if len(threatIDList) > 0 {
-		query = append(query, bson.E{Key: "flow_id", Value: bson.D{{"$in", threatIDList}}})
+		query = append(query, bson.E{Key: "flow_id", Value: bson.D{{Key: "$in", Value: threatIDList}}})
 	}
 	if len(levels) > 0 {
-		query = append(query, bson.E{Key: "level", Value: bson.D{{"$in", levels}}})
+		query = append(query, bson.E{Key: "level", Value: bson.D{{Key: "$in", Value: levels}}})
 	}
 
 	if eventStatus != -1 {
@@ -101,10 +102,10 @@ func AdvancedSearch(request []AdvancedSearchReq) (bson.D, error) {
 				}
 				//value = fmt.Sprintf("^((?!%s).)*$", v.Value[0])
 				source := primitive.E{Key: "$and", Value: bson.A{
-					bson.D{{fmt.Sprintf("field_data.%s_username", v.Name), bson.M{"$ne": v.Value[0]}}},
-					bson.D{{fmt.Sprintf("field_data.%s_ip", v.Name), bson.M{"$ne": v.Value[0]}}},
-					bson.D{{fmt.Sprintf("field_data.%s_machine_username", v.Name), bson.M{"$ne": v.Value[0]}}},
-					bson.D{{fmt.Sprintf("field_data.%s_machine_hostname", v.Name), bson.M{"$ne": v.Value[0]}}},
+					bson.D{{Key: fmt.Sprintf("field_data.%s_username", v.Name), Value: bson.M{"$ne": v.Value[0]}}},
+					bson.D{{Key: fmt.Sprintf("field_data.%s_ip", v.Name), Value: bson.M{"$ne": v.Value[0]}}},
+					bson.D{{Key: fmt.Sprintf("field_data.%s_machine_username", v.Name), Value: bson.M{"$ne": v.Value[0]}}},
+					bson.D{{Key: fmt.Sprintf("field_data.%s_machine_hostname", v.Name), Value: bson.M{"$ne": v.Value[0]}}},
 					//bson.D{{fmt.Sprintf("field_data.%s_computer", v.Name), primitive.Regex{Pattern: value, Options: "i"}}},
 					//bson.D{{fmt.Sprintf("field_data.%s_username", v.Name), primitive.Regex{Pattern: value, Options: "i"}}},
 					//bson.D{{fmt.Sprintf("field_data.%s_ip", v.Name), primitive.Regex{Pattern: value, Options: "i"}}},
@@ -113,10 +114,10 @@ func AdvancedSearch(request []AdvancedSearchReq) (bson.D, error) {
 			} else {
 				//value = v.Value[0]
 				source := primitive.E{Key: "$or", Value: bson.A{
-					bson.D{{fmt.Sprintf("field_data.%s_username", v.Name), v.Value[0]}},
-					bson.D{{fmt.Sprintf("field_data.%s_ip", v.Name), v.Value[0]}},
-					bson.D{{fmt.Sprintf("field_data.%s_machine_username", v.Name), v.Value[0]}},
-					bson.D{{fmt.Sprintf("field_data.%s_machine_hostname", v.Name), v.Value[0]}},
+					bson.D{{Key: fmt.Sprintf("field_data.%s_username", v.Name), Value: v.Value[0]}},
+					bson.D{{Key: fmt.Sprintf("field_data.%s_ip", v.Name), Value: v.Value[0]}},
+					bson.D{{Key: fmt.Sprintf("field_data.%s_machine_username", v.Name), Value: v.Value[0]}},
+					bson.D{{Key: fmt.Sprintf("field_data.%s_machine_hostname", v.Name), Value: v.Value[0]}},
 				}}
 				query = append(query, source)
 			}
@@ -135,9 +136,9 @@ func AdvancedSearch(request []AdvancedSearchReq) (bson.D, error) {
 					}
 					valueList = append(valueList, atoi)
 				}
-				query = append(query, bson.E{v.Name, bson.D{{"$in", valueList}}})
+				query = append(query, bson.E{Key: v.Name, Value: bson.D{{Key: "$in", Value: valueList}}})
 			} else {
-				query = append(query, bson.E{v.Name, bson.D{{"$in", v.Value}}})
+				query = append(query, bson.E{Key: v.Name, Value: bson.D{{Key: "$in", Value: v.Value}}})
 			}
 		case "ne":
 			var valueList []int
@@ -149,9 +150,9 @@ func AdvancedSearch(request []AdvancedSearchReq) (bson.D, error) {
 					}
 					valueList = append(valueList, atoi)
 				}
-				query = append(query, bson.E{v.Name, bson.D{{"$nin", valueList}}})
+				query = append(query, bson.E{Key: v.Name, Value: bson.D{{Key: "$nin", Value: valueList}}})
 			} else {
-				query = append(query, bson.E{v.Name, bson.D{{"$nin", v.Value}}})
+				query = append(query, bson.E{Key: v.Name, Value: bson.D{{Key: "$nin", Value: v.Value}}})
 			}
 		case "lt":
 			if v.Name == "end_tm" {
@@ -160,9 +161,9 @@ func AdvancedSearch(request []AdvancedSearchReq) (bson.D, error) {
 					logger.Errorf("parse time err:%v", err)
 					return nil, err
 				}
-				query = append(query, bson.E{v.Name, bson.D{{"$lte", tm.Add(-time.Hour * 8)}}})
+				query = append(query, bson.E{Key: v.Name, Value: bson.D{{Key: "$lte", Value: tm.Add(-time.Hour * 8)}}})
 			} else {
-				query = append(query, bson.E{v.Name, bson.D{{"$lte", v.Value[0]}}})
+				query = append(query, bson.E{Key: v.Name, Value: bson.D{{Key: "$lte", Value: v.Value[0]}}})
 			}
 		case "gt":
 			if v.Name == "end_tm" {
@@ -171,9 +172,9 @@ func AdvancedSearch(request []AdvancedSearchReq) (bson.D, error) {
 					logger.Errorf("parse time err:%v", err)
 					return nil, err
 				}
-				query = append(query, bson.E{v.Name, bson.D{{"$gte", tm.Add(-time.Hour * 8)}}})
+				query = append(query, bson.E{Key: v.Name, Value: bson.D{{Key: "$gte", Value: tm.Add(-time.Hour * 8)}}})
 			} else {
-				query = append(query, bson.E{v.Name, bson.D{{"$gte", v.Value[0]}}})
+				query = append(query, bson.E{Key: v.Name, Value: bson.D{{Key: "$gte", Value: v.Value[0]}}})
 			}
 
 		case "bt":
@@ -188,8 +189,8 @@ func AdvancedSearch(request []AdvancedSearchReq) (bson.D, error) {
 				return nil, err
 			}
 
-			query = append(query, bson.E{v.Name, bson.D{{"$gte", startTime.Add(-time.Hour * 8)}}})
-			query = append(query, bson.E{v.Name, bson.D{{"$lte", endTime.Add(-time.Hour * 8)}}})
+			query = append(query, bson.E{Key: v.Name, Value: bson.D{{Key: "$gte", Value: startTime.Add(-time.Hour * 8)}}})
+			query = append(query, bson.E{Key: v.Name, Value: bson.D{{Key: "$lte", Value: endTime.Add(-time.Hour * 8)}}})
 		}
 	}
 	return query, nil
@@ -362,15 +363,15 @@ func GetThreatActivityByID(e *config.Env, id string) (*model.AlertActivityESDB, 
 func ThreatActivityFilter(levels []int32, dcHostnames, titles []string, startTm, endTm string) (bson.D, error) {
 	query := bson.D{}
 	if len(levels) > 0 {
-		query = append(query, bson.E{Key: "level", Value: bson.D{{"$in", levels}}})
+		query = append(query, bson.E{Key: "level", Value: bson.D{{Key: "$in", Value: levels}}})
 	}
 
 	if len(dcHostnames) > 0 {
-		query = append(query, bson.E{Key: "dc_hostname", Value: bson.D{{"$in", dcHostnames}}})
+		query = append(query, bson.E{Key: "dc_hostname", Value: bson.D{{Key: "$in", Value: dcHostnames}}})
 	}
 
 	if len(titles) > 0 {
-		query = append(query, bson.E{Key: "title", Value: bson.D{{"$in", titles}}})
+		query = append(query, bson.E{Key: "title", Value: bson.D{{Key: "$in", Value: titles}}})
 	}
 
 	if startTm != "" && endTm != "" {
@@ -411,7 +412,7 @@ func GetThreatActivityAggNames(e *config.Env, dcHostname []string, startTm, endT
 
 	var matchStage bson.D
 	if len(dcHostname) > 0 {
-		matchStage = append(matchStage, bson.E{Key: "dc_hostname", Value: bson.D{{"$in", dcHostname}}})
+		matchStage = append(matchStage, bson.E{Key: "dc_hostname", Value: bson.D{{Key: "$in", Value: dcHostname}}})
 	}
 
 	if startTm != "" && endTm != "" {
@@ -423,19 +424,19 @@ func GetThreatActivityAggNames(e *config.Env, dcHostname []string, startTm, endT
 		if startTm == endTm {
 			endTime = endTime.Add(1 * time.Second)
 		}
-		matchStage = append(matchStage, bson.E{"timestamp", bson.M{"$gte": startTime.UnixMilli(), "$lte": endTime.UnixMilli()}})
+		matchStage = append(matchStage, bson.E{Key: "timestamp", Value: bson.M{"$gte": startTime.UnixMilli(), "$lte": endTime.UnixMilli()}})
 	} else {
-		matchStage = append(matchStage, bson.E{"timestamp", bson.M{"$gte": 1645539742222}})
+		matchStage = append(matchStage, bson.E{Key: "timestamp", Value: bson.M{"$gte": 1645539742222}})
 	}
 
 	pipeline := mongo.Pipeline{
-		{{"$match", matchStage}},
-		{{"$group", bson.D{
-			{"_id", "$title"},
-			{"count", bson.D{{"$sum", 1}}},
+		{{Key: "$match", Value: matchStage}},
+		{{Key: "$group", Value: bson.D{
+			{Key: "_id", Value: "$title"},
+			{Key: "count", Value: bson.D{{Key: "$sum", Value: 1}}},
 		}}},
-		{{"$sort", bson.D{{"count", -1}}}},
-		{{"$limit", 2000}}, // 限制2000条,足够了
+		{{Key: "$sort", Value: bson.D{{Key: "count", Value: -1}}}},
+		{{Key: "$limit", Value: 2000}}, // 限制2000条,足够了
 	}
 
 	var results []bson.M
@@ -558,7 +559,7 @@ func ThreatTops(e *config.Env, domain, typ string, duration int32) ([]bson.M, er
 
 	var matchStage bson.D
 	if domain != "all" {
-		matchStage = append(matchStage, bson.E{"dc_hostname", bson.M{"$regex": primitive.Regex{Pattern: ".*" + domain + "$", Options: "i"}}})
+		matchStage = append(matchStage, bson.E{Key: "dc_hostname", Value: bson.M{"$regex": primitive.Regex{Pattern: ".*" + domain + "$", Options: "i"}}})
 	}
 
 	startTimestamp := time.Now().UnixNano()/int64(time.Millisecond) - int64(duration)*24*3600*1000
@@ -568,30 +569,30 @@ func ThreatTops(e *config.Env, domain, typ string, duration int32) ([]bson.M, er
 	if typ == "activity" {
 		// 活动威胁top
 		tb = (&model.AlertActivityESDB{}).CollectName()
-		matchStage = append(matchStage, bson.E{"timestamp", bson.M{"$gte": startTimestamp}})
+		matchStage = append(matchStage, bson.E{Key: "timestamp", Value: bson.M{"$gte": startTimestamp}})
 
 		pipeline = mongo.Pipeline{
-			{{"$match", matchStage}},
-			{{"$group", bson.D{
-				{"_id", "$title"},
-				{"count", bson.D{{"$sum", 1}}},
+			{{Key: "$match", Value: matchStage}},
+			{{Key: "$group", Value: bson.D{
+				{Key: "_id", Value: "$title"},
+				{Key: "count", Value: bson.D{{Key: "$sum", Value: 1}}},
 			}}},
-			{{"$sort", bson.D{{"count", -1}}}},
-			{{"$limit", 10}},
+			{{Key: "$sort", Value: bson.D{{Key: "count", Value: -1}}}},
+			{{Key: "$limit", Value: 10}},
 		}
 	} else {
 		// 事件威胁top
 		tb = (&model.AlertEventESDB{}).CollectName()
-		matchStage = append(matchStage, bson.E{"start_ts", bson.M{"$gte": startTimestamp}})
+		matchStage = append(matchStage, bson.E{Key: "start_ts", Value: bson.M{"$gte": startTimestamp}})
 
 		pipeline = mongo.Pipeline{
-			{{"$match", matchStage}},
-			{{"$group", bson.D{
-				{"_id", "$title"},
-				{"count", bson.D{{"$sum", 1}}},
+			{{Key: "$match", Value: matchStage}},
+			{{Key: "$group", Value: bson.D{
+				{Key: "_id", Value: "$title"},
+				{Key: "count", Value: bson.D{{Key: "$sum", Value: 1}}},
 			}}},
-			{{"$sort", bson.D{{"count", -1}}}},
-			{{"$limit", 10}},
+			{{Key: "$sort", Value: bson.D{{Key: "count", Value: -1}}}},
+			{{Key: "$limit", Value: 10}},
 		}
 	}
 
@@ -612,30 +613,30 @@ func ThreatTrends(e *config.Env, domain string, levels []int32, duration int32) 
 	startTimestamp := time.Now().UnixNano()/int64(time.Millisecond) - int64(duration)*24*3600*1000
 
 	matchStage := bson.D{
-		{"timestamp", bson.M{"$gte": startTimestamp}},
+		{Key: "timestamp", Value: bson.M{"$gte": startTimestamp}},
 	}
 
 	if domain != "all" {
-		matchStage = append(matchStage, bson.E{"dc_hostname", bson.M{"$regex": primitive.Regex{Pattern: ".*" + domain + "$", Options: "i"}}})
+		matchStage = append(matchStage, bson.E{Key: "dc_hostname", Value: bson.M{"$regex": primitive.Regex{Pattern: ".*" + domain + "$", Options: "i"}}})
 	}
 
 	if len(levels) > 0 {
-		matchStage = append(matchStage, bson.E{"level", bson.M{"$in": levels}})
+		matchStage = append(matchStage, bson.E{Key: "level", Value: bson.M{"$in": levels}})
 	}
 
 	tb := (&model.AlertActivityESDB{}).CollectName()
 	pipeline := mongo.Pipeline{
-		{{"$match", matchStage}},
-		{{"$group", bson.D{
-			{"_id", bson.M{
+		{{Key: "$match", Value: matchStage}},
+		{{Key: "$group", Value: bson.D{
+			{Key: "_id", Value: bson.M{
 				"$subtract": []interface{}{
 					"$timestamp",
 					bson.M{"$mod": []interface{}{"$timestamp", duration * 60 * 60 * 1000}},
 				},
 			}},
-			{"count", bson.D{{"$sum", 1}}},
+			{Key: "count", Value: bson.D{{Key: "$sum", Value: 1}}},
 		}}},
-		{{"$sort", bson.D{{"_id", 1}}}},
+		{{Key: "$sort", Value: bson.D{{Key: "_id", Value: 1}}}},
 	}
 
 	var results []bson.M
@@ -772,7 +773,7 @@ func FindDomainEntryUser(e *config.Env, domain, search string) ([]string, error)
 
 	var users []string
 	for _, item := range auList {
-		if item.IsDelete == true {
+		if item.IsDelete {
 			continue
 		}
 		users = append(users, item.SAMAccountName)
@@ -796,7 +797,7 @@ func FindDomainEntryGroup(e *config.Env, domain, search string) ([]string, error
 
 	var users []string
 	for _, item := range agList {
-		if item.IsDelete == true {
+		if item.IsDelete {
 			continue
 		}
 		users = append(users, item.SAMAccountName)
@@ -820,7 +821,7 @@ func FindDomainEntryComputer(e *config.Env, domain, search string) ([]string, er
 
 	var users []string
 	for _, item := range auList {
-		if item.IsDelete == true {
+		if item.IsDelete {
 			continue
 		}
 		users = append(users, item.SAMAccountName)

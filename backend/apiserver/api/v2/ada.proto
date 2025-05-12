@@ -47,8 +47,8 @@ service ADA {
   // 系统信息
   // 1.基本信息
   rpc GetSystemInfo(GetSystemInfoReq) returns (GetSystemInfoReply) {} //获取系统信息
-  rpc GetCompanyIcon(GetCompanyIconReq)returns(GetCompanyIconReply) {}
-  rpc UpdateCompanyIcon(UpdateCompanyIconReq)returns(UpdateCompanyIconReply) {}
+  rpc GetProductIcon(GetProductIconReq)returns(GetProductIconReply) {}
+  rpc UpdateProductIcon(UpdateProductIconReq)returns(UpdateProductIconReply) {}
   rpc UpdateNtpAddress(UpdateNtpAddressReq)returns(UpdateNtpAddressReply) {}
   rpc UpdateSystemLanguage(UpdateSystemLanguageReq)returns(UpdateSystemLanguageReply) {}
 
@@ -145,6 +145,7 @@ service ADA {
   // 安全大盘
   rpc DashboardStats(DashboardStatsReq) returns (DashboardStatsReply) {} // dashboard 统计状态
   rpc DashboardTrends(DashboardTrendsReq) returns (DashboardTrendsReply) {} // dashboard 趋势图表
+  rpc DashboardLogStats(DashboardLogStatsReq) returns (DashboardLogStatsReply) {} // dashboard winlog/pktlog状态
 }
 
 // common page message struct
@@ -449,29 +450,27 @@ message ListSensorReply {
     string logPluginStatus = 17;     // 日志插件状态 Init|Running|Stopped|Error
     string rpcFwPluginStatus = 18;   // rpcfw插件状态 Init|Running|Stopped|Error
     string ldapFwPluginStatus = 19;  // ldapfw插件状态 Init|Running|Stopped|Error
-    string pktCpuUsed = 20;
-    string pktMemUsed = 21;
-    string logCpuUsed = 22;
-    string logMemUsed = 23;
-    string rpcFWCpuUsed = 24;
-    string rpcFWMemUsed = 25;
-    string ldapFwCpuUsed = 26;
-    string ldapFwMemUsed = 27;
+    string rpcFWCpuUsed = 20;
+    string rpcFWMemUsed = 21;
+    string ldapFwCpuUsed = 22;
+    string ldapFwMemUsed = 23;
+    string sensorCpuUsed = 24;
+    string sensorMemUsed = 25;
 
-    string platform = 28; // DC 平台
-    string kernelVer = 29; // DC内核版本
-    string memTotal = 30; // 内存大小(DC)
-    string cpuTotal  =31; // CPU核数
-    map<string, string> netIface = 32; // 主机上网口列表
-    repeated string bindNetIface = 33; // 绑定的接口list： ["0", "1"]
-    int32 dcIntervalTm = 34; // 域控时间与服务器时间的差值(秒)
+    string platform = 26; // DC 平台
+    string kernelVer = 27; // DC内核版本
+    string memTotal = 28; // 内存大小(DC)
+    string cpuTotal  = 29; // CPU核数
+    map<string, string> netIface = 30; // 主机上网口列表 {"eth0":"ip1,ip2"}
+    repeated string bindNetIface = 31; // 绑定的接口list： ["eth0", "eth1"]
+    int32 dcIntervalTm = 32; // 域控时间与服务器时间的差值(秒)
 
-    map<string, string> perfLimit = 35; // // 资源占用限制
-    repeated mapSlice events = 36; //  运行日志
+    map<string, string> perfLimit = 33; // // 资源占用限制
+    repeated mapSlice events = 34; //  运行日志
 
-    string createTm = 37; // 添加时间
-    string lastOnlineTm = 38; // 最后在线时间
-    string LastCollectTm = 39;// 最后采集时间
+    string createTm = 35; // 添加时间
+    string lastOnlineTm = 36; // 最后在线时间
+    string LastCollectTm = 37;// 最后采集时间
   }
   repeated Details List = 2;
   bool exhausted = 3; // if this is last page
@@ -527,7 +526,7 @@ message GetSystemInfoReply {
   string systemName = 5; // 系统名称
   string companyName = 6; // 名称
   string companyWebsite = 7; // 官网
-  string companyIcon = 8; // Logo
+  string productIcon = 8; // Logo
   string systemVersion = 9; // 系统版本
   string systemInstallTm = 10; // 安装时间
   string systemUpgradeTm = 11; // 上次升级时间
@@ -543,15 +542,15 @@ message GetSystemInfoReply {
   map<string, string> statsCfg = 21; // 系统监控参数
 }
 
-message GetCompanyIconReq {}
-message GetCompanyIconReply {
+message GetProductIconReq {}
+message GetProductIconReply {
   string icon = 1;
 }
 
-message UpdateCompanyIconReq {
+message UpdateProductIconReq {
   string file = 1; // 将文件转为base64字符串传过来
 }
-message UpdateCompanyIconReply {
+message UpdateProductIconReply {
   string result = 1; //  success failed
 }
 
@@ -1585,4 +1584,18 @@ message DashboardTrendsReq{
 
 message DashboardTrendsReply{
 
+}
+
+message DashboardLogStatsReq {
+  string domain = 1; // 必选，all|domainX
+  int32 duration = 2; // 必选，时间范围/h， 可选值: 1/3/6/12/24 （默认为1hour）
+}
+
+message DashboardLogStatsReply {
+  message logStatsList {
+    int64 ts = 1;
+    int32 winlogCounts = 2;
+    int32 pktlogCounts = 3;
+  }
+  repeated logStatsList List = 1; // winlog/pktlog采集统计
 }
