@@ -9,16 +9,17 @@ import (
 	"bytes"
 	"context"
 	"fmt"
-	ldap3 "github.com/go-ldap/ldap/v3"
-	jsoniter "github.com/json-iterator/go"
-	logger "github.com/sirupsen/logrus"
-	"go.mongodb.org/mongo-driver/bson"
 	"net"
 	"net/url"
 	"sort"
 	"strings"
 	"sync"
 	"time"
+
+	ldap3 "github.com/go-ldap/ldap/v3"
+	jsoniter "github.com/json-iterator/go"
+	logger "github.com/sirupsen/logrus"
+	"go.mongodb.org/mongo-driver/bson"
 )
 
 // DomainSyncTask 同步域控制器、传感器状态
@@ -78,7 +79,7 @@ func syncDomainStatus(w *Worker) (bool, error) {
 			if domainStatusMap[domain.Name] == "run" && domainStatus != "run" {
 				var lastTm = time.Now()
 				for _, dc := range dcList {
-					if dc.HostName == domain.DCHostName {
+					if strings.EqualFold(dc.HostName, domain.DCHostName) {
 						lastTm = dc.LastOnlineTm
 						break
 					}
@@ -122,7 +123,7 @@ func getDomainStatus(domain model.Domain) (string, string, []model.DCList) {
 	// 遍历dcHostnameList查询域控列表，优先从添加域的dc进行获取
 	DCList, err := getDomainDCListWithLDAP(dcHostnameList, domain.Name, userName, passWord, dns)
 	if err != nil {
-		if DCList == nil || len(DCList) == 0 {
+		if len(DCList) == 0 {
 			var dcList []model.DCList
 			for _, dc := range domain.DCList {
 				dcList = append(dcList, model.DCList{
@@ -132,8 +133,8 @@ func getDomainStatus(domain model.Domain) (string, string, []model.DCList) {
 					Timeout:      "0ms",
 					Status:       common.DomainStatusErr,
 					HasSensor:    false,
-					IsMaster:     true, // TODO: update me
-					FsmoRole:     "",   // TODO: update me
+					IsMaster:     false, // TODO: update me
+					FsmoRole:     "",    // TODO: update me
 					ErrMsg:       "LDAP连接失败",
 					LastOnlineTm: time.Now(),
 				})
@@ -154,7 +155,7 @@ func getDomainStatus(domain model.Domain) (string, string, []model.DCList) {
 			dcStatus = common.DomainStatusRunning
 		}
 
-		if strings.ToLower(dc.HostName) == strings.ToLower(domain.DCHostName) {
+		if strings.EqualFold(dc.HostName, domain.DCHostName) {
 			domainErrMsg = errMsg
 			domainStatus = dcStatus
 		}
@@ -175,14 +176,13 @@ func checkLdapConn(dialURL, userName, passWord, dns string) string {
 		errMsg := ""
 		switch {
 		case ldap3.IsErrorWithCode(err, ldap3.LDAPResultInvalidCredentials):
-			errMsg = fmt.Sprintf("用户名或密码不正确")
+			errMsg = "用户名或密码不正确"
 		case ldap3.IsErrorWithCode(err, ldap3.ErrorNetwork):
-			errMsg = fmt.Sprintf("ldap地址错误")
+			errMsg = "ldap地址错误"
 		case ldap3.IsErrorWithCode(err, ldap3.LDAPResultTimeout):
-			errMsg = fmt.Sprintf("连接超时，请检查DNS地址是否正确")
-		case ldap3.IsErrorWithCode(err, ldap3.LDAPResultTimeout):
+			errMsg = "连接超时，请检查DNS地址是否正确"
 		default:
-			errMsg = fmt.Sprintf("未知的错误")
+			errMsg = fmt.Sprintf("未知的错误:%v", err)
 		}
 
 		return errMsg
@@ -210,13 +210,16 @@ func syncDomainDCList(e *Worker) error {
 			dcFullName := fmt.Sprintf("%s.%s", strings.ToLower(dc.HostName), domain.Name)
 			for _, ip := range dc.IPList {
 				err = e.env.RedisCli.Set(ctx, cache.DomainIPRelateDCNameKey(ip), dcFullName, 0).Err()
+				if err != nil {
+					logger.Errorf("redis set domain ip relate dc name cache err:%v, will ignore it!", err)
+				}
 				ipRelateMap[ip] = dcFullName
 			}
 		}
 
 		err = e.env.RedisCli.Del(ctx, cache.DomainIPRelateDCKey(domain.Name)).Err()
 		if err != nil {
-			logger.Errorf("redis cli delete domain info cache err:%v", err)
+			logger.Errorf("redis cli delete domain info cache err:%v, will ignore it!", err)
 		}
 
 		err = e.env.RedisCli.HMSet(ctx, cache.DomainIPRelateDCKey(domain.Name), ipRelateMap).Err()
