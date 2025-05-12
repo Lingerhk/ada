@@ -23,6 +23,9 @@ func TestListDomainList(t *testing.T) {
 
 	for _, domain := range resp.List {
 		t.Logf("%#v", domain)
+		for idx, dc := range domain.DCs {
+			t.Logf("dc[%d]: %#v", idx, dc)
+		}
 	}
 }
 
