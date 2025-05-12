@@ -11,6 +11,7 @@ import (
 	"ada/backend/apiserver/util"
 
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/grpc/metadata"
 )
 
@@ -27,7 +28,7 @@ type ADAGrpcClient struct {
 }
 
 func TestMain(m *testing.M) {
-	conn, err := grpc.Dial(grpcAddr, grpc.WithInsecure())
+	conn, err := grpc.Dial(grpcAddr, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		panic(err)
 	}

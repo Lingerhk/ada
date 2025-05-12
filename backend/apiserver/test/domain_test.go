@@ -3,9 +3,28 @@ package test
 import (
 	v2 "ada/backend/apiserver/api/v2"
 	"ada/infra/ldap"
-	. "github.com/smartystreets/goconvey/convey"
 	"testing"
+
+	. "github.com/smartystreets/goconvey/convey"
 )
+
+func TestListDomainList(t *testing.T) {
+	req := v2.ListDomainReq{
+		FilterDomain:  "",
+		FilterStatus:  "",
+		FilterKeyword: "",
+		PageSize:      10,
+		PageIdx:       1,
+	}
+	resp, err := ADACli.cli.ListDomain(ADACli.ctx, &req)
+	if err != nil {
+		t.Error(err.Error())
+	}
+
+	for _, domain := range resp.List {
+		t.Logf("%#v", domain)
+	}
+}
 
 func TestAddDomain(t *testing.T) {
 	req := v2.AddDomainReq{
