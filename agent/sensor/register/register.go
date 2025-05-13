@@ -2,6 +2,7 @@ package register
 
 import (
 	"ada/agent/sensor/common"
+	"ada/agent/sensor/plugin"
 	"ada/agent/sensor/stats"
 	"ada/infra/version"
 	"context"
@@ -9,7 +10,6 @@ import (
 	"fmt"
 	"net"
 	"os"
-	"os/exec"
 	"path/filepath"
 	"runtime"
 	"strconv"
@@ -40,13 +40,19 @@ func Register(rdx *redis.Client, regCode string) error {
 	regMsg.Data["timestamp"] = strconv.FormatInt(regMsg.Timestamp, 10)
 	regMsg.Data["ip"] = getLocalIP()
 
-	domain, hostName, err := getHostDomain()
-	if err != nil {
-		logger.Errorf("get host domain err:%v", err)
-		return err
+	fqdn := plugin.GetFQDNName()
+	regMsg.Data["hostname"] = fqdn
+	parts := strings.Split(fqdn, ".")
+	if len(parts) > 1 {
+		domain := strings.Join(parts[1:], ".")
+		regMsg.Data["domain"] = domain
+		regMsg.Data["dc_hostname"] = parts[0]
+	} else {
+		// If FQDN doesn't have domain parts, just use hostname
+		hostname, _ := os.Hostname()
+		regMsg.Data["domain"] = ""
+		regMsg.Data["dc_hostname"] = hostname
 	}
-	regMsg.Data["domain"] = domain
-	regMsg.Data["dc_hostname"] = hostName
 
 	platform, _, platformVersion, err := host.PlatformInformation()
 	if err != nil {
@@ -100,35 +106,6 @@ func Register(rdx *redis.Client, regCode string) error {
 	}
 
 	return fmt.Errorf("sensor register err or timeout")
-}
-
-// 获取域控DNSHostName名称
-func getHostDomain() (string, string, error) {
-	domain, hostname, err := getDomainByRegistry() // windows平台支持
-	if err == nil {
-		return domain, hostname, nil
-	}
-
-	cmd := exec.Command("wmic", []string{"computersystem", "get", "domain,DNSHostName"}...)
-	bs, err := cmd.CombinedOutput()
-	if err != nil {
-		logger.Errorf("get domain err:%v", err)
-		return "", "", err
-	}
-
-	lines := strings.SplitN(string(bs), "\n", 2)
-	if len(lines) < 2 {
-		logger.Errorf("string split err:%v", err)
-		return "", "", fmt.Errorf("string split failed")
-	}
-
-	parts := strings.Fields(strings.TrimSpace(lines[1]))
-	if len(parts) != 2 {
-		hostname, err := os.Hostname()
-		return hostname, "", err
-	}
-
-	return parts[0], parts[1], nil
 }
 
 func getLocalIP() string {
