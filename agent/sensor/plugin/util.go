@@ -262,7 +262,7 @@ func (p *Plugin) checkFileSum(fileCnt, sha265sum string) bool {
 	return sumStr == sha265sum
 }
 
-func getFQDNName() string {
+func GetFQDNName() string {
 	hostname, _ := os.Hostname()
 
 	// 1st call: get required buffer size
