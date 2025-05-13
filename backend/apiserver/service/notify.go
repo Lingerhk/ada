@@ -3,8 +3,8 @@ package service
 import (
 	v2 "ada/backend/apiserver/api/v2"
 	"ada/backend/apiserver/server"
-	"ada/infra/base"
 	"ada/infra/email"
+	netutil "ada/infra/net"
 	"bytes"
 	"context"
 	"fmt"
@@ -209,7 +209,7 @@ func (s *ADAServiceV2) TestNotifyConf(ctx context.Context, in *v2.TestNotifyConf
 			return &ret, nil
 		}
 	case "webhook":
-		client := base.NewHTTPClient(10)
+		client := netutil.NewHTTPClient(10)
 
 		data := []byte(fmt.Sprintf(`"title":"ADA-System","type":"webhook","message":"%s"}`, testMessage))
 		req, err := http.NewRequest("GET", in.Endpoint, bytes.NewReader(data))

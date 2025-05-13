@@ -1,14 +1,24 @@
 // author: s0nnet
 // time: 2023-12-01
 
-package base
+package net
 
 import (
 	"context"
+	"fmt"
 	"net"
 	"net/http"
 	"time"
 )
+
+func CheckPortOpen(ip string, port int) (bool, error) {
+	conn, err := net.DialTimeout("tcp", fmt.Sprintf("%s:%d", ip, port), time.Second*5)
+	if err != nil {
+		return false, err
+	}
+	conn.Close()
+	return true, nil
+}
 
 // 带有超时机制http客户端, use: NewHttpClient(2)
 func NewHTTPClient(timeout int64) *http.Client {
