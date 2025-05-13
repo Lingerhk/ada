@@ -7,15 +7,11 @@ import (
 	"ada/infra/base"
 	"ada/infra/email"
 	"ada/infra/mongo"
+	netutil "ada/infra/net"
 	"bytes"
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/go-lark/lark"
-	"github.com/redis/go-redis/v9"
-	logger "github.com/sirupsen/logrus"
-	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/bson/primitive"
 	"html/template"
 	"log/syslog"
 	"net"
@@ -23,6 +19,12 @@ import (
 	"net/url"
 	"strconv"
 	"time"
+
+	"github.com/go-lark/lark"
+	"github.com/redis/go-redis/v9"
+	logger "github.com/sirupsen/logrus"
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 const emailTmpl = `<!DOCTYPE html>
@@ -270,7 +272,7 @@ func sendWebhookNotify(msg string, conf model.NotifyConf) error {
 		}
 	}
 
-	client := base.NewHTTPClient(10)
+	client := netutil.NewHTTPClient(10)
 	data := []byte(fmt.Sprintf(`"title":"ADA-System","message":"%s"}`, msg))
 	req, err := http.NewRequest("POST", conf.Endpoint, bytes.NewReader(data))
 	if err != nil {
@@ -308,7 +310,7 @@ func sendWebhookFeishuNotify(msg string, conf model.NotifyConf) error {
 }
 
 func sendWebhookWeixinOrDingtalkNotify(msg string, conf model.NotifyConf) error {
-	client := base.NewHTTPClient(10)
+	client := netutil.NewHTTPClient(10)
 	data := []byte(fmt.Sprintf(`{"msgtype":"text","text":{"content": "%s"}}`, msg))
 	req, err := http.NewRequest("POST", conf.Endpoint, bytes.NewReader(data))
 	if err != nil {

@@ -894,20 +894,20 @@ func (s *ADAServiceV2) ListScanPlugin(ctx context.Context, in *v2.ListScanPlugin
 func getPluginMetadata(md map[string]interface{}) map[string]string {
 	var metadata = make(map[string]string)
 	for k, v := range md {
-		switch v.(type) {
+		switch typedV := v.(type) {
 		case bool:
-			metadata[k] = fmt.Sprintf("%t", v)
+			metadata[k] = fmt.Sprintf("%t", typedV)
 		case string:
-			metadata[k] = fmt.Sprintf("%s", v)
+			metadata[k] = typedV
 		case int32, int64, int:
-			metadata[k] = fmt.Sprintf("%d", v)
+			metadata[k] = fmt.Sprintf("%d", typedV)
 		case float64, float32:
-			metadata[k] = fmt.Sprintf("%f", v)
+			metadata[k] = fmt.Sprintf("%f", typedV)
 		case []string:
-			metadata[k] = strings.Join(v.([]string), "\n")
+			metadata[k] = strings.Join(typedV, "\n")
 		case primitive.A:
 			var parts []string
-			for _, item := range []interface{}(v.(primitive.A)) {
+			for _, item := range []any(typedV) {
 				parts = append(parts, item.(string))
 			}
 			metadata[k] = strings.Join(parts, "\n")
