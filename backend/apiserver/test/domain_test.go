@@ -3,8 +3,12 @@ package test
 import (
 	v2 "ada/backend/apiserver/api/v2"
 	"ada/infra/ldap"
+	"context"
+	"fmt"
 	"testing"
+	"time"
 
+	"github.com/masterzen/winrm"
 	. "github.com/smartystreets/goconvey/convey"
 )
 
@@ -72,7 +76,7 @@ func TestTestDomain(t *testing.T) {
 	req := v2.TestDomainReq{
 		LdapAddr: "DC2019-01.chinanin.com",
 		Username: "administrator@chinanin.com",
-		Password: "Iams0nnetOK123",
+		Password: "dc2019@pass",
 		DNS:      "192.168.18.221",
 	}
 	resp, err := ADACli.cli.TestDomain(ADACli.ctx, &req)
@@ -86,7 +90,7 @@ func TestTestDomain(t *testing.T) {
 func TestLdapConn(t *testing.T) {
 	ldapAddr := "ldap://DC2019-01.chinanin.com"
 	username := "administrator@chinanin.com"
-	password := "Iams0nnetOK123"
+	password := "dc2019@pass"
 	dns := "192.168.18.221"
 
 	resp, err := ldap.GetConn(ldapAddr, username, password, dns)
@@ -95,4 +99,54 @@ func TestLdapConn(t *testing.T) {
 	}
 
 	t.Logf("ldap conn ok:%#v", resp)
+}
+
+func TestDeploySensor(t *testing.T) {
+	req := v2.DeploySensorReq{
+		DomainID:   "65a8cc5d02a0e274892b87ed",
+		DcHostname: "DC2019-01",
+	}
+
+	resp, err := ADACli.cli.DeploySensor(ADACli.ctx, &req)
+	if err != nil {
+		t.Error(err.Error())
+	}
+
+	t.Logf("deploy sensor resp:%#v", resp)
+}
+
+func TestWinRmCmd(t *testing.T) {
+	portal := "192.168.6.4"
+	targetIP := "192.168.6.219"
+	username := "CHINA.COM\\administrator"
+	//username := "administrator@china.com"
+	password := "dc2019@pass"
+
+	winrmConfig := winrm.NewEndpoint(
+		targetIP,      // Host
+		5985,          // Port (HTTP)
+		false,         // TLS
+		false,         // InsecureSkipVerify
+		nil,           // CACert
+		nil,           // Cert
+		nil,           // Key
+		3*time.Second, // Timeout in seconds
+	)
+
+	winrmClient, err := winrm.NewClient(winrmConfig, username, password)
+	if err != nil {
+		panic(err)
+	}
+
+	downloadCmd := fmt.Sprintf(`Invoke-WebRequest -Uri "http://%s/download/sensor/install-adaegis.ps1" -OutFile "C:\install-adaegis.ps1"`, portal)
+	execCtx, cancel := context.WithTimeout(context.Background(), 120*time.Second)
+	defer cancel()
+
+	downloadStdout, downloadStderr, downloadCode, err := winrmClient.RunPSWithContext(execCtx, downloadCmd)
+	if err != nil || downloadCode != 0 {
+		t.Errorf("winrm execute err:%v, code:%d, stdout:%s, stderr:%s", err, downloadCode, downloadStdout, downloadStderr)
+		return
+	}
+
+	t.Logf("winrm execute stdout:%s, stderr:%s, code:%d", downloadStdout, downloadStderr, downloadCode)
 }

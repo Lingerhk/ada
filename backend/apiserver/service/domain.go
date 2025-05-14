@@ -8,14 +8,19 @@ import (
 	"ada/backend/apiserver/util"
 	"ada/backend/cache"
 	baseCommon "ada/backend/common"
+	"ada/backend/model"
 	"ada/infra/ldap"
 	"ada/infra/mongo"
+	"ada/infra/net"
 	"context"
+	"fmt"
+	"net/netip"
 	"strings"
 	"time"
 
 	ldap3 "github.com/go-ldap/ldap/v3"
 	jsoniter "github.com/json-iterator/go"
+	"github.com/masterzen/winrm"
 	logger "github.com/sirupsen/logrus"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -440,4 +445,157 @@ func (s *ADAServiceV2) DeleteDomain(ctx context.Context, in *v2.DeleteDomainReq)
 	}
 
 	return &v2.DeleteDomainReply{Result: aCommon.RESP_SUCCESS}, nil
+}
+
+// DeploySensor deploy sensor to domain dc server automatically(using winrm protocol)
+func (s *ADAServiceV2) DeploySensor(ctx context.Context, in *v2.DeploySensorReq) (*v2.DeploySensorReply, error) {
+	//1、is super
+	if !s.IsSuper(ctx) {
+		return nil, status.Error(codes.PermissionDenied, s.I18n("NoPermission"))
+	}
+
+	sysInfo, err := server.GetSystemInfo(s.env)
+	if err != nil {
+		logger.Errorf("get system info err:%v", err)
+		return nil, status.Error(codes.Internal, s.I18n("InternalError"))
+	}
+
+	//2、get domain info
+	domainInfo, err := server.GetDomainById(s.env, in.DomainID)
+	if err != nil || domainInfo == nil {
+		logger.Errorf("get domain by id err:%v", err)
+		return nil, status.Error(codes.InvalidArgument, s.I18n("NotFound"))
+	}
+
+	//3、get dc info from domainInfo.DCList
+	var targetDC *model.DCList
+	for i, dc := range domainInfo.DCList {
+		if dc.HostName == in.DcHostname {
+			targetDC = &domainInfo.DCList[i]
+			break
+		}
+	}
+
+	if targetDC == nil {
+		logger.Errorf("dc hostname %s not found in domain", in.DcHostname)
+		return nil, status.Error(codes.InvalidArgument, s.I18n("Domain.DeploySensor.DcHostnameNotFound"))
+	}
+
+	//4. check dc hostname status is online('run')
+	if targetDC.Status != "run" {
+		logger.Errorf("dc hostname %s status is not online", in.DcHostname)
+		return nil, status.Error(codes.InvalidArgument, s.I18n("Domain.DeploySensor.DcHostnameNotOnline"))
+	}
+
+	//5.confirm dc hostname is not install sensor
+	if targetDC.HasSensor {
+		logger.Errorf("dc hostname %s already has sensor installed", in.DcHostname)
+		return nil, status.Error(codes.InvalidArgument, s.I18n("Domain.DeploySensor.SensorAlreadyInstalled"))
+	}
+
+	// Get LDAP account credentials for WinRM
+	ldapConf := domainInfo.LdapConf
+	username := ldapConf["user"]
+	password, err := util.PasswordDecode(ldapConf["password"])
+	if err != nil {
+		logger.Errorf("password decode err:%v", err)
+		return nil, status.Error(codes.Internal, s.I18n("Domain.DeploySensor.PasswordDecodeError"))
+	}
+
+	// note: username format can't be: CHINA.COM\administrator, it must be: administrator@china.com(for winrm protocol)
+	if strings.Contains(username, "\\") {
+		parts := strings.Split(username, "\\")
+		if len(parts) == 2 {
+			username = fmt.Sprintf("%s@%s", parts[1], domainInfo.Name)
+		}
+	}
+
+	// Get DC IP for WinRM connection
+	if len(targetDC.IPList) == 0 {
+		logger.Errorf("dc hostname %s has no IP addresses", in.DcHostname)
+		return nil, status.Error(codes.InvalidArgument, s.I18n("Domain.DeploySensor.DcHostnameNoIP"))
+	}
+
+	var dcIP string
+	// // if IPList is more than 1, then using socket to get the available IP
+	if len(targetDC.IPList) > 1 {
+		for _, ip := range targetDC.IPList {
+			addr, err := netip.ParseAddr(ip)
+			if err == nil && addr.Is6() { // ignore ipv6
+				continue
+			}
+
+			// Check if port 5985 (WinRM HTTP) is open
+			isOpen, _ := net.CheckPortOpen(ip, 5985)
+			if isOpen {
+				dcIP = ip
+				break
+			}
+		}
+		if dcIP == "" {
+
+		}
+	} else {
+		dcIP = targetDC.IPList[0]
+	}
+
+	//6.using winrm protocol to deploy sensor
+	winrmConfig := winrm.NewEndpoint(
+		dcIP,          // Host
+		5985,          // Port (HTTP)
+		false,         // TLS
+		false,         // InsecureSkipVerify
+		nil,           // CACert
+		nil,           // Cert
+		nil,           // Key
+		3*time.Second, // Timeout in seconds
+	)
+
+	winrmClient, err := winrm.NewClient(winrmConfig, username, password)
+	if err != nil {
+		logger.Errorf("create winrm client err:%v", err)
+		return nil, status.Error(codes.Internal, s.I18n("Domain.DeploySensor.WinRMClientCreateFailed"))
+	}
+
+	// Prepare download command for the installation script
+	downloadCmd := fmt.Sprintf(`Invoke-WebRequest -Uri "http://%s/download/sensor/install-adaegis.ps1" -OutFile "C:\install-adaegis.ps1"`, sysInfo.IP)
+	execCtx, cancel := context.WithTimeout(ctx, 600*time.Second)
+	defer cancel()
+
+	logger.Infof("winrm(dc ip:%s, username:%s) downloadCmd:%s", dcIP, username, downloadCmd)
+
+	// Execute download command
+	downloadStdout, downloadStderr, downloadCode, err := winrmClient.RunPSWithContext(execCtx, downloadCmd)
+	if err != nil || downloadCode != 0 {
+		logger.Errorf("run download script err:%v, code:%d, stdout:%s, stderr:%s",
+			err, downloadCode, downloadStdout, downloadStderr)
+		return nil, status.Error(codes.Internal, s.I18n("Domain.DeploySensor.WinRMDownloadFailed"))
+	}
+
+	//7.using winrm protocol to run install_adaegis.ps1
+	installCmd := `powershell.exe -ExecutionPolicy Bypass -File "C:\install-adaegis.ps1"`
+
+	// Execute installation script
+	installStdout, installStderr, installCode, err := winrmClient.RunCmdWithContext(execCtx, installCmd)
+	if err != nil || installCode != 0 {
+		logger.Errorf("run install script err:%v, code:%d, stdout:%s, stderr:%s",
+			err, installCode, installStdout, installStderr)
+		return nil, status.Error(codes.Internal, s.I18n("Domain.DeploySensor.WinRMInstallFailed"))
+	}
+
+	//8.check install_adaegis.ps1 is success
+	// Look for success message in output
+	if !strings.Contains(installStdout, "Installation successful") {
+		logger.Errorf("installation not successful, stdout:%s, stderr:%s", installStdout, installStderr)
+		return nil, status.Error(codes.Internal, s.I18n("Domain.DeploySensor.SensorInstallationFailed"))
+	}
+
+	// Update sensor status in DB
+	err = server.UpdateDCHasSensor(s.env, in.DomainID, in.DcHostname, true)
+	if err != nil {
+		logger.Errorf("update dc sensor status err:%v", err)
+		return nil, status.Error(codes.Internal, s.I18n("UpdateFailed"))
+	}
+
+	return &v2.DeploySensorReply{Result: aCommon.RESP_SUCCESS}, nil
 }

@@ -237,6 +237,12 @@ func (this *UpdateDomainDataReq) Validate() error {
 func (this *UpdateDomainDataReply) Validate() error {
 	return nil
 }
+func (this *DeploySensorReq) Validate() error {
+	return nil
+}
+func (this *DeploySensorReply) Validate() error {
+	return nil
+}
 func (this *ListSensorReq) Validate() error {
 	if !(this.PageIdx > 0) {
 		return github_com_mwitkow_go_proto_validators.FieldError("PageIdx", fmt.Errorf(`value '%v' must be greater than '0'`, this.PageIdx))
