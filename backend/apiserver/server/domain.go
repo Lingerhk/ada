@@ -4,6 +4,7 @@ import (
 	"ada/backend/apiserver/config"
 	"ada/backend/model"
 	utime "ada/infra/time"
+	"fmt"
 	"net/url"
 	"strings"
 
@@ -177,4 +178,32 @@ func GetPwdByLdapAddr(e *config.Env, ldapAddr string) (*model.Domain, error) {
 	}
 
 	return domain, nil
+}
+
+// UpdateDCHasSensor updates the HasSensor status of a specific DC in a domain
+func UpdateDCHasSensor(e *config.Env, domainID, dcHostname string, hasSensor bool) error {
+	domain, err := GetDomainById(e, domainID)
+	if err != nil {
+		return err
+	}
+
+	updated := false
+	for i, dc := range domain.DCList {
+		if dc.HostName == dcHostname {
+			domain.DCList[i].HasSensor = hasSensor
+			updated = true
+			break
+		}
+	}
+
+	if !updated {
+		return fmt.Errorf("DC hostname %s not found in domain", dcHostname)
+	}
+
+	objId, err := primitive.ObjectIDFromHex(domainID)
+	if err != nil {
+		return err
+	}
+
+	return e.MongoCli.UpdateById(domain.CollectName(), objId, domain)
 }

@@ -57,6 +57,17 @@ var I18nLangEnMap = map[string]any{
 			"StatusSyncTaskFailed": "Domain status sync task failed",
 			"LDAPSyncTaskFailed":   "Domain asset sync task failed",
 		},
+		"DeploySensor": map[string]any{
+			"DcHostnameNotFound":       "DC hostname not found",
+			"DcHostnameNotOnline":      "DC hostname is not online",
+			"SensorAlreadyInstalled":   "Sensor already installed",
+			"PasswordDecodeError":      "Password decode error",
+			"DcHostnameNoIP":           "DC hostname has no IP addresses",
+			"WinRMClientCreateFailed":  "WinRM client create failed",
+			"WinRMDownloadFailed":      "powershell download adaegis failed",
+			"WinRMInstallFailed":       "powershell install adaegis failed",
+			"SensorInstallationFailed": "sensor installation failed",
+		},
 	},
 
 	// User module

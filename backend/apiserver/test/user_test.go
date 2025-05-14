@@ -135,8 +135,8 @@ func TestDeleteUser(t *testing.T) {
 
 func TestCheckMfa(t *testing.T) {
 	req := v2.CheckMfaReq{
-		Username: "linruyi",
-		Password: "adaegis1234",
+		Username: "admin",
+		Password: "ada@2024",
 	}
 
 	resp, err := ADACli.cli.CheckMfa(ADACli.ctx, &req)
@@ -153,9 +153,9 @@ func TestCheckMfa(t *testing.T) {
 }
 func TestEnableMfa(t *testing.T) {
 	req := v2.EnableMfaReq{
-		Username: "linruyi",
-		Password: "adaegis1234",
-		Secret:   "QAYIPHG6W7LVQQPGLB54VLS32ZYQMFBD",
+		Username: "admin",
+		Password: "ada@2024",
+		Secret:   "QBYIPHG6W9KVAQPGLB21VLSGKZYQMFCB",
 		MfaCode:  "049230",
 	}
 

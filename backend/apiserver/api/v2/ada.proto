@@ -35,7 +35,8 @@ service ADA {
   rpc TestDomain(TestDomainReq) returns (TestDomainReply) {} //测试域连接
   rpc UpdateDomain(UpdateDomainReq) returns (UpdateDomainReply) {} //更新域配置
   rpc DeleteDomain(DeleteDomainReq) returns (DeleteDomainReply) {} //删除域配置
-  rpc UpdateDomainData(UpdateDomainDataReq)returns(UpdateDomainDataReply) {} // 同步域数据
+  rpc UpdateDomainData(UpdateDomainDataReq)returns (UpdateDomainDataReply) {} // 同步域数据
+  rpc DeploySensor(DeploySensorReq) returns (DeploySensorReply) {} // Deploy Sensor(via winRM)
 
   // sensor
   rpc ListSensor(ListSensorReq) returns (ListSensorReply) {} //传感器列表
@@ -425,6 +426,15 @@ message UpdateDomainDataReq {
 
 message UpdateDomainDataReply {
   string result = 1;//  success failed
+}
+
+message DeploySensorReq {
+  string domainID = 1; // 域的ID
+  string dcHostname = 2; // DC Hostname 
+}
+
+message DeploySensorReply {
+  string result = 1; //  success | failed
 }
 
 message ListSensorReq {

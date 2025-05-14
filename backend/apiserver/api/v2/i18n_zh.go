@@ -57,6 +57,17 @@ var I18nLangZhMap = map[string]any{
 			"StatusSyncTaskFailed": "域状态同步任务任务失败",
 			"LDAPSyncTaskFailed":   "域资产同步任务任务失败",
 		},
+		"DeploySensor": map[string]any{
+			"DcHostnameNotFound":       "域控主机名不存在",
+			"DcHostnameNotOnline":      "域控主机名不在线",
+			"SensorAlreadyInstalled":   "域控主机名已安装传感器",
+			"PasswordDecodeError":      "域控密码解密失败",
+			"DcHostnameNoIP":           "域控主机名没有IP地址",
+			"WinRMClientCreateFailed":  "WinRM客户端创建失败",
+			"WinRMDownloadFailed":      "执行下载Adaegis脚本失败",
+			"WinRMInstallFailed":       "执行安装Adaegis脚本失败",
+			"SensorInstallationFailed": "执行安装传感器失败",
+		},
 	},
 
 	// User module
