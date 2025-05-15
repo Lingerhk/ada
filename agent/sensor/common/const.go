@@ -1,7 +1,7 @@
 package common
 
 const (
-	SensorDir = "C:\\Program Files\\ada_sensor"
+	SensorDir = "C:\\Program Files\\adaegis"
 )
 
 const (
@@ -17,7 +17,7 @@ const (
 
 // 个sensor plugin名称
 const (
-	SensorSvcName = "ada_sensor"
+	SensorSvcName = "adaegis"
 
 	PlugEvtName = "evt"
 	PlugPktName = "pkt"

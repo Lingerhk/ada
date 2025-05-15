@@ -88,8 +88,8 @@ func main() {
 
 	svcConfig := &winsvc.Config{
 		Name:        common.SensorSvcName,
-		DisplayName: "ADAegis Sensor",
-		Description: "ADAegis Sensor for Active Directory Protection",
+		DisplayName: "Adaegis",
+		Description: "ADAegis Sensor Service",
 	}
 
 	prg := &adaSensorSvc{env: env, exit: make(chan struct{})}
@@ -165,8 +165,8 @@ func launch(ctx context.Context, env *config.Env) {
 		logger.Errorf("new plugin err:%v", err)
 		return
 	}
-	go p.Event(wg) // 监听插件事件
-	go p.Serve(wg) //监听插件启停
+	go p.Event(wg)        // 监听插件事件
+	go p.Serve(wg)        //监听插件启停
 	go p.AutoResLimit(wg) // 自动调整限速（自动停止/启动插件功能）
 
 	s := stats.New(ctx, env.RedisCli, env.SensorId)
