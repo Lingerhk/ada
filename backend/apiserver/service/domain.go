@@ -539,16 +539,18 @@ func (s *ADAServiceV2) DeploySensor(ctx context.Context, in *v2.DeploySensorReq)
 		dcIP = targetDC.IPList[0]
 	}
 
+	defaultTimeout := 600 * time.Second
+
 	//6.using winrm protocol to deploy sensor
 	winrmConfig := winrm.NewEndpoint(
-		dcIP,          // Host
-		5985,          // Port (HTTP)
-		false,         // TLS
-		false,         // InsecureSkipVerify
-		nil,           // CACert
-		nil,           // Cert
-		nil,           // Key
-		3*time.Second, // Timeout in seconds
+		dcIP,           // Host
+		5985,           // Port (HTTP)
+		false,          // TLS
+		false,          // InsecureSkipVerify
+		nil,            // CACert
+		nil,            // Cert
+		nil,            // Key
+		defaultTimeout, // Timeout in seconds
 	)
 
 	winrmClient, err := winrm.NewClient(winrmConfig, username, password)
@@ -559,7 +561,7 @@ func (s *ADAServiceV2) DeploySensor(ctx context.Context, in *v2.DeploySensorReq)
 
 	// Prepare download command for the installation script
 	downloadCmd := fmt.Sprintf(`Invoke-WebRequest -Uri "http://%s/download/sensor/install-adaegis.ps1" -OutFile "C:\install-adaegis.ps1"`, sysInfo.IP)
-	execCtx, cancel := context.WithTimeout(ctx, 600*time.Second)
+	execCtx, cancel := context.WithTimeout(ctx, defaultTimeout)
 	defer cancel()
 
 	logger.Infof("winrm(dc ip:%s, username:%s) downloadCmd:%s", dcIP, username, downloadCmd)
