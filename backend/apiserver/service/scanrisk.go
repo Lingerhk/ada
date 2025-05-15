@@ -58,7 +58,7 @@ func (s *ADAServiceV2) ScanRiskStats(ctx context.Context, in *v2.ScanRiskStatsRe
 			logger.Warnf("get latest scan task by domain err:%v", err)
 			return nil, status.Error(codes.Internal, s.I18n("InternalError"))
 		}
-		if subTasks == nil || len(subTasks) == 0 {
+		if len(subTasks) == 0 {
 			continue
 		}
 
