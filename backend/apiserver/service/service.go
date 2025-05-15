@@ -69,7 +69,7 @@ type GrpcService struct {
 // New news a GrpcService using customized configurations.
 func New(env *config.Env, opt ...grpc.ServerOption) *GrpcService {
 	keepAlive := grpc.KeepaliveParams(keepalive.ServerParameters{
-		MaxConnectionIdle:     time.Second * 60,
+		MaxConnectionIdle:     time.Second * 600,
 		MaxConnectionAge:      time.Hour * 2,
 		MaxConnectionAgeGrace: time.Second * 20,
 		Time:                  time.Second * 300,
@@ -173,16 +173,20 @@ func (s *GrpcService) recovery() grpc.UnaryServerInterceptor {
 func (s *GrpcService) handle() grpc.UnaryServerInterceptor {
 	return func(ctx context.Context, req interface{}, args *grpc.UnaryServerInfo,
 		handler grpc.UnaryHandler) (resp interface{}, err error) {
-		ctx, cancel := context.WithTimeout(ctx, 10*time.Second)
-		defer cancel()
-
-		// check if grpc FullMethod in the whitelist
+		// Check if grpc FullMethod is in the whitelist first
+		isWhitelisted := false
 		for _, path := range _whitelist {
 			if path == args.FullMethod {
-				return handler(ctx, req)
+				isWhitelisted = true
+				break
 			}
 		}
 
+		if isWhitelisted {
+			return handler(ctx, req) // Pass original context for whitelisted methods
+		}
+
+		// For non-whitelisted methods, proceed with auth and other logic using the timed context
 		md, ok := metadata.FromIncomingContext(ctx)
 		if !ok {
 			return nil, status.Error(codes.InvalidArgument, "Invalid Argument")
