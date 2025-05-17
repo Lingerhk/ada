@@ -15,10 +15,9 @@ func TestMain(m *testing.M) {
 
 	confPath := os.Getenv("TASKER_CONF_PATH")
 	if confPath == "" {
-		confPath = "./tasker.yaml"
+		confPath = "./tasker_test.yaml"
 	}
 
-	confPath = "/Users/adaegis/project/ada/backend/tasker/worker/tasker_test.yaml"
 	logger.Infof("load configure from %s", confPath)
 	env, err := config.Init(confPath, "worker")
 	if err != nil {
