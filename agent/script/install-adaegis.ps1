@@ -26,7 +26,18 @@ try {
     Write-Log "Downloading ADAegis package..."
     $packageUrl = "${adaegisPortal}/download/sensor/adaegis.zip"
     $packagePath = "$sensorDir\adaegis.zip"
-    Invoke-WebRequest -Uri $packageUrl -OutFile $packagePath
+    $webClient = New-Object System.Net.WebClient
+    try {
+        $webClient.DownloadFile($packageUrl, $packagePath)
+    } catch {
+        Write-Log "Error downloading with WebClient: $_. Falling back to Invoke-WebRequest."
+        Remove-Item -Path $packagePath -ErrorAction SilentlyContinue # Clean up partially downloaded file if any
+        Invoke-WebRequest -Uri $packageUrl -OutFile $packagePath
+    } finally {
+        if ($webClient -ne $null) {
+            $webClient.Dispose()
+        }
+    }
     Write-Log "Downloaded ADAegis package"
 
     # 3. Extract ADAegis package
