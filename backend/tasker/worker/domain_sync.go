@@ -259,11 +259,11 @@ func sliceEqual(oldList, newList []model.DCList) bool {
 		return false
 	}
 	sort.Slice(oldList, func(i, j int) bool {
-		return oldList[i].HostName > oldList[i].HostName
+		return oldList[i].HostName > oldList[j].HostName
 	})
 
 	sort.Slice(newList, func(i, j int) bool {
-		return newList[i].HostName > newList[i].HostName
+		return newList[i].HostName > newList[j].HostName
 	})
 
 	for k := range oldList {
@@ -336,11 +336,18 @@ func getDomainDCListWithLDAP(dcHostnameList []string, domainName, username, pass
 		return nil, err
 	}
 
+	dcName, err := ldapSearch.LdapSearchFSMORoleOwner()
+	if err != nil {
+		logger.Warnf("ldap search fsmo role owner err:%v, will ignore it!", err)
+	}
+
+	fsmoRole := "DC"
 	var DCList []model.DCList
 	for _, entries := range entriesList {
 		var ipList []string
 		dcHostName := entries.Attributes[0].Values[0]
-		platform := entries.Attributes[2].Values[0] // TODO: fixme 此处可能取不到
+		platform := entries.Attributes[2].Values[0]
+		version := entries.Attributes[3].Values[0]
 		dcAddr := fmt.Sprintf("%s.%s", entries.Attributes[0].Values[0], domain)
 		ips, err := resolver.LookupIP(context.Background(), "ip", dcAddr)
 		if err != nil {
@@ -352,7 +359,11 @@ func getDomainDCListWithLDAP(dcHostnameList []string, domainName, username, pass
 			ipList = append(ipList, ip.String())
 		}
 
-		DCList = append(DCList, model.DCList{HostName: dcHostName, IPList: ipList, Platform: platform})
+		if dcName == dcHostName {
+			fsmoRole = "PDC"
+		}
+
+		DCList = append(DCList, model.DCList{HostName: dcHostName, FsmoRole: fsmoRole, IPList: ipList, Platform: platform, Version: version})
 	}
 
 	return DCList, nil

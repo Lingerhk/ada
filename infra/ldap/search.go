@@ -103,9 +103,8 @@ func (r *LDAPSearch) LdapSearchByCN(cn, attributes string) (*ldap3.Entry, error)
 
 // 搜索 dc hostname list
 func (r *LDAPSearch) LdapSearchDomainController() ([]*ldap3.Entry, error) {
-	// 此处查询的filter进行了优化
-	//filter := fmt.Sprint("(&(objectCategory=computer)(objectClass=computer))")
-	filter := "(|(primarygroupid=516)(primarygroupid=521))"
+	// First, get all domain controllers
+	filter := "(&(objectCategory=computer)(userAccountControl:1.2.840.113556.1.4.803:=8192)(operatingSystem=Windows*Server*))"
 	result, err := r.BasicSearch(filter, "cn,dnsHostName,objectSid,operatingSystem,operatingSystemVersion")
 	if err != nil {
 		return nil, err
@@ -116,4 +115,27 @@ func (r *LDAPSearch) LdapSearchDomainController() ([]*ldap3.Entry, error) {
 	}
 
 	return result.Entries, nil
+}
+
+func (r *LDAPSearch) LdapSearchFSMORoleOwner() (string, error) {
+	// search PDC Emulator
+	filter := "(objectClass=domain)"
+	result, err := r.BasicSearch(filter, "fSMORoleOwner")
+	if err != nil {
+		return "", err
+	}
+
+	if len(result.Entries) <= 0 {
+		return "", ErrEmptyResult
+	}
+
+	ownerDN := result.Entries[0].GetAttributeValue("fSMORoleOwner")
+	parts := strings.Split(ownerDN, ",")
+	for i := 0; i < len(parts)-1; i++ {
+		if strings.HasPrefix(parts[i], "CN=Servers") && i > 0 {
+			return strings.TrimPrefix(parts[i-1], "CN="), nil
+		}
+	}
+
+	return "", ErrEmptyResult
 }

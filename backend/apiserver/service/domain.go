@@ -56,6 +56,7 @@ func (s *ADAServiceV2) ListDomain(ctx context.Context, in *v2.ListDomainReq) (*v
 				dcItem := &v2.ListDomainReplyDcList{
 					Hostname:     dc.HostName,
 					Platform:     dc.Platform,
+					Version:      dc.Version,
 					Ips:          strings.Join(dc.IPList, ","),
 					Timeout:      dc.Timeout,
 					Status:       dc.Status,
