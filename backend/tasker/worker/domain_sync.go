@@ -57,7 +57,7 @@ func syncDomainStatus(w *Worker) (bool, error) {
 		domainStatusMap[domain.Name] = domain.Status
 		go func() {
 			defer wg.Done()
-			domainStatus, errMsg, dcList := getDomainStatus(domain)
+			domainStatus, errMsg, dcList := getDomainStatus(w, domain)
 			if errMsg != "" {
 				logger.Warnf("check domain status failed, Id: %s, error: %+v", domain.ID.Hex(), errMsg)
 			}
@@ -105,7 +105,7 @@ func syncDomainStatus(w *Worker) (bool, error) {
 }
 
 // 获取域控制器状态
-func getDomainStatus(domain model.Domain) (string, string, []model.DCList) {
+func getDomainStatus(w *Worker, domain model.Domain) (string, string, []model.DCList) {
 	dns := domain.LdapConf["dns"]
 	passWord, _ := util.PasswordDecode(domain.LdapConf["password"])
 	userName := domain.LdapConf["user"]
@@ -162,9 +162,7 @@ func getDomainStatus(domain model.Domain) (string, string, []model.DCList) {
 		dc.Timeout = timeOut
 		dc.ErrMsg = errMsg
 		dc.Status = dcStatus
-		dc.HasSensor = false
-		dc.IsMaster = true
-		dc.FsmoRole = ""
+		dc.HasSensor = isSensorInstalled(w, dc.HostName)
 		dc.LastOnlineTm = time.Now()
 	}
 	return domainStatus, domainErrMsg, DCList
@@ -254,6 +252,16 @@ func updateDomainByID(w *Worker, domain model.Domain) error {
 	return w.env.MongoCli.UpdateById(domain.CollectName(), domain.ID, &domain)
 }
 
+func getSensorByDCHostName(w *Worker, dcHostName string) (*model.Sensor, error) {
+	query := bson.M{"dc_hostname": dcHostName}
+	var sensor model.Sensor
+	err, _ := w.env.MongoCli.FindOne(sensor.CollectName(), query, &sensor)
+	if err != nil {
+		return nil, err
+	}
+	return &sensor, nil
+}
+
 func sliceEqual(oldList, newList []model.DCList) bool {
 	if len(oldList) != len(newList) {
 		return false
@@ -336,12 +344,11 @@ func getDomainDCListWithLDAP(dcHostnameList []string, domainName, username, pass
 		return nil, err
 	}
 
-	dcName, err := ldapSearch.LdapSearchFSMORoleOwner()
+	pdcName, err := ldapSearch.LdapSearchFSMORoleOwner()
 	if err != nil {
 		logger.Warnf("ldap search fsmo role owner err:%v, will ignore it!", err)
 	}
 
-	fsmoRole := "DC"
 	var DCList []model.DCList
 	for _, entries := range entriesList {
 		var ipList []string
@@ -359,11 +366,14 @@ func getDomainDCListWithLDAP(dcHostnameList []string, domainName, username, pass
 			ipList = append(ipList, ip.String())
 		}
 
-		if dcName == dcHostName {
+		isMaster := false
+		fsmoRole := "DC"
+		if pdcName == dcHostName {
 			fsmoRole = "PDC"
+			isMaster = true
 		}
 
-		DCList = append(DCList, model.DCList{HostName: dcHostName, FsmoRole: fsmoRole, IPList: ipList, Platform: platform, Version: version})
+		DCList = append(DCList, model.DCList{HostName: dcHostName, FsmoRole: fsmoRole, IsMaster: isMaster, IPList: ipList, Platform: platform, Version: version})
 	}
 
 	return DCList, nil
@@ -392,4 +402,14 @@ func pinger(ip string) (string, error) {
 	defer conn.Close()
 	var t = float64(endTime.Sub(startTime)) / float64(time.Millisecond)
 	return fmt.Sprintf("%4.2fms", t), nil
+}
+
+func isSensorInstalled(w *Worker, dcHostName string) bool {
+	sensor, err := getSensorByDCHostName(w, dcHostName)
+	if err != nil || sensor == nil {
+		logger.Warnf("get sensor by dc_hostname(%s) err:%v", dcHostName, err)
+		return false
+	}
+
+	return true
 }
