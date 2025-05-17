@@ -1,7 +1,7 @@
 # ADAegis sensor uninstallation script
 
 $sensorDir = "C:\Program Files\adaegis"
-$logFile = "$sensorDir\uninstall.log"
+$logFile = "C:\uninstall-adaegis.log"
 
 function Write-Log {
     param (
@@ -54,9 +54,6 @@ try {
         Write-Log "Removing ADAegis installation directory..."
         # Add a short delay to ensure all processes are properly terminated
         Start-Sleep -Seconds 3
-        
-        # Force remove all files and directories
-        Remove-Item -Path $sensorDir -Recurse -Force -ErrorAction SilentlyContinue
 
         # Remove the sub directory or files: C:\Program Files\adaegis\xxx
         Remove-Item -Path "$sensorDir\ldapfw" -Recurse -Force -ErrorAction SilentlyContinue
@@ -65,6 +62,9 @@ try {
         Remove-Item -Path "$sensorDir\sensor.cfg" -Recurse -Force -ErrorAction SilentlyContinue
         Remove-Item -Path "$sensorDir\adaegis.exe" -Recurse -Force -ErrorAction SilentlyContinue
         Remove-Item -Path "$sensorDir\uuid" -Recurse -Force -ErrorAction SilentlyContinue
+        
+        # Force remove all files and directories
+        Remove-Item -Path $sensorDir -Recurse -Force -ErrorAction SilentlyContinue
 
         # TODO: Noted that this uninstallation script is in the current directory, so it can't delete the directory: C:\Program Files\adaegis
         

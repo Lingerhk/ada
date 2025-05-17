@@ -1,8 +1,9 @@
 # ADAegis sensor installation script
 
-# Define installation directory
+# Define installation options
+$adaegisServer = "YOUR_ADA_SERVER_IP"
+
 $sensorDir = "C:\Program Files\adaegis"
-$adaegisPortal = "http://192.168.6.4"
 $logFile = "$sensorDir\install.log"
 
 function Write-Log {
@@ -24,7 +25,7 @@ try {
 
     # 2. Download ADAegis package
     Write-Log "Downloading ADAegis package..."
-    $packageUrl = "${adaegisPortal}/download/sensor/adaegis.zip"
+    $packageUrl = "http://${adaegisServer}/download/sensor/adaegis.zip"
     $packagePath = "$sensorDir\adaegis.zip"
     $webClient = New-Object System.Net.WebClient
     try {
@@ -55,7 +56,10 @@ try {
     # 4. Install Npcap if not already installed
     if (!(Test-Path "C:\Program Files\Npcap")) {
         Write-Log "Installing Npcap..."
-        Start-Process -FilePath "$sensorDir\pkg\npcap-0.93.exe" -ArgumentList "/S", "/winpcap_mode=yes", "/loopback_support=no" -Wait
+        $process = Start-Process -FilePath "$sensorDir\pkg\npcap-0.93.exe" -ArgumentList "/S", "/winpcap_mode=yes", "/loopback_support=no" -Wait -PassThru
+        if ($process.ExitCode -ne 0) {
+            throw "Npcap installation failed with exit code $($process.ExitCode)"
+        }
         Write-Log "Installed Npcap"
     } else {
         Write-Log "Npcap already installed"
@@ -72,7 +76,10 @@ try {
     $rpcService = Get-Service -Name "RPC Firewall" -ErrorAction SilentlyContinue
     if ($null -eq $rpcService) {
         Write-Log "Installing RPCFW service..."
-        Start-Process -FilePath $rpcfwBin -ArgumentList "/install" -WorkingDirectory $rpcfwDir -Wait
+        $process = Start-Process -FilePath $rpcfwBin -ArgumentList "/install" -WorkingDirectory $rpcfwDir -Wait -PassThru
+        if ($process.ExitCode -ne 0) {
+            throw "RPCFW service installation failed with exit code $($process.ExitCode)"
+        }
         Write-Log "Installed RPCFW service"
     } else {
         Write-Log "RPCFW service already installed"
@@ -90,7 +97,10 @@ try {
         $ldapService = Get-Service -Name "LDAP Firewall" -ErrorAction SilentlyContinue
         if ($null -eq $ldapService) {
             Write-Log "Installing LDAPFW service..."
-            Start-Process -FilePath $ldapfwBin -ArgumentList "/install" -WorkingDirectory $ldapfwDir -Wait
+            $process = Start-Process -FilePath $ldapfwBin -ArgumentList "/install" -WorkingDirectory $ldapfwDir -Wait -PassThru
+            if ($process.ExitCode -ne 0) {
+                throw "LDAPFW service installation failed with exit code $($process.ExitCode)"
+            }
             Write-Log "Installed LDAPFW service"
         } else {
             Write-Log "LDAPFW service already installed"
@@ -98,11 +108,17 @@ try {
     } catch {
         Write-Log "Error checking LDAPFW status. Make sure VC_redist.x64 is installed."
         Write-Log "Installing VC_redist.x64..."
-        Start-Process -FilePath "$sensorDir\pkg\vc_redist.x64.exe" -ArgumentList "/quiet", "/norestart" -Wait
+        $process = Start-Process -FilePath "$sensorDir\pkg\vc_redist.x64.exe" -ArgumentList "/quiet", "/norestart" -Wait -PassThru
+        if ($process.ExitCode -ne 0) {
+            throw "VC_redist.x64 installation failed with exit code $($process.ExitCode)"
+        }
         Write-Log "Installed VC_redist.x64"
         
         Write-Log "Installing LDAPFW service..."
-        Start-Process -FilePath $ldapfwBin -ArgumentList "/install" -WorkingDirectory $ldapfwDir -Wait
+        $process = Start-Process -FilePath $ldapfwBin -ArgumentList "/install" -WorkingDirectory $ldapfwDir -Wait -PassThru
+        if ($process.ExitCode -ne 0) {
+            throw "LDAPFW service installation after VC_redist failed with exit code $($process.ExitCode)"
+        }
         Write-Log "Installed LDAPFW service"
     }
 
@@ -113,9 +129,19 @@ try {
     Copy-Item -Path "$sensorDir\pkg\uninstall-adaegis.ps1" -Destination "$sensorDir\uninstall-adaegis.ps1" -Force
     Write-Log "Copied ADAegis files"
 
-    # 8. Register ADAegis
+    # 8. update adaegis server into sensor.cfg
+    Write-Log "Updating ADAegis server into sensor.cfg..."
+    $process = Start-Process -FilePath "$sensorDir\adaegis.exe" -ArgumentList "-m", "${adaegisServer}" -WorkingDirectory $sensorDir -Wait -PassThru
+    if ($process.ExitCode -ne 0) {
+        throw "Failed to update ADAegis server in sensor.cfg. Exit code: $($process.ExitCode)"
+    }
+
+    # 9. Register ADAegis
     Write-Log "Registering ADAegis sensor..."
-    Start-Process -FilePath "$sensorDir\adaegis.exe" -ArgumentList "-r" -WorkingDirectory $sensorDir -Wait
+    $process = Start-Process -FilePath "$sensorDir\adaegis.exe" -ArgumentList "-r" -WorkingDirectory $sensorDir -Wait -PassThru
+    if ($process.ExitCode -ne 0) {
+        throw "Failed to register ADAegis sensor. Exit code: $($process.ExitCode)"
+    }
     if (Test-Path "$sensorDir\uuid") {
         $uuid = Get-Content -Path "$sensorDir\uuid"
         Write-Log "Registered ADAegis sensor with UUID: $uuid"
@@ -123,7 +149,7 @@ try {
         throw "Failed to register ADAegis sensor"
     }
 
-    # 9. Create ADAegis service if it doesn't exist
+    # 10. Create ADAegis service if it doesn't exist
     $service = Get-Service -Name "Adaegis" -ErrorAction SilentlyContinue
     if ($null -eq $service) {
         Write-Log "Creating ADAegis service..."
@@ -151,18 +177,18 @@ try {
         Invoke-Expression $cmd
     }
 
-    # 10. Start ADAegis service
+    # 11. Start ADAegis service
     Write-Log "Starting ADAegis service..."
     Start-Service -Name "Adaegis"
     
-    # 11. Clean up temporary files
+    # 12. Clean up temporary files
     Write-Log "Cleaning up..."
     Remove-Item -Path $packagePath -Force
     Remove-Item -Path "$sensorDir\pkg" -Recurse -Force
 
     Start-Sleep -Seconds 1
 
-    # 8. Check if ADAegis service is running
+    # 13. Check if ADAegis service is running
     $service = Get-Service -Name "Adaegis" -ErrorAction SilentlyContinue
     if ($service.Status -eq "Running") {
         Write-Log "ADAegis service is running"

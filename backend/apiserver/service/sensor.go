@@ -5,9 +5,9 @@ import (
 	v2 "ada/backend/apiserver/api/v2"
 	aCommon "ada/backend/apiserver/common"
 	"ada/backend/apiserver/server"
+	"ada/backend/apiserver/util"
 	"ada/backend/cache"
 	"ada/backend/common"
-	"ada/infra/version"
 	"context"
 	"fmt"
 	"io"
@@ -167,6 +167,22 @@ func (s *ADAServiceV2) UpdateSensor(ctx context.Context, in *v2.UpdateSensorReq)
 }
 
 func (s *ADAServiceV2) CmdSensor(ctx context.Context, in *v2.CmdSensorReq) (*v2.CmdSensorReply, error) {
+	defer s.syncDomainStatus(ctx)
+
+	// get system info
+	sysInfo, err := server.GetSystemInfo(s.env)
+	if err != nil {
+		logger.Errorf("get system info err:%v", err)
+		return nil, status.Error(codes.Internal, s.I18n("QueryFailed"))
+	}
+
+	// get sensor info
+	sensor, err := server.GetSensorByID(s.env, in.ID)
+	if err != nil {
+		logger.Errorf("get sensor err:%v", err)
+		return nil, status.Error(codes.Internal, s.I18n("QueryFailed"))
+	}
+
 	// 仅支持: delete | uninstall
 	switch in.Cmd {
 	case "delete":
@@ -196,18 +212,71 @@ func (s *ADAServiceV2) CmdSensor(ctx context.Context, in *v2.CmdSensorReq) (*v2.
 			return nil, status.Error(codes.Internal, s.I18n("Sensor.CmdSensor.UninstallFailed"))
 		}
 
-		var adaMsg sCommon.AdaMessage
-		adaMsg.MsgType = sCommon.T_CMD_UNINSTALL_ALL
-		adaMsg.TaskID = uuid.NewString()
-		adaMsg.Timestamp = time.Now().Unix()
-		adaMsg.Version = version.BuildVersion
-		adaMsg.AgentID = in.ID
-		adaMsg.Data = map[string]string{"plugin": "all"}
+		// var adaMsg sCommon.AdaMessage
+		// adaMsg.MsgType = sCommon.T_CMD_UNINSTALL_ALL
+		// adaMsg.TaskID = uuid.NewString()
+		// adaMsg.Timestamp = time.Now().Unix()
+		// adaMsg.Version = version.BuildVersion
+		// adaMsg.AgentID = in.ID
+		// adaMsg.Data = map[string]string{"plugin": "all"}
 
-		if err := s.pushCmdSensor(ctx, adaMsg, true); err != nil {
-			logger.Errorf("push cmd(%s) sensor(id:%s) err:%v", in.Cmd, in.ID, err)
-			return nil, status.Error(codes.InvalidArgument, s.I18n("CommandFailed"))
+		// if err := s.pushCmdSensor(ctx, adaMsg, true); err != nil {
+		// 	logger.Errorf("push cmd(%s) sensor(id:%s) err:%v", in.Cmd, in.ID, err)
+		// 	return nil, status.Error(codes.InvalidArgument, s.I18n("CommandFailed"))
+		// }
+
+		// using dcHostName to get domain info
+		domain, err := server.GetDomainByName(s.env, sensor.Domain)
+		if err != nil {
+			logger.Errorf("get domain by hostname err:%v", err)
+			return nil, status.Error(codes.Internal, s.I18n("QueryFailed"))
 		}
+
+		// Get LDAP account credentials for WinRM
+		ldapConf := domain.LdapConf
+		username := ldapConf["user"]
+		password, err := util.PasswordDecode(ldapConf["password"])
+		if err != nil {
+			logger.Errorf("password decode err:%v", err)
+			return nil, status.Error(codes.Internal, s.I18n("Domain.DeploySensor.PasswordDecodeError"))
+		}
+
+		// note: username format can't be: CHINA.COM\administrator, it must be: administrator@china.com(for winrm protocol)
+		if strings.Contains(username, "\\") {
+			parts := strings.Split(username, "\\")
+			if len(parts) == 2 {
+				username = fmt.Sprintf("%s@%s", parts[1], domain.Name)
+			}
+		}
+
+		var dcIPs []string
+		for _, dc := range domain.DCList {
+			if dc.HostName == sensor.DCHostName {
+				dcIPs = dc.IPList
+				break
+			}
+		}
+
+		// Get DC IP for WinRM connection
+		if len(dcIPs) == 0 {
+			logger.Errorf("dc hostname %s has no IP addresses", sensor.DCHostName)
+			return nil, status.Error(codes.InvalidArgument, s.I18n("Domain.DeploySensor.DcHostnameNoIP"))
+		}
+
+		// uninstall sensor
+		uninstallStdout, err := s.winRMUninstallSensor(ctx, dcIPs, sysInfo.IP, username, password)
+		if err != nil {
+			logger.Errorf("uninstall sensor err:%v", err)
+			return nil, status.Error(codes.Internal, s.I18n("Sensor.CmdSensor.UninstallFailed"))
+		}
+
+		//check uninstall_adaegis.ps1 is success
+		// Look for success message in output
+		if !strings.Contains(uninstallStdout, "Uninstallation successful") {
+			logger.Errorf("uninstall not successful, stdout:%s", uninstallStdout)
+			return nil, status.Error(codes.Internal, s.I18n("Sensor.CmdSensor.UninstallFailed"))
+		}
+
 	default:
 		return &v2.CmdSensorReply{Result: aCommon.RESP_FAILED}, nil
 	}

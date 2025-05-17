@@ -26,7 +26,7 @@ var I18nLangZhMap = map[string]any{
 			"EmptyIface": "网卡不能为空",
 		},
 		"CmdSensor": map[string]any{
-			"UninstallFailed": "卸载失败",
+			"UninstallFailed": "卸载传感器失败，请在AD上手动卸载！",
 		},
 		"UpdateSensorVersion": map[string]any{
 			"SensorNotRunning":       "域控传感器未处于运行中",
@@ -63,9 +63,6 @@ var I18nLangZhMap = map[string]any{
 			"SensorAlreadyInstalled":   "域控主机名已安装传感器",
 			"PasswordDecodeError":      "域控密码解密失败",
 			"DcHostnameNoIP":           "域控主机名没有IP地址",
-			"WinRMClientCreateFailed":  "WinRM客户端创建失败",
-			"WinRMDownloadFailed":      "执行下载Adaegis脚本失败",
-			"WinRMInstallFailed":       "执行安装Adaegis脚本失败",
 			"SensorInstallationFailed": "执行安装传感器失败",
 		},
 	},
