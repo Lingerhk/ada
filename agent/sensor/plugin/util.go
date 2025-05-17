@@ -7,7 +7,6 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
-	"time"
 
 	logger "github.com/sirupsen/logrus"
 	"golang.org/x/sys/windows"
