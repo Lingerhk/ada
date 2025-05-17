@@ -356,14 +356,15 @@ message ListDomainReply {
   message dcList {
     string hostname = 1;
     string platform = 2;
-    string ips = 3;
-    string timeout = 4;
-    string status = 5;
-    bool hasSensor = 6;
-    bool isMaster = 7;
-    string fsmoRole = 8;
-    string errMsg = 9;
-    string lastOnlineTm = 10;
+    string version = 3;
+    string ips = 4;
+    string timeout = 5;
+    string status = 6;
+    bool hasSensor = 7;
+    bool isMaster = 8;
+    string fsmoRole = 9;
+    string errMsg = 10;
+    string lastOnlineTm = 11;
   }
   message Details {
     string ID = 1;

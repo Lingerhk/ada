@@ -52,6 +52,7 @@ func (a *AuditLog) CollectName() string {
 type DCList struct {
 	HostName     string    `bson:"hostname"`       // 域控DC主机名
 	Platform     string    `bson:"platform"`       // 操作系统
+	Version      string    `bson:"version"`        // 域控版本
 	IPList       []string  `bson:"ip_list"`        // IP列表
 	Timeout      string    `bson:"timeout"`        // 网络延迟，ping测试结果
 	Status       string    `bson:"status"`         // run|stop|init|error
