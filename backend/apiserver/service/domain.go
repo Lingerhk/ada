@@ -11,16 +11,13 @@ import (
 	"ada/backend/model"
 	"ada/infra/ldap"
 	"ada/infra/mongo"
-	"ada/infra/net"
 	"context"
 	"fmt"
-	"net/netip"
 	"strings"
 	"time"
 
 	ldap3 "github.com/go-ldap/ldap/v3"
 	jsoniter "github.com/json-iterator/go"
-	"github.com/masterzen/winrm"
 	logger "github.com/sirupsen/logrus"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -517,79 +514,16 @@ func (s *ADAServiceV2) DeploySensor(ctx context.Context, in *v2.DeploySensorReq)
 		return nil, status.Error(codes.InvalidArgument, s.I18n("Domain.DeploySensor.DcHostnameNoIP"))
 	}
 
-	var dcIP string
-	// // if IPList is more than 1, then using socket to get the available IP
-	if len(targetDC.IPList) > 1 {
-		for _, ip := range targetDC.IPList {
-			addr, err := netip.ParseAddr(ip)
-			if err == nil && addr.Is6() { // ignore ipv6
-				continue
-			}
-
-			// Check if port 5985 (WinRM HTTP) is open
-			isOpen, _ := net.CheckPortOpen(ip, 5985)
-			if isOpen {
-				dcIP = ip
-				break
-			}
-		}
-		if dcIP == "" {
-
-		}
-	} else {
-		dcIP = targetDC.IPList[0]
-	}
-
-	defaultTimeout := 600 * time.Second
-
-	//6.using winrm protocol to deploy sensor
-	winrmConfig := winrm.NewEndpoint(
-		dcIP,           // Host
-		5985,           // Port (HTTP)
-		false,          // TLS
-		false,          // InsecureSkipVerify
-		nil,            // CACert
-		nil,            // Cert
-		nil,            // Key
-		defaultTimeout, // Timeout in seconds
-	)
-
-	winrmClient, err := winrm.NewClient(winrmConfig, username, password)
+	installStdout, err := s.winRMInstallSensor(ctx, targetDC.IPList, sysInfo.IP, username, password)
 	if err != nil {
-		logger.Errorf("create winrm client err:%v", err)
-		return nil, status.Error(codes.Internal, s.I18n("Domain.DeploySensor.WinRMClientCreateFailed"))
-	}
-
-	// Prepare download command for the installation script
-	downloadCmd := fmt.Sprintf(`Invoke-WebRequest -Uri "http://%s/download/sensor/install-adaegis.ps1" -OutFile "C:\install-adaegis.ps1"`, sysInfo.IP)
-	execCtx, cancel := context.WithTimeout(ctx, defaultTimeout)
-	defer cancel()
-
-	logger.Infof("winrm(dc ip:%s, username:%s) downloadCmd:%s", dcIP, username, downloadCmd)
-
-	// Execute download command
-	downloadStdout, downloadStderr, downloadCode, err := winrmClient.RunPSWithContext(execCtx, downloadCmd)
-	if err != nil || downloadCode != 0 {
-		logger.Errorf("run download script err:%v, code:%d, stdout:%s, stderr:%s",
-			err, downloadCode, downloadStdout, downloadStderr)
-		return nil, status.Error(codes.Internal, s.I18n("Domain.DeploySensor.WinRMDownloadFailed"))
-	}
-
-	//7.using winrm protocol to run install_adaegis.ps1
-	installCmd := `powershell.exe -ExecutionPolicy Bypass -File "C:\install-adaegis.ps1"`
-
-	// Execute installation script
-	installStdout, installStderr, installCode, err := winrmClient.RunCmdWithContext(execCtx, installCmd)
-	if err != nil || installCode != 0 {
-		logger.Errorf("run install script err:%v, code:%d, stdout:%s, stderr:%s",
-			err, installCode, installStdout, installStderr)
-		return nil, status.Error(codes.Internal, s.I18n("Domain.DeploySensor.WinRMInstallFailed"))
+		logger.Errorf("winrm install sensor err:%v", err)
+		return nil, status.Error(codes.Internal, s.I18n("Domain.DeploySensor.SensorInstallationFailed"))
 	}
 
 	//8.check install_adaegis.ps1 is success
 	// Look for success message in output
 	if !strings.Contains(installStdout, "Installation successful") {
-		logger.Errorf("installation not successful, stdout:%s, stderr:%s", installStdout, installStderr)
+		logger.Errorf("installation not successful, stdout:%s", installStdout)
 		return nil, status.Error(codes.Internal, s.I18n("Domain.DeploySensor.SensorInstallationFailed"))
 	}
 

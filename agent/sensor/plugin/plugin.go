@@ -129,6 +129,9 @@ func (p *Plugin) cmdSync(msgCmd string) {
 	logger.Infof("received cmd(task_id:%s) from server: code:%d, msg_type:%d, data:%v", msg.TaskID, msg.Code, msg.MsgType, msg.Data)
 
 	switch msg.MsgType {
+	case common.T_CMD_UNINSTALL_ALL:
+		// uninstall sensor: we using WinRM to execute uninstall-adaegis.ps1 from server side.
+		logger.Info("received uninstall sensor cmd, will execute uninstall-adaegis.ps1 from server side")
 	case common.T_CONF_UPDATE:
 		err = p.sensorConfUpdate(msg.Data)
 	case common.T_PLUG_CONF_UPDATE:

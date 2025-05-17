@@ -26,7 +26,7 @@ var I18nLangEnMap = map[string]any{
 			"EmptyIface": "Empty iface",
 		},
 		"CmdSensor": map[string]any{
-			"UninstallFailed": "Uninstall failed",
+			"UninstallFailed": "Uninstall failed, please uninstall manually on AD!",
 		},
 		"UpdateSensorVersion": map[string]any{
 			"SensorNotRunning":       "Sensor not running",
@@ -63,10 +63,7 @@ var I18nLangEnMap = map[string]any{
 			"SensorAlreadyInstalled":   "Sensor already installed",
 			"PasswordDecodeError":      "Password decode error",
 			"DcHostnameNoIP":           "DC hostname has no IP addresses",
-			"WinRMClientCreateFailed":  "WinRM client create failed",
-			"WinRMDownloadFailed":      "powershell download adaegis failed",
-			"WinRMInstallFailed":       "powershell install adaegis failed",
-			"SensorInstallationFailed": "sensor installation failed",
+			"SensorInstallationFailed": "Sensor installation failed",
 		},
 	},
 

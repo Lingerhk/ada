@@ -154,8 +154,8 @@ func (s *GrpcService) Use(handlers ...grpc.UnaryServerInterceptor) *GrpcService 
 
 // recovery is a server interceptor that recovers from any panics.
 func (s *GrpcService) recovery() grpc.UnaryServerInterceptor {
-	return func(ctx context.Context, req interface{}, args *grpc.UnaryServerInfo,
-		handler grpc.UnaryHandler) (resp interface{}, err error) {
+	return func(ctx context.Context, req any, args *grpc.UnaryServerInfo,
+		handler grpc.UnaryHandler) (resp any, err error) {
 		defer func() {
 			if rerr := recover(); rerr != nil {
 				buf := make([]byte, 1024*32) // 32KB
@@ -171,8 +171,8 @@ func (s *GrpcService) recovery() grpc.UnaryServerInterceptor {
 
 // handle return a new unary server interceptor for Tracing\LinkTimeout\AuthToken
 func (s *GrpcService) handle() grpc.UnaryServerInterceptor {
-	return func(ctx context.Context, req interface{}, args *grpc.UnaryServerInfo,
-		handler grpc.UnaryHandler) (resp interface{}, err error) {
+	return func(ctx context.Context, req any, args *grpc.UnaryServerInfo,
+		handler grpc.UnaryHandler) (resp any, err error) {
 		// Check if grpc FullMethod is in the whitelist first
 		isWhitelisted := false
 		for _, path := range _whitelist {
@@ -236,8 +236,8 @@ func (s *GrpcService) handle() grpc.UnaryServerInterceptor {
 
 // grpc logging
 func (s *GrpcService) logging() grpc.UnaryServerInterceptor {
-	return func(ctx context.Context, req interface{}, args *grpc.UnaryServerInfo,
-		handler grpc.UnaryHandler) (interface{}, error) {
+	return func(ctx context.Context, req any, args *grpc.UnaryServerInfo,
+		handler grpc.UnaryHandler) (any, error) {
 		startTime := time.Now()
 		var addr, remoteIP string
 		if peerInfo, ok := peer.FromContext(ctx); ok {
