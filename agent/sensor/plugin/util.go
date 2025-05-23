@@ -9,7 +9,6 @@ import (
 	"path/filepath"
 
 	logger "github.com/sirupsen/logrus"
-	"golang.org/x/sys/windows"
 	"golang.org/x/sys/windows/svc"
 	"golang.org/x/sys/windows/svc/mgr"
 )
@@ -260,27 +259,4 @@ func (p *Plugin) checkFileSum(fileCnt, sha265sum string) bool {
 	sumStr := fmt.Sprintf("%x", hash.Sum(nil))
 
 	return sumStr == sha265sum
-}
-
-func GetFQDNName() string {
-	hostname, _ := os.Hostname()
-
-	// 1st call: get required buffer size
-	var size uint32
-	// COMPUTER_NAME_DNS_FULLY_QUALIFIED == 3
-	err := windows.GetComputerNameEx(windows.ComputerNameDnsFullyQualified, nil, &size)
-	if err != nil && err != windows.ERROR_MORE_DATA {
-		logger.Errorf("get computer name ex err:%v", err)
-		return hostname
-	}
-
-	// allocate buffer of UTF-16 words
-	buf := make([]uint16, size)
-	// 2nd call: actually fetch the name
-	if err := windows.GetComputerNameEx(windows.ComputerNameDnsFullyQualified, &buf[0], &size); err != nil {
-		logger.Errorf("get computer name ex err:%v", err)
-		return hostname
-	}
-
-	return windows.UTF16ToString(buf[:size])
 }

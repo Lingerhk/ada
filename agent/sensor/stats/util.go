@@ -4,15 +4,18 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"os"
 	"strings"
 	"time"
 
 	"github.com/google/gopacket/pcap"
 	"github.com/shirou/gopsutil/process"
-	"github.com/sirupsen/logrus"
+	logger "github.com/sirupsen/logrus"
+
+	"golang.org/x/sys/windows"
 )
 
-func GetNetDevices() (string, error) {
+func GetNetDevices(ignoreLocalIface bool) (string, error) {
 	ifaceMap := make(map[string]string)
 
 	devices, err := pcap.FindAllDevs()
@@ -27,6 +30,10 @@ func GetNetDevices() (string, error) {
 		var ips []string
 		if len(dev.Addresses) > 0 {
 			for _, address := range dev.Addresses {
+				if ignoreLocalIface && address.IP.IsLoopback() {
+					continue
+				}
+
 				if address.IP.To4() == nil {
 					continue
 				}
@@ -61,7 +68,7 @@ func getProcessCpuMemPercent(ctx context.Context, interval time.Duration, pid ui
 		}
 		p, err := process.NewProcess(int32(pid))
 		if err != nil {
-			logrus.Errorf("get process info by pid:%d err:%v", pid, err)
+			logger.Errorf("get process info by pid:%d err:%v", pid, err)
 			return 0, 0, err
 		}
 		// Use CPUPercentWithContext if possible (depends on gopsutil version, fallback otherwise)
@@ -111,12 +118,12 @@ func getProcessCpuMemPercent(ctx context.Context, interval time.Duration, pid ui
 				if err != nil {
 					// Ignore CPU calculation error for this sample? Or return error?
 					// Let's log and continue for now, maybe the next sample works.
-					logrus.Warnf("get cpu percent pid %d err: %v", pid, err)
+					logger.Warnf("get cpu percent pid %d err: %v", pid, err)
 					continue
 				}
 				curMem, err := p.MemoryPercent()
 				if err != nil {
-					logrus.Warnf("get memory percent pid %d err: %v", pid, err)
+					logger.Warnf("get memory percent pid %d err: %v", pid, err)
 					continue
 				}
 
@@ -156,4 +163,27 @@ func humanReadableBytes(bytes uint64) string {
 		exp++
 	}
 	return fmt.Sprintf("%.1f %cB", float64(bytes)/float64(div), "KMGTPE"[exp])
+}
+
+func GetFQDNName() string {
+	hostname, _ := os.Hostname()
+
+	// 1st call: get required buffer size
+	var size uint32
+	// COMPUTER_NAME_DNS_FULLY_QUALIFIED == 3
+	err := windows.GetComputerNameEx(windows.ComputerNameDnsFullyQualified, nil, &size)
+	if err != nil && err != windows.ERROR_MORE_DATA {
+		logger.Errorf("get computer name ex err:%v", err)
+		return hostname
+	}
+
+	// allocate buffer of UTF-16 words
+	buf := make([]uint16, size)
+	// 2nd call: actually fetch the name
+	if err := windows.GetComputerNameEx(windows.ComputerNameDnsFullyQualified, &buf[0], &size); err != nil {
+		logger.Errorf("get computer name ex err:%v", err)
+		return hostname
+	}
+
+	return windows.UTF16ToString(buf[:size])
 }

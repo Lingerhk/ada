@@ -1,6 +1,7 @@
 package plugin
 
 import (
+	"ada/agent/sensor/stats"
 	"ada/agent/sensor/winevt/operator"
 	"ada/agent/sensor/winevt/operator/input/windows"
 	"ada/agent/sensor/winevt/operator/output/syslog"
@@ -88,7 +89,7 @@ func (e *evtPlugin) Start() error {
 	syslogConfig.Network = e.SyslogNetwork
 	syslogConfig.Address = e.SyslogAddress
 	syslogConfig.Tag = e.SyslogTag
-	syslogConfig.Hostname = GetFQDNName()
+	syslogConfig.Hostname = stats.GetFQDNName()
 
 	var err error
 	e.syslogOutput, err = syslogConfig.Build(e.settings)

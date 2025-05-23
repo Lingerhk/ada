@@ -21,10 +21,12 @@ type State struct {
 	rdxCli       *redis.Client
 	sensorId     string
 	sensorStatus string
+	fqdn         string
 }
 
 func New(ctx context.Context, rdxCli *redis.Client, sensorId string) *State {
-	return &State{ctx: ctx, rdxCli: rdxCli, sensorId: sensorId, sensorStatus: sCommon.SensorStatusRun}
+	fqdn := GetFQDNName()
+	return &State{ctx: ctx, rdxCli: rdxCli, sensorId: sensorId, sensorStatus: sCommon.SensorStatusRun, fqdn: fqdn}
 }
 
 func (s *State) Serve(wg *sync.WaitGroup, plugProcessMap map[string]uint32) {
@@ -89,12 +91,15 @@ func (s *State) getSensorState(ctx context.Context, plugProcessMap map[string]ui
 	msg.TaskID = uuid.New().String()
 	msg.Version = version.GetBuildVersion()
 	msg.Timestamp = time.Now().Unix()
-	cardInfo, err := GetNetDevices()
+	cardInfo, err := GetNetDevices(true)
 	if err != nil {
 		logger.Warningf("get card devices err:%v", err)
 		return nil, err
 	}
 	msg.Data["net_iface"] = cardInfo
+
+	msg.Data["fqdn"] = s.fqdn
+
 	msg.Data["status"] = sCommon.SensorStatusRun
 	msg.Data["timestamp"] = fmt.Sprintf("%d", time.Now().Unix())
 	msg.Data["mem_total"] = ""

@@ -109,10 +109,9 @@ type SyslogServer struct {
 	esBulker        esutil.BulkIndexer
 	channel         syslog.LogPartsChannel
 	server          *syslog.Server
-	dcHostnameMap   map[string]string // cache mapping dcHostname&ip 减少redis查询
-	eveLogIndexName string            // 当前evelog日志index的日期,用于缓存
-	pktLogIndexName string            // 当前pktlog日志index的日期,用于缓存
-	logStats        *sync.Map         // map[domain]count - Added for pktlog stats
+	eveLogIndexName string    // 当前evelog日志index的日期,用于缓存
+	pktLogIndexName string    // 当前pktlog日志index的日期,用于缓存
+	logStats        *sync.Map // map[domain]count - Added for pktlog stats
 }
 
 func NewSyslogServer(env *config.Env) (*SyslogServer, error) {
@@ -143,18 +142,16 @@ func NewSyslogServer(env *config.Env) (*SyslogServer, error) {
 		}
 	}
 
-	dcHostnameMap := make(map[string]string)
 	ctx, cancel := context.WithCancel(context.Background())
 
 	return &SyslogServer{
-		ctx:           ctx,
-		env:           env,
-		cancel:        cancel,
-		esBulker:      bi,
-		channel:       channel,
-		server:        server,
-		dcHostnameMap: dcHostnameMap,
-		logStats:      new(sync.Map), // Initialize the map
+		ctx:      ctx,
+		env:      env,
+		cancel:   cancel,
+		esBulker: bi,
+		channel:  channel,
+		server:   server,
+		logStats: new(sync.Map), // Initialize the map
 	}, nil
 }
 
@@ -217,16 +214,6 @@ func (s *SyslogServer) syslogSync(event map[string]interface{}) {
 	if s.env.RedisCli.Exists(s.ctx, rdxDomainKey).Val() == 0 {
 		logger.Warnf("ignore invalid syslog from hostname:%s, please add domain first!", hostname)
 		return
-	}
-	// update the mapping hostname&client into redis cache
-	if ip, ok := s.dcHostnameMap[hostname]; !ok || ip != c[0] {
-		// 设置为通用KV形式，便于zeek-redis模块直接从redis中根据ip获取dc hostname
-		rdxDcIPKey := cache.DomainIPRelateDCNameKey(c[0])
-		if err := s.env.RedisCli.Set(s.ctx, rdxDcIPKey, hostname, 0).Err(); err != nil {
-			logger.Errorf("update domain cache to redis err%v", err)
-			return
-		}
-		s.dcHostnameMap[hostname] = c[0]
 	}
 
 	// 记录当前dc的timestamp到SensorCollectStatusKey中，task_worker会check是否异常
