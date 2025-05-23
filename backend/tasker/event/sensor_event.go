@@ -9,6 +9,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/redis/go-redis/v9"
@@ -200,6 +201,7 @@ func (s *SensorEvent) state(stateMsg sCommon.AdaMessage) {
 
 	sensor.Version = stateMsg.Version
 	sensor.Status = stateMsg.Data["status"]
+	sensor.Timestamp = strconv.FormatInt(stateMsg.Timestamp, 10)
 
 	var cardInfo map[string]string
 	err = json.Unmarshal([]byte(stateMsg.Data["net_iface"]), &cardInfo)
@@ -208,7 +210,18 @@ func (s *SensorEvent) state(stateMsg sCommon.AdaMessage) {
 		return
 	}
 	sensor.NetIface = cardInfo
-	sensor.Timestamp = strconv.FormatInt(stateMsg.Timestamp, 10)
+
+	// update IP related hostname in redis key: cache.DomainIPRelateDCNameKey
+	for _, ipList := range cardInfo {
+		for _, ip := range strings.Split(ipList, ",") {
+			domainIPRelateDCNameKey := cache.DomainIPRelateDCNameKey(ip)
+			err = s.redisCli.HSet(ctx, domainIPRelateDCNameKey, stateMsg.Data["fqdn"]).Err()
+			if err != nil {
+				logger.Errorf("redis set domainIPRelateDCNameKey err:%v", err)
+				return
+			}
+		}
+	}
 
 	sensor.MemTotal = stateMsg.Data["mem_total"]
 	sensor.CpuTotal = stateMsg.Data["cpu_total"]

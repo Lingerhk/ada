@@ -2,7 +2,6 @@ package register
 
 import (
 	"ada/agent/sensor/common"
-	"ada/agent/sensor/plugin"
 	"ada/agent/sensor/stats"
 	"ada/infra/version"
 	"context"
@@ -40,7 +39,7 @@ func Register(rdx *redis.Client, regCode string) error {
 	regMsg.Data["timestamp"] = strconv.FormatInt(regMsg.Timestamp, 10)
 	regMsg.Data["ip"] = getLocalIP()
 
-	fqdn := plugin.GetFQDNName()
+	fqdn := stats.GetFQDNName()
 	regMsg.Data["hostname"] = fqdn
 	parts := strings.Split(fqdn, ".")
 	if len(parts) > 1 {
@@ -63,7 +62,7 @@ func Register(rdx *redis.Client, regCode string) error {
 	regMsg.Data["platform"] = platform
 	regMsg.Data["kernel_version"] = platformVersion
 
-	cardInfo, err := stats.GetNetDevices()
+	cardInfo, err := stats.GetNetDevices(true)
 	if err != nil {
 		logger.Errorf("get net devices err:%v", err)
 		return err

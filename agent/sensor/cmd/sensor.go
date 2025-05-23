@@ -56,7 +56,7 @@ func main() {
 	}
 
 	if listIfaces {
-		cardInfo, err := stats.GetNetDevices()
+		cardInfo, err := stats.GetNetDevices(false)
 		if err != nil {
 			fmt.Printf("[sensor] get net devices err:%v\n", err)
 			os.Exit(-1)
