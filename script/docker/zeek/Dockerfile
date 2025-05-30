@@ -4,7 +4,7 @@ FROM ada_zeek:7.1.0
 ENV SERVICE_NAME=ada_zeek
 
 LABEL maintainer="dev@ada"
-LABEL version="2.6"
+LABEL version="2.9.1"
 LABEL description="Docker image for ada system zeek service"
 
 RUN sed -i 's/127.0.0.1/ada_redis/g' /usr/local/zeek/lib/zeek/plugins/Zeek_Redis/scripts/types.zeek
