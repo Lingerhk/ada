@@ -279,7 +279,7 @@ db.getCollection("tb_notify_conf").insert([
     },
     {
         "_id" : new ObjectId(),
-        "module_type" : "baseline",
+        "module_name" : "baseline",
         "notify_type" : "syslog",
         "endpoint" : "",
         "metadata" : {},
