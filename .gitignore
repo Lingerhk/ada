@@ -2,7 +2,6 @@
 .vscode/
 build/
 vendor/
-script/docker/mongodb/02-init_db.js
 script/docker/zeek/plugins/
 script/docker/zeek/zeek.bin.7.1.0.tar.gz
 script/docker/zeek/redis-plus-1.3.12.tar.gz
