@@ -186,12 +186,13 @@ var I18nLangZhMap = map[string]any{
 	// System module
 	"System": map[string]any{
 		"GetSystemInfoFailed":        "获取系统信息失败",
-		"GetProductIconFailed":       "获取产品图标失败",
-		"UpdateProductIconFailed":    "更新产品图标失败",
+		"GetSystemIconFailed":        "获取系统LOGO失败",
+		"UpdateSystemIconFailed":     "更新系统LOGO失败",
 		"UpdateIconTooLarge":         "上传图标文件过大，请上传小于512KB的图片文件",
 		"UpdateIconInvalidType":      "上传图标文件类型不支持(仅限jpg/jpeg/png格式)",
 		"UpdateNtpAddressFailed":     "更新NTP地址失败",
 		"UpdateSystemLanguageFailed": "更新系统语言失败",
+		"UpdateSystemIPFailed":       "更新系统IP失败",
 		"NetworkDebug": map[string]any{
 			"InvalidTarget": "包含非法字符串",
 			"TargetTooLong": "Target太长(超过25字符)",

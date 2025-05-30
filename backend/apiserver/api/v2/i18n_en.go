@@ -186,12 +186,13 @@ var I18nLangEnMap = map[string]any{
 	// System module
 	"System": map[string]any{
 		"GetSystemInfoFailed":        "Get system info failed",
-		"GetProductIconFailed":       "Get product icon failed",
-		"UpdateProductIconFailed":    "Update product icon failed",
+		"GetSystemIconFailed":        "Get system icon failed",
+		"UpdateSystemIconFailed":     "Update system icon failed",
 		"UpdateIconTooLarge":         "Upload icon file too large, please upload an image smaller than 512KB",
 		"UpdateIconInvalidType":      "Upload icon file type not supported (only jpg/jpeg/png format)",
 		"UpdateNtpAddressFailed":     "Update ntp address failed",
 		"UpdateSystemLanguageFailed": "Update system language failed",
+		"UpdateSystemIPFailed":       "Update system ip failed",
 		"NetworkDebug": map[string]any{
 			"InvalidTarget": "Invalid target",
 			"TargetTooLong": "Target too long (more than 25 characters)",

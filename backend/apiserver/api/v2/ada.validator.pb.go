@@ -342,16 +342,16 @@ func (this *GetSystemInfoReply) Validate() error {
 	// Validation of proto3 map<> fields is unsupported.
 	return nil
 }
-func (this *GetProductIconReq) Validate() error {
+func (this *GetSystemIconReq) Validate() error {
 	return nil
 }
-func (this *GetProductIconReply) Validate() error {
+func (this *GetSystemIconReply) Validate() error {
 	return nil
 }
-func (this *UpdateProductIconReq) Validate() error {
+func (this *UpdateSystemIconReq) Validate() error {
 	return nil
 }
-func (this *UpdateProductIconReply) Validate() error {
+func (this *UpdateSystemIconReply) Validate() error {
 	return nil
 }
 func (this *UpdateNtpAddressReq) Validate() error {
@@ -370,6 +370,12 @@ func (this *UpdateSystemLanguageReq) Validate() error {
 	return nil
 }
 func (this *UpdateSystemLanguageReply) Validate() error {
+	return nil
+}
+func (this *UpdateSystemIPReq) Validate() error {
+	return nil
+}
+func (this *UpdateSystemIPReply) Validate() error {
 	return nil
 }
 

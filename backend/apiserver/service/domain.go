@@ -514,7 +514,7 @@ func (s *ADAServiceV2) DeploySensor(ctx context.Context, in *v2.DeploySensorReq)
 		return nil, status.Error(codes.InvalidArgument, s.I18n("Domain.DeploySensor.DcHostnameNoIP"))
 	}
 
-	installStdout, err := s.winRMInstallSensor(ctx, targetDC.IPList, sysInfo.IP, username, password)
+	installStdout, err := s.winRMInstallSensor(ctx, targetDC.IPList, sysInfo.SystemIP, username, password)
 	if err != nil {
 		logger.Errorf("winrm install sensor err:%v", err)
 		return nil, status.Error(codes.Internal, s.I18n("Domain.DeploySensor.SensorInstallationFailed"))

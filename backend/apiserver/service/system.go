@@ -50,14 +50,9 @@ func (s *ADAServiceV2) GetSystemInfo(ctx context.Context, in *v2.GetSystemInfoRe
 	}
 
 	ret := v2.GetSystemInfoReply{
-		Ip:                sys.IP,
-		Netmask:           sys.NetMask,
-		Gateway:           sys.Gateway,
-		Dns:               sys.DNS,
+		SystemIP:          sys.SystemIP,
 		SystemName:        sys.SystemName,
-		CompanyName:       sys.CompanyName,
-		CompanyWebsite:    sys.CompanyWebsite,
-		ProductIcon:       sys.ProductIcon,
+		SystemIcon:        sys.SystemIcon,
 		SystemVersion:     sys.SystemVersion,
 		SystemInstallTm:   sys.CreateTm.String(),
 		SystemUpgradeTm:   sys.UpgradeTm.String(),
@@ -76,43 +71,43 @@ func (s *ADAServiceV2) GetSystemInfo(ctx context.Context, in *v2.GetSystemInfoRe
 	return &ret, nil
 }
 
-func (s *ADAServiceV2) GetProductIcon(ctx context.Context, in *v2.GetProductIconReq) (*v2.GetProductIconReply, error) {
+func (s *ADAServiceV2) GetSystemIcon(ctx context.Context, in *v2.GetSystemIconReq) (*v2.GetSystemIconReply, error) {
 	si, err := server.GetSystemInfo(s.env)
 	if err != nil {
 		logger.Errorf("get system info err:%v", err)
 		return nil, status.Error(codes.Internal, s.I18n("System.GetSystemInfoFailed"))
 	}
 
-	if si.ProductIcon == "" {
+	if si.SystemIcon == "" {
 		originIcon := path.Join(common.RESOURCE_PATH, "image", "favicon.png")
 		fCnt, err := os.ReadFile(originIcon)
 		if err != nil {
 			logger.Warnf("read file err:%v", err)
-			return nil, status.Error(codes.Internal, s.I18n("System.GetProductIconFailed"))
+			return nil, status.Error(codes.Internal, s.I18n("System.GetSystemIconFailed"))
 		}
 		iconB64 := base64.StdEncoding.EncodeToString(fCnt)
-		err = server.UpdateProductIcon(s.env, si.ID, iconB64)
+		err = server.UpdateSystemIcon(s.env, si.ID, iconB64)
 		if err != nil {
 			logger.Warnf("update system info err:%v", err)
-			return nil, status.Error(codes.Internal, s.I18n("System.UpdateProductIconFailed"))
+			return nil, status.Error(codes.Internal, s.I18n("System.UpdateSystemIconFailed"))
 		}
-		return &v2.GetProductIconReply{Icon: si.ProductIcon}, nil
+		return &v2.GetSystemIconReply{Icon: si.SystemIcon}, nil
 	}
 
-	return &v2.GetProductIconReply{Icon: si.ProductIcon}, nil
+	return &v2.GetSystemIconReply{Icon: si.SystemIcon}, nil
 }
 
-func (s *ADAServiceV2) UpdateProductIcon(ctx context.Context, in *v2.UpdateProductIconReq) (*v2.UpdateProductIconReply, error) {
+func (s *ADAServiceV2) UpdateSystemIcon(ctx context.Context, in *v2.UpdateSystemIconReq) (*v2.UpdateSystemIconReply, error) {
 	var iconTypes = []string{"jpg", "jpeg", "png"}
 
-	ret := &v2.UpdateProductIconReply{
+	ret := &v2.UpdateSystemIconReply{
 		Result: RESP_FAILED,
 	}
 
 	iconByte, err := base64.StdEncoding.DecodeString(in.File)
 	if err != nil {
 		logger.Warnf("decode string err: %s", err)
-		return ret, status.Error(codes.Internal, s.I18n("System.UpdateProductIconFailed"))
+		return ret, status.Error(codes.Internal, s.I18n("System.UpdateSystemIconFailed"))
 	}
 
 	// 限制大小
@@ -142,10 +137,10 @@ func (s *ADAServiceV2) UpdateProductIcon(ctx context.Context, in *v2.UpdateProdu
 		return ret, status.Error(codes.Internal, s.I18n("System.GetSystemInfoFailed"))
 	}
 
-	err = server.UpdateProductIcon(s.env, si.ID, in.File)
+	err = server.UpdateSystemIcon(s.env, si.ID, in.File)
 	if err != nil {
 		logger.Warnf("get system info err:%v", err)
-		return ret, status.Error(codes.Internal, s.I18n("System.UpdateProductIconFailed"))
+		return ret, status.Error(codes.Internal, s.I18n("System.UpdateSystemIconFailed"))
 	}
 
 	ret.Result = RESP_SUCCESS
@@ -197,6 +192,23 @@ func (s *ADAServiceV2) UpdateSystemLanguage(ctx context.Context, in *v2.UpdateSy
 	}
 
 	s.language = in.Language
+	ret.Result = RESP_SUCCESS
+
+	return ret, nil
+}
+
+func (s *ADAServiceV2) UpdateSystemIP(ctx context.Context, in *v2.UpdateSystemIPReq) (*v2.UpdateSystemIPReply, error) {
+	ret := &v2.UpdateSystemIPReply{
+		Result: RESP_FAILED,
+	}
+
+	// update language in db
+	err := server.UpdateSystemIP(s.env, in.SystemIP)
+	if err != nil {
+		logger.Warnf("update system language err:%v", err)
+		return ret, status.Error(codes.Internal, s.I18n("System.UpdateSystemIPFailed"))
+	}
+
 	ret.Result = RESP_SUCCESS
 
 	return ret, nil
@@ -391,7 +403,7 @@ func (s *ADAServiceV2) GetLicense(ctx context.Context, in *v2.GetLicenseReq) (*v
 		return &ret, err
 	}
 	ret.Version = sysInfo.SystemVersion
-	ret.Partner = sysInfo.CompanyName
+	ret.Partner = sysInfo.SystemName
 
 	return &ret, nil
 }

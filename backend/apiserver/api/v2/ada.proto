@@ -48,10 +48,11 @@ service ADA {
   // 系统信息
   // 1.基本信息
   rpc GetSystemInfo(GetSystemInfoReq) returns (GetSystemInfoReply) {} //获取系统信息
-  rpc GetProductIcon(GetProductIconReq)returns(GetProductIconReply) {}
-  rpc UpdateProductIcon(UpdateProductIconReq)returns(UpdateProductIconReply) {}
+  rpc GetSystemIcon(GetSystemIconReq)returns(GetSystemIconReply) {}
+  rpc UpdateSystemIcon(UpdateSystemIconReq)returns(UpdateSystemIconReply) {}
   rpc UpdateNtpAddress(UpdateNtpAddressReq)returns(UpdateNtpAddressReply) {}
   rpc UpdateSystemLanguage(UpdateSystemLanguageReq)returns(UpdateSystemLanguageReply) {}
+  rpc UpdateSystemIP(UpdateSystemIPReq)returns(UpdateSystemIPReply) {} // 更新系统IP
 
   // 2.系统监控: load|cpu|mem|net_rx|net_tx
   rpc GetSystemStats(GetSystemStatsReq) returns (GetSystemStatsReply) {} //获取系统监控信息
@@ -543,38 +544,33 @@ message UpdateSensorVersionReply {
 message GetSystemInfoReq {}
 
 message GetSystemInfoReply {
-  string ip = 1;
-  string netmask = 2;
-  string gateway = 3;
-  string dns = 4;
-  string systemName = 5; // 系统名称
-  string companyName = 6; // 名称
-  string companyWebsite = 7; // 官网
-  string productIcon = 8; // Logo
-  string systemVersion = 9; // 系统版本
-  string systemInstallTm = 10; // 安装时间
-  string systemUpgradeTm = 11; // 上次升级时间
-  string systemCpuTotal = 12; // 4C
-  string systemMemTotal = 13; // 16GB
-  string systemDiskTotal = 14; // 64GB
-  string systemLoadAverage = 15; // 系统负载, local_15m
-  string systemBootTime = 16; // 开机使用时间
-  string systemEsHealth = 17; // ES健康状态: green/yellow/red
-  string systemTimestamp = 18; // 系统时间
-  string systemNtpAddress = 19; // NTP服务器地址
-  string systemLanguage = 20; // 系统语言(EN/ZH)
-  map<string, string> statsCfg = 21; // 系统监控参数
+  string systemIP = 1;
+  string systemName = 2; // 系统名称
+  string systemIcon = 3; // Logo
+  string systemVersion = 4; // 系统版本
+  string systemInstallTm = 5; // 安装时间
+  string systemUpgradeTm = 6; // 上次升级时间
+  string systemCpuTotal = 7; // 4C
+  string systemMemTotal = 8; // 16GB
+  string systemDiskTotal = 9; // 64GB
+  string systemLoadAverage = 10; // 系统负载, local_15m
+  string systemBootTime = 11; // 开机使用时间
+  string systemEsHealth = 12; // ES健康状态: green/yellow/red
+  string systemTimestamp = 13; // 系统时间
+  string systemNtpAddress = 14; // NTP服务器地址
+  string systemLanguage = 15; // 系统语言(EN/ZH)
+  map<string, string> statsCfg = 16; // 系统监控参数
 }
 
-message GetProductIconReq {}
-message GetProductIconReply {
+message GetSystemIconReq {}
+message GetSystemIconReply {
   string icon = 1;
 }
 
-message UpdateProductIconReq {
+message UpdateSystemIconReq {
   string file = 1; // 将文件转为base64字符串传过来
 }
-message UpdateProductIconReply {
+message UpdateSystemIconReply {
   string result = 1; //  success failed
 }
 
@@ -589,6 +585,13 @@ message UpdateSystemLanguageReq{
   string language = 1[(validator.field) = {regex: "EN|ZH"}]; // EN/ZH
 }
 message UpdateSystemLanguageReply{
+  string result = 1; //  success failed
+}
+
+message UpdateSystemIPReq{
+  string systemIP = 1;
+}
+message UpdateSystemIPReply{
   string result = 1; //  success failed
 }
 
