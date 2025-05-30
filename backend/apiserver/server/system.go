@@ -50,10 +50,10 @@ func GetSystemInfo(e *config.Env) (*model.SystemInfo, error) {
 	return &s, nil
 }
 
-func UpdateProductIcon(e *config.Env, id primitive.ObjectID, iconB64 string) error {
+func UpdateSystemIcon(e *config.Env, id primitive.ObjectID, iconB64 string) error {
 	var sc model.SystemInfo
 	query := bson.M{"_id": id}
-	update := bson.M{"$set": bson.M{"product_icon": iconB64}}
+	update := bson.M{"$set": bson.M{"system_icon": iconB64}}
 	err := e.MongoCli.UpdateRaw(sc.CollectName(), query, &update, false)
 	if err != nil {
 		return err
@@ -77,6 +77,18 @@ func UpdateLanguage(e *config.Env, lang string) error {
 	var sc model.SystemInfo
 
 	update := bson.M{"$set": bson.M{"system_language": lang}}
+	err := e.MongoCli.UpdateRaw(sc.CollectName(), bson.M{}, &update, false)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func UpdateSystemIP(e *config.Env, ip string) error {
+	var sc model.SystemInfo
+
+	update := bson.M{"$set": bson.M{"system_ip": ip}}
 	err := e.MongoCli.UpdateRaw(sc.CollectName(), bson.M{}, &update, false)
 	if err != nil {
 		return err

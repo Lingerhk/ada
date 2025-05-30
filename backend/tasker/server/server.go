@@ -117,7 +117,10 @@ func New(env *config.Env) (*TaskService, error) {
 	pubsubServer := NewPubsubServer(env)
 
 	// cron server
-	cronServer := NewCronScheduler(taskServer)
+	cronServer, err := NewCronScheduler(taskServer)
+	if err != nil {
+		return nil, err
+	}
 
 	// syslog server
 	syslogServer, err := NewSyslogServer(env)
@@ -166,8 +169,10 @@ func (s *TaskService) Start() error {
 
 func (s *TaskService) Stop() {
 	s.syslogServer.Stop()
+	s.pubsubServer.Stop()
 	s.grpcServer.Stop()
 	s.httpServer.Shutdown(nil)
+	s.cronServer.Stop()
 }
 
 // signal handler

@@ -264,7 +264,7 @@ func (s *ADAServiceV2) CmdSensor(ctx context.Context, in *v2.CmdSensorReq) (*v2.
 		}
 
 		// uninstall sensor
-		uninstallStdout, err := s.winRMUninstallSensor(ctx, dcIPs, sysInfo.IP, username, password)
+		uninstallStdout, err := s.winRMUninstallSensor(ctx, dcIPs, sysInfo.SystemIP, username, password)
 		if err != nil {
 			logger.Errorf("uninstall sensor err:%v", err)
 			return nil, status.Error(codes.Internal, s.I18n("Sensor.CmdSensor.UninstallFailed"))

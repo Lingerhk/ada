@@ -80,22 +80,17 @@ func (a *Domain) CollectName() string {
 
 // 系统信息表
 type SystemInfo struct {
-	ID              primitive.ObjectID `bson:"_id,omitempty"`     // ID
-	IP              string             `bson:"ip"`                // 系统IP
-	NetMask         string             `bson:"netmask"`           // 子网掩码
-	Gateway         string             `bson:"gateway"`           // 网关
-	DNS             string             `bson:"dns"`               // DNS
-	SystemName      string             `bson:"system_name"`       // 系统名称
-	CompanyName     string             `bson:"company_name"`      // 公司名称
-	CompanyWebsite  string             `bson:"company_website"`   // 公司官网
-	ProductIcon     string             `bson:"product_icon"`      // 产品Logo
-	SystemVersion   string             `bson:"system_version"`    // 系统版本
-	UpgradeCheckUrl string             `bson:"upgrade_check_url"` // 新版本检测
-	NtpAddress      string             `bson:"ntp_address"`       // NTP服务器地址
-	SystemLanguage  string             `bson:"system_language"`   // 系统语言(EN/ZH)
-	StatsCfg        map[string]string  `bson:"stats_cfg"`         // 系统状态监控配置
-	CreateTm        time.Time          `bson:"create_tm"`         // 系统安装时间
-	UpgradeTm       time.Time          `bson:"upgrade_tm"`        // 系统上次更新时间
+	ID             primitive.ObjectID `bson:"_id,omitempty"`   // ID
+	SystemIP       string             `bson:"system_ip"`       // 系统IP
+	SystemName     string             `bson:"system_name"`     // 系统名称
+	SystemIcon     string             `bson:"system_icon"`     // 系统Logo
+	SystemVersion  string             `bson:"system_version"`  // 系统版本
+	UpgradeUrl     string             `bson:"upgrade_url"`     // 新版本检测
+	NtpAddress     string             `bson:"ntp_address"`     // NTP服务器地址
+	SystemLanguage string             `bson:"system_language"` // 系统语言(EN/ZH)
+	StatsCfg       map[string]string  `bson:"stats_cfg"`       // 系统状态监控配置
+	CreateTm       time.Time          `bson:"create_tm"`       // 系统安装时间
+	UpgradeTm      time.Time          `bson:"upgrade_tm"`      // 系统上次更新时间
 }
 
 func (a *SystemInfo) CollectName() string {
