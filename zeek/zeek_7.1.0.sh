@@ -256,7 +256,7 @@ function build_zeek_local() {
     cd ${zeek_dir}
     ./configure
     make -j 8
-    make install
+    sudo make install
 }
 
 function build_zeek_docker() {
