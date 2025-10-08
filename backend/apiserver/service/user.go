@@ -23,14 +23,47 @@ import (
 
 const tokenExpired = 60 * 5
 const fileMaxSize = 512 * 1024
+const loginErrorExpire = 60 * 5 // 5 minutes for login error tracking
 
 // needChangePwdTm 提醒用户修改密码周期
 const needChangePwdTm = 90 * 24 * time.Hour
 
-var UserLoginCountInfo model.UserBucket
+// Redis keys for login tracking
+func userLoginErrorKey(username string) string {
+	return "ada:server:user_login:errors:" + username
+}
 
-func init() {
-	UserLoginCountInfo.List = make(map[string]*model.UserLoginCountInfo)
+func userLoginExpireKey(username string) string {
+	return "ada:server:user_login:expire:" + username
+}
+
+// getLoginErrorCount gets the login error count from Redis
+func (s *ADAServiceV2) getLoginErrorCount(ctx context.Context, username string) int {
+	val, err := s.env.RedisCli.Get(ctx, userLoginErrorKey(username)).Int()
+	if err != nil {
+		return 0
+	}
+	return val
+}
+
+// incrLoginErrorCount increments the login error count in Redis
+func (s *ADAServiceV2) incrLoginErrorCount(ctx context.Context, username string) error {
+	key := userLoginErrorKey(username)
+	pipe := s.env.RedisCli.Pipeline()
+	pipe.Incr(ctx, key)
+	pipe.Expire(ctx, key, time.Duration(loginErrorExpire)*time.Second)
+	_, err := pipe.Exec(ctx)
+	return err
+}
+
+// resetLoginErrorCount resets the login error count in Redis
+func (s *ADAServiceV2) resetLoginErrorCount(ctx context.Context, username string) error {
+	return s.env.RedisCli.Del(ctx, userLoginErrorKey(username)).Err()
+}
+
+// setLastLoginExpireTime sets the last login expire time in Redis
+func (s *ADAServiceV2) setLastLoginExpireTime(ctx context.Context, username string, expireTime int64) error {
+	return s.env.RedisCli.Set(ctx, userLoginExpireKey(username), expireTime, 0).Err()
 }
 
 func (s *ADAServiceV2) Login(ctx context.Context, in *v2.LoginReq) (*v2.LoginReply, error) {
@@ -39,14 +72,14 @@ func (s *ADAServiceV2) Login(ctx context.Context, in *v2.LoginReq) (*v2.LoginRep
 		return nil, status.Error(codes.Unauthenticated, s.I18n("User.Login.InvalidCredentials"))
 	}
 
-	clt := UserLoginCountInfo.Get(in.Username)
-	if clt.LoginErrCount >= common.LoginErrorCount {
+	loginErrCount := s.getLoginErrorCount(ctx, in.Username)
+	if loginErrCount >= common.LoginErrorCount {
 		return nil, status.Error(codes.PermissionDenied, s.I18n("User.LoginErrorLocked"))
 	}
 
 	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(in.Password))
 	if err != nil {
-		_ = UserLoginCountInfo.SetLoginErrCount(in.Username, 1)
+		_ = s.incrLoginErrorCount(ctx, in.Username)
 		return nil, status.Error(codes.Unauthenticated, s.I18n("User.Login.InvalidCredentials"))
 	}
 
@@ -64,19 +97,19 @@ func (s *ADAServiceV2) Login(ctx context.Context, in *v2.LoginReq) (*v2.LoginRep
 
 		check := util.TotpCheck(user.Secret, totpCode)
 		if !check {
-			_ = UserLoginCountInfo.SetLoginErrCount(in.Username, 1)
+			_ = s.incrLoginErrorCount(ctx, in.Username)
 
 			return nil, status.Error(codes.Unauthenticated, s.I18n("User.Login.MfaCodeError"))
 		}
 	}
 
-	// If the login is successful, the error changes to 0
-	_ = UserLoginCountInfo.SetLoginErrCount(in.Username, 0)
+	// If the login is successful, reset the error count
+	_ = s.resetLoginErrorCount(ctx, in.Username)
 	// generate jwt-token
 	exp := time.Now().Add(time.Minute * tokenExpired).Unix()
 	token, err := util.GenerateToken(in.Username, user.Role, user.Priv, exp)
 	// Write LastLoginExpireTime
-	UserLoginCountInfo.SetLastLoginExpireTime(in.Username, exp)
+	_ = s.setLastLoginExpireTime(ctx, in.Username, exp)
 	if err != nil {
 		return nil, status.Error(codes.Internal, s.I18n("User.Login.MfaCodeGenerateError"))
 	}
@@ -299,15 +332,14 @@ func (s *ADAServiceV2) CheckMfa(ctx context.Context, in *v2.CheckMfaReq) (*v2.Ch
 		return nil, status.Error(codes.Unauthenticated, s.I18n("User.InvalidUsernameOrPassword"))
 	}
 
-	clt := UserLoginCountInfo.Get(in.Username)
-
-	if clt.LoginErrCount >= common.LoginErrorCount {
+	loginErrCount := s.getLoginErrorCount(ctx, in.Username)
+	if loginErrCount >= common.LoginErrorCount {
 		return nil, status.Error(codes.PermissionDenied, s.I18n("User.LoginErrorLocked"))
 	}
 
 	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(in.Password))
 	if err != nil {
-		_ = UserLoginCountInfo.SetLoginErrCount(in.Username, 1)
+		_ = s.incrLoginErrorCount(ctx, in.Username)
 
 		return nil, status.Error(codes.Unauthenticated, s.I18n("User.InvalidUsernameOrPassword"))
 	}

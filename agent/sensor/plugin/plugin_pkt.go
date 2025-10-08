@@ -1,6 +1,7 @@
 package plugin
 
 import (
+	"ada/agent/sensor/common"
 	"context"
 	"fmt"
 	"net"
@@ -13,8 +14,7 @@ import (
 )
 
 const (
-	snapshotLen      int32 = 1500
-	defaultBpfFilter       = "(tcp) and (port 88 or port 139 or port 445 or port 389) and (not (host %s))" // 只抓取88/139/445/389/端口的tcp数据，并过滤掉regHost的ip
+	snapshotLen int32 = 1500
 )
 
 type pktPlugin struct {
@@ -31,7 +31,7 @@ type pktPlugin struct {
 }
 
 func NewPktPlugin(ctx context.Context, adaHost string, pktSrvPort int) (*pktPlugin, error) {
-	bpfFilter := fmt.Sprintf(defaultBpfFilter, adaHost) // TODO: adaHost为域名的话，需要解析为ip
+	bpfFilter := fmt.Sprintf(common.DefaultBpfFilter, adaHost) // TODO: adaHost为域名的话，需要解析为ip
 
 	return &pktPlugin{
 		ctx:        ctx,
