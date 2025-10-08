@@ -66,6 +66,11 @@ type GrpcService struct {
 	handlers []grpc.UnaryServerInterceptor
 }
 
+// getLastLoginExpireTime gets the last login expire time from Redis
+func (s *GrpcService) getLastLoginExpireTime(ctx context.Context, username string) (int64, error) {
+	return s.env.RedisCli.Get(ctx, userLoginExpireKey(username)).Int64()
+}
+
 // New news a GrpcService using customized configurations.
 func New(env *config.Env, opt ...grpc.ServerOption) *GrpcService {
 	keepAlive := grpc.KeepaliveParams(keepalive.ServerParameters{
@@ -209,8 +214,8 @@ func (s *GrpcService) handle() grpc.UnaryServerInterceptor {
 		}
 
 		// 检测单用户登录
-		value := UserLoginCountInfo.Get(u.User)
-		if value.LastLoginExpireTime > u.Expired {
+		lastLoginExpireTime, err := s.getLastLoginExpireTime(ctx, u.User)
+		if err == nil && lastLoginExpireTime > u.Expired {
 			return nil, status.Error(codes.Unauthenticated, "Already logged")
 		}
 
@@ -387,7 +392,7 @@ func getSysLanguage(env *config.Env) string {
 	return sysInfo.SystemLanguage
 }
 
-func (h *ADAServiceV2) I18n(m string, args ...interface{}) string {
+func (h *ADAServiceV2) I18n(m string, args ...any) string {
 	// param: Key1 OR Key1.Key2 OR Key1.Key3
 
 	var langMap map[string]any

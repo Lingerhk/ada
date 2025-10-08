@@ -115,7 +115,7 @@ func (s *SensorEvent) register(regMsg sCommon.AdaMessage) {
 	sensor.SensorCpuUsed = "0%"
 	sensor.SensorMemUsed = "0%"
 
-	sensor.PktBpfFilter = ""
+	sensor.PktBpfFilter = sCommon.DefaultBpfFilter
 	sensor.LogEvtFilter = "{\"EventID\":[],\"Level\":[],\"Custom\":[]}"
 
 	sensor.PerfLimit = map[string]string{"limit_mem_max": "0.15", "limit_cpu_max": "0.15"}
@@ -146,7 +146,7 @@ func (s *SensorEvent) register(regMsg sCommon.AdaMessage) {
 	sensorInfo["limit_mem_max"] = "0.15"
 	sensorInfo["limit_cpu_max"] = "0.15"
 	sensorInfo["bind_net_iface"] = ""
-	sensorInfo["pkt_bpf_filter"] = ""
+	sensorInfo["pkt_bpf_filter"] = sCommon.DefaultBpfFilter
 	sensorInfo["log_evt_filter"] = "{\"EventID\":[],\"Level\":[],\"Custom\":[]}"
 	sensorInfo["last_online_tm"] = sensor.LastOnlineTm
 

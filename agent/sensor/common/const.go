@@ -1,7 +1,8 @@
 package common
 
 const (
-	SensorDir = "C:\\Program Files\\adaegis"
+	SensorDir        = "C:\\Program Files\\adaegis"
+	DefaultBpfFilter = "(tcp) and (port 88 or port 139 or port 445 or port 389) and (not (host %s))" // 默认BPF过滤规则
 )
 
 const (
