@@ -8,7 +8,7 @@
 #    Log::add_filter(Conn::LOG, filter);
 #}
 
-## Online configuration
+
 @load base/protocols/krb
 @load base/protocols/rdp
 @load base/protocols/ntlm
