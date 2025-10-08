@@ -333,7 +333,6 @@ static int zpot_bind_local_udp_socket(int socket_fd, std::string bind_ip, int po
 // 	  0 : socket is closed, EOF
 static int zpot_get_packet_body(int socket_fd, char * buffer, int bufsize)
 {
-	const int HEADER_SIZE = 20; // pkt header size(ethernet, for ntap_remote.exe)
 	int bytes_received;
 
 	do {
@@ -355,19 +354,7 @@ static int zpot_get_packet_body(int socket_fd, char * buffer, int bufsize)
 		return 0;
 	}
 
-	if (bytes_received < HEADER_SIZE)
-	{
-		PLUGIN_DBG_LOG(TrafficReceiverFoo, "zpot_get_packet_body: received data is smaller than header size");
-		return -1;
-	}
-
-	int ethernet_frame_size = bytes_received - HEADER_SIZE;
-	
-    // Move the Ethernet frame data to the beginning of the buffer
-    memmove(buffer, buffer+HEADER_SIZE, ethernet_frame_size);
-
-    // Return the size of the Ethernet frame
-    return ethernet_frame_size;
+	return bytes_received; // return the full size of the packet
 }
 
 // Simple HTTP GET request function
