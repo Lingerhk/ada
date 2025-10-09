@@ -4,9 +4,10 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"time"
+
 	"github.com/redis/go-redis/v9"
 	logger "github.com/sirupsen/logrus"
-	"time"
 )
 
 const publicKeyPrefix = "BI+pAObVMq+VvDHQnj4pFC0seQjozvn5"
@@ -15,7 +16,7 @@ type LicenseInfo struct {
 	SnId  string `json:"sn"`
 	Trait string `json:"trait"`
 	Count int    `json:"count"`
-	EndTm int64  `json:"end_tm"` // TODO: 如何防止被调试，直接内存修改该值？？
+	EndTm int64  `json:"end_tm"`
 }
 
 type AdaLicence struct {
@@ -80,18 +81,15 @@ func (l *AdaLicence) Expired() bool {
 }
 
 func (l *AdaLicence) DelayExpired() bool {
-	// 校验License是否过期，超过15天
-	if time.Unix(l.licInfo.EndTm, 0).Before(time.Now().Add(-15 * 24 * time.Hour)) {
+	// 校验License是否过期，超过30天
+	if time.Unix(l.licInfo.EndTm, 0).Before(time.Now().Add(-30 * 24 * time.Hour)) {
 		return true
 	}
 	return false
 }
 
 func (l *AdaLicence) VerifyCount(count int) bool {
-	if l.licInfo.Count > count {
-		return true
-	}
-	return false
+	return l.licInfo.Count > count
 }
 
 func (l *AdaLicence) VerifySnId(sn string) bool {

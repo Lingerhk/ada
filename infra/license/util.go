@@ -67,6 +67,9 @@ func GetTrait() string {
 
 	// 机器ID
 	midText := strings.TrimSpace(strings.Trim(string(mid), "\n"))
+	if midText == "" {
+		dockerEnv = true
+	}
 
 	// 机器IP
 	ipsText := getLocalIPText(dockerEnv)
@@ -81,11 +84,8 @@ func GetTrait() string {
 }
 
 func getLocalIPText(dockerEnv bool) string {
-	if dockerEnv {
-		serial, err := os.ReadFile("/sys/class/dmi/id/product_serial")
-		if err != nil {
-			return "docker-err"
-		}
+	serial, err := os.ReadFile("/sys/class/dmi/id/product_serial")
+	if err == nil && string(serial) != "" && dockerEnv {
 		return string(serial)
 	}
 
@@ -133,9 +133,13 @@ func getLocalIPText(dockerEnv bool) string {
 			}
 
 			if ipAddr.IP.IsPrivate() {
-				ips = append(ips, ipAddr.IP.String())
+				if dockerEnv {
+					ipPrefix := strings.Join(strings.Split(ipAddr.IP.String(), ".")[0:3], ".")
+					ips = append(ips, fmt.Sprintf("%s|%s", ipPrefix, ipAddr.Mask.String()))
+				} else {
+					ips = append(ips, ipAddr.IP.String())
+				}
 			}
-
 		}
 
 	}
