@@ -115,6 +115,17 @@ service ADA {
   rpc UpdateThreatBlock(UpdateThreatBlockReq) returns (UpdateThreatBlockReply) {} // 阻断更新
   rpc DeleteThreatBlock(DeleteThreatBlockReq) returns (DeleteThreatBlockReply) {} // 阻断删除
 
+  // Rule Management (Alert Rules & Activity Rules)
+  rpc ListAlertRule(ListAlertRuleReq) returns (ListAlertRuleReply) {} // 告警规则列表
+  rpc AddAlertRule(AddAlertRuleReq) returns (AddAlertRuleReply) {} // 添加告警规则
+  rpc UpdateAlertRule(UpdateAlertRuleReq) returns (UpdateAlertRuleReply) {} // 更新告警规则
+  rpc DeleteAlertRule(DeleteAlertRuleReq) returns (DeleteAlertRuleReply) {} // 删除告警规则
+  rpc ListActivityRule(ListActivityRuleReq) returns (ListActivityRuleReply) {} // Sigma规则列表
+  rpc GetActivityRule(GetActivityRuleReq) returns (GetActivityRuleReply) {} // 获取Sigma规则详情
+  rpc AddActivityRule(AddActivityRuleReq) returns (AddActivityRuleReply) {} // 添加Sigma规则
+  rpc UpdateActivityRule(UpdateActivityRuleReq) returns (UpdateActivityRuleReply) {} // 更新Sigma规则
+  rpc DeleteActivityRule(DeleteActivityRuleReq) returns (DeleteActivityRuleReply) {} // 删除Sigma规则
+
   ////////////////////////////////
   // scanrisk主动检测dashboard
   rpc ScanRiskStats(ScanRiskStatsReq) returns (ScanRiskStatsReply) {} // 主动检测事件概览
@@ -1625,4 +1636,199 @@ message DashboardLogStatsReply {
     int32 pktlogCounts = 3;
   }
   repeated logStatsList List = 1; // winlog/pktlog采集统计
+}
+///////////////////////////////////////////
+// Alert Rule & Activity Rule Messages
+///////////////////////////////////////////
+
+// Alert Rule (Flow Rules) Messages
+message ListAlertRuleReq {
+  int32 pageIdx = 1 [(validator.field) = {int_gt: 0}];
+  int32 pageSize = 2;
+  repeated string IDs = 3; // 规则ID列表
+  repeated int32 level = 4; // 规则等级: 5:critical, 4:high, 3:medium, 2:low, 1:info
+  repeated string status = 5; // 规则状态: test|experimental|stable|deprecated
+  bool enable = 6; // 启用状态
+  string keyword = 7; // 关键词搜索(标题/描述)
+  repeated string tags = 8; // 标签过滤
+  string logsource = 9; // 日志来源
+  int32 sortTm = 10; // 时间排序: 1升序, -1降序
+}
+
+message AlertRuleInfo {
+  string ID = 1;
+  string title = 2; // 规则标题
+  string description = 3; // 规则描述
+  bool enable = 4; // 启用状态
+  int32 level = 5; // 威胁等级
+  string status = 6; // 规则状态
+  repeated string tags = 7; // 标签
+  string logsource = 8; // 日志来源
+  string type = 9; // 规则分类
+  string author = 10; // 作者
+  bool autoBlock = 11; // 自动阻断
+  string createTm = 12;
+  string updateTm = 13;
+}
+
+message ListAlertRuleReply {
+  ModelPage page = 1;
+  repeated AlertRuleInfo rules = 2;
+}
+
+message AddAlertRuleReq {
+  string title = 1 [(validator.field) = {string_not_empty: true}];
+  string description = 2;
+  bool enable = 3;
+  int32 level = 4 [(validator.field) = {int_gt: 0, int_lt: 6}]; // 1-5
+  string status = 5;
+  repeated string tags = 6;
+  string logsource = 7;
+  string detection = 8 [(validator.field) = {string_not_empty: true}]; // JSON string
+  string type = 9;
+  repeated string references = 10;
+  string suggestion = 11;
+  string author = 12;
+  bool autoBlock = 13;
+}
+
+message AddAlertRuleReply {
+  string ID = 1;
+  string result = 2;
+}
+
+message UpdateAlertRuleReq {
+  string ID = 1 [(validator.field) = {string_not_empty: true}];
+  string title = 2;
+  string description = 3;
+  bool enable = 4;
+  int32 level = 5;
+  string status = 6;
+  repeated string tags = 7;
+  string logsource = 8;
+  string detection = 9; // JSON string
+  string type = 10;
+  repeated string references = 11;
+  string suggestion = 12;
+  string author = 13;
+  bool autoBlock = 14;
+}
+
+message UpdateAlertRuleReply {
+  string result = 1;
+}
+
+message DeleteAlertRuleReq {
+  string ID = 1 [(validator.field) = {string_not_empty: true}];
+}
+
+message DeleteAlertRuleReply {
+  string result = 1;
+}
+
+// Activity Rule (Sigma Rules) Messages
+message ListActivityRuleReq {
+  int32 pageIdx = 1 [(validator.field) = {int_gt: 0}];
+  int32 pageSize = 2;
+  repeated string IDs = 3; // 规则ID列表
+  repeated int32 level = 4; // 规则等级: 5:critical, 4:high, 3:medium, 2:low, 1:info
+  repeated string status = 5; // 规则状态: test|experimental|stable|deprecated
+  string keyword = 6; // 关键词搜索(标题/描述)
+  repeated string tags = 7; // 标签过滤 (MITRE ATT&CK)
+  string logsource = 8; // 日志来源: windows/linux/pktlog
+  string ruleType = 9; // 规则类型: winlog/pktlog/flow
+  int32 sortTm = 10; // 时间排序: 1升序, -1降序
+}
+
+message ActivityRuleInfo {
+  string ID = 1;
+  string title = 2; // 规则标题
+  string description = 3; // 规则描述
+  int32 level = 4; // 风险等级
+  string status = 5; // 规则状态
+  repeated string tags = 6; // 标签
+  string logsource = 7; // 日志来源
+  repeated string references = 8; // 参考链接
+  string rdxKey = 9; // Redis缓存key
+  repeated string fields = 10; // 提取字段
+  repeated string uniqueFields = 11; // 唯一字段
+  string author = 12; // 作者
+  string createTm = 13;
+  string updateTm = 14;
+}
+
+message ListActivityRuleReply {
+  ModelPage page = 1;
+  repeated ActivityRuleInfo rules = 2;
+}
+
+message GetActivityRuleReq {
+  string ID = 1 [(validator.field) = {string_not_empty: true}];
+}
+
+message GetActivityRuleReply {
+  string ID = 1;
+  string title = 2;
+  string description = 3;
+  int32 level = 4;
+  string status = 5;
+  repeated string tags = 6;
+  string logsource = 7;
+  repeated string references = 8;
+  string detection = 9; // JSON string of dynamic detection
+  string rdxKey = 10;
+  repeated string fields = 11;
+  repeated string uniqueFields = 12;
+  string author = 13;
+  string createTm = 14;
+  string updateTm = 15;
+}
+
+message AddActivityRuleReq {
+  string ID = 1 [(validator.field) = {string_not_empty: true}]; // Sigma rule ID (e.g. winlog-0000-0001)
+  string title = 2 [(validator.field) = {string_not_empty: true}];
+  string description = 3;
+  int32 level = 4 [(validator.field) = {int_gt: 0, int_lt: 6}]; // 1-5
+  string status = 5;
+  repeated string tags = 6;
+  string logsource = 7;
+  repeated string references = 8;
+  string detection = 9 [(validator.field) = {string_not_empty: true}]; // JSON string
+  string rdxKey = 10;
+  repeated string fields = 11;
+  repeated string uniqueFields = 12;
+  string author = 13;
+}
+
+message AddActivityRuleReply {
+  string ID = 1;
+  string result = 2;
+}
+
+message UpdateActivityRuleReq {
+  string ID = 1 [(validator.field) = {string_not_empty: true}];
+  string title = 2;
+  string description = 3;
+  int32 level = 4;
+  string status = 5;
+  repeated string tags = 6;
+  string logsource = 7;
+  repeated string references = 8;
+  string detection = 9; // JSON string
+  string rdxKey = 10;
+  repeated string fields = 11;
+  repeated string uniqueFields = 12;
+  string author = 13;
+}
+
+message UpdateActivityRuleReply {
+  string result = 1;
+}
+
+message DeleteActivityRuleReq {
+  string ID = 1 [(validator.field) = {string_not_empty: true}];
+}
+
+message DeleteActivityRuleReply {
+  string result = 1;
 }

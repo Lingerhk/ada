@@ -1,0 +1,286 @@
+package server
+
+import (
+	"ada/backend/apiserver/config"
+	"ada/backend/model"
+	"encoding/json"
+	"fmt"
+	"strings"
+	"time"
+
+	logger "github.com/sirupsen/logrus"
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
+)
+
+// Alert Rule (Flow Rules) Operations
+
+func ListAlertRule(e *config.Env, ids []string, levels []int32, status []string, enable *bool, keyword string, tags []string, logsource string, sortTm int32, limit, offset int32) ([]*model.AlertRule, int64, error) {
+	tb := (&model.AlertRule{}).CollectName()
+
+	// Build query
+	query := bson.D{}
+
+	if len(ids) > 0 {
+		query = append(query, bson.E{Key: "_id", Value: bson.D{{Key: "$in", Value: ids}}})
+	}
+
+	if len(levels) > 0 {
+		query = append(query, bson.E{Key: "level", Value: bson.D{{Key: "$in", Value: levels}}})
+	}
+
+	if len(status) > 0 {
+		query = append(query, bson.E{Key: "status", Value: bson.D{{Key: "$in", Value: status}}})
+	}
+
+	if enable != nil {
+		query = append(query, bson.E{Key: "enable", Value: *enable})
+	}
+
+	if keyword != "" {
+		// Search in title and description
+		query = append(query, bson.E{Key: "$or", Value: []bson.M{
+			{"title": bson.M{"$regex": keyword, "$options": "i"}},
+			{"description": bson.M{"$regex": keyword, "$options": "i"}},
+		}})
+	}
+
+	if len(tags) > 0 {
+		query = append(query, bson.E{Key: "tags", Value: bson.D{{Key: "$in", Value: tags}}})
+	}
+
+	if logsource != "" {
+		query = append(query, bson.E{Key: "logsource", Value: logsource})
+	}
+
+	// Get total count
+	total, err := e.MongoCli.FindCount(tb, query)
+	if err != nil {
+		return nil, 0, err
+	}
+
+	// Sort
+	sort := bson.M{"update_tm": -1}
+	if sortTm != 0 {
+		sort["update_tm"] = sortTm
+	}
+
+	// Find with pagination
+	var rules []*model.AlertRule
+	err = e.MongoCli.FindSortByLimitAndSkip(tb, query, sort, &rules, int64(limit), int64(offset))
+	if err != nil {
+		return nil, 0, err
+	}
+
+	return rules, total, nil
+}
+
+func AddAlertRule(e *config.Env, rule *model.AlertRule) error {
+	tb := (&model.AlertRule{}).CollectName()
+
+	// Set timestamps
+	rule.CreateTm = time.Now()
+	rule.UpdateTm = time.Now()
+
+	// Generate ID if empty
+	if rule.ID == "" {
+		rule.ID = primitive.NewObjectID().Hex()
+	}
+
+	return e.MongoCli.Insert(tb, rule)
+}
+
+func UpdateAlertRule(e *config.Env, id string, updates bson.M) error {
+	tb := (&model.AlertRule{}).CollectName()
+
+	// Add update timestamp
+	updates["update_tm"] = time.Now()
+
+	filter := bson.M{"_id": id}
+
+	return e.MongoCli.Update(tb, filter, updates, false)
+}
+
+func DeleteAlertRule(e *config.Env, id string) error {
+	tb := (&model.AlertRule{}).CollectName()
+	filter := bson.M{"_id": id}
+	return e.MongoCli.Remove(tb, filter, false)
+}
+
+func GetAlertRuleByID(e *config.Env, id string) (*model.AlertRule, error) {
+	tb := (&model.AlertRule{}).CollectName()
+	filter := bson.M{"_id": id}
+
+	var rule model.AlertRule
+	err, exist := e.MongoCli.FindOne(tb, filter, &rule)
+	if err != nil {
+		return nil, err
+	}
+	if !exist {
+		return nil, fmt.Errorf("rule not found")
+	}
+
+	return &rule, nil
+}
+
+// Activity Rule (Sigma Rules) Operations
+
+func ListActivityRule(e *config.Env, ids []string, levels []int32, status []string, keyword string, tags []string, logsource string, ruleType string, sortTm int32, limit, offset int32) ([]*model.AlertActivityRule, int64, error) {
+	tb := (&model.AlertActivityRule{}).CollectName()
+
+	// Build query
+	query := bson.D{}
+
+	if len(ids) > 0 {
+		query = append(query, bson.E{Key: "_id", Value: bson.D{{Key: "$in", Value: ids}}})
+	}
+
+	if len(levels) > 0 {
+		query = append(query, bson.E{Key: "level", Value: bson.D{{Key: "$in", Value: levels}}})
+	}
+
+	if len(status) > 0 {
+		query = append(query, bson.E{Key: "status", Value: bson.D{{Key: "$in", Value: status}}})
+	}
+
+	if keyword != "" {
+		// Search in title and description
+		query = append(query, bson.E{Key: "$or", Value: []bson.M{
+			{"title": bson.M{"$regex": keyword, "$options": "i"}},
+			{"description": bson.M{"$regex": keyword, "$options": "i"}},
+		}})
+	}
+
+	if len(tags) > 0 {
+		query = append(query, bson.E{Key: "tags", Value: bson.D{{Key: "$in", Value: tags}}})
+	}
+
+	if logsource != "" {
+		query = append(query, bson.E{Key: "logsource", Value: logsource})
+	}
+
+	if ruleType != "" {
+		// Rule type is determined by ID prefix: winlog-*, pktlog-*, flow-*
+		query = append(query, bson.E{Key: "_id", Value: bson.M{"$regex": fmt.Sprintf("^%s-", ruleType)}})
+	}
+
+	// Get total count
+	total, err := e.MongoCli.FindCount(tb, query)
+	if err != nil {
+		return nil, 0, err
+	}
+
+	// Sort
+	sort := bson.M{"update_tm": -1}
+	if sortTm != 0 {
+		sort["update_tm"] = sortTm
+	}
+
+	// Find with pagination
+	var rules []*model.AlertActivityRule
+	err = e.MongoCli.FindSortByLimitAndSkip(tb, query, sort, &rules, int64(limit), int64(offset))
+	if err != nil {
+		return nil, 0, err
+	}
+
+	return rules, total, nil
+}
+
+func GetActivityRuleByID(e *config.Env, id string) (*model.AlertActivityRule, error) {
+	tb := (&model.AlertActivityRule{}).CollectName()
+	filter := bson.M{"_id": id}
+
+	var rule model.AlertActivityRule
+	err, exist := e.MongoCli.FindOne(tb, filter, &rule)
+	if err != nil {
+		return nil, err
+	}
+	if !exist {
+		return nil, fmt.Errorf("rule not found")
+	}
+
+	return &rule, nil
+}
+
+func AddActivityRule(e *config.Env, rule *model.AlertActivityRule) error {
+	tb := (&model.AlertActivityRule{}).CollectName()
+
+	// Set timestamps
+	rule.CreateTm = time.Now()
+	rule.UpdateTm = time.Now()
+
+	// Validate ID format (should be like winlog-0000-0001, pktlog-0001, flow-0001)
+	if !strings.Contains(rule.ID, "-") {
+		return fmt.Errorf("invalid rule ID format, should be like: winlog-0000-0001")
+	}
+
+	return e.MongoCli.Insert(tb, rule)
+}
+
+func UpdateActivityRule(e *config.Env, id string, updates bson.M) error {
+	tb := (&model.AlertActivityRule{}).CollectName()
+
+	// Add update timestamp
+	updates["update_tm"] = time.Now()
+
+	filter := bson.M{"_id": id}
+
+	return e.MongoCli.Update(tb, filter, updates, false)
+}
+
+func DeleteActivityRule(e *config.Env, id string) error {
+	tb := (&model.AlertActivityRule{}).CollectName()
+	filter := bson.M{"_id": id}
+	return e.MongoCli.Remove(tb, filter, false)
+}
+
+// Helper: Convert level string to int32
+func LevelStringToInt(level string) int32 {
+	levelMap := map[string]int32{
+		"info":     1,
+		"low":      2,
+		"medium":   3,
+		"high":     4,
+		"critical": 5,
+	}
+	if val, ok := levelMap[level]; ok {
+		return val
+	}
+	return 3 // default to medium
+}
+
+// Helper: Convert level int32 to string
+func LevelIntToString(level int32) string {
+	levelMap := map[int32]string{
+		1: "info",
+		2: "low",
+		3: "medium",
+		4: "high",
+		5: "critical",
+	}
+	if val, ok := levelMap[level]; ok {
+		return val
+	}
+	return "medium"
+}
+
+// Helper: Parse JSON detection string to ActivityDetection
+func ParseDetectionJSON(detectionJSON string) (model.ActivityDetection, error) {
+	var detection model.ActivityDetection
+	err := json.Unmarshal([]byte(detectionJSON), &detection)
+	if err != nil {
+		logger.Errorf("Failed to parse detection JSON: %v", err)
+		return nil, err
+	}
+	return detection, nil
+}
+
+// Helper: Convert ActivityDetection to JSON string
+func DetectionToJSON(detection model.ActivityDetection) (string, error) {
+	data, err := json.Marshal(detection)
+	if err != nil {
+		logger.Errorf("Failed to marshal detection: %v", err)
+		return "", err
+	}
+	return string(data), nil
+}

@@ -1459,3 +1459,135 @@ func (this *DashboardLogStatsReply) Validate() error {
 func (this *DashboardLogStatsReplyLogStatsList) Validate() error {
 	return nil
 }
+func (this *ListAlertRuleReq) Validate() error {
+	if !(this.PageIdx > 0) {
+		return github_com_mwitkow_go_proto_validators.FieldError("PageIdx", fmt.Errorf(`value '%v' must be greater than '0'`, this.PageIdx))
+	}
+	return nil
+}
+func (this *AlertRuleInfo) Validate() error {
+	return nil
+}
+func (this *ListAlertRuleReply) Validate() error {
+	if this.Page != nil {
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Page); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Page", err)
+		}
+	}
+	for _, item := range this.Rules {
+		if item != nil {
+			if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(item); err != nil {
+				return github_com_mwitkow_go_proto_validators.FieldError("Rules", err)
+			}
+		}
+	}
+	return nil
+}
+func (this *AddAlertRuleReq) Validate() error {
+	if this.Title == "" {
+		return github_com_mwitkow_go_proto_validators.FieldError("Title", fmt.Errorf(`value '%v' must not be an empty string`, this.Title))
+	}
+	if !(this.Level > 0) {
+		return github_com_mwitkow_go_proto_validators.FieldError("Level", fmt.Errorf(`value '%v' must be greater than '0'`, this.Level))
+	}
+	if !(this.Level < 6) {
+		return github_com_mwitkow_go_proto_validators.FieldError("Level", fmt.Errorf(`value '%v' must be less than '6'`, this.Level))
+	}
+	if this.Detection == "" {
+		return github_com_mwitkow_go_proto_validators.FieldError("Detection", fmt.Errorf(`value '%v' must not be an empty string`, this.Detection))
+	}
+	return nil
+}
+func (this *AddAlertRuleReply) Validate() error {
+	return nil
+}
+func (this *UpdateAlertRuleReq) Validate() error {
+	if this.ID == "" {
+		return github_com_mwitkow_go_proto_validators.FieldError("ID", fmt.Errorf(`value '%v' must not be an empty string`, this.ID))
+	}
+	return nil
+}
+func (this *UpdateAlertRuleReply) Validate() error {
+	return nil
+}
+func (this *DeleteAlertRuleReq) Validate() error {
+	if this.ID == "" {
+		return github_com_mwitkow_go_proto_validators.FieldError("ID", fmt.Errorf(`value '%v' must not be an empty string`, this.ID))
+	}
+	return nil
+}
+func (this *DeleteAlertRuleReply) Validate() error {
+	return nil
+}
+func (this *ListActivityRuleReq) Validate() error {
+	if !(this.PageIdx > 0) {
+		return github_com_mwitkow_go_proto_validators.FieldError("PageIdx", fmt.Errorf(`value '%v' must be greater than '0'`, this.PageIdx))
+	}
+	return nil
+}
+func (this *ActivityRuleInfo) Validate() error {
+	return nil
+}
+func (this *ListActivityRuleReply) Validate() error {
+	if this.Page != nil {
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Page); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Page", err)
+		}
+	}
+	for _, item := range this.Rules {
+		if item != nil {
+			if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(item); err != nil {
+				return github_com_mwitkow_go_proto_validators.FieldError("Rules", err)
+			}
+		}
+	}
+	return nil
+}
+func (this *GetActivityRuleReq) Validate() error {
+	if this.ID == "" {
+		return github_com_mwitkow_go_proto_validators.FieldError("ID", fmt.Errorf(`value '%v' must not be an empty string`, this.ID))
+	}
+	return nil
+}
+func (this *GetActivityRuleReply) Validate() error {
+	return nil
+}
+func (this *AddActivityRuleReq) Validate() error {
+	if this.ID == "" {
+		return github_com_mwitkow_go_proto_validators.FieldError("ID", fmt.Errorf(`value '%v' must not be an empty string`, this.ID))
+	}
+	if this.Title == "" {
+		return github_com_mwitkow_go_proto_validators.FieldError("Title", fmt.Errorf(`value '%v' must not be an empty string`, this.Title))
+	}
+	if !(this.Level > 0) {
+		return github_com_mwitkow_go_proto_validators.FieldError("Level", fmt.Errorf(`value '%v' must be greater than '0'`, this.Level))
+	}
+	if !(this.Level < 6) {
+		return github_com_mwitkow_go_proto_validators.FieldError("Level", fmt.Errorf(`value '%v' must be less than '6'`, this.Level))
+	}
+	if this.Detection == "" {
+		return github_com_mwitkow_go_proto_validators.FieldError("Detection", fmt.Errorf(`value '%v' must not be an empty string`, this.Detection))
+	}
+	return nil
+}
+func (this *AddActivityRuleReply) Validate() error {
+	return nil
+}
+func (this *UpdateActivityRuleReq) Validate() error {
+	if this.ID == "" {
+		return github_com_mwitkow_go_proto_validators.FieldError("ID", fmt.Errorf(`value '%v' must not be an empty string`, this.ID))
+	}
+	return nil
+}
+func (this *UpdateActivityRuleReply) Validate() error {
+	return nil
+}
+func (this *DeleteActivityRuleReq) Validate() error {
+	if this.ID == "" {
+		return github_com_mwitkow_go_proto_validators.FieldError("ID", fmt.Errorf(`value '%v' must not be an empty string`, this.ID))
+	}
+	return nil
+}
+func (this *DeleteActivityRuleReply) Validate() error {
+	return nil
+}

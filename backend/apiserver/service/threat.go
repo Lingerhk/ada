@@ -7,7 +7,6 @@ import (
 	"ada/backend/apiserver/config"
 	"ada/backend/apiserver/server"
 	"ada/backend/cache"
-	bCommon "ada/backend/common"
 	"ada/infra/base"
 	"ada/infra/crypto"
 	"ada/infra/version"
@@ -102,10 +101,7 @@ func (s *ADAServiceV2) ListThreat(ctx context.Context, in *v2.ListThreatReq) (*v
 			logger.Errorf("GetThreatDescByID(%s) err:%v, will ignore this event!", r.FlowId, err)
 			continue
 		}
-		eventTmpl := ad.EventTmplZH
-		if s.language == bCommon.LangEn {
-			eventTmpl = ad.EventTmplEN
-		}
+		eventTmpl := ad.Description
 
 		ret.List = append(ret.List,
 			&v2.ListThreatReply_Details{
@@ -179,14 +175,9 @@ func (s *ADAServiceV2) GetThreat(ctx context.Context, in *v2.GetThreatReq) (*v2.
 		})
 	}
 
-	eventTmpl := ad.EventTmplZH
-	suggestion := ad.SuggestionZH
-	verifyDesc := ad.VerifyDescZH
-	if s.language == bCommon.LangEn {
-		eventTmpl = ad.EventTmplEN
-		suggestion = ad.SuggestionEN
-		verifyDesc = ad.VerifyDescEN
-	}
+	eventTmpl := ad.Description
+	suggestion := ad.Suggestion
+	verifyDesc := ad.Description // Use description as verify description
 
 	ret := v2.GetThreatReply{
 		ID:         ae.ID.Hex(),
@@ -365,19 +356,10 @@ func (s *ADAServiceV2) ListThreatRule(ctx context.Context, in *v2.ListThreatRule
 
 	var ret v2.ListThreatRuleReply
 	for _, desc := range descList {
-		var name, typ string
-		if s.language == bCommon.LangEn {
-			name = desc.NameEN
-			typ = desc.TypeEN
-		} else {
-			name = desc.NameZH
-			typ = desc.TypeZH
-		}
-
 		ret.List = append(ret.List, &v2.ListThreatRuleReply_Details{
 			ID:        desc.ID,
-			Name:      name,
-			Type:      typ,
+			Name:      desc.Title,
+			Type:      desc.Type,
 			Enable:    desc.Enable,
 			AutoBlock: desc.AutoBlock,
 			Level:     desc.Level,
@@ -420,11 +402,7 @@ func (s *ADAServiceV2) GetThreatNames(ctx context.Context, in *v2.GetThreatNames
 			logger.Errorf("get threat desc by id(%s) err:%v", in.RuleId, err)
 			return nil, status.Error(codes.Internal, s.I18n("Threat.GetThreatNamesFailed"))
 		}
-		if s.language == bCommon.LangEn {
-			mameMap[desc.ID] = desc.NameEN
-		} else {
-			mameMap[desc.ID] = desc.NameZH
-		}
+		mameMap[desc.ID] = desc.Title
 
 		return &v2.GetThreatNamesReply{Names: mameMap}, nil
 	}
@@ -436,11 +414,7 @@ func (s *ADAServiceV2) GetThreatNames(ctx context.Context, in *v2.GetThreatNames
 	}
 
 	for _, desc := range descList {
-		if s.language == bCommon.LangEn {
-			mameMap[desc.ID] = desc.NameEN
-		} else {
-			mameMap[desc.ID] = desc.NameZH
-		}
+		mameMap[desc.ID] = desc.Title
 	}
 
 	return &v2.GetThreatNamesReply{Names: mameMap}, nil
@@ -732,11 +706,7 @@ func (s *ADAServiceV2) AddThreatWhitelist(ctx context.Context, in *v2.AddThreatW
 	}
 
 	var wId string
-	if s.language == bCommon.LangEn {
-		wId, err = server.AddThreatWhitelist(s.env, rule.ID, rule.NameEN, rule.TypeEN, in.Domain, in.Remark, in.Origin, rules)
-	} else {
-		wId, err = server.AddThreatWhitelist(s.env, rule.ID, rule.NameZH, rule.TypeZH, in.Domain, in.Remark, in.Origin, rules)
-	}
+	wId, err = server.AddThreatWhitelist(s.env, rule.ID, rule.Title, rule.Type, in.Domain, in.Remark, in.Origin, rules)
 	if err != nil {
 		logger.Errorf("delete whitelist err:%v", err)
 		return &ret, status.Error(codes.Internal, s.I18n("DeleteFailed"))
