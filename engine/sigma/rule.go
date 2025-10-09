@@ -194,10 +194,10 @@ type Logsource struct {
 
 // Detection represents the detection field in sigma rule
 // contains condition expression and identifier fields for building AST
-type Detection map[string]interface{}
+type Detection map[string]any
 
-func (d Detection) Extract() map[string]interface{} {
-	tx := make(map[string]interface{})
+func (d Detection) Extract() map[string]any {
+	tx := make(map[string]any)
 	for k, v := range d {
 		if k != "condition" {
 			tx[k] = v

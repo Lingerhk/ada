@@ -227,7 +227,7 @@ func sendEmailNotify(n notifyInfo, conf model.NotifyConf) error {
 
 	buf := new(bytes.Buffer)
 	head := common.NotifyMsgTypeDescMap[n.MsgType]
-	err = t.Execute(buf, map[string]interface{}{"head": head, "details": details})
+	err = t.Execute(buf, map[string]any{"head": head, "details": details})
 	if err != nil {
 		logger.Errorf("execute email tmpl err:%v", err)
 		return err

@@ -35,7 +35,7 @@ func NewCeleryClient(broker CeleryBroker, backend CeleryBackend, numWorkers int)
 }
 
 // Register task
-func (cc *CeleryClient) Register(name string, task interface{}) {
+func (cc *CeleryClient) Register(name string, task any) {
 	cc.worker.Register(name, task)
 }
 
@@ -60,14 +60,14 @@ func (cc *CeleryClient) WaitForStopWorker() {
 }
 
 // Delay gets asynchronous result
-func (cc *CeleryClient) Delay(task string, args ...interface{}) (*AsyncResult, error) {
+func (cc *CeleryClient) Delay(task string, args ...any) (*AsyncResult, error) {
 	celeryTask := getTaskMessage(task)
 	celeryTask.Args = args
 	return cc.delay(celeryTask)
 }
 
 // DelayKwargs gets asynchronous results with argument map
-func (cc *CeleryClient) DelayKwargs(task, taskId string, args map[string]interface{}) (*AsyncResult, error) {
+func (cc *CeleryClient) DelayKwargs(task, taskId string, args map[string]any) (*AsyncResult, error) {
 	celeryTask := getTaskMessage(task)
 	celeryTask.TaskID = taskId
 	celeryTask.Kwargs = args
@@ -102,10 +102,10 @@ func (cc *CeleryClient) delay(task *TaskMessage) (*AsyncResult, error) {
 type CeleryTask interface {
 
 	// ParseKwargs - define a method to parse kwargs
-	ParseKwargs(map[string]interface{}) error
+	ParseKwargs(map[string]any) error
 
 	// RunTask - define a method for execution
-	RunTask() (interface{}, error)
+	RunTask() (any, error)
 }
 
 // AsyncResult represents pending result
@@ -117,7 +117,7 @@ type AsyncResult struct {
 
 // Get gets actual result from backend
 // It blocks for period of time set by timeout and returns error if unavailable
-func (ar *AsyncResult) Get(timeout time.Duration) (interface{}, error) {
+func (ar *AsyncResult) Get(timeout time.Duration) (any, error) {
 	ticker := time.NewTicker(50 * time.Millisecond)
 	timeoutChan := time.After(timeout)
 	for {
@@ -136,7 +136,7 @@ func (ar *AsyncResult) Get(timeout time.Duration) (interface{}, error) {
 }
 
 // AsyncGet gets actual result from backend and returns nil if not available
-func (ar *AsyncResult) AsyncGet() (interface{}, error) {
+func (ar *AsyncResult) AsyncGet() (any, error) {
 	if ar.result != nil {
 		return ar.result.Result, nil
 	}

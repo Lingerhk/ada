@@ -124,7 +124,7 @@ func (s *ADAServiceV2) ListBaseline(ctx context.Context, in *v2.ListBaselineReq)
 		return ret, status.Error(codes.Internal, s.I18n("ScanRisk.ListBaseline.GetBaselineListFailed"))
 	}
 
-	var instanceList []map[string]interface{}
+	var instanceList []map[string]any
 
 	for _, t := range subTasks {
 		byteData, _ := json.Marshal(t.Result.Data["instance_list"])
@@ -160,7 +160,7 @@ func (s *ADAServiceV2) GetBaseline(ctx context.Context, in *v2.GetBaselineReq) (
 		return nil, status.Error(codes.Internal, s.I18n("ScanRisk.GetBaseline.GetBaselineFailed"))
 	}
 
-	var instanceList []map[string]interface{}
+	var instanceList []map[string]any
 	byteData, _ := json.Marshal(subTask.Result.Data["instance_list"])
 	err = json.Unmarshal(byteData, &instanceList)
 	if err != nil {
@@ -415,7 +415,7 @@ func (s *ADAServiceV2) GetScanTask(ctx context.Context, in *v2.GetScanTaskReq) (
 				if t.Result.Status == 0 {
 					params["entries"] = "0"
 				} else {
-					var instanceList []map[string]interface{}
+					var instanceList []map[string]any
 					byteData, _ := json.Marshal(t.Result.Data["instance_list"])
 					err = json.Unmarshal(byteData, &instanceList)
 					if err != nil {
@@ -890,8 +890,8 @@ func (s *ADAServiceV2) ListScanPlugin(ctx context.Context, in *v2.ListScanPlugin
 	return &ret, nil
 }
 
-// getPluginMetadata 处理medata map[string]interface{}， 只有weakPassword类型的password: []string
-func getPluginMetadata(md map[string]interface{}) map[string]string {
+// getPluginMetadata 处理medata map[string]any， 只有weakPassword类型的password: []string
+func getPluginMetadata(md map[string]any) map[string]string {
 	var metadata = make(map[string]string)
 	for k, v := range md {
 		switch typedV := v.(type) {

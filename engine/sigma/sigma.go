@@ -10,7 +10,7 @@ type Keyworder interface {
 // Selector implements selection sigma rule type
 type Selector interface {
 	// Select implements Selector
-	Select(string) (interface{}, bool)
+	Select(string) (any, bool)
 }
 
 // Event implements sigma rule types by embedding Keyworder and Selector
@@ -32,5 +32,5 @@ type Branch interface {
 
 	// Self returns Node or final rule object for debugging and/or walking the tree
 	// Must be type switched externally
-	// Self() interface{}
+	// Self() any
 }

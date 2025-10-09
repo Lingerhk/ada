@@ -42,7 +42,7 @@ func (ms *MongoSession) SetPoolLimit(limit uint64) {
 }
 
 // 实际操作
-func (ms *MongoSession) FindOne(name string, query, result interface{}) (err error, exist bool) {
+func (ms *MongoSession) FindOne(name string, query, result any) (err error, exist bool) {
 	exist = true
 	err = ms.session.DB(ms.dbName).C(name).Find(query).One(result)
 	if err != nil {
@@ -55,7 +55,7 @@ func (ms *MongoSession) FindOne(name string, query, result interface{}) (err err
 	return err, exist
 }
 
-func (ms *MongoSession) Find(name string, query, result interface{}, limit int64) error {
+func (ms *MongoSession) Find(name string, query, result any, limit int64) error {
 	if limit <= 0 {
 		return ErrorLimit
 	}
@@ -64,11 +64,11 @@ func (ms *MongoSession) Find(name string, query, result interface{}, limit int64
 	return err
 }
 
-func (ms *MongoSession) FindAll(name string, query, result interface{}) error {
+func (ms *MongoSession) FindAll(name string, query, result any) error {
 	return ms.session.DB(ms.dbName).C(name).Find(query).All(result)
 }
 
-func (ms *MongoSession) FindByLimitAndSkip(name string, query, result interface{}, limit, skip int64) error {
+func (ms *MongoSession) FindByLimitAndSkip(name string, query, result any, limit, skip int64) error {
 	if limit <= 0 || skip < 0 {
 		return ErrorLimit
 	}
@@ -77,11 +77,11 @@ func (ms *MongoSession) FindByLimitAndSkip(name string, query, result interface{
 	return err
 }
 
-func (ms *MongoSession) FindCount(name string, query interface{}) (int64, error) {
+func (ms *MongoSession) FindCount(name string, query any) (int64, error) {
 	return ms.session.DB(ms.dbName).C(name).Count(query)
 }
 
-func (ms *MongoSession) FindSortByLimitAndSkip(name string, query interface{}, sorter, result interface{}, limit, skip int64) error {
+func (ms *MongoSession) FindSortByLimitAndSkip(name string, query any, sorter, result any, limit, skip int64) error {
 	if limit < 0 || skip < 0 {
 		return ErrorLimit
 	}
@@ -93,12 +93,12 @@ func (ms *MongoSession) FindSortByLimitAndSkip(name string, query interface{}, s
 	}
 }
 
-func (ms *MongoSession) FindWithAggregation(name string, pipeline interface{}, result interface{}) error {
+func (ms *MongoSession) FindWithAggregation(name string, pipeline any, result any) error {
 	return ms.session.DB(ms.dbName).C(name).Find(nil).Pipe(pipeline, result)
 }
 
 // 删除
-func (ms *MongoSession) Remove(name string, query interface{}, multi bool) error {
+func (ms *MongoSession) Remove(name string, query any, multi bool) error {
 	if multi {
 		return ms.session.DB(ms.dbName).C(name).RemoveAll(query)
 	}
@@ -107,24 +107,24 @@ func (ms *MongoSession) Remove(name string, query interface{}, multi bool) error
 }
 
 // 删除by ID
-func (ms *MongoSession) RemoveById(name string, id interface{}) error {
+func (ms *MongoSession) RemoveById(name string, id any) error {
 	return ms.session.DB(ms.dbName).C(name).RemoveID(id)
 }
 
 // 插入
-func (ms *MongoSession) Insert(name string, doc interface{}) error {
+func (ms *MongoSession) Insert(name string, doc any) error {
 	err := ms.session.DB(ms.dbName).C(name).Insert(doc)
 	return err
 }
 
-func (ms *MongoSession) InsertAll(name string, docs ...interface{}) error {
+func (ms *MongoSession) InsertAll(name string, docs ...any) error {
 	err := ms.session.DB(ms.dbName).C(name).InsertAll(docs...)
 
 	return err
 }
 
 // 更新
-func (ms *MongoSession) Update(name string, query interface{}, update interface{}, multi bool) error {
+func (ms *MongoSession) Update(name string, query any, update any, multi bool) error {
 	value := make(bson.M)
 	value["$set"] = update
 	if multi {
@@ -135,7 +135,7 @@ func (ms *MongoSession) Update(name string, query interface{}, update interface{
 }
 
 // 更新by ID
-func (ms *MongoSession) UpdateById(name string, id interface{}, update interface{}) error {
+func (ms *MongoSession) UpdateById(name string, id any, update any) error {
 	value := make(bson.M)
 	value["$set"] = update
 
@@ -143,7 +143,7 @@ func (ms *MongoSession) UpdateById(name string, id interface{}, update interface
 }
 
 // 支持Mongodb原始update操作，$set, $inc ...
-func (ms *MongoSession) UpdateRaw(name string, query interface{}, update interface{}, multi bool) error {
+func (ms *MongoSession) UpdateRaw(name string, query any, update any, multi bool) error {
 	if multi {
 		_, err := ms.session.DB(ms.dbName).C(name).UpdateAll(query, update, true)
 		return err
@@ -167,7 +167,7 @@ func (ms *MongoSession) GetNextSequence(name string) (int32, error) {
 }
 
 // 支持Select
-func (ms *MongoSession) FindWithSelect(name string, query, selection, result interface{}, limit int64) error {
+func (ms *MongoSession) FindWithSelect(name string, query, selection, result any, limit int64) error {
 	if limit <= 1 {
 		err := ms.session.DB(ms.dbName).C(name).Find(query).Select(selection).One(result)
 		if err != nil {
@@ -182,13 +182,13 @@ func (ms *MongoSession) FindWithSelect(name string, query, selection, result int
 }
 
 // Select No Limit
-func (ms *MongoSession) FindSelect(name string, query, selection, result interface{}) error {
+func (ms *MongoSession) FindSelect(name string, query, selection, result any) error {
 
 	return ms.session.DB(ms.dbName).C(name).Find(query).Select(selection).All(result)
 }
 
 // 综合查询，支持query, selection, sorter, limit, skip
-func (ms *MongoSession) FindWithMultiple(name string, query, selection, sorter, result interface{}, limit, skip int64) error {
+func (ms *MongoSession) FindWithMultiple(name string, query, selection, sorter, result any, limit, skip int64) error {
 	if limit < 0 || skip < 0 {
 		return ErrorLimit
 	}
@@ -200,7 +200,7 @@ func (ms *MongoSession) FindWithMultiple(name string, query, selection, sorter, 
 	return ms.session.DB(ms.dbName).C(name).Find(query).Select(selection).Sort(sorter).Limit(limit).Skip(skip).All(result)
 }
 
-func (ms *MongoSession) FindWithDistinct(name, distinct string, query interface{}) ([]interface{}, error) {
+func (ms *MongoSession) FindWithDistinct(name, distinct string, query any) ([]any, error) {
 	result, err := ms.session.DB(ms.dbName).C(name).Find(query).Distinct(distinct)
 	if err != nil {
 		return nil, err

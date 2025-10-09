@@ -27,7 +27,7 @@ func RemoveDuplicate(arr []string) (newArr []string) {
 // InArray will search element inside array with any type.
 // Will return boolean and index for matched element.
 // needle is element to search, haystack is slice of value to be search.
-func InArray(needle interface{}, haystack interface{}) bool {
+func InArray(needle any, haystack any) bool {
 	val := reflect.ValueOf(haystack)
 	switch val.Kind() {
 	case reflect.Slice, reflect.Array:
@@ -50,7 +50,7 @@ func InArray(needle interface{}, haystack interface{}) bool {
 }
 
 // 判断obj中是否在target中，支持array/slice/map
-func Contain(obj interface{}, target interface{}) (bool, error) {
+func Contain(obj any, target any) (bool, error) {
 	targetValue := reflect.ValueOf(target)
 	switch reflect.TypeOf(target).Kind() {
 	case reflect.Slice, reflect.Array:

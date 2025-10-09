@@ -629,9 +629,9 @@ func ThreatTrends(e *config.Env, domain string, levels []int32, duration int32) 
 		{{Key: "$match", Value: matchStage}},
 		{{Key: "$group", Value: bson.D{
 			{Key: "_id", Value: bson.M{
-				"$subtract": []interface{}{
+				"$subtract": []any{
 					"$timestamp",
-					bson.M{"$mod": []interface{}{"$timestamp", duration * 60 * 60 * 1000}},
+					bson.M{"$mod": []any{"$timestamp", duration * 60 * 60 * 1000}},
 				},
 			}},
 			{Key: "count", Value: bson.D{{Key: "$sum", Value: 1}}},

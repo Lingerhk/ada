@@ -15,7 +15,7 @@ import (
 // CeleryMessage is actual message to be sent to Redis
 type CeleryMessage struct {
 	Body            string                 `json:"body"`
-	Headers         map[string]interface{} `json:"headers,omitempty"`
+	Headers         map[string]any `json:"headers,omitempty"`
 	ContentType     string                 `json:"content-type"`
 	Properties      CeleryProperties       `json:"properties"`
 	ContentEncoding string                 `json:"content-encoding"`
@@ -31,8 +31,8 @@ func (cm *CeleryMessage) reset() {
 	cm.Properties.DeliveryInfo.Exchange = ""
 }
 
-func (cm *CeleryMessage) setHeader(taskName, taskId string, kwargs map[string]interface{}) {
-	header := make(map[string]interface{})
+func (cm *CeleryMessage) setHeader(taskName, taskId string, kwargs map[string]any) {
+	header := make(map[string]any)
 	header["lang"] = "golang"
 	header["task"] = taskName
 	header["id"] = taskId
@@ -69,7 +69,7 @@ func (cm *CeleryMessage) setDeliveryInfo(taskName string) {
 }
 
 var celeryMessagePool = sync.Pool{
-	New: func() interface{} {
+	New: func() any {
 		return &CeleryMessage{
 			Body:        "",
 			Headers:     nil,
@@ -152,8 +152,8 @@ func (cm *CeleryMessage) GetTaskMessage() *TaskMessage {
 type TaskMessage struct {
 	TaskID  string                 `json:"task_id"`
 	Task    string                 `json:"task"`
-	Args    []interface{}          `json:"args"`
-	Kwargs  map[string]interface{} `json:"kwargs"`
+	Args    []any          `json:"args"`
+	Kwargs  map[string]any `json:"kwargs"`
 	Retries int                    `json:"retries"`
 	ETA     *string                `json:"eta"`
 	Expires *time.Time             `json:"expires"`
@@ -167,7 +167,7 @@ func (tm *TaskMessage) reset() {
 }
 
 var taskMessagePool = sync.Pool{
-	New: func() interface{} {
+	New: func() any {
 		eta := time.Now().Format(time.RFC3339)
 		return &TaskMessage{
 			TaskID:  strings.ReplaceAll(uuid.NewString(), "-", ""),
@@ -181,8 +181,8 @@ var taskMessagePool = sync.Pool{
 func getTaskMessage(task string) *TaskMessage {
 	msg := taskMessagePool.Get().(*TaskMessage)
 	msg.Task = task
-	msg.Args = make([]interface{}, 0)
-	msg.Kwargs = make(map[string]interface{})
+	msg.Args = make([]any, 0)
+	msg.Kwargs = make(map[string]any)
 	msg.ETA = nil
 	return msg
 }
@@ -209,7 +209,7 @@ func DecodeTaskMessage(encodedBody string) (*TaskMessage, error) {
 // Encode returns base64 json encoded string
 func (tm *TaskMessage) Encode() (string, error) {
 	if tm.Args == nil {
-		tm.Args = make([]interface{}, 0)
+		tm.Args = make([]any, 0)
 	}
 	jsonData, err := json.Marshal(tm)
 	if err != nil {
@@ -223,9 +223,9 @@ func (tm *TaskMessage) Encode() (string, error) {
 type ResultMessage struct {
 	ID        string        `json:"task_id"`
 	Status    string        `json:"status"`
-	Traceback interface{}   `json:"traceback"`
-	Result    interface{}   `json:"result"`
-	Children  []interface{} `json:"children"`
+	Traceback any   `json:"traceback"`
+	Result    any   `json:"result"`
+	Children  []any `json:"children"`
 }
 
 func (rm *ResultMessage) reset() {
@@ -233,7 +233,7 @@ func (rm *ResultMessage) reset() {
 }
 
 var resultMessagePool = sync.Pool{
-	New: func() interface{} {
+	New: func() any {
 		return &ResultMessage{
 			Status:    "SUCCESS",
 			Traceback: nil,
@@ -242,7 +242,7 @@ var resultMessagePool = sync.Pool{
 	},
 }
 
-func getResultMessage(val interface{}) *ResultMessage {
+func getResultMessage(val any) *ResultMessage {
 	msg := resultMessagePool.Get().(*ResultMessage)
 	msg.Result = val
 	return msg
@@ -261,7 +261,7 @@ func releaseResultMessage(v *ResultMessage) {
 
 // GetRealValue returns real value of reflect.Value
 // Required for JSON Marshalling
-func GetRealValue(val *reflect.Value) interface{} {
+func GetRealValue(val *reflect.Value) any {
 	if val == nil {
 		return nil
 	}

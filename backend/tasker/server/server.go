@@ -198,8 +198,8 @@ func (s *TaskService) SignalHandler() {
 // Execution is done in left-to-right order, including passing of context.
 // For example ChainUnaryServer(one, two, three) will execute one before two before three, and three
 // will see context changes of one and two.
-func rpcInterceptor(ctx context.Context, req interface{},
-	args *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error) {
+func rpcInterceptor(ctx context.Context, req any,
+	args *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (any, error) {
 	var (
 		i     int
 		chain grpc.UnaryHandler
@@ -210,7 +210,7 @@ func rpcInterceptor(ctx context.Context, req interface{},
 		return handler(ctx, req)
 	}
 
-	chain = func(ic context.Context, ir interface{}) (interface{}, error) {
+	chain = func(ic context.Context, ir any) (any, error) {
 		if i == n-1 {
 			return handler(ic, ir)
 		}
@@ -236,8 +236,8 @@ func rpcUse(handlers ...grpc.UnaryServerInterceptor) {
 
 // rpc auth middleware
 func rpcAuthMiddleware() grpc.UnaryServerInterceptor {
-	return func(ctx context.Context, req interface{}, args *grpc.UnaryServerInfo,
-		handler grpc.UnaryHandler) (resp interface{}, err error) {
+	return func(ctx context.Context, req any, args *grpc.UnaryServerInfo,
+		handler grpc.UnaryHandler) (resp any, err error) {
 		ctx, cancel := context.WithTimeout(ctx, 10*time.Second)
 		defer cancel()
 		md, ok := metadata.FromIncomingContext(ctx)
@@ -315,7 +315,7 @@ func (c UserClaim) Valid() error {
 
 // 解析token获取user消息
 func parseToken(tokenStr, authSecret string) (*UserClaim, error) {
-	fn := func(token *jwt.Token) (interface{}, error) {
+	fn := func(token *jwt.Token) (any, error) {
 		return []byte(authSecret), nil
 	}
 

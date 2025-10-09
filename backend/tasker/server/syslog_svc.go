@@ -178,7 +178,7 @@ func (s *SyslogServer) Stop() {
 	s.esBulker.Close(s.ctx)
 }
 
-func (s *SyslogServer) syslogSync(event map[string]interface{}) {
+func (s *SyslogServer) syslogSync(event map[string]any) {
 	// "client":"192.168.145.135:49627",
 	// "facility":1,
 	// "hostname":"DC2019-02.china.com",
@@ -290,7 +290,7 @@ func (s *SyslogServer) monitor() {
 
 func (s *SyslogServer) stats() {
 	ctx := context.Background()
-	var infoMap = make(map[string]interface{})
+	var infoMap = make(map[string]any)
 	infoMap["es_check_tm"] = strconv.FormatInt(time.Now().Unix(), 10)
 
 	// GET /_cat/health?v=true&format=json

@@ -119,8 +119,8 @@ func (s *GrpcService) Stop() {
 // Execution is done in left-to-right order, including passing of context.
 // For example ChainUnaryServer(one, two, three) will execute one before two before three, and three
 // will see context changes of one and two.
-func (s *GrpcService) interceptor(ctx context.Context, req interface{},
-	args *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error) {
+func (s *GrpcService) interceptor(ctx context.Context, req any,
+	args *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (any, error) {
 	var (
 		i     int
 		chain grpc.UnaryHandler
@@ -131,7 +131,7 @@ func (s *GrpcService) interceptor(ctx context.Context, req interface{},
 		return handler(ctx, req)
 	}
 
-	chain = func(ic context.Context, ir interface{}) (interface{}, error) {
+	chain = func(ic context.Context, ir any) (any, error) {
 		if i == n-1 {
 			return handler(ic, ir)
 		}
@@ -371,7 +371,7 @@ type validator interface {
 
 // proto参数校验
 func (s *GrpcService) validate() grpc.UnaryServerInterceptor {
-	return func(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error) {
+	return func(ctx context.Context, req any, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (any, error) {
 		if v, ok := req.(validator); ok {
 			if err := v.Validate(); err != nil {
 				logger.Infof("middleware validate parameter err(path:%s):%v", info.FullMethod, err)

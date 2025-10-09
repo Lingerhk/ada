@@ -61,13 +61,13 @@ func (l *lexer) scan() {
 	close(l.items)
 }
 
-func (l *lexer) unsuppf(format string, args ...interface{}) stateFn {
+func (l *lexer) unsuppf(format string, args ...any) stateFn {
 	msg := fmt.Sprintf(format, args...)
 	l.items <- Item{T: TokUnsupp, Val: msg}
 	return nil
 }
 
-func (l *lexer) errorf(format string, args ...interface{}) stateFn {
+func (l *lexer) errorf(format string, args ...any) stateFn {
 	msg := fmt.Sprintf(format, args...)
 	l.items <- Item{T: TokErr, Val: msg}
 	return nil

@@ -410,7 +410,7 @@ func exportBaselineReport(mongoCli mongo.DBAdaptor, startTm, endTm time.Time, do
 
 	sheet1CurCol := 2
 	sheet1Columns := []string{"A%d", "B%d", "C%d", "D%d", "E%d", "F%d", "G%d", "H%d", "I%d", "J%d", "K%d", "L%d"}
-	var instanceList []map[string]interface{}
+	var instanceList []map[string]any
 
 	for index, item := range logList {
 		byteData, _ := json.Marshal(item.Result.Data["instance_list"])

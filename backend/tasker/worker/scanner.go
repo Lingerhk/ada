@@ -52,7 +52,7 @@ func (w *Worker) ScannerBaselineTask(domainTmplMap string) error {
 		}
 
 		var subTask model.ScanSubTasks
-		kwargs := make(map[string]interface{})
+		kwargs := make(map[string]any)
 
 		for _, plug := range sTmpl.Plugins {
 			kwargs["plugin_id"] = plug.ID
@@ -119,7 +119,7 @@ func (w *Worker) ScannerLeakTask(domainTmplMap string) error {
 		}
 
 		var subTask model.ScanSubTasks
-		kwargs := make(map[string]interface{})
+		kwargs := make(map[string]any)
 
 		for _, dc := range dm.DCList {
 			for _, plug := range sTmpl.Plugins {
@@ -207,7 +207,7 @@ func (w *Worker) ScannerWeakPwdTask(domainTmplMap string) error {
 		}
 
 		var subTask model.ScanSubTasks
-		kwargs := make(map[string]interface{})
+		kwargs := make(map[string]any)
 
 		// 将userList分组下发任务，每组300个
 		chunkSize := 300
@@ -334,7 +334,7 @@ func (w *Worker) getAssetUserNameList(domain string) ([]string, error) {
 	return userNames, nil
 }
 
-func (w *Worker) sendTaskToScanner(taskType, taskId string, kwargs map[string]interface{}) {
+func (w *Worker) sendTaskToScanner(taskType, taskId string, kwargs map[string]any) {
 	ctx := context.Background()
 	taskCli, _ := gocelery.NewCeleryClient(
 		gocelery.NewRedisBroker(ctx, w.env.RedisCli),
