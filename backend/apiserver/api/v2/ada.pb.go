@@ -12449,6 +12449,1828 @@ func (x *DashboardLogStatsReply) GetList() []*DashboardLogStatsReplyLogStatsList
 	return nil
 }
 
+// Alert Rule (Flow Rules) Messages
+type ListAlertRuleReq struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	PageIdx   int32    `protobuf:"varint,1,opt,name=pageIdx,proto3" json:"pageIdx,omitempty"`
+	PageSize  int32    `protobuf:"varint,2,opt,name=pageSize,proto3" json:"pageSize,omitempty"`
+	IDs       []string `protobuf:"bytes,3,rep,name=IDs,proto3" json:"IDs,omitempty"`             // 规则ID列表
+	Level     []int32  `protobuf:"varint,4,rep,packed,name=level,proto3" json:"level,omitempty"` // 规则等级: 5:critical, 4:high, 3:medium, 2:low, 1:info
+	Status    []string `protobuf:"bytes,5,rep,name=status,proto3" json:"status,omitempty"`       // 规则状态: test|experimental|stable|deprecated
+	Enable    bool     `protobuf:"varint,6,opt,name=enable,proto3" json:"enable,omitempty"`      // 启用状态
+	Keyword   string   `protobuf:"bytes,7,opt,name=keyword,proto3" json:"keyword,omitempty"`     // 关键词搜索(标题/描述)
+	Tags      []string `protobuf:"bytes,8,rep,name=tags,proto3" json:"tags,omitempty"`           // 标签过滤
+	Logsource string   `protobuf:"bytes,9,opt,name=logsource,proto3" json:"logsource,omitempty"` // 日志来源
+	SortTm    int32    `protobuf:"varint,10,opt,name=sortTm,proto3" json:"sortTm,omitempty"`     // 时间排序: 1升序, -1降序
+}
+
+func (x *ListAlertRuleReq) Reset() {
+	*x = ListAlertRuleReq{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_ada_proto_msgTypes[203]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *ListAlertRuleReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListAlertRuleReq) ProtoMessage() {}
+
+func (x *ListAlertRuleReq) ProtoReflect() protoreflect.Message {
+	mi := &file_ada_proto_msgTypes[203]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListAlertRuleReq.ProtoReflect.Descriptor instead.
+func (*ListAlertRuleReq) Descriptor() ([]byte, []int) {
+	return file_ada_proto_rawDescGZIP(), []int{203}
+}
+
+func (x *ListAlertRuleReq) GetPageIdx() int32 {
+	if x != nil {
+		return x.PageIdx
+	}
+	return 0
+}
+
+func (x *ListAlertRuleReq) GetPageSize() int32 {
+	if x != nil {
+		return x.PageSize
+	}
+	return 0
+}
+
+func (x *ListAlertRuleReq) GetIDs() []string {
+	if x != nil {
+		return x.IDs
+	}
+	return nil
+}
+
+func (x *ListAlertRuleReq) GetLevel() []int32 {
+	if x != nil {
+		return x.Level
+	}
+	return nil
+}
+
+func (x *ListAlertRuleReq) GetStatus() []string {
+	if x != nil {
+		return x.Status
+	}
+	return nil
+}
+
+func (x *ListAlertRuleReq) GetEnable() bool {
+	if x != nil {
+		return x.Enable
+	}
+	return false
+}
+
+func (x *ListAlertRuleReq) GetKeyword() string {
+	if x != nil {
+		return x.Keyword
+	}
+	return ""
+}
+
+func (x *ListAlertRuleReq) GetTags() []string {
+	if x != nil {
+		return x.Tags
+	}
+	return nil
+}
+
+func (x *ListAlertRuleReq) GetLogsource() string {
+	if x != nil {
+		return x.Logsource
+	}
+	return ""
+}
+
+func (x *ListAlertRuleReq) GetSortTm() int32 {
+	if x != nil {
+		return x.SortTm
+	}
+	return 0
+}
+
+type AlertRuleInfo struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	ID          string   `protobuf:"bytes,1,opt,name=ID,proto3" json:"ID,omitempty"`
+	Title       string   `protobuf:"bytes,2,opt,name=title,proto3" json:"title,omitempty"`             // 规则标题
+	Description string   `protobuf:"bytes,3,opt,name=description,proto3" json:"description,omitempty"` // 规则描述
+	Enable      bool     `protobuf:"varint,4,opt,name=enable,proto3" json:"enable,omitempty"`          // 启用状态
+	Level       int32    `protobuf:"varint,5,opt,name=level,proto3" json:"level,omitempty"`            // 威胁等级
+	Status      string   `protobuf:"bytes,6,opt,name=status,proto3" json:"status,omitempty"`           // 规则状态
+	Tags        []string `protobuf:"bytes,7,rep,name=tags,proto3" json:"tags,omitempty"`               // 标签
+	Logsource   string   `protobuf:"bytes,8,opt,name=logsource,proto3" json:"logsource,omitempty"`     // 日志来源
+	Type        string   `protobuf:"bytes,9,opt,name=type,proto3" json:"type,omitempty"`               // 规则分类
+	Author      string   `protobuf:"bytes,10,opt,name=author,proto3" json:"author,omitempty"`          // 作者
+	AutoBlock   bool     `protobuf:"varint,11,opt,name=autoBlock,proto3" json:"autoBlock,omitempty"`   // 自动阻断
+	CreateTm    string   `protobuf:"bytes,12,opt,name=createTm,proto3" json:"createTm,omitempty"`
+	UpdateTm    string   `protobuf:"bytes,13,opt,name=updateTm,proto3" json:"updateTm,omitempty"`
+}
+
+func (x *AlertRuleInfo) Reset() {
+	*x = AlertRuleInfo{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_ada_proto_msgTypes[204]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *AlertRuleInfo) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AlertRuleInfo) ProtoMessage() {}
+
+func (x *AlertRuleInfo) ProtoReflect() protoreflect.Message {
+	mi := &file_ada_proto_msgTypes[204]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AlertRuleInfo.ProtoReflect.Descriptor instead.
+func (*AlertRuleInfo) Descriptor() ([]byte, []int) {
+	return file_ada_proto_rawDescGZIP(), []int{204}
+}
+
+func (x *AlertRuleInfo) GetID() string {
+	if x != nil {
+		return x.ID
+	}
+	return ""
+}
+
+func (x *AlertRuleInfo) GetTitle() string {
+	if x != nil {
+		return x.Title
+	}
+	return ""
+}
+
+func (x *AlertRuleInfo) GetDescription() string {
+	if x != nil {
+		return x.Description
+	}
+	return ""
+}
+
+func (x *AlertRuleInfo) GetEnable() bool {
+	if x != nil {
+		return x.Enable
+	}
+	return false
+}
+
+func (x *AlertRuleInfo) GetLevel() int32 {
+	if x != nil {
+		return x.Level
+	}
+	return 0
+}
+
+func (x *AlertRuleInfo) GetStatus() string {
+	if x != nil {
+		return x.Status
+	}
+	return ""
+}
+
+func (x *AlertRuleInfo) GetTags() []string {
+	if x != nil {
+		return x.Tags
+	}
+	return nil
+}
+
+func (x *AlertRuleInfo) GetLogsource() string {
+	if x != nil {
+		return x.Logsource
+	}
+	return ""
+}
+
+func (x *AlertRuleInfo) GetType() string {
+	if x != nil {
+		return x.Type
+	}
+	return ""
+}
+
+func (x *AlertRuleInfo) GetAuthor() string {
+	if x != nil {
+		return x.Author
+	}
+	return ""
+}
+
+func (x *AlertRuleInfo) GetAutoBlock() bool {
+	if x != nil {
+		return x.AutoBlock
+	}
+	return false
+}
+
+func (x *AlertRuleInfo) GetCreateTm() string {
+	if x != nil {
+		return x.CreateTm
+	}
+	return ""
+}
+
+func (x *AlertRuleInfo) GetUpdateTm() string {
+	if x != nil {
+		return x.UpdateTm
+	}
+	return ""
+}
+
+type ListAlertRuleReply struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Page  *ModelPage       `protobuf:"bytes,1,opt,name=page,proto3" json:"page,omitempty"`
+	Rules []*AlertRuleInfo `protobuf:"bytes,2,rep,name=rules,proto3" json:"rules,omitempty"`
+}
+
+func (x *ListAlertRuleReply) Reset() {
+	*x = ListAlertRuleReply{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_ada_proto_msgTypes[205]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *ListAlertRuleReply) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListAlertRuleReply) ProtoMessage() {}
+
+func (x *ListAlertRuleReply) ProtoReflect() protoreflect.Message {
+	mi := &file_ada_proto_msgTypes[205]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListAlertRuleReply.ProtoReflect.Descriptor instead.
+func (*ListAlertRuleReply) Descriptor() ([]byte, []int) {
+	return file_ada_proto_rawDescGZIP(), []int{205}
+}
+
+func (x *ListAlertRuleReply) GetPage() *ModelPage {
+	if x != nil {
+		return x.Page
+	}
+	return nil
+}
+
+func (x *ListAlertRuleReply) GetRules() []*AlertRuleInfo {
+	if x != nil {
+		return x.Rules
+	}
+	return nil
+}
+
+type AddAlertRuleReq struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Title       string   `protobuf:"bytes,1,opt,name=title,proto3" json:"title,omitempty"`
+	Description string   `protobuf:"bytes,2,opt,name=description,proto3" json:"description,omitempty"`
+	Enable      bool     `protobuf:"varint,3,opt,name=enable,proto3" json:"enable,omitempty"`
+	Level       int32    `protobuf:"varint,4,opt,name=level,proto3" json:"level,omitempty"` // 1-5
+	Status      string   `protobuf:"bytes,5,opt,name=status,proto3" json:"status,omitempty"`
+	Tags        []string `protobuf:"bytes,6,rep,name=tags,proto3" json:"tags,omitempty"`
+	Logsource   string   `protobuf:"bytes,7,opt,name=logsource,proto3" json:"logsource,omitempty"`
+	Detection   string   `protobuf:"bytes,8,opt,name=detection,proto3" json:"detection,omitempty"` // JSON string
+	Type        string   `protobuf:"bytes,9,opt,name=type,proto3" json:"type,omitempty"`
+	References  []string `protobuf:"bytes,10,rep,name=references,proto3" json:"references,omitempty"`
+	Suggestion  string   `protobuf:"bytes,11,opt,name=suggestion,proto3" json:"suggestion,omitempty"`
+	Author      string   `protobuf:"bytes,12,opt,name=author,proto3" json:"author,omitempty"`
+	AutoBlock   bool     `protobuf:"varint,13,opt,name=autoBlock,proto3" json:"autoBlock,omitempty"`
+}
+
+func (x *AddAlertRuleReq) Reset() {
+	*x = AddAlertRuleReq{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_ada_proto_msgTypes[206]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *AddAlertRuleReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AddAlertRuleReq) ProtoMessage() {}
+
+func (x *AddAlertRuleReq) ProtoReflect() protoreflect.Message {
+	mi := &file_ada_proto_msgTypes[206]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AddAlertRuleReq.ProtoReflect.Descriptor instead.
+func (*AddAlertRuleReq) Descriptor() ([]byte, []int) {
+	return file_ada_proto_rawDescGZIP(), []int{206}
+}
+
+func (x *AddAlertRuleReq) GetTitle() string {
+	if x != nil {
+		return x.Title
+	}
+	return ""
+}
+
+func (x *AddAlertRuleReq) GetDescription() string {
+	if x != nil {
+		return x.Description
+	}
+	return ""
+}
+
+func (x *AddAlertRuleReq) GetEnable() bool {
+	if x != nil {
+		return x.Enable
+	}
+	return false
+}
+
+func (x *AddAlertRuleReq) GetLevel() int32 {
+	if x != nil {
+		return x.Level
+	}
+	return 0
+}
+
+func (x *AddAlertRuleReq) GetStatus() string {
+	if x != nil {
+		return x.Status
+	}
+	return ""
+}
+
+func (x *AddAlertRuleReq) GetTags() []string {
+	if x != nil {
+		return x.Tags
+	}
+	return nil
+}
+
+func (x *AddAlertRuleReq) GetLogsource() string {
+	if x != nil {
+		return x.Logsource
+	}
+	return ""
+}
+
+func (x *AddAlertRuleReq) GetDetection() string {
+	if x != nil {
+		return x.Detection
+	}
+	return ""
+}
+
+func (x *AddAlertRuleReq) GetType() string {
+	if x != nil {
+		return x.Type
+	}
+	return ""
+}
+
+func (x *AddAlertRuleReq) GetReferences() []string {
+	if x != nil {
+		return x.References
+	}
+	return nil
+}
+
+func (x *AddAlertRuleReq) GetSuggestion() string {
+	if x != nil {
+		return x.Suggestion
+	}
+	return ""
+}
+
+func (x *AddAlertRuleReq) GetAuthor() string {
+	if x != nil {
+		return x.Author
+	}
+	return ""
+}
+
+func (x *AddAlertRuleReq) GetAutoBlock() bool {
+	if x != nil {
+		return x.AutoBlock
+	}
+	return false
+}
+
+type AddAlertRuleReply struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	ID     string `protobuf:"bytes,1,opt,name=ID,proto3" json:"ID,omitempty"`
+	Result string `protobuf:"bytes,2,opt,name=result,proto3" json:"result,omitempty"`
+}
+
+func (x *AddAlertRuleReply) Reset() {
+	*x = AddAlertRuleReply{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_ada_proto_msgTypes[207]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *AddAlertRuleReply) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AddAlertRuleReply) ProtoMessage() {}
+
+func (x *AddAlertRuleReply) ProtoReflect() protoreflect.Message {
+	mi := &file_ada_proto_msgTypes[207]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AddAlertRuleReply.ProtoReflect.Descriptor instead.
+func (*AddAlertRuleReply) Descriptor() ([]byte, []int) {
+	return file_ada_proto_rawDescGZIP(), []int{207}
+}
+
+func (x *AddAlertRuleReply) GetID() string {
+	if x != nil {
+		return x.ID
+	}
+	return ""
+}
+
+func (x *AddAlertRuleReply) GetResult() string {
+	if x != nil {
+		return x.Result
+	}
+	return ""
+}
+
+type UpdateAlertRuleReq struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	ID          string   `protobuf:"bytes,1,opt,name=ID,proto3" json:"ID,omitempty"`
+	Title       string   `protobuf:"bytes,2,opt,name=title,proto3" json:"title,omitempty"`
+	Description string   `protobuf:"bytes,3,opt,name=description,proto3" json:"description,omitempty"`
+	Enable      bool     `protobuf:"varint,4,opt,name=enable,proto3" json:"enable,omitempty"`
+	Level       int32    `protobuf:"varint,5,opt,name=level,proto3" json:"level,omitempty"`
+	Status      string   `protobuf:"bytes,6,opt,name=status,proto3" json:"status,omitempty"`
+	Tags        []string `protobuf:"bytes,7,rep,name=tags,proto3" json:"tags,omitempty"`
+	Logsource   string   `protobuf:"bytes,8,opt,name=logsource,proto3" json:"logsource,omitempty"`
+	Detection   string   `protobuf:"bytes,9,opt,name=detection,proto3" json:"detection,omitempty"` // JSON string
+	Type        string   `protobuf:"bytes,10,opt,name=type,proto3" json:"type,omitempty"`
+	References  []string `protobuf:"bytes,11,rep,name=references,proto3" json:"references,omitempty"`
+	Suggestion  string   `protobuf:"bytes,12,opt,name=suggestion,proto3" json:"suggestion,omitempty"`
+	Author      string   `protobuf:"bytes,13,opt,name=author,proto3" json:"author,omitempty"`
+	AutoBlock   bool     `protobuf:"varint,14,opt,name=autoBlock,proto3" json:"autoBlock,omitempty"`
+}
+
+func (x *UpdateAlertRuleReq) Reset() {
+	*x = UpdateAlertRuleReq{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_ada_proto_msgTypes[208]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *UpdateAlertRuleReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UpdateAlertRuleReq) ProtoMessage() {}
+
+func (x *UpdateAlertRuleReq) ProtoReflect() protoreflect.Message {
+	mi := &file_ada_proto_msgTypes[208]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UpdateAlertRuleReq.ProtoReflect.Descriptor instead.
+func (*UpdateAlertRuleReq) Descriptor() ([]byte, []int) {
+	return file_ada_proto_rawDescGZIP(), []int{208}
+}
+
+func (x *UpdateAlertRuleReq) GetID() string {
+	if x != nil {
+		return x.ID
+	}
+	return ""
+}
+
+func (x *UpdateAlertRuleReq) GetTitle() string {
+	if x != nil {
+		return x.Title
+	}
+	return ""
+}
+
+func (x *UpdateAlertRuleReq) GetDescription() string {
+	if x != nil {
+		return x.Description
+	}
+	return ""
+}
+
+func (x *UpdateAlertRuleReq) GetEnable() bool {
+	if x != nil {
+		return x.Enable
+	}
+	return false
+}
+
+func (x *UpdateAlertRuleReq) GetLevel() int32 {
+	if x != nil {
+		return x.Level
+	}
+	return 0
+}
+
+func (x *UpdateAlertRuleReq) GetStatus() string {
+	if x != nil {
+		return x.Status
+	}
+	return ""
+}
+
+func (x *UpdateAlertRuleReq) GetTags() []string {
+	if x != nil {
+		return x.Tags
+	}
+	return nil
+}
+
+func (x *UpdateAlertRuleReq) GetLogsource() string {
+	if x != nil {
+		return x.Logsource
+	}
+	return ""
+}
+
+func (x *UpdateAlertRuleReq) GetDetection() string {
+	if x != nil {
+		return x.Detection
+	}
+	return ""
+}
+
+func (x *UpdateAlertRuleReq) GetType() string {
+	if x != nil {
+		return x.Type
+	}
+	return ""
+}
+
+func (x *UpdateAlertRuleReq) GetReferences() []string {
+	if x != nil {
+		return x.References
+	}
+	return nil
+}
+
+func (x *UpdateAlertRuleReq) GetSuggestion() string {
+	if x != nil {
+		return x.Suggestion
+	}
+	return ""
+}
+
+func (x *UpdateAlertRuleReq) GetAuthor() string {
+	if x != nil {
+		return x.Author
+	}
+	return ""
+}
+
+func (x *UpdateAlertRuleReq) GetAutoBlock() bool {
+	if x != nil {
+		return x.AutoBlock
+	}
+	return false
+}
+
+type UpdateAlertRuleReply struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Result string `protobuf:"bytes,1,opt,name=result,proto3" json:"result,omitempty"`
+}
+
+func (x *UpdateAlertRuleReply) Reset() {
+	*x = UpdateAlertRuleReply{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_ada_proto_msgTypes[209]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *UpdateAlertRuleReply) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UpdateAlertRuleReply) ProtoMessage() {}
+
+func (x *UpdateAlertRuleReply) ProtoReflect() protoreflect.Message {
+	mi := &file_ada_proto_msgTypes[209]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UpdateAlertRuleReply.ProtoReflect.Descriptor instead.
+func (*UpdateAlertRuleReply) Descriptor() ([]byte, []int) {
+	return file_ada_proto_rawDescGZIP(), []int{209}
+}
+
+func (x *UpdateAlertRuleReply) GetResult() string {
+	if x != nil {
+		return x.Result
+	}
+	return ""
+}
+
+type DeleteAlertRuleReq struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	ID string `protobuf:"bytes,1,opt,name=ID,proto3" json:"ID,omitempty"`
+}
+
+func (x *DeleteAlertRuleReq) Reset() {
+	*x = DeleteAlertRuleReq{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_ada_proto_msgTypes[210]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *DeleteAlertRuleReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DeleteAlertRuleReq) ProtoMessage() {}
+
+func (x *DeleteAlertRuleReq) ProtoReflect() protoreflect.Message {
+	mi := &file_ada_proto_msgTypes[210]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DeleteAlertRuleReq.ProtoReflect.Descriptor instead.
+func (*DeleteAlertRuleReq) Descriptor() ([]byte, []int) {
+	return file_ada_proto_rawDescGZIP(), []int{210}
+}
+
+func (x *DeleteAlertRuleReq) GetID() string {
+	if x != nil {
+		return x.ID
+	}
+	return ""
+}
+
+type DeleteAlertRuleReply struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Result string `protobuf:"bytes,1,opt,name=result,proto3" json:"result,omitempty"`
+}
+
+func (x *DeleteAlertRuleReply) Reset() {
+	*x = DeleteAlertRuleReply{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_ada_proto_msgTypes[211]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *DeleteAlertRuleReply) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DeleteAlertRuleReply) ProtoMessage() {}
+
+func (x *DeleteAlertRuleReply) ProtoReflect() protoreflect.Message {
+	mi := &file_ada_proto_msgTypes[211]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DeleteAlertRuleReply.ProtoReflect.Descriptor instead.
+func (*DeleteAlertRuleReply) Descriptor() ([]byte, []int) {
+	return file_ada_proto_rawDescGZIP(), []int{211}
+}
+
+func (x *DeleteAlertRuleReply) GetResult() string {
+	if x != nil {
+		return x.Result
+	}
+	return ""
+}
+
+// Activity Rule (Sigma Rules) Messages
+type ListActivityRuleReq struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	PageIdx   int32    `protobuf:"varint,1,opt,name=pageIdx,proto3" json:"pageIdx,omitempty"`
+	PageSize  int32    `protobuf:"varint,2,opt,name=pageSize,proto3" json:"pageSize,omitempty"`
+	IDs       []string `protobuf:"bytes,3,rep,name=IDs,proto3" json:"IDs,omitempty"`             // 规则ID列表
+	Level     []int32  `protobuf:"varint,4,rep,packed,name=level,proto3" json:"level,omitempty"` // 规则等级: 5:critical, 4:high, 3:medium, 2:low, 1:info
+	Status    []string `protobuf:"bytes,5,rep,name=status,proto3" json:"status,omitempty"`       // 规则状态: test|experimental|stable|deprecated
+	Keyword   string   `protobuf:"bytes,6,opt,name=keyword,proto3" json:"keyword,omitempty"`     // 关键词搜索(标题/描述)
+	Tags      []string `protobuf:"bytes,7,rep,name=tags,proto3" json:"tags,omitempty"`           // 标签过滤 (MITRE ATT&CK)
+	Logsource string   `protobuf:"bytes,8,opt,name=logsource,proto3" json:"logsource,omitempty"` // 日志来源: windows/linux/pktlog
+	RuleType  string   `protobuf:"bytes,9,opt,name=ruleType,proto3" json:"ruleType,omitempty"`   // 规则类型: winlog/pktlog/flow
+	SortTm    int32    `protobuf:"varint,10,opt,name=sortTm,proto3" json:"sortTm,omitempty"`     // 时间排序: 1升序, -1降序
+}
+
+func (x *ListActivityRuleReq) Reset() {
+	*x = ListActivityRuleReq{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_ada_proto_msgTypes[212]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *ListActivityRuleReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListActivityRuleReq) ProtoMessage() {}
+
+func (x *ListActivityRuleReq) ProtoReflect() protoreflect.Message {
+	mi := &file_ada_proto_msgTypes[212]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListActivityRuleReq.ProtoReflect.Descriptor instead.
+func (*ListActivityRuleReq) Descriptor() ([]byte, []int) {
+	return file_ada_proto_rawDescGZIP(), []int{212}
+}
+
+func (x *ListActivityRuleReq) GetPageIdx() int32 {
+	if x != nil {
+		return x.PageIdx
+	}
+	return 0
+}
+
+func (x *ListActivityRuleReq) GetPageSize() int32 {
+	if x != nil {
+		return x.PageSize
+	}
+	return 0
+}
+
+func (x *ListActivityRuleReq) GetIDs() []string {
+	if x != nil {
+		return x.IDs
+	}
+	return nil
+}
+
+func (x *ListActivityRuleReq) GetLevel() []int32 {
+	if x != nil {
+		return x.Level
+	}
+	return nil
+}
+
+func (x *ListActivityRuleReq) GetStatus() []string {
+	if x != nil {
+		return x.Status
+	}
+	return nil
+}
+
+func (x *ListActivityRuleReq) GetKeyword() string {
+	if x != nil {
+		return x.Keyword
+	}
+	return ""
+}
+
+func (x *ListActivityRuleReq) GetTags() []string {
+	if x != nil {
+		return x.Tags
+	}
+	return nil
+}
+
+func (x *ListActivityRuleReq) GetLogsource() string {
+	if x != nil {
+		return x.Logsource
+	}
+	return ""
+}
+
+func (x *ListActivityRuleReq) GetRuleType() string {
+	if x != nil {
+		return x.RuleType
+	}
+	return ""
+}
+
+func (x *ListActivityRuleReq) GetSortTm() int32 {
+	if x != nil {
+		return x.SortTm
+	}
+	return 0
+}
+
+type ActivityRuleInfo struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	ID           string   `protobuf:"bytes,1,opt,name=ID,proto3" json:"ID,omitempty"`
+	Title        string   `protobuf:"bytes,2,opt,name=title,proto3" json:"title,omitempty"`                // 规则标题
+	Description  string   `protobuf:"bytes,3,opt,name=description,proto3" json:"description,omitempty"`    // 规则描述
+	Level        int32    `protobuf:"varint,4,opt,name=level,proto3" json:"level,omitempty"`               // 风险等级
+	Status       string   `protobuf:"bytes,5,opt,name=status,proto3" json:"status,omitempty"`              // 规则状态
+	Tags         []string `protobuf:"bytes,6,rep,name=tags,proto3" json:"tags,omitempty"`                  // 标签
+	Logsource    string   `protobuf:"bytes,7,opt,name=logsource,proto3" json:"logsource,omitempty"`        // 日志来源
+	References   []string `protobuf:"bytes,8,rep,name=references,proto3" json:"references,omitempty"`      // 参考链接
+	RdxKey       string   `protobuf:"bytes,9,opt,name=rdxKey,proto3" json:"rdxKey,omitempty"`              // Redis缓存key
+	Fields       []string `protobuf:"bytes,10,rep,name=fields,proto3" json:"fields,omitempty"`             // 提取字段
+	UniqueFields []string `protobuf:"bytes,11,rep,name=uniqueFields,proto3" json:"uniqueFields,omitempty"` // 唯一字段
+	Author       string   `protobuf:"bytes,12,opt,name=author,proto3" json:"author,omitempty"`             // 作者
+	CreateTm     string   `protobuf:"bytes,13,opt,name=createTm,proto3" json:"createTm,omitempty"`
+	UpdateTm     string   `protobuf:"bytes,14,opt,name=updateTm,proto3" json:"updateTm,omitempty"`
+}
+
+func (x *ActivityRuleInfo) Reset() {
+	*x = ActivityRuleInfo{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_ada_proto_msgTypes[213]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *ActivityRuleInfo) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ActivityRuleInfo) ProtoMessage() {}
+
+func (x *ActivityRuleInfo) ProtoReflect() protoreflect.Message {
+	mi := &file_ada_proto_msgTypes[213]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ActivityRuleInfo.ProtoReflect.Descriptor instead.
+func (*ActivityRuleInfo) Descriptor() ([]byte, []int) {
+	return file_ada_proto_rawDescGZIP(), []int{213}
+}
+
+func (x *ActivityRuleInfo) GetID() string {
+	if x != nil {
+		return x.ID
+	}
+	return ""
+}
+
+func (x *ActivityRuleInfo) GetTitle() string {
+	if x != nil {
+		return x.Title
+	}
+	return ""
+}
+
+func (x *ActivityRuleInfo) GetDescription() string {
+	if x != nil {
+		return x.Description
+	}
+	return ""
+}
+
+func (x *ActivityRuleInfo) GetLevel() int32 {
+	if x != nil {
+		return x.Level
+	}
+	return 0
+}
+
+func (x *ActivityRuleInfo) GetStatus() string {
+	if x != nil {
+		return x.Status
+	}
+	return ""
+}
+
+func (x *ActivityRuleInfo) GetTags() []string {
+	if x != nil {
+		return x.Tags
+	}
+	return nil
+}
+
+func (x *ActivityRuleInfo) GetLogsource() string {
+	if x != nil {
+		return x.Logsource
+	}
+	return ""
+}
+
+func (x *ActivityRuleInfo) GetReferences() []string {
+	if x != nil {
+		return x.References
+	}
+	return nil
+}
+
+func (x *ActivityRuleInfo) GetRdxKey() string {
+	if x != nil {
+		return x.RdxKey
+	}
+	return ""
+}
+
+func (x *ActivityRuleInfo) GetFields() []string {
+	if x != nil {
+		return x.Fields
+	}
+	return nil
+}
+
+func (x *ActivityRuleInfo) GetUniqueFields() []string {
+	if x != nil {
+		return x.UniqueFields
+	}
+	return nil
+}
+
+func (x *ActivityRuleInfo) GetAuthor() string {
+	if x != nil {
+		return x.Author
+	}
+	return ""
+}
+
+func (x *ActivityRuleInfo) GetCreateTm() string {
+	if x != nil {
+		return x.CreateTm
+	}
+	return ""
+}
+
+func (x *ActivityRuleInfo) GetUpdateTm() string {
+	if x != nil {
+		return x.UpdateTm
+	}
+	return ""
+}
+
+type ListActivityRuleReply struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Page  *ModelPage          `protobuf:"bytes,1,opt,name=page,proto3" json:"page,omitempty"`
+	Rules []*ActivityRuleInfo `protobuf:"bytes,2,rep,name=rules,proto3" json:"rules,omitempty"`
+}
+
+func (x *ListActivityRuleReply) Reset() {
+	*x = ListActivityRuleReply{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_ada_proto_msgTypes[214]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *ListActivityRuleReply) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListActivityRuleReply) ProtoMessage() {}
+
+func (x *ListActivityRuleReply) ProtoReflect() protoreflect.Message {
+	mi := &file_ada_proto_msgTypes[214]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListActivityRuleReply.ProtoReflect.Descriptor instead.
+func (*ListActivityRuleReply) Descriptor() ([]byte, []int) {
+	return file_ada_proto_rawDescGZIP(), []int{214}
+}
+
+func (x *ListActivityRuleReply) GetPage() *ModelPage {
+	if x != nil {
+		return x.Page
+	}
+	return nil
+}
+
+func (x *ListActivityRuleReply) GetRules() []*ActivityRuleInfo {
+	if x != nil {
+		return x.Rules
+	}
+	return nil
+}
+
+type GetActivityRuleReq struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	ID string `protobuf:"bytes,1,opt,name=ID,proto3" json:"ID,omitempty"`
+}
+
+func (x *GetActivityRuleReq) Reset() {
+	*x = GetActivityRuleReq{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_ada_proto_msgTypes[215]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *GetActivityRuleReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetActivityRuleReq) ProtoMessage() {}
+
+func (x *GetActivityRuleReq) ProtoReflect() protoreflect.Message {
+	mi := &file_ada_proto_msgTypes[215]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetActivityRuleReq.ProtoReflect.Descriptor instead.
+func (*GetActivityRuleReq) Descriptor() ([]byte, []int) {
+	return file_ada_proto_rawDescGZIP(), []int{215}
+}
+
+func (x *GetActivityRuleReq) GetID() string {
+	if x != nil {
+		return x.ID
+	}
+	return ""
+}
+
+type GetActivityRuleReply struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	ID           string   `protobuf:"bytes,1,opt,name=ID,proto3" json:"ID,omitempty"`
+	Title        string   `protobuf:"bytes,2,opt,name=title,proto3" json:"title,omitempty"`
+	Description  string   `protobuf:"bytes,3,opt,name=description,proto3" json:"description,omitempty"`
+	Level        int32    `protobuf:"varint,4,opt,name=level,proto3" json:"level,omitempty"`
+	Status       string   `protobuf:"bytes,5,opt,name=status,proto3" json:"status,omitempty"`
+	Tags         []string `protobuf:"bytes,6,rep,name=tags,proto3" json:"tags,omitempty"`
+	Logsource    string   `protobuf:"bytes,7,opt,name=logsource,proto3" json:"logsource,omitempty"`
+	References   []string `protobuf:"bytes,8,rep,name=references,proto3" json:"references,omitempty"`
+	Detection    string   `protobuf:"bytes,9,opt,name=detection,proto3" json:"detection,omitempty"` // JSON string of dynamic detection
+	RdxKey       string   `protobuf:"bytes,10,opt,name=rdxKey,proto3" json:"rdxKey,omitempty"`
+	Fields       []string `protobuf:"bytes,11,rep,name=fields,proto3" json:"fields,omitempty"`
+	UniqueFields []string `protobuf:"bytes,12,rep,name=uniqueFields,proto3" json:"uniqueFields,omitempty"`
+	Author       string   `protobuf:"bytes,13,opt,name=author,proto3" json:"author,omitempty"`
+	CreateTm     string   `protobuf:"bytes,14,opt,name=createTm,proto3" json:"createTm,omitempty"`
+	UpdateTm     string   `protobuf:"bytes,15,opt,name=updateTm,proto3" json:"updateTm,omitempty"`
+}
+
+func (x *GetActivityRuleReply) Reset() {
+	*x = GetActivityRuleReply{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_ada_proto_msgTypes[216]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *GetActivityRuleReply) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetActivityRuleReply) ProtoMessage() {}
+
+func (x *GetActivityRuleReply) ProtoReflect() protoreflect.Message {
+	mi := &file_ada_proto_msgTypes[216]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetActivityRuleReply.ProtoReflect.Descriptor instead.
+func (*GetActivityRuleReply) Descriptor() ([]byte, []int) {
+	return file_ada_proto_rawDescGZIP(), []int{216}
+}
+
+func (x *GetActivityRuleReply) GetID() string {
+	if x != nil {
+		return x.ID
+	}
+	return ""
+}
+
+func (x *GetActivityRuleReply) GetTitle() string {
+	if x != nil {
+		return x.Title
+	}
+	return ""
+}
+
+func (x *GetActivityRuleReply) GetDescription() string {
+	if x != nil {
+		return x.Description
+	}
+	return ""
+}
+
+func (x *GetActivityRuleReply) GetLevel() int32 {
+	if x != nil {
+		return x.Level
+	}
+	return 0
+}
+
+func (x *GetActivityRuleReply) GetStatus() string {
+	if x != nil {
+		return x.Status
+	}
+	return ""
+}
+
+func (x *GetActivityRuleReply) GetTags() []string {
+	if x != nil {
+		return x.Tags
+	}
+	return nil
+}
+
+func (x *GetActivityRuleReply) GetLogsource() string {
+	if x != nil {
+		return x.Logsource
+	}
+	return ""
+}
+
+func (x *GetActivityRuleReply) GetReferences() []string {
+	if x != nil {
+		return x.References
+	}
+	return nil
+}
+
+func (x *GetActivityRuleReply) GetDetection() string {
+	if x != nil {
+		return x.Detection
+	}
+	return ""
+}
+
+func (x *GetActivityRuleReply) GetRdxKey() string {
+	if x != nil {
+		return x.RdxKey
+	}
+	return ""
+}
+
+func (x *GetActivityRuleReply) GetFields() []string {
+	if x != nil {
+		return x.Fields
+	}
+	return nil
+}
+
+func (x *GetActivityRuleReply) GetUniqueFields() []string {
+	if x != nil {
+		return x.UniqueFields
+	}
+	return nil
+}
+
+func (x *GetActivityRuleReply) GetAuthor() string {
+	if x != nil {
+		return x.Author
+	}
+	return ""
+}
+
+func (x *GetActivityRuleReply) GetCreateTm() string {
+	if x != nil {
+		return x.CreateTm
+	}
+	return ""
+}
+
+func (x *GetActivityRuleReply) GetUpdateTm() string {
+	if x != nil {
+		return x.UpdateTm
+	}
+	return ""
+}
+
+type AddActivityRuleReq struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	ID           string   `protobuf:"bytes,1,opt,name=ID,proto3" json:"ID,omitempty"` // Sigma rule ID (e.g. winlog-0000-0001)
+	Title        string   `protobuf:"bytes,2,opt,name=title,proto3" json:"title,omitempty"`
+	Description  string   `protobuf:"bytes,3,opt,name=description,proto3" json:"description,omitempty"`
+	Level        int32    `protobuf:"varint,4,opt,name=level,proto3" json:"level,omitempty"` // 1-5
+	Status       string   `protobuf:"bytes,5,opt,name=status,proto3" json:"status,omitempty"`
+	Tags         []string `protobuf:"bytes,6,rep,name=tags,proto3" json:"tags,omitempty"`
+	Logsource    string   `protobuf:"bytes,7,opt,name=logsource,proto3" json:"logsource,omitempty"`
+	References   []string `protobuf:"bytes,8,rep,name=references,proto3" json:"references,omitempty"`
+	Detection    string   `protobuf:"bytes,9,opt,name=detection,proto3" json:"detection,omitempty"` // JSON string
+	RdxKey       string   `protobuf:"bytes,10,opt,name=rdxKey,proto3" json:"rdxKey,omitempty"`
+	Fields       []string `protobuf:"bytes,11,rep,name=fields,proto3" json:"fields,omitempty"`
+	UniqueFields []string `protobuf:"bytes,12,rep,name=uniqueFields,proto3" json:"uniqueFields,omitempty"`
+	Author       string   `protobuf:"bytes,13,opt,name=author,proto3" json:"author,omitempty"`
+}
+
+func (x *AddActivityRuleReq) Reset() {
+	*x = AddActivityRuleReq{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_ada_proto_msgTypes[217]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *AddActivityRuleReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AddActivityRuleReq) ProtoMessage() {}
+
+func (x *AddActivityRuleReq) ProtoReflect() protoreflect.Message {
+	mi := &file_ada_proto_msgTypes[217]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AddActivityRuleReq.ProtoReflect.Descriptor instead.
+func (*AddActivityRuleReq) Descriptor() ([]byte, []int) {
+	return file_ada_proto_rawDescGZIP(), []int{217}
+}
+
+func (x *AddActivityRuleReq) GetID() string {
+	if x != nil {
+		return x.ID
+	}
+	return ""
+}
+
+func (x *AddActivityRuleReq) GetTitle() string {
+	if x != nil {
+		return x.Title
+	}
+	return ""
+}
+
+func (x *AddActivityRuleReq) GetDescription() string {
+	if x != nil {
+		return x.Description
+	}
+	return ""
+}
+
+func (x *AddActivityRuleReq) GetLevel() int32 {
+	if x != nil {
+		return x.Level
+	}
+	return 0
+}
+
+func (x *AddActivityRuleReq) GetStatus() string {
+	if x != nil {
+		return x.Status
+	}
+	return ""
+}
+
+func (x *AddActivityRuleReq) GetTags() []string {
+	if x != nil {
+		return x.Tags
+	}
+	return nil
+}
+
+func (x *AddActivityRuleReq) GetLogsource() string {
+	if x != nil {
+		return x.Logsource
+	}
+	return ""
+}
+
+func (x *AddActivityRuleReq) GetReferences() []string {
+	if x != nil {
+		return x.References
+	}
+	return nil
+}
+
+func (x *AddActivityRuleReq) GetDetection() string {
+	if x != nil {
+		return x.Detection
+	}
+	return ""
+}
+
+func (x *AddActivityRuleReq) GetRdxKey() string {
+	if x != nil {
+		return x.RdxKey
+	}
+	return ""
+}
+
+func (x *AddActivityRuleReq) GetFields() []string {
+	if x != nil {
+		return x.Fields
+	}
+	return nil
+}
+
+func (x *AddActivityRuleReq) GetUniqueFields() []string {
+	if x != nil {
+		return x.UniqueFields
+	}
+	return nil
+}
+
+func (x *AddActivityRuleReq) GetAuthor() string {
+	if x != nil {
+		return x.Author
+	}
+	return ""
+}
+
+type AddActivityRuleReply struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	ID     string `protobuf:"bytes,1,opt,name=ID,proto3" json:"ID,omitempty"`
+	Result string `protobuf:"bytes,2,opt,name=result,proto3" json:"result,omitempty"`
+}
+
+func (x *AddActivityRuleReply) Reset() {
+	*x = AddActivityRuleReply{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_ada_proto_msgTypes[218]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *AddActivityRuleReply) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AddActivityRuleReply) ProtoMessage() {}
+
+func (x *AddActivityRuleReply) ProtoReflect() protoreflect.Message {
+	mi := &file_ada_proto_msgTypes[218]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AddActivityRuleReply.ProtoReflect.Descriptor instead.
+func (*AddActivityRuleReply) Descriptor() ([]byte, []int) {
+	return file_ada_proto_rawDescGZIP(), []int{218}
+}
+
+func (x *AddActivityRuleReply) GetID() string {
+	if x != nil {
+		return x.ID
+	}
+	return ""
+}
+
+func (x *AddActivityRuleReply) GetResult() string {
+	if x != nil {
+		return x.Result
+	}
+	return ""
+}
+
+type UpdateActivityRuleReq struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	ID           string   `protobuf:"bytes,1,opt,name=ID,proto3" json:"ID,omitempty"`
+	Title        string   `protobuf:"bytes,2,opt,name=title,proto3" json:"title,omitempty"`
+	Description  string   `protobuf:"bytes,3,opt,name=description,proto3" json:"description,omitempty"`
+	Level        int32    `protobuf:"varint,4,opt,name=level,proto3" json:"level,omitempty"`
+	Status       string   `protobuf:"bytes,5,opt,name=status,proto3" json:"status,omitempty"`
+	Tags         []string `protobuf:"bytes,6,rep,name=tags,proto3" json:"tags,omitempty"`
+	Logsource    string   `protobuf:"bytes,7,opt,name=logsource,proto3" json:"logsource,omitempty"`
+	References   []string `protobuf:"bytes,8,rep,name=references,proto3" json:"references,omitempty"`
+	Detection    string   `protobuf:"bytes,9,opt,name=detection,proto3" json:"detection,omitempty"` // JSON string
+	RdxKey       string   `protobuf:"bytes,10,opt,name=rdxKey,proto3" json:"rdxKey,omitempty"`
+	Fields       []string `protobuf:"bytes,11,rep,name=fields,proto3" json:"fields,omitempty"`
+	UniqueFields []string `protobuf:"bytes,12,rep,name=uniqueFields,proto3" json:"uniqueFields,omitempty"`
+	Author       string   `protobuf:"bytes,13,opt,name=author,proto3" json:"author,omitempty"`
+}
+
+func (x *UpdateActivityRuleReq) Reset() {
+	*x = UpdateActivityRuleReq{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_ada_proto_msgTypes[219]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *UpdateActivityRuleReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UpdateActivityRuleReq) ProtoMessage() {}
+
+func (x *UpdateActivityRuleReq) ProtoReflect() protoreflect.Message {
+	mi := &file_ada_proto_msgTypes[219]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UpdateActivityRuleReq.ProtoReflect.Descriptor instead.
+func (*UpdateActivityRuleReq) Descriptor() ([]byte, []int) {
+	return file_ada_proto_rawDescGZIP(), []int{219}
+}
+
+func (x *UpdateActivityRuleReq) GetID() string {
+	if x != nil {
+		return x.ID
+	}
+	return ""
+}
+
+func (x *UpdateActivityRuleReq) GetTitle() string {
+	if x != nil {
+		return x.Title
+	}
+	return ""
+}
+
+func (x *UpdateActivityRuleReq) GetDescription() string {
+	if x != nil {
+		return x.Description
+	}
+	return ""
+}
+
+func (x *UpdateActivityRuleReq) GetLevel() int32 {
+	if x != nil {
+		return x.Level
+	}
+	return 0
+}
+
+func (x *UpdateActivityRuleReq) GetStatus() string {
+	if x != nil {
+		return x.Status
+	}
+	return ""
+}
+
+func (x *UpdateActivityRuleReq) GetTags() []string {
+	if x != nil {
+		return x.Tags
+	}
+	return nil
+}
+
+func (x *UpdateActivityRuleReq) GetLogsource() string {
+	if x != nil {
+		return x.Logsource
+	}
+	return ""
+}
+
+func (x *UpdateActivityRuleReq) GetReferences() []string {
+	if x != nil {
+		return x.References
+	}
+	return nil
+}
+
+func (x *UpdateActivityRuleReq) GetDetection() string {
+	if x != nil {
+		return x.Detection
+	}
+	return ""
+}
+
+func (x *UpdateActivityRuleReq) GetRdxKey() string {
+	if x != nil {
+		return x.RdxKey
+	}
+	return ""
+}
+
+func (x *UpdateActivityRuleReq) GetFields() []string {
+	if x != nil {
+		return x.Fields
+	}
+	return nil
+}
+
+func (x *UpdateActivityRuleReq) GetUniqueFields() []string {
+	if x != nil {
+		return x.UniqueFields
+	}
+	return nil
+}
+
+func (x *UpdateActivityRuleReq) GetAuthor() string {
+	if x != nil {
+		return x.Author
+	}
+	return ""
+}
+
+type UpdateActivityRuleReply struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Result string `protobuf:"bytes,1,opt,name=result,proto3" json:"result,omitempty"`
+}
+
+func (x *UpdateActivityRuleReply) Reset() {
+	*x = UpdateActivityRuleReply{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_ada_proto_msgTypes[220]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *UpdateActivityRuleReply) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UpdateActivityRuleReply) ProtoMessage() {}
+
+func (x *UpdateActivityRuleReply) ProtoReflect() protoreflect.Message {
+	mi := &file_ada_proto_msgTypes[220]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UpdateActivityRuleReply.ProtoReflect.Descriptor instead.
+func (*UpdateActivityRuleReply) Descriptor() ([]byte, []int) {
+	return file_ada_proto_rawDescGZIP(), []int{220}
+}
+
+func (x *UpdateActivityRuleReply) GetResult() string {
+	if x != nil {
+		return x.Result
+	}
+	return ""
+}
+
+type DeleteActivityRuleReq struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	ID string `protobuf:"bytes,1,opt,name=ID,proto3" json:"ID,omitempty"`
+}
+
+func (x *DeleteActivityRuleReq) Reset() {
+	*x = DeleteActivityRuleReq{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_ada_proto_msgTypes[221]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *DeleteActivityRuleReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DeleteActivityRuleReq) ProtoMessage() {}
+
+func (x *DeleteActivityRuleReq) ProtoReflect() protoreflect.Message {
+	mi := &file_ada_proto_msgTypes[221]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DeleteActivityRuleReq.ProtoReflect.Descriptor instead.
+func (*DeleteActivityRuleReq) Descriptor() ([]byte, []int) {
+	return file_ada_proto_rawDescGZIP(), []int{221}
+}
+
+func (x *DeleteActivityRuleReq) GetID() string {
+	if x != nil {
+		return x.ID
+	}
+	return ""
+}
+
+type DeleteActivityRuleReply struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Result string `protobuf:"bytes,1,opt,name=result,proto3" json:"result,omitempty"`
+}
+
+func (x *DeleteActivityRuleReply) Reset() {
+	*x = DeleteActivityRuleReply{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_ada_proto_msgTypes[222]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *DeleteActivityRuleReply) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DeleteActivityRuleReply) ProtoMessage() {}
+
+func (x *DeleteActivityRuleReply) ProtoReflect() protoreflect.Message {
+	mi := &file_ada_proto_msgTypes[222]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DeleteActivityRuleReply.ProtoReflect.Descriptor instead.
+func (*DeleteActivityRuleReply) Descriptor() ([]byte, []int) {
+	return file_ada_proto_rawDescGZIP(), []int{222}
+}
+
+func (x *DeleteActivityRuleReply) GetResult() string {
+	if x != nil {
+		return x.Result
+	}
+	return ""
+}
+
 type ListUserReply_Details struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -12475,7 +14297,7 @@ type ListUserReply_Details struct {
 func (x *ListUserReply_Details) Reset() {
 	*x = ListUserReply_Details{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[203]
+		mi := &file_ada_proto_msgTypes[223]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -12488,7 +14310,7 @@ func (x *ListUserReply_Details) String() string {
 func (*ListUserReply_Details) ProtoMessage() {}
 
 func (x *ListUserReply_Details) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[203]
+	mi := &file_ada_proto_msgTypes[223]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -12637,7 +14459,7 @@ type ListDomainReplyDcList struct {
 func (x *ListDomainReplyDcList) Reset() {
 	*x = ListDomainReplyDcList{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[204]
+		mi := &file_ada_proto_msgTypes[224]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -12650,7 +14472,7 @@ func (x *ListDomainReplyDcList) String() string {
 func (*ListDomainReplyDcList) ProtoMessage() {}
 
 func (x *ListDomainReplyDcList) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[204]
+	mi := &file_ada_proto_msgTypes[224]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -12761,7 +14583,7 @@ type ListDomainReply_Details struct {
 func (x *ListDomainReply_Details) Reset() {
 	*x = ListDomainReply_Details{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[205]
+		mi := &file_ada_proto_msgTypes[225]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -12774,7 +14596,7 @@ func (x *ListDomainReply_Details) String() string {
 func (*ListDomainReply_Details) ProtoMessage() {}
 
 func (x *ListDomainReply_Details) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[205]
+	mi := &file_ada_proto_msgTypes[225]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -12857,7 +14679,7 @@ type ListSensorReplyMapSlice struct {
 func (x *ListSensorReplyMapSlice) Reset() {
 	*x = ListSensorReplyMapSlice{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[207]
+		mi := &file_ada_proto_msgTypes[227]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -12870,7 +14692,7 @@ func (x *ListSensorReplyMapSlice) String() string {
 func (*ListSensorReplyMapSlice) ProtoMessage() {}
 
 func (x *ListSensorReplyMapSlice) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[207]
+	mi := &file_ada_proto_msgTypes[227]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -12940,7 +14762,7 @@ type ListSensorReply_Details struct {
 func (x *ListSensorReply_Details) Reset() {
 	*x = ListSensorReply_Details{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[208]
+		mi := &file_ada_proto_msgTypes[228]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -12953,7 +14775,7 @@ func (x *ListSensorReply_Details) String() string {
 func (*ListSensorReply_Details) ProtoMessage() {}
 
 func (x *ListSensorReply_Details) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[208]
+	mi := &file_ada_proto_msgTypes[228]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -13245,7 +15067,7 @@ type ListAuditLogReply_Details struct {
 func (x *ListAuditLogReply_Details) Reset() {
 	*x = ListAuditLogReply_Details{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[215]
+		mi := &file_ada_proto_msgTypes[235]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -13258,7 +15080,7 @@ func (x *ListAuditLogReply_Details) String() string {
 func (*ListAuditLogReply_Details) ProtoMessage() {}
 
 func (x *ListAuditLogReply_Details) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[215]
+	mi := &file_ada_proto_msgTypes[235]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -13341,7 +15163,7 @@ type ListNotifyConfReply_Details struct {
 func (x *ListNotifyConfReply_Details) Reset() {
 	*x = ListNotifyConfReply_Details{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[216]
+		mi := &file_ada_proto_msgTypes[236]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -13354,7 +15176,7 @@ func (x *ListNotifyConfReply_Details) String() string {
 func (*ListNotifyConfReply_Details) ProtoMessage() {}
 
 func (x *ListNotifyConfReply_Details) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[216]
+	mi := &file_ada_proto_msgTypes[236]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -13446,7 +15268,7 @@ type ListExportTaskReply_Details struct {
 func (x *ListExportTaskReply_Details) Reset() {
 	*x = ListExportTaskReply_Details{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[220]
+		mi := &file_ada_proto_msgTypes[240]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -13459,7 +15281,7 @@ func (x *ListExportTaskReply_Details) String() string {
 func (*ListExportTaskReply_Details) ProtoMessage() {}
 
 func (x *ListExportTaskReply_Details) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[220]
+	mi := &file_ada_proto_msgTypes[240]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -13563,7 +15385,7 @@ type ListNotifyReply_Details struct {
 func (x *ListNotifyReply_Details) Reset() {
 	*x = ListNotifyReply_Details{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[223]
+		mi := &file_ada_proto_msgTypes[243]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -13576,7 +15398,7 @@ func (x *ListNotifyReply_Details) String() string {
 func (*ListNotifyReply_Details) ProtoMessage() {}
 
 func (x *ListNotifyReply_Details) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[223]
+	mi := &file_ada_proto_msgTypes[243]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -13660,7 +15482,7 @@ type ThreatTopsReply_Details struct {
 func (x *ThreatTopsReply_Details) Reset() {
 	*x = ThreatTopsReply_Details{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[225]
+		mi := &file_ada_proto_msgTypes[245]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -13673,7 +15495,7 @@ func (x *ThreatTopsReply_Details) String() string {
 func (*ThreatTopsReply_Details) ProtoMessage() {}
 
 func (x *ThreatTopsReply_Details) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[225]
+	mi := &file_ada_proto_msgTypes[245]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -13715,7 +15537,7 @@ type ThreatTrendsReply_Item struct {
 func (x *ThreatTrendsReply_Item) Reset() {
 	*x = ThreatTrendsReply_Item{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[226]
+		mi := &file_ada_proto_msgTypes[246]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -13728,7 +15550,7 @@ func (x *ThreatTrendsReply_Item) String() string {
 func (*ThreatTrendsReply_Item) ProtoMessage() {}
 
 func (x *ThreatTrendsReply_Item) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[226]
+	mi := &file_ada_proto_msgTypes[246]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -13769,7 +15591,7 @@ type AttackFlowReply_Field struct {
 func (x *AttackFlowReply_Field) Reset() {
 	*x = AttackFlowReply_Field{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[227]
+		mi := &file_ada_proto_msgTypes[247]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -13782,7 +15604,7 @@ func (x *AttackFlowReply_Field) String() string {
 func (*AttackFlowReply_Field) ProtoMessage() {}
 
 func (x *AttackFlowReply_Field) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[227]
+	mi := &file_ada_proto_msgTypes[247]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -13818,7 +15640,7 @@ type ListThreatReq_Details struct {
 func (x *ListThreatReq_Details) Reset() {
 	*x = ListThreatReq_Details{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[229]
+		mi := &file_ada_proto_msgTypes[249]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -13831,7 +15653,7 @@ func (x *ListThreatReq_Details) String() string {
 func (*ListThreatReq_Details) ProtoMessage() {}
 
 func (x *ListThreatReq_Details) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[229]
+	mi := &file_ada_proto_msgTypes[249]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -13895,7 +15717,7 @@ type ListThreatReply_Details struct {
 func (x *ListThreatReply_Details) Reset() {
 	*x = ListThreatReply_Details{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[230]
+		mi := &file_ada_proto_msgTypes[250]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -13908,7 +15730,7 @@ func (x *ListThreatReply_Details) String() string {
 func (*ListThreatReply_Details) ProtoMessage() {}
 
 func (x *ListThreatReply_Details) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[230]
+	mi := &file_ada_proto_msgTypes[250]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -14060,7 +15882,7 @@ type ListThreatRuleReply_Details struct {
 func (x *ListThreatRuleReply_Details) Reset() {
 	*x = ListThreatRuleReply_Details{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[232]
+		mi := &file_ada_proto_msgTypes[252]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -14073,7 +15895,7 @@ func (x *ListThreatRuleReply_Details) String() string {
 func (*ListThreatRuleReply_Details) ProtoMessage() {}
 
 func (x *ListThreatRuleReply_Details) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[232]
+	mi := &file_ada_proto_msgTypes[252]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -14154,7 +15976,7 @@ type ListSensitiveEntryReply_Details struct {
 func (x *ListSensitiveEntryReply_Details) Reset() {
 	*x = ListSensitiveEntryReply_Details{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[236]
+		mi := &file_ada_proto_msgTypes[256]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -14167,7 +15989,7 @@ func (x *ListSensitiveEntryReply_Details) String() string {
 func (*ListSensitiveEntryReply_Details) ProtoMessage() {}
 
 func (x *ListSensitiveEntryReply_Details) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[236]
+	mi := &file_ada_proto_msgTypes[256]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -14245,7 +16067,7 @@ type ListThreatWhitelistReply_Details struct {
 func (x *ListThreatWhitelistReply_Details) Reset() {
 	*x = ListThreatWhitelistReply_Details{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[237]
+		mi := &file_ada_proto_msgTypes[257]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -14258,7 +16080,7 @@ func (x *ListThreatWhitelistReply_Details) String() string {
 func (*ListThreatWhitelistReply_Details) ProtoMessage() {}
 
 func (x *ListThreatWhitelistReply_Details) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[237]
+	mi := &file_ada_proto_msgTypes[257]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -14355,7 +16177,7 @@ type ListThreatWhitelistReply_DetailsRuleInfo struct {
 func (x *ListThreatWhitelistReply_DetailsRuleInfo) Reset() {
 	*x = ListThreatWhitelistReply_DetailsRuleInfo{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[238]
+		mi := &file_ada_proto_msgTypes[258]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -14368,7 +16190,7 @@ func (x *ListThreatWhitelistReply_DetailsRuleInfo) String() string {
 func (*ListThreatWhitelistReply_DetailsRuleInfo) ProtoMessage() {}
 
 func (x *ListThreatWhitelistReply_DetailsRuleInfo) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[238]
+	mi := &file_ada_proto_msgTypes[258]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -14402,7 +16224,7 @@ type AddThreatWhitelistReqRuleInfo struct {
 func (x *AddThreatWhitelistReqRuleInfo) Reset() {
 	*x = AddThreatWhitelistReqRuleInfo{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[240]
+		mi := &file_ada_proto_msgTypes[260]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -14415,7 +16237,7 @@ func (x *AddThreatWhitelistReqRuleInfo) String() string {
 func (*AddThreatWhitelistReqRuleInfo) ProtoMessage() {}
 
 func (x *AddThreatWhitelistReqRuleInfo) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[240]
+	mi := &file_ada_proto_msgTypes[260]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -14449,7 +16271,7 @@ type UpdateThreatWhitelistReqRuleInfo struct {
 func (x *UpdateThreatWhitelistReqRuleInfo) Reset() {
 	*x = UpdateThreatWhitelistReqRuleInfo{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[242]
+		mi := &file_ada_proto_msgTypes[262]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -14462,7 +16284,7 @@ func (x *UpdateThreatWhitelistReqRuleInfo) String() string {
 func (*UpdateThreatWhitelistReqRuleInfo) ProtoMessage() {}
 
 func (x *UpdateThreatWhitelistReqRuleInfo) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[242]
+	mi := &file_ada_proto_msgTypes[262]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -14496,7 +16318,7 @@ type ListThreatBlockReply_Results struct {
 func (x *ListThreatBlockReply_Results) Reset() {
 	*x = ListThreatBlockReply_Results{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[244]
+		mi := &file_ada_proto_msgTypes[264]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -14509,7 +16331,7 @@ func (x *ListThreatBlockReply_Results) String() string {
 func (*ListThreatBlockReply_Results) ProtoMessage() {}
 
 func (x *ListThreatBlockReply_Results) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[244]
+	mi := &file_ada_proto_msgTypes[264]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -14554,7 +16376,7 @@ type ListThreatBlockReply_Details struct {
 func (x *ListThreatBlockReply_Details) Reset() {
 	*x = ListThreatBlockReply_Details{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[245]
+		mi := &file_ada_proto_msgTypes[265]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -14567,7 +16389,7 @@ func (x *ListThreatBlockReply_Details) String() string {
 func (*ListThreatBlockReply_Details) ProtoMessage() {}
 
 func (x *ListThreatBlockReply_Details) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[245]
+	mi := &file_ada_proto_msgTypes[265]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -14681,7 +16503,7 @@ type ScanRiskStatsReply_Details struct {
 func (x *ScanRiskStatsReply_Details) Reset() {
 	*x = ScanRiskStatsReply_Details{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[247]
+		mi := &file_ada_proto_msgTypes[267]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -14694,7 +16516,7 @@ func (x *ScanRiskStatsReply_Details) String() string {
 func (*ScanRiskStatsReply_Details) ProtoMessage() {}
 
 func (x *ScanRiskStatsReply_Details) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[247]
+	mi := &file_ada_proto_msgTypes[267]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -14756,7 +16578,7 @@ type ListBaselineReply_Details struct {
 func (x *ListBaselineReply_Details) Reset() {
 	*x = ListBaselineReply_Details{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[248]
+		mi := &file_ada_proto_msgTypes[268]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -14769,7 +16591,7 @@ func (x *ListBaselineReply_Details) String() string {
 func (*ListBaselineReply_Details) ProtoMessage() {}
 
 func (x *ListBaselineReply_Details) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[248]
+	mi := &file_ada_proto_msgTypes[268]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -14852,7 +16674,7 @@ type GetBaselineReplyEntryInfo struct {
 func (x *GetBaselineReplyEntryInfo) Reset() {
 	*x = GetBaselineReplyEntryInfo{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[249]
+		mi := &file_ada_proto_msgTypes[269]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -14865,7 +16687,7 @@ func (x *GetBaselineReplyEntryInfo) String() string {
 func (*GetBaselineReplyEntryInfo) ProtoMessage() {}
 
 func (x *GetBaselineReplyEntryInfo) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[249]
+	mi := &file_ada_proto_msgTypes[269]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -14909,7 +16731,7 @@ type ListLeakReply_Details struct {
 func (x *ListLeakReply_Details) Reset() {
 	*x = ListLeakReply_Details{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[251]
+		mi := &file_ada_proto_msgTypes[271]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -14922,7 +16744,7 @@ func (x *ListLeakReply_Details) String() string {
 func (*ListLeakReply_Details) ProtoMessage() {}
 
 func (x *ListLeakReply_Details) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[251]
+	mi := &file_ada_proto_msgTypes[271]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -15034,7 +16856,7 @@ type ListWeakPwdReply_Details struct {
 func (x *ListWeakPwdReply_Details) Reset() {
 	*x = ListWeakPwdReply_Details{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[252]
+		mi := &file_ada_proto_msgTypes[272]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -15047,7 +16869,7 @@ func (x *ListWeakPwdReply_Details) String() string {
 func (*ListWeakPwdReply_Details) ProtoMessage() {}
 
 func (x *ListWeakPwdReply_Details) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[252]
+	mi := &file_ada_proto_msgTypes[272]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -15145,7 +16967,7 @@ type ListScanTaskReply_Details struct {
 func (x *ListScanTaskReply_Details) Reset() {
 	*x = ListScanTaskReply_Details{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[253]
+		mi := &file_ada_proto_msgTypes[273]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -15158,7 +16980,7 @@ func (x *ListScanTaskReply_Details) String() string {
 func (*ListScanTaskReply_Details) ProtoMessage() {}
 
 func (x *ListScanTaskReply_Details) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[253]
+	mi := &file_ada_proto_msgTypes[273]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -15257,7 +17079,7 @@ type GetScanTaskReply_Details struct {
 func (x *GetScanTaskReply_Details) Reset() {
 	*x = GetScanTaskReply_Details{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[254]
+		mi := &file_ada_proto_msgTypes[274]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -15270,7 +17092,7 @@ func (x *GetScanTaskReply_Details) String() string {
 func (*GetScanTaskReply_Details) ProtoMessage() {}
 
 func (x *GetScanTaskReply_Details) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[254]
+	mi := &file_ada_proto_msgTypes[274]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -15368,7 +17190,7 @@ type GetScanTmplNamesReplyTmplNames struct {
 func (x *GetScanTmplNamesReplyTmplNames) Reset() {
 	*x = GetScanTmplNamesReplyTmplNames{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[258]
+		mi := &file_ada_proto_msgTypes[278]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -15381,7 +17203,7 @@ func (x *GetScanTmplNamesReplyTmplNames) String() string {
 func (*GetScanTmplNamesReplyTmplNames) ProtoMessage() {}
 
 func (x *GetScanTmplNamesReplyTmplNames) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[258]
+	mi := &file_ada_proto_msgTypes[278]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -15426,7 +17248,7 @@ type ListScanTmplReply_Details struct {
 func (x *ListScanTmplReply_Details) Reset() {
 	*x = ListScanTmplReply_Details{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[260]
+		mi := &file_ada_proto_msgTypes[280]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -15439,7 +17261,7 @@ func (x *ListScanTmplReply_Details) String() string {
 func (*ListScanTmplReply_Details) ProtoMessage() {}
 
 func (x *ListScanTmplReply_Details) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[260]
+	mi := &file_ada_proto_msgTypes[280]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -15503,7 +17325,7 @@ type DashboardLogStatsReplyLogStatsList struct {
 func (x *DashboardLogStatsReplyLogStatsList) Reset() {
 	*x = DashboardLogStatsReplyLogStatsList{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[268]
+		mi := &file_ada_proto_msgTypes[288]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -15516,7 +17338,7 @@ func (x *DashboardLogStatsReplyLogStatsList) String() string {
 func (*DashboardLogStatsReplyLogStatsList) ProtoMessage() {}
 
 func (x *DashboardLogStatsReplyLogStatsList) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[268]
+	mi := &file_ada_proto_msgTypes[288]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -17555,423 +19377,709 @@ var file_ada_proto_rawDesc = []byte{
 	0x20, 0x01, 0x28, 0x05, 0x52, 0x0c, 0x77, 0x69, 0x6e, 0x6c, 0x6f, 0x67, 0x43, 0x6f, 0x75, 0x6e,
 	0x74, 0x73, 0x12, 0x22, 0x0a, 0x0c, 0x70, 0x6b, 0x74, 0x6c, 0x6f, 0x67, 0x43, 0x6f, 0x75, 0x6e,
 	0x74, 0x73, 0x18, 0x03, 0x20, 0x01, 0x28, 0x05, 0x52, 0x0c, 0x70, 0x6b, 0x74, 0x6c, 0x6f, 0x67,
-	0x43, 0x6f, 0x75, 0x6e, 0x74, 0x73, 0x32, 0xed, 0x33, 0x0a, 0x03, 0x41, 0x44, 0x41, 0x12, 0x29,
-	0x0a, 0x05, 0x4c, 0x6f, 0x67, 0x69, 0x6e, 0x12, 0x0d, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x4c, 0x6f,
-	0x67, 0x69, 0x6e, 0x52, 0x65, 0x71, 0x1a, 0x0f, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x4c, 0x6f, 0x67,
-	0x69, 0x6e, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x2c, 0x0a, 0x06, 0x4c, 0x6f, 0x67,
-	0x6f, 0x75, 0x74, 0x12, 0x0e, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x4c, 0x6f, 0x67, 0x6f, 0x75, 0x74,
-	0x52, 0x65, 0x71, 0x1a, 0x10, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x4c, 0x6f, 0x67, 0x6f, 0x75, 0x74,
-	0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x32, 0x0a, 0x08, 0x4c, 0x69, 0x73, 0x74, 0x55,
-	0x73, 0x65, 0x72, 0x12, 0x10, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x4c, 0x69, 0x73, 0x74, 0x55, 0x73,
-	0x65, 0x72, 0x52, 0x65, 0x71, 0x1a, 0x12, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x4c, 0x69, 0x73, 0x74,
-	0x55, 0x73, 0x65, 0x72, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x2f, 0x0a, 0x07, 0x41,
-	0x64, 0x64, 0x55, 0x73, 0x65, 0x72, 0x12, 0x0f, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x41, 0x64, 0x64,
-	0x55, 0x73, 0x65, 0x72, 0x52, 0x65, 0x71, 0x1a, 0x11, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x41, 0x64,
-	0x64, 0x55, 0x73, 0x65, 0x72, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x38, 0x0a, 0x0a,
-	0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x55, 0x73, 0x65, 0x72, 0x12, 0x12, 0x2e, 0x61, 0x64, 0x61,
-	0x2e, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x55, 0x73, 0x65, 0x72, 0x52, 0x65, 0x71, 0x1a, 0x14,
-	0x2e, 0x61, 0x64, 0x61, 0x2e, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x55, 0x73, 0x65, 0x72, 0x52,
-	0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x50, 0x0a, 0x12, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65,
-	0x55, 0x73, 0x65, 0x72, 0x50, 0x61, 0x73, 0x73, 0x77, 0x6f, 0x72, 0x64, 0x12, 0x1a, 0x2e, 0x61,
-	0x64, 0x61, 0x2e, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x55, 0x73, 0x65, 0x72, 0x50, 0x61, 0x73,
-	0x73, 0x77, 0x6f, 0x72, 0x64, 0x52, 0x65, 0x71, 0x1a, 0x1c, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x55,
-	0x70, 0x64, 0x61, 0x74, 0x65, 0x55, 0x73, 0x65, 0x72, 0x50, 0x61, 0x73, 0x73, 0x77, 0x6f, 0x72,
-	0x64, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x38, 0x0a, 0x0a, 0x44, 0x65, 0x6c, 0x65,
-	0x74, 0x65, 0x55, 0x73, 0x65, 0x72, 0x12, 0x12, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x44, 0x65, 0x6c,
-	0x65, 0x74, 0x65, 0x55, 0x73, 0x65, 0x72, 0x52, 0x65, 0x71, 0x1a, 0x14, 0x2e, 0x61, 0x64, 0x61,
-	0x2e, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x55, 0x73, 0x65, 0x72, 0x52, 0x65, 0x70, 0x6c, 0x79,
-	0x22, 0x00, 0x12, 0x38, 0x0a, 0x0a, 0x55, 0x73, 0x65, 0x72, 0x45, 0x78, 0x69, 0x73, 0x74, 0x73,
-	0x12, 0x12, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x55, 0x73, 0x65, 0x72, 0x45, 0x78, 0x69, 0x73, 0x74,
-	0x73, 0x52, 0x65, 0x71, 0x1a, 0x14, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x55, 0x73, 0x65, 0x72, 0x45,
-	0x78, 0x69, 0x73, 0x74, 0x73, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x32, 0x0a, 0x08,
-	0x43, 0x68, 0x65, 0x63, 0x6b, 0x4d, 0x66, 0x61, 0x12, 0x10, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x43,
-	0x68, 0x65, 0x63, 0x6b, 0x4d, 0x66, 0x61, 0x52, 0x65, 0x71, 0x1a, 0x12, 0x2e, 0x61, 0x64, 0x61,
-	0x2e, 0x43, 0x68, 0x65, 0x63, 0x6b, 0x4d, 0x66, 0x61, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00,
-	0x12, 0x35, 0x0a, 0x09, 0x45, 0x6e, 0x61, 0x62, 0x6c, 0x65, 0x4d, 0x66, 0x61, 0x12, 0x11, 0x2e,
-	0x61, 0x64, 0x61, 0x2e, 0x45, 0x6e, 0x61, 0x62, 0x6c, 0x65, 0x4d, 0x66, 0x61, 0x52, 0x65, 0x71,
-	0x1a, 0x13, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x45, 0x6e, 0x61, 0x62, 0x6c, 0x65, 0x4d, 0x66, 0x61,
-	0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x38, 0x0a, 0x0a, 0x44, 0x69, 0x73, 0x61, 0x62,
-	0x6c, 0x65, 0x4d, 0x66, 0x61, 0x12, 0x12, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x44, 0x69, 0x73, 0x61,
-	0x62, 0x6c, 0x65, 0x4d, 0x66, 0x61, 0x52, 0x65, 0x71, 0x1a, 0x14, 0x2e, 0x61, 0x64, 0x61, 0x2e,
-	0x44, 0x69, 0x73, 0x61, 0x62, 0x6c, 0x65, 0x4d, 0x66, 0x61, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22,
-	0x00, 0x12, 0x3e, 0x0a, 0x0c, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x41, 0x76, 0x61, 0x74, 0x61,
-	0x72, 0x12, 0x14, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x41, 0x76,
-	0x61, 0x74, 0x61, 0x72, 0x52, 0x65, 0x71, 0x1a, 0x16, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x55, 0x70,
-	0x64, 0x61, 0x74, 0x65, 0x41, 0x76, 0x61, 0x74, 0x61, 0x72, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22,
-	0x00, 0x12, 0x41, 0x0a, 0x0d, 0x52, 0x65, 0x73, 0x65, 0x74, 0x50, 0x61, 0x73, 0x73, 0x77, 0x6f,
-	0x72, 0x64, 0x12, 0x15, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x52, 0x65, 0x73, 0x65, 0x74, 0x50, 0x61,
-	0x73, 0x73, 0x77, 0x6f, 0x72, 0x64, 0x52, 0x65, 0x71, 0x1a, 0x17, 0x2e, 0x61, 0x64, 0x61, 0x2e,
-	0x52, 0x65, 0x73, 0x65, 0x74, 0x50, 0x61, 0x73, 0x73, 0x77, 0x6f, 0x72, 0x64, 0x52, 0x65, 0x70,
-	0x6c, 0x79, 0x22, 0x00, 0x12, 0x44, 0x0a, 0x0e, 0x47, 0x65, 0x74, 0x50, 0x77, 0x64, 0x55, 0x70,
-	0x64, 0x61, 0x74, 0x65, 0x54, 0x6d, 0x12, 0x16, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x47, 0x65, 0x74,
-	0x50, 0x77, 0x64, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x54, 0x6d, 0x52, 0x65, 0x71, 0x1a, 0x18,
-	0x2e, 0x61, 0x64, 0x61, 0x2e, 0x47, 0x65, 0x74, 0x50, 0x77, 0x64, 0x55, 0x70, 0x64, 0x61, 0x74,
-	0x65, 0x54, 0x6d, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x38, 0x0a, 0x0a, 0x4c, 0x69,
-	0x73, 0x74, 0x44, 0x6f, 0x6d, 0x61, 0x69, 0x6e, 0x12, 0x12, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x4c,
-	0x69, 0x73, 0x74, 0x44, 0x6f, 0x6d, 0x61, 0x69, 0x6e, 0x52, 0x65, 0x71, 0x1a, 0x14, 0x2e, 0x61,
-	0x64, 0x61, 0x2e, 0x4c, 0x69, 0x73, 0x74, 0x44, 0x6f, 0x6d, 0x61, 0x69, 0x6e, 0x52, 0x65, 0x70,
-	0x6c, 0x79, 0x22, 0x00, 0x12, 0x35, 0x0a, 0x09, 0x41, 0x64, 0x64, 0x44, 0x6f, 0x6d, 0x61, 0x69,
-	0x6e, 0x12, 0x11, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x41, 0x64, 0x64, 0x44, 0x6f, 0x6d, 0x61, 0x69,
-	0x6e, 0x52, 0x65, 0x71, 0x1a, 0x13, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x41, 0x64, 0x64, 0x44, 0x6f,
-	0x6d, 0x61, 0x69, 0x6e, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x38, 0x0a, 0x0a, 0x54,
-	0x65, 0x73, 0x74, 0x44, 0x6f, 0x6d, 0x61, 0x69, 0x6e, 0x12, 0x12, 0x2e, 0x61, 0x64, 0x61, 0x2e,
-	0x54, 0x65, 0x73, 0x74, 0x44, 0x6f, 0x6d, 0x61, 0x69, 0x6e, 0x52, 0x65, 0x71, 0x1a, 0x14, 0x2e,
-	0x61, 0x64, 0x61, 0x2e, 0x54, 0x65, 0x73, 0x74, 0x44, 0x6f, 0x6d, 0x61, 0x69, 0x6e, 0x52, 0x65,
-	0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x3e, 0x0a, 0x0c, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x44,
-	0x6f, 0x6d, 0x61, 0x69, 0x6e, 0x12, 0x14, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x55, 0x70, 0x64, 0x61,
-	0x74, 0x65, 0x44, 0x6f, 0x6d, 0x61, 0x69, 0x6e, 0x52, 0x65, 0x71, 0x1a, 0x16, 0x2e, 0x61, 0x64,
-	0x61, 0x2e, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x44, 0x6f, 0x6d, 0x61, 0x69, 0x6e, 0x52, 0x65,
-	0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x3e, 0x0a, 0x0c, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x44,
-	0x6f, 0x6d, 0x61, 0x69, 0x6e, 0x12, 0x14, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x44, 0x65, 0x6c, 0x65,
-	0x74, 0x65, 0x44, 0x6f, 0x6d, 0x61, 0x69, 0x6e, 0x52, 0x65, 0x71, 0x1a, 0x16, 0x2e, 0x61, 0x64,
-	0x61, 0x2e, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x44, 0x6f, 0x6d, 0x61, 0x69, 0x6e, 0x52, 0x65,
-	0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x4a, 0x0a, 0x10, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x44,
-	0x6f, 0x6d, 0x61, 0x69, 0x6e, 0x44, 0x61, 0x74, 0x61, 0x12, 0x18, 0x2e, 0x61, 0x64, 0x61, 0x2e,
+	0x43, 0x6f, 0x75, 0x6e, 0x74, 0x73, 0x22, 0x8c, 0x02, 0x0a, 0x10, 0x4c, 0x69, 0x73, 0x74, 0x41,
+	0x6c, 0x65, 0x72, 0x74, 0x52, 0x75, 0x6c, 0x65, 0x52, 0x65, 0x71, 0x12, 0x20, 0x0a, 0x07, 0x70,
+	0x61, 0x67, 0x65, 0x49, 0x64, 0x78, 0x18, 0x01, 0x20, 0x01, 0x28, 0x05, 0x42, 0x06, 0xe2, 0xdf,
+	0x1f, 0x02, 0x10, 0x00, 0x52, 0x07, 0x70, 0x61, 0x67, 0x65, 0x49, 0x64, 0x78, 0x12, 0x1a, 0x0a,
+	0x08, 0x70, 0x61, 0x67, 0x65, 0x53, 0x69, 0x7a, 0x65, 0x18, 0x02, 0x20, 0x01, 0x28, 0x05, 0x52,
+	0x08, 0x70, 0x61, 0x67, 0x65, 0x53, 0x69, 0x7a, 0x65, 0x12, 0x10, 0x0a, 0x03, 0x49, 0x44, 0x73,
+	0x18, 0x03, 0x20, 0x03, 0x28, 0x09, 0x52, 0x03, 0x49, 0x44, 0x73, 0x12, 0x14, 0x0a, 0x05, 0x6c,
+	0x65, 0x76, 0x65, 0x6c, 0x18, 0x04, 0x20, 0x03, 0x28, 0x05, 0x52, 0x05, 0x6c, 0x65, 0x76, 0x65,
+	0x6c, 0x12, 0x16, 0x0a, 0x06, 0x73, 0x74, 0x61, 0x74, 0x75, 0x73, 0x18, 0x05, 0x20, 0x03, 0x28,
+	0x09, 0x52, 0x06, 0x73, 0x74, 0x61, 0x74, 0x75, 0x73, 0x12, 0x16, 0x0a, 0x06, 0x65, 0x6e, 0x61,
+	0x62, 0x6c, 0x65, 0x18, 0x06, 0x20, 0x01, 0x28, 0x08, 0x52, 0x06, 0x65, 0x6e, 0x61, 0x62, 0x6c,
+	0x65, 0x12, 0x18, 0x0a, 0x07, 0x6b, 0x65, 0x79, 0x77, 0x6f, 0x72, 0x64, 0x18, 0x07, 0x20, 0x01,
+	0x28, 0x09, 0x52, 0x07, 0x6b, 0x65, 0x79, 0x77, 0x6f, 0x72, 0x64, 0x12, 0x12, 0x0a, 0x04, 0x74,
+	0x61, 0x67, 0x73, 0x18, 0x08, 0x20, 0x03, 0x28, 0x09, 0x52, 0x04, 0x74, 0x61, 0x67, 0x73, 0x12,
+	0x1c, 0x0a, 0x09, 0x6c, 0x6f, 0x67, 0x73, 0x6f, 0x75, 0x72, 0x63, 0x65, 0x18, 0x09, 0x20, 0x01,
+	0x28, 0x09, 0x52, 0x09, 0x6c, 0x6f, 0x67, 0x73, 0x6f, 0x75, 0x72, 0x63, 0x65, 0x12, 0x16, 0x0a,
+	0x06, 0x73, 0x6f, 0x72, 0x74, 0x54, 0x6d, 0x18, 0x0a, 0x20, 0x01, 0x28, 0x05, 0x52, 0x06, 0x73,
+	0x6f, 0x72, 0x74, 0x54, 0x6d, 0x22, 0xd1, 0x02, 0x0a, 0x0d, 0x41, 0x6c, 0x65, 0x72, 0x74, 0x52,
+	0x75, 0x6c, 0x65, 0x49, 0x6e, 0x66, 0x6f, 0x12, 0x0e, 0x0a, 0x02, 0x49, 0x44, 0x18, 0x01, 0x20,
+	0x01, 0x28, 0x09, 0x52, 0x02, 0x49, 0x44, 0x12, 0x14, 0x0a, 0x05, 0x74, 0x69, 0x74, 0x6c, 0x65,
+	0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x05, 0x74, 0x69, 0x74, 0x6c, 0x65, 0x12, 0x20, 0x0a,
+	0x0b, 0x64, 0x65, 0x73, 0x63, 0x72, 0x69, 0x70, 0x74, 0x69, 0x6f, 0x6e, 0x18, 0x03, 0x20, 0x01,
+	0x28, 0x09, 0x52, 0x0b, 0x64, 0x65, 0x73, 0x63, 0x72, 0x69, 0x70, 0x74, 0x69, 0x6f, 0x6e, 0x12,
+	0x16, 0x0a, 0x06, 0x65, 0x6e, 0x61, 0x62, 0x6c, 0x65, 0x18, 0x04, 0x20, 0x01, 0x28, 0x08, 0x52,
+	0x06, 0x65, 0x6e, 0x61, 0x62, 0x6c, 0x65, 0x12, 0x14, 0x0a, 0x05, 0x6c, 0x65, 0x76, 0x65, 0x6c,
+	0x18, 0x05, 0x20, 0x01, 0x28, 0x05, 0x52, 0x05, 0x6c, 0x65, 0x76, 0x65, 0x6c, 0x12, 0x16, 0x0a,
+	0x06, 0x73, 0x74, 0x61, 0x74, 0x75, 0x73, 0x18, 0x06, 0x20, 0x01, 0x28, 0x09, 0x52, 0x06, 0x73,
+	0x74, 0x61, 0x74, 0x75, 0x73, 0x12, 0x12, 0x0a, 0x04, 0x74, 0x61, 0x67, 0x73, 0x18, 0x07, 0x20,
+	0x03, 0x28, 0x09, 0x52, 0x04, 0x74, 0x61, 0x67, 0x73, 0x12, 0x1c, 0x0a, 0x09, 0x6c, 0x6f, 0x67,
+	0x73, 0x6f, 0x75, 0x72, 0x63, 0x65, 0x18, 0x08, 0x20, 0x01, 0x28, 0x09, 0x52, 0x09, 0x6c, 0x6f,
+	0x67, 0x73, 0x6f, 0x75, 0x72, 0x63, 0x65, 0x12, 0x12, 0x0a, 0x04, 0x74, 0x79, 0x70, 0x65, 0x18,
+	0x09, 0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x74, 0x79, 0x70, 0x65, 0x12, 0x16, 0x0a, 0x06, 0x61,
+	0x75, 0x74, 0x68, 0x6f, 0x72, 0x18, 0x0a, 0x20, 0x01, 0x28, 0x09, 0x52, 0x06, 0x61, 0x75, 0x74,
+	0x68, 0x6f, 0x72, 0x12, 0x1c, 0x0a, 0x09, 0x61, 0x75, 0x74, 0x6f, 0x42, 0x6c, 0x6f, 0x63, 0x6b,
+	0x18, 0x0b, 0x20, 0x01, 0x28, 0x08, 0x52, 0x09, 0x61, 0x75, 0x74, 0x6f, 0x42, 0x6c, 0x6f, 0x63,
+	0x6b, 0x12, 0x1a, 0x0a, 0x08, 0x63, 0x72, 0x65, 0x61, 0x74, 0x65, 0x54, 0x6d, 0x18, 0x0c, 0x20,
+	0x01, 0x28, 0x09, 0x52, 0x08, 0x63, 0x72, 0x65, 0x61, 0x74, 0x65, 0x54, 0x6d, 0x12, 0x1a, 0x0a,
+	0x08, 0x75, 0x70, 0x64, 0x61, 0x74, 0x65, 0x54, 0x6d, 0x18, 0x0d, 0x20, 0x01, 0x28, 0x09, 0x52,
+	0x08, 0x75, 0x70, 0x64, 0x61, 0x74, 0x65, 0x54, 0x6d, 0x22, 0x62, 0x0a, 0x12, 0x4c, 0x69, 0x73,
+	0x74, 0x41, 0x6c, 0x65, 0x72, 0x74, 0x52, 0x75, 0x6c, 0x65, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x12,
+	0x22, 0x0a, 0x04, 0x70, 0x61, 0x67, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x0e, 0x2e,
+	0x61, 0x64, 0x61, 0x2e, 0x4d, 0x6f, 0x64, 0x65, 0x6c, 0x50, 0x61, 0x67, 0x65, 0x52, 0x04, 0x70,
+	0x61, 0x67, 0x65, 0x12, 0x28, 0x0a, 0x05, 0x72, 0x75, 0x6c, 0x65, 0x73, 0x18, 0x02, 0x20, 0x03,
+	0x28, 0x0b, 0x32, 0x12, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x41, 0x6c, 0x65, 0x72, 0x74, 0x52, 0x75,
+	0x6c, 0x65, 0x49, 0x6e, 0x66, 0x6f, 0x52, 0x05, 0x72, 0x75, 0x6c, 0x65, 0x73, 0x22, 0x83, 0x03,
+	0x0a, 0x0f, 0x41, 0x64, 0x64, 0x41, 0x6c, 0x65, 0x72, 0x74, 0x52, 0x75, 0x6c, 0x65, 0x52, 0x65,
+	0x71, 0x12, 0x1c, 0x0a, 0x05, 0x74, 0x69, 0x74, 0x6c, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09,
+	0x42, 0x06, 0xe2, 0xdf, 0x1f, 0x02, 0x58, 0x01, 0x52, 0x05, 0x74, 0x69, 0x74, 0x6c, 0x65, 0x12,
+	0x20, 0x0a, 0x0b, 0x64, 0x65, 0x73, 0x63, 0x72, 0x69, 0x70, 0x74, 0x69, 0x6f, 0x6e, 0x18, 0x02,
+	0x20, 0x01, 0x28, 0x09, 0x52, 0x0b, 0x64, 0x65, 0x73, 0x63, 0x72, 0x69, 0x70, 0x74, 0x69, 0x6f,
+	0x6e, 0x12, 0x16, 0x0a, 0x06, 0x65, 0x6e, 0x61, 0x62, 0x6c, 0x65, 0x18, 0x03, 0x20, 0x01, 0x28,
+	0x08, 0x52, 0x06, 0x65, 0x6e, 0x61, 0x62, 0x6c, 0x65, 0x12, 0x1e, 0x0a, 0x05, 0x6c, 0x65, 0x76,
+	0x65, 0x6c, 0x18, 0x04, 0x20, 0x01, 0x28, 0x05, 0x42, 0x08, 0xe2, 0xdf, 0x1f, 0x04, 0x10, 0x00,
+	0x18, 0x06, 0x52, 0x05, 0x6c, 0x65, 0x76, 0x65, 0x6c, 0x12, 0x16, 0x0a, 0x06, 0x73, 0x74, 0x61,
+	0x74, 0x75, 0x73, 0x18, 0x05, 0x20, 0x01, 0x28, 0x09, 0x52, 0x06, 0x73, 0x74, 0x61, 0x74, 0x75,
+	0x73, 0x12, 0x12, 0x0a, 0x04, 0x74, 0x61, 0x67, 0x73, 0x18, 0x06, 0x20, 0x03, 0x28, 0x09, 0x52,
+	0x04, 0x74, 0x61, 0x67, 0x73, 0x12, 0x1c, 0x0a, 0x09, 0x6c, 0x6f, 0x67, 0x73, 0x6f, 0x75, 0x72,
+	0x63, 0x65, 0x18, 0x07, 0x20, 0x01, 0x28, 0x09, 0x52, 0x09, 0x6c, 0x6f, 0x67, 0x73, 0x6f, 0x75,
+	0x72, 0x63, 0x65, 0x12, 0x24, 0x0a, 0x09, 0x64, 0x65, 0x74, 0x65, 0x63, 0x74, 0x69, 0x6f, 0x6e,
+	0x18, 0x08, 0x20, 0x01, 0x28, 0x09, 0x42, 0x06, 0xe2, 0xdf, 0x1f, 0x02, 0x58, 0x01, 0x52, 0x09,
+	0x64, 0x65, 0x74, 0x65, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x12, 0x12, 0x0a, 0x04, 0x74, 0x79, 0x70,
+	0x65, 0x18, 0x09, 0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x74, 0x79, 0x70, 0x65, 0x12, 0x1e, 0x0a,
+	0x0a, 0x72, 0x65, 0x66, 0x65, 0x72, 0x65, 0x6e, 0x63, 0x65, 0x73, 0x18, 0x0a, 0x20, 0x03, 0x28,
+	0x09, 0x52, 0x0a, 0x72, 0x65, 0x66, 0x65, 0x72, 0x65, 0x6e, 0x63, 0x65, 0x73, 0x12, 0x1e, 0x0a,
+	0x0a, 0x73, 0x75, 0x67, 0x67, 0x65, 0x73, 0x74, 0x69, 0x6f, 0x6e, 0x18, 0x0b, 0x20, 0x01, 0x28,
+	0x09, 0x52, 0x0a, 0x73, 0x75, 0x67, 0x67, 0x65, 0x73, 0x74, 0x69, 0x6f, 0x6e, 0x12, 0x16, 0x0a,
+	0x06, 0x61, 0x75, 0x74, 0x68, 0x6f, 0x72, 0x18, 0x0c, 0x20, 0x01, 0x28, 0x09, 0x52, 0x06, 0x61,
+	0x75, 0x74, 0x68, 0x6f, 0x72, 0x12, 0x1c, 0x0a, 0x09, 0x61, 0x75, 0x74, 0x6f, 0x42, 0x6c, 0x6f,
+	0x63, 0x6b, 0x18, 0x0d, 0x20, 0x01, 0x28, 0x08, 0x52, 0x09, 0x61, 0x75, 0x74, 0x6f, 0x42, 0x6c,
+	0x6f, 0x63, 0x6b, 0x22, 0x3b, 0x0a, 0x11, 0x41, 0x64, 0x64, 0x41, 0x6c, 0x65, 0x72, 0x74, 0x52,
+	0x75, 0x6c, 0x65, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x12, 0x0e, 0x0a, 0x02, 0x49, 0x44, 0x18, 0x01,
+	0x20, 0x01, 0x28, 0x09, 0x52, 0x02, 0x49, 0x44, 0x12, 0x16, 0x0a, 0x06, 0x72, 0x65, 0x73, 0x75,
+	0x6c, 0x74, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x06, 0x72, 0x65, 0x73, 0x75, 0x6c, 0x74,
+	0x22, 0x84, 0x03, 0x0a, 0x12, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x41, 0x6c, 0x65, 0x72, 0x74,
+	0x52, 0x75, 0x6c, 0x65, 0x52, 0x65, 0x71, 0x12, 0x16, 0x0a, 0x02, 0x49, 0x44, 0x18, 0x01, 0x20,
+	0x01, 0x28, 0x09, 0x42, 0x06, 0xe2, 0xdf, 0x1f, 0x02, 0x58, 0x01, 0x52, 0x02, 0x49, 0x44, 0x12,
+	0x14, 0x0a, 0x05, 0x74, 0x69, 0x74, 0x6c, 0x65, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x05,
+	0x74, 0x69, 0x74, 0x6c, 0x65, 0x12, 0x20, 0x0a, 0x0b, 0x64, 0x65, 0x73, 0x63, 0x72, 0x69, 0x70,
+	0x74, 0x69, 0x6f, 0x6e, 0x18, 0x03, 0x20, 0x01, 0x28, 0x09, 0x52, 0x0b, 0x64, 0x65, 0x73, 0x63,
+	0x72, 0x69, 0x70, 0x74, 0x69, 0x6f, 0x6e, 0x12, 0x16, 0x0a, 0x06, 0x65, 0x6e, 0x61, 0x62, 0x6c,
+	0x65, 0x18, 0x04, 0x20, 0x01, 0x28, 0x08, 0x52, 0x06, 0x65, 0x6e, 0x61, 0x62, 0x6c, 0x65, 0x12,
+	0x14, 0x0a, 0x05, 0x6c, 0x65, 0x76, 0x65, 0x6c, 0x18, 0x05, 0x20, 0x01, 0x28, 0x05, 0x52, 0x05,
+	0x6c, 0x65, 0x76, 0x65, 0x6c, 0x12, 0x16, 0x0a, 0x06, 0x73, 0x74, 0x61, 0x74, 0x75, 0x73, 0x18,
+	0x06, 0x20, 0x01, 0x28, 0x09, 0x52, 0x06, 0x73, 0x74, 0x61, 0x74, 0x75, 0x73, 0x12, 0x12, 0x0a,
+	0x04, 0x74, 0x61, 0x67, 0x73, 0x18, 0x07, 0x20, 0x03, 0x28, 0x09, 0x52, 0x04, 0x74, 0x61, 0x67,
+	0x73, 0x12, 0x1c, 0x0a, 0x09, 0x6c, 0x6f, 0x67, 0x73, 0x6f, 0x75, 0x72, 0x63, 0x65, 0x18, 0x08,
+	0x20, 0x01, 0x28, 0x09, 0x52, 0x09, 0x6c, 0x6f, 0x67, 0x73, 0x6f, 0x75, 0x72, 0x63, 0x65, 0x12,
+	0x1c, 0x0a, 0x09, 0x64, 0x65, 0x74, 0x65, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x18, 0x09, 0x20, 0x01,
+	0x28, 0x09, 0x52, 0x09, 0x64, 0x65, 0x74, 0x65, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x12, 0x12, 0x0a,
+	0x04, 0x74, 0x79, 0x70, 0x65, 0x18, 0x0a, 0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x74, 0x79, 0x70,
+	0x65, 0x12, 0x1e, 0x0a, 0x0a, 0x72, 0x65, 0x66, 0x65, 0x72, 0x65, 0x6e, 0x63, 0x65, 0x73, 0x18,
+	0x0b, 0x20, 0x03, 0x28, 0x09, 0x52, 0x0a, 0x72, 0x65, 0x66, 0x65, 0x72, 0x65, 0x6e, 0x63, 0x65,
+	0x73, 0x12, 0x1e, 0x0a, 0x0a, 0x73, 0x75, 0x67, 0x67, 0x65, 0x73, 0x74, 0x69, 0x6f, 0x6e, 0x18,
+	0x0c, 0x20, 0x01, 0x28, 0x09, 0x52, 0x0a, 0x73, 0x75, 0x67, 0x67, 0x65, 0x73, 0x74, 0x69, 0x6f,
+	0x6e, 0x12, 0x16, 0x0a, 0x06, 0x61, 0x75, 0x74, 0x68, 0x6f, 0x72, 0x18, 0x0d, 0x20, 0x01, 0x28,
+	0x09, 0x52, 0x06, 0x61, 0x75, 0x74, 0x68, 0x6f, 0x72, 0x12, 0x1c, 0x0a, 0x09, 0x61, 0x75, 0x74,
+	0x6f, 0x42, 0x6c, 0x6f, 0x63, 0x6b, 0x18, 0x0e, 0x20, 0x01, 0x28, 0x08, 0x52, 0x09, 0x61, 0x75,
+	0x74, 0x6f, 0x42, 0x6c, 0x6f, 0x63, 0x6b, 0x22, 0x2e, 0x0a, 0x14, 0x55, 0x70, 0x64, 0x61, 0x74,
+	0x65, 0x41, 0x6c, 0x65, 0x72, 0x74, 0x52, 0x75, 0x6c, 0x65, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x12,
+	0x16, 0x0a, 0x06, 0x72, 0x65, 0x73, 0x75, 0x6c, 0x74, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52,
+	0x06, 0x72, 0x65, 0x73, 0x75, 0x6c, 0x74, 0x22, 0x2c, 0x0a, 0x12, 0x44, 0x65, 0x6c, 0x65, 0x74,
+	0x65, 0x41, 0x6c, 0x65, 0x72, 0x74, 0x52, 0x75, 0x6c, 0x65, 0x52, 0x65, 0x71, 0x12, 0x16, 0x0a,
+	0x02, 0x49, 0x44, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x42, 0x06, 0xe2, 0xdf, 0x1f, 0x02, 0x58,
+	0x01, 0x52, 0x02, 0x49, 0x44, 0x22, 0x2e, 0x0a, 0x14, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x41,
+	0x6c, 0x65, 0x72, 0x74, 0x52, 0x75, 0x6c, 0x65, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x12, 0x16, 0x0a,
+	0x06, 0x72, 0x65, 0x73, 0x75, 0x6c, 0x74, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x06, 0x72,
+	0x65, 0x73, 0x75, 0x6c, 0x74, 0x22, 0x93, 0x02, 0x0a, 0x13, 0x4c, 0x69, 0x73, 0x74, 0x41, 0x63,
+	0x74, 0x69, 0x76, 0x69, 0x74, 0x79, 0x52, 0x75, 0x6c, 0x65, 0x52, 0x65, 0x71, 0x12, 0x20, 0x0a,
+	0x07, 0x70, 0x61, 0x67, 0x65, 0x49, 0x64, 0x78, 0x18, 0x01, 0x20, 0x01, 0x28, 0x05, 0x42, 0x06,
+	0xe2, 0xdf, 0x1f, 0x02, 0x10, 0x00, 0x52, 0x07, 0x70, 0x61, 0x67, 0x65, 0x49, 0x64, 0x78, 0x12,
+	0x1a, 0x0a, 0x08, 0x70, 0x61, 0x67, 0x65, 0x53, 0x69, 0x7a, 0x65, 0x18, 0x02, 0x20, 0x01, 0x28,
+	0x05, 0x52, 0x08, 0x70, 0x61, 0x67, 0x65, 0x53, 0x69, 0x7a, 0x65, 0x12, 0x10, 0x0a, 0x03, 0x49,
+	0x44, 0x73, 0x18, 0x03, 0x20, 0x03, 0x28, 0x09, 0x52, 0x03, 0x49, 0x44, 0x73, 0x12, 0x14, 0x0a,
+	0x05, 0x6c, 0x65, 0x76, 0x65, 0x6c, 0x18, 0x04, 0x20, 0x03, 0x28, 0x05, 0x52, 0x05, 0x6c, 0x65,
+	0x76, 0x65, 0x6c, 0x12, 0x16, 0x0a, 0x06, 0x73, 0x74, 0x61, 0x74, 0x75, 0x73, 0x18, 0x05, 0x20,
+	0x03, 0x28, 0x09, 0x52, 0x06, 0x73, 0x74, 0x61, 0x74, 0x75, 0x73, 0x12, 0x18, 0x0a, 0x07, 0x6b,
+	0x65, 0x79, 0x77, 0x6f, 0x72, 0x64, 0x18, 0x06, 0x20, 0x01, 0x28, 0x09, 0x52, 0x07, 0x6b, 0x65,
+	0x79, 0x77, 0x6f, 0x72, 0x64, 0x12, 0x12, 0x0a, 0x04, 0x74, 0x61, 0x67, 0x73, 0x18, 0x07, 0x20,
+	0x03, 0x28, 0x09, 0x52, 0x04, 0x74, 0x61, 0x67, 0x73, 0x12, 0x1c, 0x0a, 0x09, 0x6c, 0x6f, 0x67,
+	0x73, 0x6f, 0x75, 0x72, 0x63, 0x65, 0x18, 0x08, 0x20, 0x01, 0x28, 0x09, 0x52, 0x09, 0x6c, 0x6f,
+	0x67, 0x73, 0x6f, 0x75, 0x72, 0x63, 0x65, 0x12, 0x1a, 0x0a, 0x08, 0x72, 0x75, 0x6c, 0x65, 0x54,
+	0x79, 0x70, 0x65, 0x18, 0x09, 0x20, 0x01, 0x28, 0x09, 0x52, 0x08, 0x72, 0x75, 0x6c, 0x65, 0x54,
+	0x79, 0x70, 0x65, 0x12, 0x16, 0x0a, 0x06, 0x73, 0x6f, 0x72, 0x74, 0x54, 0x6d, 0x18, 0x0a, 0x20,
+	0x01, 0x28, 0x05, 0x52, 0x06, 0x73, 0x6f, 0x72, 0x74, 0x54, 0x6d, 0x22, 0xfe, 0x02, 0x0a, 0x10,
+	0x41, 0x63, 0x74, 0x69, 0x76, 0x69, 0x74, 0x79, 0x52, 0x75, 0x6c, 0x65, 0x49, 0x6e, 0x66, 0x6f,
+	0x12, 0x0e, 0x0a, 0x02, 0x49, 0x44, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x02, 0x49, 0x44,
+	0x12, 0x14, 0x0a, 0x05, 0x74, 0x69, 0x74, 0x6c, 0x65, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52,
+	0x05, 0x74, 0x69, 0x74, 0x6c, 0x65, 0x12, 0x20, 0x0a, 0x0b, 0x64, 0x65, 0x73, 0x63, 0x72, 0x69,
+	0x70, 0x74, 0x69, 0x6f, 0x6e, 0x18, 0x03, 0x20, 0x01, 0x28, 0x09, 0x52, 0x0b, 0x64, 0x65, 0x73,
+	0x63, 0x72, 0x69, 0x70, 0x74, 0x69, 0x6f, 0x6e, 0x12, 0x14, 0x0a, 0x05, 0x6c, 0x65, 0x76, 0x65,
+	0x6c, 0x18, 0x04, 0x20, 0x01, 0x28, 0x05, 0x52, 0x05, 0x6c, 0x65, 0x76, 0x65, 0x6c, 0x12, 0x16,
+	0x0a, 0x06, 0x73, 0x74, 0x61, 0x74, 0x75, 0x73, 0x18, 0x05, 0x20, 0x01, 0x28, 0x09, 0x52, 0x06,
+	0x73, 0x74, 0x61, 0x74, 0x75, 0x73, 0x12, 0x12, 0x0a, 0x04, 0x74, 0x61, 0x67, 0x73, 0x18, 0x06,
+	0x20, 0x03, 0x28, 0x09, 0x52, 0x04, 0x74, 0x61, 0x67, 0x73, 0x12, 0x1c, 0x0a, 0x09, 0x6c, 0x6f,
+	0x67, 0x73, 0x6f, 0x75, 0x72, 0x63, 0x65, 0x18, 0x07, 0x20, 0x01, 0x28, 0x09, 0x52, 0x09, 0x6c,
+	0x6f, 0x67, 0x73, 0x6f, 0x75, 0x72, 0x63, 0x65, 0x12, 0x1e, 0x0a, 0x0a, 0x72, 0x65, 0x66, 0x65,
+	0x72, 0x65, 0x6e, 0x63, 0x65, 0x73, 0x18, 0x08, 0x20, 0x03, 0x28, 0x09, 0x52, 0x0a, 0x72, 0x65,
+	0x66, 0x65, 0x72, 0x65, 0x6e, 0x63, 0x65, 0x73, 0x12, 0x16, 0x0a, 0x06, 0x72, 0x64, 0x78, 0x4b,
+	0x65, 0x79, 0x18, 0x09, 0x20, 0x01, 0x28, 0x09, 0x52, 0x06, 0x72, 0x64, 0x78, 0x4b, 0x65, 0x79,
+	0x12, 0x16, 0x0a, 0x06, 0x66, 0x69, 0x65, 0x6c, 0x64, 0x73, 0x18, 0x0a, 0x20, 0x03, 0x28, 0x09,
+	0x52, 0x06, 0x66, 0x69, 0x65, 0x6c, 0x64, 0x73, 0x12, 0x22, 0x0a, 0x0c, 0x75, 0x6e, 0x69, 0x71,
+	0x75, 0x65, 0x46, 0x69, 0x65, 0x6c, 0x64, 0x73, 0x18, 0x0b, 0x20, 0x03, 0x28, 0x09, 0x52, 0x0c,
+	0x75, 0x6e, 0x69, 0x71, 0x75, 0x65, 0x46, 0x69, 0x65, 0x6c, 0x64, 0x73, 0x12, 0x16, 0x0a, 0x06,
+	0x61, 0x75, 0x74, 0x68, 0x6f, 0x72, 0x18, 0x0c, 0x20, 0x01, 0x28, 0x09, 0x52, 0x06, 0x61, 0x75,
+	0x74, 0x68, 0x6f, 0x72, 0x12, 0x1a, 0x0a, 0x08, 0x63, 0x72, 0x65, 0x61, 0x74, 0x65, 0x54, 0x6d,
+	0x18, 0x0d, 0x20, 0x01, 0x28, 0x09, 0x52, 0x08, 0x63, 0x72, 0x65, 0x61, 0x74, 0x65, 0x54, 0x6d,
+	0x12, 0x1a, 0x0a, 0x08, 0x75, 0x70, 0x64, 0x61, 0x74, 0x65, 0x54, 0x6d, 0x18, 0x0e, 0x20, 0x01,
+	0x28, 0x09, 0x52, 0x08, 0x75, 0x70, 0x64, 0x61, 0x74, 0x65, 0x54, 0x6d, 0x22, 0x68, 0x0a, 0x15,
+	0x4c, 0x69, 0x73, 0x74, 0x41, 0x63, 0x74, 0x69, 0x76, 0x69, 0x74, 0x79, 0x52, 0x75, 0x6c, 0x65,
+	0x52, 0x65, 0x70, 0x6c, 0x79, 0x12, 0x22, 0x0a, 0x04, 0x70, 0x61, 0x67, 0x65, 0x18, 0x01, 0x20,
+	0x01, 0x28, 0x0b, 0x32, 0x0e, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x4d, 0x6f, 0x64, 0x65, 0x6c, 0x50,
+	0x61, 0x67, 0x65, 0x52, 0x04, 0x70, 0x61, 0x67, 0x65, 0x12, 0x2b, 0x0a, 0x05, 0x72, 0x75, 0x6c,
+	0x65, 0x73, 0x18, 0x02, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x15, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x41,
+	0x63, 0x74, 0x69, 0x76, 0x69, 0x74, 0x79, 0x52, 0x75, 0x6c, 0x65, 0x49, 0x6e, 0x66, 0x6f, 0x52,
+	0x05, 0x72, 0x75, 0x6c, 0x65, 0x73, 0x22, 0x2c, 0x0a, 0x12, 0x47, 0x65, 0x74, 0x41, 0x63, 0x74,
+	0x69, 0x76, 0x69, 0x74, 0x79, 0x52, 0x75, 0x6c, 0x65, 0x52, 0x65, 0x71, 0x12, 0x16, 0x0a, 0x02,
+	0x49, 0x44, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x42, 0x06, 0xe2, 0xdf, 0x1f, 0x02, 0x58, 0x01,
+	0x52, 0x02, 0x49, 0x44, 0x22, 0xa0, 0x03, 0x0a, 0x14, 0x47, 0x65, 0x74, 0x41, 0x63, 0x74, 0x69,
+	0x76, 0x69, 0x74, 0x79, 0x52, 0x75, 0x6c, 0x65, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x12, 0x0e, 0x0a,
+	0x02, 0x49, 0x44, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x02, 0x49, 0x44, 0x12, 0x14, 0x0a,
+	0x05, 0x74, 0x69, 0x74, 0x6c, 0x65, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x05, 0x74, 0x69,
+	0x74, 0x6c, 0x65, 0x12, 0x20, 0x0a, 0x0b, 0x64, 0x65, 0x73, 0x63, 0x72, 0x69, 0x70, 0x74, 0x69,
+	0x6f, 0x6e, 0x18, 0x03, 0x20, 0x01, 0x28, 0x09, 0x52, 0x0b, 0x64, 0x65, 0x73, 0x63, 0x72, 0x69,
+	0x70, 0x74, 0x69, 0x6f, 0x6e, 0x12, 0x14, 0x0a, 0x05, 0x6c, 0x65, 0x76, 0x65, 0x6c, 0x18, 0x04,
+	0x20, 0x01, 0x28, 0x05, 0x52, 0x05, 0x6c, 0x65, 0x76, 0x65, 0x6c, 0x12, 0x16, 0x0a, 0x06, 0x73,
+	0x74, 0x61, 0x74, 0x75, 0x73, 0x18, 0x05, 0x20, 0x01, 0x28, 0x09, 0x52, 0x06, 0x73, 0x74, 0x61,
+	0x74, 0x75, 0x73, 0x12, 0x12, 0x0a, 0x04, 0x74, 0x61, 0x67, 0x73, 0x18, 0x06, 0x20, 0x03, 0x28,
+	0x09, 0x52, 0x04, 0x74, 0x61, 0x67, 0x73, 0x12, 0x1c, 0x0a, 0x09, 0x6c, 0x6f, 0x67, 0x73, 0x6f,
+	0x75, 0x72, 0x63, 0x65, 0x18, 0x07, 0x20, 0x01, 0x28, 0x09, 0x52, 0x09, 0x6c, 0x6f, 0x67, 0x73,
+	0x6f, 0x75, 0x72, 0x63, 0x65, 0x12, 0x1e, 0x0a, 0x0a, 0x72, 0x65, 0x66, 0x65, 0x72, 0x65, 0x6e,
+	0x63, 0x65, 0x73, 0x18, 0x08, 0x20, 0x03, 0x28, 0x09, 0x52, 0x0a, 0x72, 0x65, 0x66, 0x65, 0x72,
+	0x65, 0x6e, 0x63, 0x65, 0x73, 0x12, 0x1c, 0x0a, 0x09, 0x64, 0x65, 0x74, 0x65, 0x63, 0x74, 0x69,
+	0x6f, 0x6e, 0x18, 0x09, 0x20, 0x01, 0x28, 0x09, 0x52, 0x09, 0x64, 0x65, 0x74, 0x65, 0x63, 0x74,
+	0x69, 0x6f, 0x6e, 0x12, 0x16, 0x0a, 0x06, 0x72, 0x64, 0x78, 0x4b, 0x65, 0x79, 0x18, 0x0a, 0x20,
+	0x01, 0x28, 0x09, 0x52, 0x06, 0x72, 0x64, 0x78, 0x4b, 0x65, 0x79, 0x12, 0x16, 0x0a, 0x06, 0x66,
+	0x69, 0x65, 0x6c, 0x64, 0x73, 0x18, 0x0b, 0x20, 0x03, 0x28, 0x09, 0x52, 0x06, 0x66, 0x69, 0x65,
+	0x6c, 0x64, 0x73, 0x12, 0x22, 0x0a, 0x0c, 0x75, 0x6e, 0x69, 0x71, 0x75, 0x65, 0x46, 0x69, 0x65,
+	0x6c, 0x64, 0x73, 0x18, 0x0c, 0x20, 0x03, 0x28, 0x09, 0x52, 0x0c, 0x75, 0x6e, 0x69, 0x71, 0x75,
+	0x65, 0x46, 0x69, 0x65, 0x6c, 0x64, 0x73, 0x12, 0x16, 0x0a, 0x06, 0x61, 0x75, 0x74, 0x68, 0x6f,
+	0x72, 0x18, 0x0d, 0x20, 0x01, 0x28, 0x09, 0x52, 0x06, 0x61, 0x75, 0x74, 0x68, 0x6f, 0x72, 0x12,
+	0x1a, 0x0a, 0x08, 0x63, 0x72, 0x65, 0x61, 0x74, 0x65, 0x54, 0x6d, 0x18, 0x0e, 0x20, 0x01, 0x28,
+	0x09, 0x52, 0x08, 0x63, 0x72, 0x65, 0x61, 0x74, 0x65, 0x54, 0x6d, 0x12, 0x1a, 0x0a, 0x08, 0x75,
+	0x70, 0x64, 0x61, 0x74, 0x65, 0x54, 0x6d, 0x18, 0x0f, 0x20, 0x01, 0x28, 0x09, 0x52, 0x08, 0x75,
+	0x70, 0x64, 0x61, 0x74, 0x65, 0x54, 0x6d, 0x22, 0x88, 0x03, 0x0a, 0x12, 0x41, 0x64, 0x64, 0x41,
+	0x63, 0x74, 0x69, 0x76, 0x69, 0x74, 0x79, 0x52, 0x75, 0x6c, 0x65, 0x52, 0x65, 0x71, 0x12, 0x16,
+	0x0a, 0x02, 0x49, 0x44, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x42, 0x06, 0xe2, 0xdf, 0x1f, 0x02,
+	0x58, 0x01, 0x52, 0x02, 0x49, 0x44, 0x12, 0x1c, 0x0a, 0x05, 0x74, 0x69, 0x74, 0x6c, 0x65, 0x18,
+	0x02, 0x20, 0x01, 0x28, 0x09, 0x42, 0x06, 0xe2, 0xdf, 0x1f, 0x02, 0x58, 0x01, 0x52, 0x05, 0x74,
+	0x69, 0x74, 0x6c, 0x65, 0x12, 0x20, 0x0a, 0x0b, 0x64, 0x65, 0x73, 0x63, 0x72, 0x69, 0x70, 0x74,
+	0x69, 0x6f, 0x6e, 0x18, 0x03, 0x20, 0x01, 0x28, 0x09, 0x52, 0x0b, 0x64, 0x65, 0x73, 0x63, 0x72,
+	0x69, 0x70, 0x74, 0x69, 0x6f, 0x6e, 0x12, 0x1e, 0x0a, 0x05, 0x6c, 0x65, 0x76, 0x65, 0x6c, 0x18,
+	0x04, 0x20, 0x01, 0x28, 0x05, 0x42, 0x08, 0xe2, 0xdf, 0x1f, 0x04, 0x10, 0x00, 0x18, 0x06, 0x52,
+	0x05, 0x6c, 0x65, 0x76, 0x65, 0x6c, 0x12, 0x16, 0x0a, 0x06, 0x73, 0x74, 0x61, 0x74, 0x75, 0x73,
+	0x18, 0x05, 0x20, 0x01, 0x28, 0x09, 0x52, 0x06, 0x73, 0x74, 0x61, 0x74, 0x75, 0x73, 0x12, 0x12,
+	0x0a, 0x04, 0x74, 0x61, 0x67, 0x73, 0x18, 0x06, 0x20, 0x03, 0x28, 0x09, 0x52, 0x04, 0x74, 0x61,
+	0x67, 0x73, 0x12, 0x1c, 0x0a, 0x09, 0x6c, 0x6f, 0x67, 0x73, 0x6f, 0x75, 0x72, 0x63, 0x65, 0x18,
+	0x07, 0x20, 0x01, 0x28, 0x09, 0x52, 0x09, 0x6c, 0x6f, 0x67, 0x73, 0x6f, 0x75, 0x72, 0x63, 0x65,
+	0x12, 0x1e, 0x0a, 0x0a, 0x72, 0x65, 0x66, 0x65, 0x72, 0x65, 0x6e, 0x63, 0x65, 0x73, 0x18, 0x08,
+	0x20, 0x03, 0x28, 0x09, 0x52, 0x0a, 0x72, 0x65, 0x66, 0x65, 0x72, 0x65, 0x6e, 0x63, 0x65, 0x73,
+	0x12, 0x24, 0x0a, 0x09, 0x64, 0x65, 0x74, 0x65, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x18, 0x09, 0x20,
+	0x01, 0x28, 0x09, 0x42, 0x06, 0xe2, 0xdf, 0x1f, 0x02, 0x58, 0x01, 0x52, 0x09, 0x64, 0x65, 0x74,
+	0x65, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x12, 0x16, 0x0a, 0x06, 0x72, 0x64, 0x78, 0x4b, 0x65, 0x79,
+	0x18, 0x0a, 0x20, 0x01, 0x28, 0x09, 0x52, 0x06, 0x72, 0x64, 0x78, 0x4b, 0x65, 0x79, 0x12, 0x16,
+	0x0a, 0x06, 0x66, 0x69, 0x65, 0x6c, 0x64, 0x73, 0x18, 0x0b, 0x20, 0x03, 0x28, 0x09, 0x52, 0x06,
+	0x66, 0x69, 0x65, 0x6c, 0x64, 0x73, 0x12, 0x22, 0x0a, 0x0c, 0x75, 0x6e, 0x69, 0x71, 0x75, 0x65,
+	0x46, 0x69, 0x65, 0x6c, 0x64, 0x73, 0x18, 0x0c, 0x20, 0x03, 0x28, 0x09, 0x52, 0x0c, 0x75, 0x6e,
+	0x69, 0x71, 0x75, 0x65, 0x46, 0x69, 0x65, 0x6c, 0x64, 0x73, 0x12, 0x16, 0x0a, 0x06, 0x61, 0x75,
+	0x74, 0x68, 0x6f, 0x72, 0x18, 0x0d, 0x20, 0x01, 0x28, 0x09, 0x52, 0x06, 0x61, 0x75, 0x74, 0x68,
+	0x6f, 0x72, 0x22, 0x3e, 0x0a, 0x14, 0x41, 0x64, 0x64, 0x41, 0x63, 0x74, 0x69, 0x76, 0x69, 0x74,
+	0x79, 0x52, 0x75, 0x6c, 0x65, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x12, 0x0e, 0x0a, 0x02, 0x49, 0x44,
+	0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x02, 0x49, 0x44, 0x12, 0x16, 0x0a, 0x06, 0x72, 0x65,
+	0x73, 0x75, 0x6c, 0x74, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x06, 0x72, 0x65, 0x73, 0x75,
+	0x6c, 0x74, 0x22, 0xf1, 0x02, 0x0a, 0x15, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x41, 0x63, 0x74,
+	0x69, 0x76, 0x69, 0x74, 0x79, 0x52, 0x75, 0x6c, 0x65, 0x52, 0x65, 0x71, 0x12, 0x16, 0x0a, 0x02,
+	0x49, 0x44, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x42, 0x06, 0xe2, 0xdf, 0x1f, 0x02, 0x58, 0x01,
+	0x52, 0x02, 0x49, 0x44, 0x12, 0x14, 0x0a, 0x05, 0x74, 0x69, 0x74, 0x6c, 0x65, 0x18, 0x02, 0x20,
+	0x01, 0x28, 0x09, 0x52, 0x05, 0x74, 0x69, 0x74, 0x6c, 0x65, 0x12, 0x20, 0x0a, 0x0b, 0x64, 0x65,
+	0x73, 0x63, 0x72, 0x69, 0x70, 0x74, 0x69, 0x6f, 0x6e, 0x18, 0x03, 0x20, 0x01, 0x28, 0x09, 0x52,
+	0x0b, 0x64, 0x65, 0x73, 0x63, 0x72, 0x69, 0x70, 0x74, 0x69, 0x6f, 0x6e, 0x12, 0x14, 0x0a, 0x05,
+	0x6c, 0x65, 0x76, 0x65, 0x6c, 0x18, 0x04, 0x20, 0x01, 0x28, 0x05, 0x52, 0x05, 0x6c, 0x65, 0x76,
+	0x65, 0x6c, 0x12, 0x16, 0x0a, 0x06, 0x73, 0x74, 0x61, 0x74, 0x75, 0x73, 0x18, 0x05, 0x20, 0x01,
+	0x28, 0x09, 0x52, 0x06, 0x73, 0x74, 0x61, 0x74, 0x75, 0x73, 0x12, 0x12, 0x0a, 0x04, 0x74, 0x61,
+	0x67, 0x73, 0x18, 0x06, 0x20, 0x03, 0x28, 0x09, 0x52, 0x04, 0x74, 0x61, 0x67, 0x73, 0x12, 0x1c,
+	0x0a, 0x09, 0x6c, 0x6f, 0x67, 0x73, 0x6f, 0x75, 0x72, 0x63, 0x65, 0x18, 0x07, 0x20, 0x01, 0x28,
+	0x09, 0x52, 0x09, 0x6c, 0x6f, 0x67, 0x73, 0x6f, 0x75, 0x72, 0x63, 0x65, 0x12, 0x1e, 0x0a, 0x0a,
+	0x72, 0x65, 0x66, 0x65, 0x72, 0x65, 0x6e, 0x63, 0x65, 0x73, 0x18, 0x08, 0x20, 0x03, 0x28, 0x09,
+	0x52, 0x0a, 0x72, 0x65, 0x66, 0x65, 0x72, 0x65, 0x6e, 0x63, 0x65, 0x73, 0x12, 0x1c, 0x0a, 0x09,
+	0x64, 0x65, 0x74, 0x65, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x18, 0x09, 0x20, 0x01, 0x28, 0x09, 0x52,
+	0x09, 0x64, 0x65, 0x74, 0x65, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x12, 0x16, 0x0a, 0x06, 0x72, 0x64,
+	0x78, 0x4b, 0x65, 0x79, 0x18, 0x0a, 0x20, 0x01, 0x28, 0x09, 0x52, 0x06, 0x72, 0x64, 0x78, 0x4b,
+	0x65, 0x79, 0x12, 0x16, 0x0a, 0x06, 0x66, 0x69, 0x65, 0x6c, 0x64, 0x73, 0x18, 0x0b, 0x20, 0x03,
+	0x28, 0x09, 0x52, 0x06, 0x66, 0x69, 0x65, 0x6c, 0x64, 0x73, 0x12, 0x22, 0x0a, 0x0c, 0x75, 0x6e,
+	0x69, 0x71, 0x75, 0x65, 0x46, 0x69, 0x65, 0x6c, 0x64, 0x73, 0x18, 0x0c, 0x20, 0x03, 0x28, 0x09,
+	0x52, 0x0c, 0x75, 0x6e, 0x69, 0x71, 0x75, 0x65, 0x46, 0x69, 0x65, 0x6c, 0x64, 0x73, 0x12, 0x16,
+	0x0a, 0x06, 0x61, 0x75, 0x74, 0x68, 0x6f, 0x72, 0x18, 0x0d, 0x20, 0x01, 0x28, 0x09, 0x52, 0x06,
+	0x61, 0x75, 0x74, 0x68, 0x6f, 0x72, 0x22, 0x31, 0x0a, 0x17, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65,
+	0x41, 0x63, 0x74, 0x69, 0x76, 0x69, 0x74, 0x79, 0x52, 0x75, 0x6c, 0x65, 0x52, 0x65, 0x70, 0x6c,
+	0x79, 0x12, 0x16, 0x0a, 0x06, 0x72, 0x65, 0x73, 0x75, 0x6c, 0x74, 0x18, 0x01, 0x20, 0x01, 0x28,
+	0x09, 0x52, 0x06, 0x72, 0x65, 0x73, 0x75, 0x6c, 0x74, 0x22, 0x2f, 0x0a, 0x15, 0x44, 0x65, 0x6c,
+	0x65, 0x74, 0x65, 0x41, 0x63, 0x74, 0x69, 0x76, 0x69, 0x74, 0x79, 0x52, 0x75, 0x6c, 0x65, 0x52,
+	0x65, 0x71, 0x12, 0x16, 0x0a, 0x02, 0x49, 0x44, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x42, 0x06,
+	0xe2, 0xdf, 0x1f, 0x02, 0x58, 0x01, 0x52, 0x02, 0x49, 0x44, 0x22, 0x31, 0x0a, 0x17, 0x44, 0x65,
+	0x6c, 0x65, 0x74, 0x65, 0x41, 0x63, 0x74, 0x69, 0x76, 0x69, 0x74, 0x79, 0x52, 0x75, 0x6c, 0x65,
+	0x52, 0x65, 0x70, 0x6c, 0x79, 0x12, 0x16, 0x0a, 0x06, 0x72, 0x65, 0x73, 0x75, 0x6c, 0x74, 0x18,
+	0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x06, 0x72, 0x65, 0x73, 0x75, 0x6c, 0x74, 0x32, 0x84, 0x39,
+	0x0a, 0x03, 0x41, 0x44, 0x41, 0x12, 0x29, 0x0a, 0x05, 0x4c, 0x6f, 0x67, 0x69, 0x6e, 0x12, 0x0d,
+	0x2e, 0x61, 0x64, 0x61, 0x2e, 0x4c, 0x6f, 0x67, 0x69, 0x6e, 0x52, 0x65, 0x71, 0x1a, 0x0f, 0x2e,
+	0x61, 0x64, 0x61, 0x2e, 0x4c, 0x6f, 0x67, 0x69, 0x6e, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00,
+	0x12, 0x2c, 0x0a, 0x06, 0x4c, 0x6f, 0x67, 0x6f, 0x75, 0x74, 0x12, 0x0e, 0x2e, 0x61, 0x64, 0x61,
+	0x2e, 0x4c, 0x6f, 0x67, 0x6f, 0x75, 0x74, 0x52, 0x65, 0x71, 0x1a, 0x10, 0x2e, 0x61, 0x64, 0x61,
+	0x2e, 0x4c, 0x6f, 0x67, 0x6f, 0x75, 0x74, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x32,
+	0x0a, 0x08, 0x4c, 0x69, 0x73, 0x74, 0x55, 0x73, 0x65, 0x72, 0x12, 0x10, 0x2e, 0x61, 0x64, 0x61,
+	0x2e, 0x4c, 0x69, 0x73, 0x74, 0x55, 0x73, 0x65, 0x72, 0x52, 0x65, 0x71, 0x1a, 0x12, 0x2e, 0x61,
+	0x64, 0x61, 0x2e, 0x4c, 0x69, 0x73, 0x74, 0x55, 0x73, 0x65, 0x72, 0x52, 0x65, 0x70, 0x6c, 0x79,
+	0x22, 0x00, 0x12, 0x2f, 0x0a, 0x07, 0x41, 0x64, 0x64, 0x55, 0x73, 0x65, 0x72, 0x12, 0x0f, 0x2e,
+	0x61, 0x64, 0x61, 0x2e, 0x41, 0x64, 0x64, 0x55, 0x73, 0x65, 0x72, 0x52, 0x65, 0x71, 0x1a, 0x11,
+	0x2e, 0x61, 0x64, 0x61, 0x2e, 0x41, 0x64, 0x64, 0x55, 0x73, 0x65, 0x72, 0x52, 0x65, 0x70, 0x6c,
+	0x79, 0x22, 0x00, 0x12, 0x38, 0x0a, 0x0a, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x55, 0x73, 0x65,
+	0x72, 0x12, 0x12, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x55, 0x73,
+	0x65, 0x72, 0x52, 0x65, 0x71, 0x1a, 0x14, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x55, 0x70, 0x64, 0x61,
+	0x74, 0x65, 0x55, 0x73, 0x65, 0x72, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x50, 0x0a,
+	0x12, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x55, 0x73, 0x65, 0x72, 0x50, 0x61, 0x73, 0x73, 0x77,
+	0x6f, 0x72, 0x64, 0x12, 0x1a, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65,
+	0x55, 0x73, 0x65, 0x72, 0x50, 0x61, 0x73, 0x73, 0x77, 0x6f, 0x72, 0x64, 0x52, 0x65, 0x71, 0x1a,
+	0x1c, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x55, 0x73, 0x65, 0x72,
+	0x50, 0x61, 0x73, 0x73, 0x77, 0x6f, 0x72, 0x64, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12,
+	0x38, 0x0a, 0x0a, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x55, 0x73, 0x65, 0x72, 0x12, 0x12, 0x2e,
+	0x61, 0x64, 0x61, 0x2e, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x55, 0x73, 0x65, 0x72, 0x52, 0x65,
+	0x71, 0x1a, 0x14, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x55, 0x73,
+	0x65, 0x72, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x38, 0x0a, 0x0a, 0x55, 0x73, 0x65,
+	0x72, 0x45, 0x78, 0x69, 0x73, 0x74, 0x73, 0x12, 0x12, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x55, 0x73,
+	0x65, 0x72, 0x45, 0x78, 0x69, 0x73, 0x74, 0x73, 0x52, 0x65, 0x71, 0x1a, 0x14, 0x2e, 0x61, 0x64,
+	0x61, 0x2e, 0x55, 0x73, 0x65, 0x72, 0x45, 0x78, 0x69, 0x73, 0x74, 0x73, 0x52, 0x65, 0x70, 0x6c,
+	0x79, 0x22, 0x00, 0x12, 0x32, 0x0a, 0x08, 0x43, 0x68, 0x65, 0x63, 0x6b, 0x4d, 0x66, 0x61, 0x12,
+	0x10, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x43, 0x68, 0x65, 0x63, 0x6b, 0x4d, 0x66, 0x61, 0x52, 0x65,
+	0x71, 0x1a, 0x12, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x43, 0x68, 0x65, 0x63, 0x6b, 0x4d, 0x66, 0x61,
+	0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x35, 0x0a, 0x09, 0x45, 0x6e, 0x61, 0x62, 0x6c,
+	0x65, 0x4d, 0x66, 0x61, 0x12, 0x11, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x45, 0x6e, 0x61, 0x62, 0x6c,
+	0x65, 0x4d, 0x66, 0x61, 0x52, 0x65, 0x71, 0x1a, 0x13, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x45, 0x6e,
+	0x61, 0x62, 0x6c, 0x65, 0x4d, 0x66, 0x61, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x38,
+	0x0a, 0x0a, 0x44, 0x69, 0x73, 0x61, 0x62, 0x6c, 0x65, 0x4d, 0x66, 0x61, 0x12, 0x12, 0x2e, 0x61,
+	0x64, 0x61, 0x2e, 0x44, 0x69, 0x73, 0x61, 0x62, 0x6c, 0x65, 0x4d, 0x66, 0x61, 0x52, 0x65, 0x71,
+	0x1a, 0x14, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x44, 0x69, 0x73, 0x61, 0x62, 0x6c, 0x65, 0x4d, 0x66,
+	0x61, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x3e, 0x0a, 0x0c, 0x55, 0x70, 0x64, 0x61,
+	0x74, 0x65, 0x41, 0x76, 0x61, 0x74, 0x61, 0x72, 0x12, 0x14, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x55,
+	0x70, 0x64, 0x61, 0x74, 0x65, 0x41, 0x76, 0x61, 0x74, 0x61, 0x72, 0x52, 0x65, 0x71, 0x1a, 0x16,
+	0x2e, 0x61, 0x64, 0x61, 0x2e, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x41, 0x76, 0x61, 0x74, 0x61,
+	0x72, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x41, 0x0a, 0x0d, 0x52, 0x65, 0x73, 0x65,
+	0x74, 0x50, 0x61, 0x73, 0x73, 0x77, 0x6f, 0x72, 0x64, 0x12, 0x15, 0x2e, 0x61, 0x64, 0x61, 0x2e,
+	0x52, 0x65, 0x73, 0x65, 0x74, 0x50, 0x61, 0x73, 0x73, 0x77, 0x6f, 0x72, 0x64, 0x52, 0x65, 0x71,
+	0x1a, 0x17, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x52, 0x65, 0x73, 0x65, 0x74, 0x50, 0x61, 0x73, 0x73,
+	0x77, 0x6f, 0x72, 0x64, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x44, 0x0a, 0x0e, 0x47,
+	0x65, 0x74, 0x50, 0x77, 0x64, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x54, 0x6d, 0x12, 0x16, 0x2e,
+	0x61, 0x64, 0x61, 0x2e, 0x47, 0x65, 0x74, 0x50, 0x77, 0x64, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65,
+	0x54, 0x6d, 0x52, 0x65, 0x71, 0x1a, 0x18, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x47, 0x65, 0x74, 0x50,
+	0x77, 0x64, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x54, 0x6d, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22,
+	0x00, 0x12, 0x38, 0x0a, 0x0a, 0x4c, 0x69, 0x73, 0x74, 0x44, 0x6f, 0x6d, 0x61, 0x69, 0x6e, 0x12,
+	0x12, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x4c, 0x69, 0x73, 0x74, 0x44, 0x6f, 0x6d, 0x61, 0x69, 0x6e,
+	0x52, 0x65, 0x71, 0x1a, 0x14, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x4c, 0x69, 0x73, 0x74, 0x44, 0x6f,
+	0x6d, 0x61, 0x69, 0x6e, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x35, 0x0a, 0x09, 0x41,
+	0x64, 0x64, 0x44, 0x6f, 0x6d, 0x61, 0x69, 0x6e, 0x12, 0x11, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x41,
+	0x64, 0x64, 0x44, 0x6f, 0x6d, 0x61, 0x69, 0x6e, 0x52, 0x65, 0x71, 0x1a, 0x13, 0x2e, 0x61, 0x64,
+	0x61, 0x2e, 0x41, 0x64, 0x64, 0x44, 0x6f, 0x6d, 0x61, 0x69, 0x6e, 0x52, 0x65, 0x70, 0x6c, 0x79,
+	0x22, 0x00, 0x12, 0x38, 0x0a, 0x0a, 0x54, 0x65, 0x73, 0x74, 0x44, 0x6f, 0x6d, 0x61, 0x69, 0x6e,
+	0x12, 0x12, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x54, 0x65, 0x73, 0x74, 0x44, 0x6f, 0x6d, 0x61, 0x69,
+	0x6e, 0x52, 0x65, 0x71, 0x1a, 0x14, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x54, 0x65, 0x73, 0x74, 0x44,
+	0x6f, 0x6d, 0x61, 0x69, 0x6e, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x3e, 0x0a, 0x0c,
+	0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x44, 0x6f, 0x6d, 0x61, 0x69, 0x6e, 0x12, 0x14, 0x2e, 0x61,
+	0x64, 0x61, 0x2e, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x44, 0x6f, 0x6d, 0x61, 0x69, 0x6e, 0x52,
+	0x65, 0x71, 0x1a, 0x16, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x44,
+	0x6f, 0x6d, 0x61, 0x69, 0x6e, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x3e, 0x0a, 0x0c,
+	0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x44, 0x6f, 0x6d, 0x61, 0x69, 0x6e, 0x12, 0x14, 0x2e, 0x61,
+	0x64, 0x61, 0x2e, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x44, 0x6f, 0x6d, 0x61, 0x69, 0x6e, 0x52,
+	0x65, 0x71, 0x1a, 0x16, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x44,
+	0x6f, 0x6d, 0x61, 0x69, 0x6e, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x4a, 0x0a, 0x10,
 	0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x44, 0x6f, 0x6d, 0x61, 0x69, 0x6e, 0x44, 0x61, 0x74, 0x61,
-	0x52, 0x65, 0x71, 0x1a, 0x1a, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65,
-	0x44, 0x6f, 0x6d, 0x61, 0x69, 0x6e, 0x44, 0x61, 0x74, 0x61, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22,
-	0x00, 0x12, 0x3e, 0x0a, 0x0c, 0x44, 0x65, 0x70, 0x6c, 0x6f, 0x79, 0x53, 0x65, 0x6e, 0x73, 0x6f,
-	0x72, 0x12, 0x14, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x44, 0x65, 0x70, 0x6c, 0x6f, 0x79, 0x53, 0x65,
-	0x6e, 0x73, 0x6f, 0x72, 0x52, 0x65, 0x71, 0x1a, 0x16, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x44, 0x65,
-	0x70, 0x6c, 0x6f, 0x79, 0x53, 0x65, 0x6e, 0x73, 0x6f, 0x72, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22,
-	0x00, 0x12, 0x38, 0x0a, 0x0a, 0x4c, 0x69, 0x73, 0x74, 0x53, 0x65, 0x6e, 0x73, 0x6f, 0x72, 0x12,
-	0x12, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x4c, 0x69, 0x73, 0x74, 0x53, 0x65, 0x6e, 0x73, 0x6f, 0x72,
-	0x52, 0x65, 0x71, 0x1a, 0x14, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x4c, 0x69, 0x73, 0x74, 0x53, 0x65,
-	0x6e, 0x73, 0x6f, 0x72, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x3e, 0x0a, 0x0c, 0x55,
-	0x70, 0x64, 0x61, 0x74, 0x65, 0x53, 0x65, 0x6e, 0x73, 0x6f, 0x72, 0x12, 0x14, 0x2e, 0x61, 0x64,
-	0x61, 0x2e, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x53, 0x65, 0x6e, 0x73, 0x6f, 0x72, 0x52, 0x65,
-	0x71, 0x1a, 0x16, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x53, 0x65,
-	0x6e, 0x73, 0x6f, 0x72, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x44, 0x0a, 0x0e, 0x44,
-	0x6f, 0x77, 0x6e, 0x6c, 0x6f, 0x61, 0x64, 0x53, 0x65, 0x6e, 0x73, 0x6f, 0x72, 0x12, 0x16, 0x2e,
-	0x61, 0x64, 0x61, 0x2e, 0x44, 0x6f, 0x77, 0x6e, 0x6c, 0x6f, 0x61, 0x64, 0x53, 0x65, 0x6e, 0x73,
-	0x6f, 0x72, 0x52, 0x65, 0x71, 0x1a, 0x18, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x44, 0x6f, 0x77, 0x6e,
-	0x6c, 0x6f, 0x61, 0x64, 0x53, 0x65, 0x6e, 0x73, 0x6f, 0x72, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22,
-	0x00, 0x12, 0x35, 0x0a, 0x09, 0x43, 0x6d, 0x64, 0x53, 0x65, 0x6e, 0x73, 0x6f, 0x72, 0x12, 0x11,
-	0x2e, 0x61, 0x64, 0x61, 0x2e, 0x43, 0x6d, 0x64, 0x53, 0x65, 0x6e, 0x73, 0x6f, 0x72, 0x52, 0x65,
-	0x71, 0x1a, 0x13, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x43, 0x6d, 0x64, 0x53, 0x65, 0x6e, 0x73, 0x6f,
-	0x72, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x53, 0x0a, 0x13, 0x55, 0x70, 0x64, 0x61,
-	0x74, 0x65, 0x53, 0x65, 0x6e, 0x73, 0x6f, 0x72, 0x56, 0x65, 0x72, 0x73, 0x69, 0x6f, 0x6e, 0x12,
-	0x1b, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x53, 0x65, 0x6e, 0x73,
-	0x6f, 0x72, 0x56, 0x65, 0x72, 0x73, 0x69, 0x6f, 0x6e, 0x52, 0x65, 0x71, 0x1a, 0x1d, 0x2e, 0x61,
-	0x64, 0x61, 0x2e, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x53, 0x65, 0x6e, 0x73, 0x6f, 0x72, 0x56,
-	0x65, 0x72, 0x73, 0x69, 0x6f, 0x6e, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x41, 0x0a,
-	0x0d, 0x47, 0x65, 0x74, 0x53, 0x79, 0x73, 0x74, 0x65, 0x6d, 0x49, 0x6e, 0x66, 0x6f, 0x12, 0x15,
-	0x2e, 0x61, 0x64, 0x61, 0x2e, 0x47, 0x65, 0x74, 0x53, 0x79, 0x73, 0x74, 0x65, 0x6d, 0x49, 0x6e,
-	0x66, 0x6f, 0x52, 0x65, 0x71, 0x1a, 0x17, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x47, 0x65, 0x74, 0x53,
-	0x79, 0x73, 0x74, 0x65, 0x6d, 0x49, 0x6e, 0x66, 0x6f, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00,
-	0x12, 0x41, 0x0a, 0x0d, 0x47, 0x65, 0x74, 0x53, 0x79, 0x73, 0x74, 0x65, 0x6d, 0x49, 0x63, 0x6f,
-	0x6e, 0x12, 0x15, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x47, 0x65, 0x74, 0x53, 0x79, 0x73, 0x74, 0x65,
-	0x6d, 0x49, 0x63, 0x6f, 0x6e, 0x52, 0x65, 0x71, 0x1a, 0x17, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x47,
-	0x65, 0x74, 0x53, 0x79, 0x73, 0x74, 0x65, 0x6d, 0x49, 0x63, 0x6f, 0x6e, 0x52, 0x65, 0x70, 0x6c,
-	0x79, 0x22, 0x00, 0x12, 0x4a, 0x0a, 0x10, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x53, 0x79, 0x73,
-	0x74, 0x65, 0x6d, 0x49, 0x63, 0x6f, 0x6e, 0x12, 0x18, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x55, 0x70,
-	0x64, 0x61, 0x74, 0x65, 0x53, 0x79, 0x73, 0x74, 0x65, 0x6d, 0x49, 0x63, 0x6f, 0x6e, 0x52, 0x65,
-	0x71, 0x1a, 0x1a, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x53, 0x79,
-	0x73, 0x74, 0x65, 0x6d, 0x49, 0x63, 0x6f, 0x6e, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12,
-	0x4a, 0x0a, 0x10, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x4e, 0x74, 0x70, 0x41, 0x64, 0x64, 0x72,
-	0x65, 0x73, 0x73, 0x12, 0x18, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65,
-	0x4e, 0x74, 0x70, 0x41, 0x64, 0x64, 0x72, 0x65, 0x73, 0x73, 0x52, 0x65, 0x71, 0x1a, 0x1a, 0x2e,
-	0x61, 0x64, 0x61, 0x2e, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x4e, 0x74, 0x70, 0x41, 0x64, 0x64,
-	0x72, 0x65, 0x73, 0x73, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x56, 0x0a, 0x14, 0x55,
+	0x12, 0x18, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x44, 0x6f, 0x6d,
+	0x61, 0x69, 0x6e, 0x44, 0x61, 0x74, 0x61, 0x52, 0x65, 0x71, 0x1a, 0x1a, 0x2e, 0x61, 0x64, 0x61,
+	0x2e, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x44, 0x6f, 0x6d, 0x61, 0x69, 0x6e, 0x44, 0x61, 0x74,
+	0x61, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x3e, 0x0a, 0x0c, 0x44, 0x65, 0x70, 0x6c,
+	0x6f, 0x79, 0x53, 0x65, 0x6e, 0x73, 0x6f, 0x72, 0x12, 0x14, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x44,
+	0x65, 0x70, 0x6c, 0x6f, 0x79, 0x53, 0x65, 0x6e, 0x73, 0x6f, 0x72, 0x52, 0x65, 0x71, 0x1a, 0x16,
+	0x2e, 0x61, 0x64, 0x61, 0x2e, 0x44, 0x65, 0x70, 0x6c, 0x6f, 0x79, 0x53, 0x65, 0x6e, 0x73, 0x6f,
+	0x72, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x38, 0x0a, 0x0a, 0x4c, 0x69, 0x73, 0x74,
+	0x53, 0x65, 0x6e, 0x73, 0x6f, 0x72, 0x12, 0x12, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x4c, 0x69, 0x73,
+	0x74, 0x53, 0x65, 0x6e, 0x73, 0x6f, 0x72, 0x52, 0x65, 0x71, 0x1a, 0x14, 0x2e, 0x61, 0x64, 0x61,
+	0x2e, 0x4c, 0x69, 0x73, 0x74, 0x53, 0x65, 0x6e, 0x73, 0x6f, 0x72, 0x52, 0x65, 0x70, 0x6c, 0x79,
+	0x22, 0x00, 0x12, 0x3e, 0x0a, 0x0c, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x53, 0x65, 0x6e, 0x73,
+	0x6f, 0x72, 0x12, 0x14, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x53,
+	0x65, 0x6e, 0x73, 0x6f, 0x72, 0x52, 0x65, 0x71, 0x1a, 0x16, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x55,
+	0x70, 0x64, 0x61, 0x74, 0x65, 0x53, 0x65, 0x6e, 0x73, 0x6f, 0x72, 0x52, 0x65, 0x70, 0x6c, 0x79,
+	0x22, 0x00, 0x12, 0x44, 0x0a, 0x0e, 0x44, 0x6f, 0x77, 0x6e, 0x6c, 0x6f, 0x61, 0x64, 0x53, 0x65,
+	0x6e, 0x73, 0x6f, 0x72, 0x12, 0x16, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x44, 0x6f, 0x77, 0x6e, 0x6c,
+	0x6f, 0x61, 0x64, 0x53, 0x65, 0x6e, 0x73, 0x6f, 0x72, 0x52, 0x65, 0x71, 0x1a, 0x18, 0x2e, 0x61,
+	0x64, 0x61, 0x2e, 0x44, 0x6f, 0x77, 0x6e, 0x6c, 0x6f, 0x61, 0x64, 0x53, 0x65, 0x6e, 0x73, 0x6f,
+	0x72, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x35, 0x0a, 0x09, 0x43, 0x6d, 0x64, 0x53,
+	0x65, 0x6e, 0x73, 0x6f, 0x72, 0x12, 0x11, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x43, 0x6d, 0x64, 0x53,
+	0x65, 0x6e, 0x73, 0x6f, 0x72, 0x52, 0x65, 0x71, 0x1a, 0x13, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x43,
+	0x6d, 0x64, 0x53, 0x65, 0x6e, 0x73, 0x6f, 0x72, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12,
+	0x53, 0x0a, 0x13, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x53, 0x65, 0x6e, 0x73, 0x6f, 0x72, 0x56,
+	0x65, 0x72, 0x73, 0x69, 0x6f, 0x6e, 0x12, 0x1b, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x55, 0x70, 0x64,
+	0x61, 0x74, 0x65, 0x53, 0x65, 0x6e, 0x73, 0x6f, 0x72, 0x56, 0x65, 0x72, 0x73, 0x69, 0x6f, 0x6e,
+	0x52, 0x65, 0x71, 0x1a, 0x1d, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65,
+	0x53, 0x65, 0x6e, 0x73, 0x6f, 0x72, 0x56, 0x65, 0x72, 0x73, 0x69, 0x6f, 0x6e, 0x52, 0x65, 0x70,
+	0x6c, 0x79, 0x22, 0x00, 0x12, 0x41, 0x0a, 0x0d, 0x47, 0x65, 0x74, 0x53, 0x79, 0x73, 0x74, 0x65,
+	0x6d, 0x49, 0x6e, 0x66, 0x6f, 0x12, 0x15, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x47, 0x65, 0x74, 0x53,
+	0x79, 0x73, 0x74, 0x65, 0x6d, 0x49, 0x6e, 0x66, 0x6f, 0x52, 0x65, 0x71, 0x1a, 0x17, 0x2e, 0x61,
+	0x64, 0x61, 0x2e, 0x47, 0x65, 0x74, 0x53, 0x79, 0x73, 0x74, 0x65, 0x6d, 0x49, 0x6e, 0x66, 0x6f,
+	0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x41, 0x0a, 0x0d, 0x47, 0x65, 0x74, 0x53, 0x79,
+	0x73, 0x74, 0x65, 0x6d, 0x49, 0x63, 0x6f, 0x6e, 0x12, 0x15, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x47,
+	0x65, 0x74, 0x53, 0x79, 0x73, 0x74, 0x65, 0x6d, 0x49, 0x63, 0x6f, 0x6e, 0x52, 0x65, 0x71, 0x1a,
+	0x17, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x47, 0x65, 0x74, 0x53, 0x79, 0x73, 0x74, 0x65, 0x6d, 0x49,
+	0x63, 0x6f, 0x6e, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x4a, 0x0a, 0x10, 0x55, 0x70,
+	0x64, 0x61, 0x74, 0x65, 0x53, 0x79, 0x73, 0x74, 0x65, 0x6d, 0x49, 0x63, 0x6f, 0x6e, 0x12, 0x18,
+	0x2e, 0x61, 0x64, 0x61, 0x2e, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x53, 0x79, 0x73, 0x74, 0x65,
+	0x6d, 0x49, 0x63, 0x6f, 0x6e, 0x52, 0x65, 0x71, 0x1a, 0x1a, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x55,
+	0x70, 0x64, 0x61, 0x74, 0x65, 0x53, 0x79, 0x73, 0x74, 0x65, 0x6d, 0x49, 0x63, 0x6f, 0x6e, 0x52,
+	0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x4a, 0x0a, 0x10, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65,
+	0x4e, 0x74, 0x70, 0x41, 0x64, 0x64, 0x72, 0x65, 0x73, 0x73, 0x12, 0x18, 0x2e, 0x61, 0x64, 0x61,
+	0x2e, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x4e, 0x74, 0x70, 0x41, 0x64, 0x64, 0x72, 0x65, 0x73,
+	0x73, 0x52, 0x65, 0x71, 0x1a, 0x1a, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x55, 0x70, 0x64, 0x61, 0x74,
+	0x65, 0x4e, 0x74, 0x70, 0x41, 0x64, 0x64, 0x72, 0x65, 0x73, 0x73, 0x52, 0x65, 0x70, 0x6c, 0x79,
+	0x22, 0x00, 0x12, 0x56, 0x0a, 0x14, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x53, 0x79, 0x73, 0x74,
+	0x65, 0x6d, 0x4c, 0x61, 0x6e, 0x67, 0x75, 0x61, 0x67, 0x65, 0x12, 0x1c, 0x2e, 0x61, 0x64, 0x61,
+	0x2e, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x53, 0x79, 0x73, 0x74, 0x65, 0x6d, 0x4c, 0x61, 0x6e,
+	0x67, 0x75, 0x61, 0x67, 0x65, 0x52, 0x65, 0x71, 0x1a, 0x1e, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x55,
 	0x70, 0x64, 0x61, 0x74, 0x65, 0x53, 0x79, 0x73, 0x74, 0x65, 0x6d, 0x4c, 0x61, 0x6e, 0x67, 0x75,
-	0x61, 0x67, 0x65, 0x12, 0x1c, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65,
-	0x53, 0x79, 0x73, 0x74, 0x65, 0x6d, 0x4c, 0x61, 0x6e, 0x67, 0x75, 0x61, 0x67, 0x65, 0x52, 0x65,
-	0x71, 0x1a, 0x1e, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x53, 0x79,
-	0x73, 0x74, 0x65, 0x6d, 0x4c, 0x61, 0x6e, 0x67, 0x75, 0x61, 0x67, 0x65, 0x52, 0x65, 0x70, 0x6c,
-	0x79, 0x22, 0x00, 0x12, 0x44, 0x0a, 0x0e, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x53, 0x79, 0x73,
-	0x74, 0x65, 0x6d, 0x49, 0x50, 0x12, 0x16, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x55, 0x70, 0x64, 0x61,
-	0x74, 0x65, 0x53, 0x79, 0x73, 0x74, 0x65, 0x6d, 0x49, 0x50, 0x52, 0x65, 0x71, 0x1a, 0x18, 0x2e,
-	0x61, 0x64, 0x61, 0x2e, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x53, 0x79, 0x73, 0x74, 0x65, 0x6d,
-	0x49, 0x50, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x44, 0x0a, 0x0e, 0x47, 0x65, 0x74,
-	0x53, 0x79, 0x73, 0x74, 0x65, 0x6d, 0x53, 0x74, 0x61, 0x74, 0x73, 0x12, 0x16, 0x2e, 0x61, 0x64,
-	0x61, 0x2e, 0x47, 0x65, 0x74, 0x53, 0x79, 0x73, 0x74, 0x65, 0x6d, 0x53, 0x74, 0x61, 0x74, 0x73,
-	0x52, 0x65, 0x71, 0x1a, 0x18, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x47, 0x65, 0x74, 0x53, 0x79, 0x73,
-	0x74, 0x65, 0x6d, 0x53, 0x74, 0x61, 0x74, 0x73, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12,
-	0x4d, 0x0a, 0x11, 0x53, 0x65, 0x74, 0x53, 0x79, 0x73, 0x74, 0x65, 0x6d, 0x53, 0x74, 0x61, 0x74,
-	0x73, 0x43, 0x66, 0x67, 0x12, 0x19, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x53, 0x65, 0x74, 0x53, 0x79,
-	0x73, 0x74, 0x65, 0x6d, 0x53, 0x74, 0x61, 0x74, 0x73, 0x43, 0x66, 0x67, 0x52, 0x65, 0x71, 0x1a,
-	0x1b, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x53, 0x65, 0x74, 0x53, 0x79, 0x73, 0x74, 0x65, 0x6d, 0x53,
-	0x74, 0x61, 0x74, 0x73, 0x43, 0x66, 0x67, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x38,
-	0x0a, 0x0a, 0x47, 0x65, 0x74, 0x4c, 0x69, 0x63, 0x65, 0x6e, 0x73, 0x65, 0x12, 0x12, 0x2e, 0x61,
-	0x64, 0x61, 0x2e, 0x47, 0x65, 0x74, 0x4c, 0x69, 0x63, 0x65, 0x6e, 0x73, 0x65, 0x52, 0x65, 0x71,
-	0x1a, 0x14, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x47, 0x65, 0x74, 0x4c, 0x69, 0x63, 0x65, 0x6e, 0x73,
-	0x65, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x41, 0x0a, 0x0d, 0x55, 0x70, 0x64, 0x61,
-	0x74, 0x65, 0x4c, 0x69, 0x63, 0x65, 0x6e, 0x73, 0x65, 0x12, 0x15, 0x2e, 0x61, 0x64, 0x61, 0x2e,
-	0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x4c, 0x69, 0x63, 0x65, 0x6e, 0x73, 0x65, 0x52, 0x65, 0x71,
-	0x1a, 0x17, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x4c, 0x69, 0x63,
-	0x65, 0x6e, 0x73, 0x65, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x3e, 0x0a, 0x0c, 0x4e,
-	0x65, 0x74, 0x77, 0x6f, 0x72, 0x6b, 0x44, 0x65, 0x62, 0x75, 0x67, 0x12, 0x14, 0x2e, 0x61, 0x64,
-	0x61, 0x2e, 0x4e, 0x65, 0x74, 0x77, 0x6f, 0x72, 0x6b, 0x44, 0x65, 0x62, 0x75, 0x67, 0x52, 0x65,
-	0x71, 0x1a, 0x16, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x4e, 0x65, 0x74, 0x77, 0x6f, 0x72, 0x6b, 0x44,
-	0x65, 0x62, 0x75, 0x67, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x44, 0x0a, 0x0e, 0x4c,
-	0x69, 0x73, 0x74, 0x4e, 0x6f, 0x74, 0x69, 0x66, 0x79, 0x43, 0x6f, 0x6e, 0x66, 0x12, 0x16, 0x2e,
-	0x61, 0x64, 0x61, 0x2e, 0x4c, 0x69, 0x73, 0x74, 0x4e, 0x6f, 0x74, 0x69, 0x66, 0x79, 0x43, 0x6f,
-	0x6e, 0x66, 0x52, 0x65, 0x71, 0x1a, 0x18, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x4c, 0x69, 0x73, 0x74,
-	0x4e, 0x6f, 0x74, 0x69, 0x66, 0x79, 0x43, 0x6f, 0x6e, 0x66, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22,
-	0x00, 0x12, 0x4a, 0x0a, 0x10, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x4e, 0x6f, 0x74, 0x69, 0x66,
-	0x79, 0x43, 0x6f, 0x6e, 0x66, 0x12, 0x18, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x55, 0x70, 0x64, 0x61,
-	0x74, 0x65, 0x4e, 0x6f, 0x74, 0x69, 0x66, 0x79, 0x43, 0x6f, 0x6e, 0x66, 0x52, 0x65, 0x71, 0x1a,
-	0x1a, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x4e, 0x6f, 0x74, 0x69,
-	0x66, 0x79, 0x43, 0x6f, 0x6e, 0x66, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x4a, 0x0a,
-	0x10, 0x45, 0x6e, 0x61, 0x62, 0x6c, 0x65, 0x4e, 0x6f, 0x74, 0x69, 0x66, 0x79, 0x43, 0x6f, 0x6e,
-	0x66, 0x12, 0x18, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x45, 0x6e, 0x61, 0x62, 0x6c, 0x65, 0x4e, 0x6f,
-	0x74, 0x69, 0x66, 0x79, 0x43, 0x6f, 0x6e, 0x66, 0x52, 0x65, 0x71, 0x1a, 0x1a, 0x2e, 0x61, 0x64,
-	0x61, 0x2e, 0x45, 0x6e, 0x61, 0x62, 0x6c, 0x65, 0x4e, 0x6f, 0x74, 0x69, 0x66, 0x79, 0x43, 0x6f,
-	0x6e, 0x66, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x44, 0x0a, 0x0e, 0x54, 0x65, 0x73,
-	0x74, 0x4e, 0x6f, 0x74, 0x69, 0x66, 0x79, 0x43, 0x6f, 0x6e, 0x66, 0x12, 0x16, 0x2e, 0x61, 0x64,
-	0x61, 0x2e, 0x54, 0x65, 0x73, 0x74, 0x4e, 0x6f, 0x74, 0x69, 0x66, 0x79, 0x43, 0x6f, 0x6e, 0x66,
-	0x52, 0x65, 0x71, 0x1a, 0x18, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x54, 0x65, 0x73, 0x74, 0x4e, 0x6f,
-	0x74, 0x69, 0x66, 0x79, 0x43, 0x6f, 0x6e, 0x66, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12,
-	0x44, 0x0a, 0x0e, 0x4c, 0x69, 0x73, 0x74, 0x45, 0x78, 0x70, 0x6f, 0x72, 0x74, 0x54, 0x61, 0x73,
-	0x6b, 0x12, 0x16, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x4c, 0x69, 0x73, 0x74, 0x45, 0x78, 0x70, 0x6f,
-	0x72, 0x74, 0x54, 0x61, 0x73, 0x6b, 0x52, 0x65, 0x71, 0x1a, 0x18, 0x2e, 0x61, 0x64, 0x61, 0x2e,
-	0x4c, 0x69, 0x73, 0x74, 0x45, 0x78, 0x70, 0x6f, 0x72, 0x74, 0x54, 0x61, 0x73, 0x6b, 0x52, 0x65,
-	0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x41, 0x0a, 0x0d, 0x41, 0x64, 0x64, 0x45, 0x78, 0x70, 0x6f,
-	0x72, 0x74, 0x54, 0x61, 0x73, 0x6b, 0x12, 0x15, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x41, 0x64, 0x64,
-	0x45, 0x78, 0x70, 0x6f, 0x72, 0x74, 0x54, 0x61, 0x73, 0x6b, 0x52, 0x65, 0x71, 0x1a, 0x17, 0x2e,
+	0x61, 0x67, 0x65, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x44, 0x0a, 0x0e, 0x55, 0x70,
+	0x64, 0x61, 0x74, 0x65, 0x53, 0x79, 0x73, 0x74, 0x65, 0x6d, 0x49, 0x50, 0x12, 0x16, 0x2e, 0x61,
+	0x64, 0x61, 0x2e, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x53, 0x79, 0x73, 0x74, 0x65, 0x6d, 0x49,
+	0x50, 0x52, 0x65, 0x71, 0x1a, 0x18, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x55, 0x70, 0x64, 0x61, 0x74,
+	0x65, 0x53, 0x79, 0x73, 0x74, 0x65, 0x6d, 0x49, 0x50, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00,
+	0x12, 0x44, 0x0a, 0x0e, 0x47, 0x65, 0x74, 0x53, 0x79, 0x73, 0x74, 0x65, 0x6d, 0x53, 0x74, 0x61,
+	0x74, 0x73, 0x12, 0x16, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x47, 0x65, 0x74, 0x53, 0x79, 0x73, 0x74,
+	0x65, 0x6d, 0x53, 0x74, 0x61, 0x74, 0x73, 0x52, 0x65, 0x71, 0x1a, 0x18, 0x2e, 0x61, 0x64, 0x61,
+	0x2e, 0x47, 0x65, 0x74, 0x53, 0x79, 0x73, 0x74, 0x65, 0x6d, 0x53, 0x74, 0x61, 0x74, 0x73, 0x52,
+	0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x4d, 0x0a, 0x11, 0x53, 0x65, 0x74, 0x53, 0x79, 0x73,
+	0x74, 0x65, 0x6d, 0x53, 0x74, 0x61, 0x74, 0x73, 0x43, 0x66, 0x67, 0x12, 0x19, 0x2e, 0x61, 0x64,
+	0x61, 0x2e, 0x53, 0x65, 0x74, 0x53, 0x79, 0x73, 0x74, 0x65, 0x6d, 0x53, 0x74, 0x61, 0x74, 0x73,
+	0x43, 0x66, 0x67, 0x52, 0x65, 0x71, 0x1a, 0x1b, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x53, 0x65, 0x74,
+	0x53, 0x79, 0x73, 0x74, 0x65, 0x6d, 0x53, 0x74, 0x61, 0x74, 0x73, 0x43, 0x66, 0x67, 0x52, 0x65,
+	0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x38, 0x0a, 0x0a, 0x47, 0x65, 0x74, 0x4c, 0x69, 0x63, 0x65,
+	0x6e, 0x73, 0x65, 0x12, 0x12, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x47, 0x65, 0x74, 0x4c, 0x69, 0x63,
+	0x65, 0x6e, 0x73, 0x65, 0x52, 0x65, 0x71, 0x1a, 0x14, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x47, 0x65,
+	0x74, 0x4c, 0x69, 0x63, 0x65, 0x6e, 0x73, 0x65, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12,
+	0x41, 0x0a, 0x0d, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x4c, 0x69, 0x63, 0x65, 0x6e, 0x73, 0x65,
+	0x12, 0x15, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x4c, 0x69, 0x63,
+	0x65, 0x6e, 0x73, 0x65, 0x52, 0x65, 0x71, 0x1a, 0x17, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x55, 0x70,
+	0x64, 0x61, 0x74, 0x65, 0x4c, 0x69, 0x63, 0x65, 0x6e, 0x73, 0x65, 0x52, 0x65, 0x70, 0x6c, 0x79,
+	0x22, 0x00, 0x12, 0x3e, 0x0a, 0x0c, 0x4e, 0x65, 0x74, 0x77, 0x6f, 0x72, 0x6b, 0x44, 0x65, 0x62,
+	0x75, 0x67, 0x12, 0x14, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x4e, 0x65, 0x74, 0x77, 0x6f, 0x72, 0x6b,
+	0x44, 0x65, 0x62, 0x75, 0x67, 0x52, 0x65, 0x71, 0x1a, 0x16, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x4e,
+	0x65, 0x74, 0x77, 0x6f, 0x72, 0x6b, 0x44, 0x65, 0x62, 0x75, 0x67, 0x52, 0x65, 0x70, 0x6c, 0x79,
+	0x22, 0x00, 0x12, 0x44, 0x0a, 0x0e, 0x4c, 0x69, 0x73, 0x74, 0x4e, 0x6f, 0x74, 0x69, 0x66, 0x79,
+	0x43, 0x6f, 0x6e, 0x66, 0x12, 0x16, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x4c, 0x69, 0x73, 0x74, 0x4e,
+	0x6f, 0x74, 0x69, 0x66, 0x79, 0x43, 0x6f, 0x6e, 0x66, 0x52, 0x65, 0x71, 0x1a, 0x18, 0x2e, 0x61,
+	0x64, 0x61, 0x2e, 0x4c, 0x69, 0x73, 0x74, 0x4e, 0x6f, 0x74, 0x69, 0x66, 0x79, 0x43, 0x6f, 0x6e,
+	0x66, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x4a, 0x0a, 0x10, 0x55, 0x70, 0x64, 0x61,
+	0x74, 0x65, 0x4e, 0x6f, 0x74, 0x69, 0x66, 0x79, 0x43, 0x6f, 0x6e, 0x66, 0x12, 0x18, 0x2e, 0x61,
+	0x64, 0x61, 0x2e, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x4e, 0x6f, 0x74, 0x69, 0x66, 0x79, 0x43,
+	0x6f, 0x6e, 0x66, 0x52, 0x65, 0x71, 0x1a, 0x1a, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x55, 0x70, 0x64,
+	0x61, 0x74, 0x65, 0x4e, 0x6f, 0x74, 0x69, 0x66, 0x79, 0x43, 0x6f, 0x6e, 0x66, 0x52, 0x65, 0x70,
+	0x6c, 0x79, 0x22, 0x00, 0x12, 0x4a, 0x0a, 0x10, 0x45, 0x6e, 0x61, 0x62, 0x6c, 0x65, 0x4e, 0x6f,
+	0x74, 0x69, 0x66, 0x79, 0x43, 0x6f, 0x6e, 0x66, 0x12, 0x18, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x45,
+	0x6e, 0x61, 0x62, 0x6c, 0x65, 0x4e, 0x6f, 0x74, 0x69, 0x66, 0x79, 0x43, 0x6f, 0x6e, 0x66, 0x52,
+	0x65, 0x71, 0x1a, 0x1a, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x45, 0x6e, 0x61, 0x62, 0x6c, 0x65, 0x4e,
+	0x6f, 0x74, 0x69, 0x66, 0x79, 0x43, 0x6f, 0x6e, 0x66, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00,
+	0x12, 0x44, 0x0a, 0x0e, 0x54, 0x65, 0x73, 0x74, 0x4e, 0x6f, 0x74, 0x69, 0x66, 0x79, 0x43, 0x6f,
+	0x6e, 0x66, 0x12, 0x16, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x54, 0x65, 0x73, 0x74, 0x4e, 0x6f, 0x74,
+	0x69, 0x66, 0x79, 0x43, 0x6f, 0x6e, 0x66, 0x52, 0x65, 0x71, 0x1a, 0x18, 0x2e, 0x61, 0x64, 0x61,
+	0x2e, 0x54, 0x65, 0x73, 0x74, 0x4e, 0x6f, 0x74, 0x69, 0x66, 0x79, 0x43, 0x6f, 0x6e, 0x66, 0x52,
+	0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x44, 0x0a, 0x0e, 0x4c, 0x69, 0x73, 0x74, 0x45, 0x78,
+	0x70, 0x6f, 0x72, 0x74, 0x54, 0x61, 0x73, 0x6b, 0x12, 0x16, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x4c,
+	0x69, 0x73, 0x74, 0x45, 0x78, 0x70, 0x6f, 0x72, 0x74, 0x54, 0x61, 0x73, 0x6b, 0x52, 0x65, 0x71,
+	0x1a, 0x18, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x4c, 0x69, 0x73, 0x74, 0x45, 0x78, 0x70, 0x6f, 0x72,
+	0x74, 0x54, 0x61, 0x73, 0x6b, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x41, 0x0a, 0x0d,
+	0x41, 0x64, 0x64, 0x45, 0x78, 0x70, 0x6f, 0x72, 0x74, 0x54, 0x61, 0x73, 0x6b, 0x12, 0x15, 0x2e,
 	0x61, 0x64, 0x61, 0x2e, 0x41, 0x64, 0x64, 0x45, 0x78, 0x70, 0x6f, 0x72, 0x74, 0x54, 0x61, 0x73,
-	0x6b, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x4a, 0x0a, 0x10, 0x44, 0x65, 0x6c, 0x65,
-	0x74, 0x65, 0x45, 0x78, 0x70, 0x6f, 0x72, 0x74, 0x54, 0x61, 0x73, 0x6b, 0x12, 0x18, 0x2e, 0x61,
-	0x64, 0x61, 0x2e, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x45, 0x78, 0x70, 0x6f, 0x72, 0x74, 0x54,
-	0x61, 0x73, 0x6b, 0x52, 0x65, 0x71, 0x1a, 0x1a, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x44, 0x65, 0x6c,
-	0x65, 0x74, 0x65, 0x45, 0x78, 0x70, 0x6f, 0x72, 0x74, 0x54, 0x61, 0x73, 0x6b, 0x52, 0x65, 0x70,
-	0x6c, 0x79, 0x22, 0x00, 0x12, 0x38, 0x0a, 0x0a, 0x4c, 0x69, 0x73, 0x74, 0x4e, 0x6f, 0x74, 0x69,
-	0x66, 0x79, 0x12, 0x12, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x4c, 0x69, 0x73, 0x74, 0x4e, 0x6f, 0x74,
-	0x69, 0x66, 0x79, 0x52, 0x65, 0x71, 0x1a, 0x14, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x4c, 0x69, 0x73,
-	0x74, 0x4e, 0x6f, 0x74, 0x69, 0x66, 0x79, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x3e,
-	0x0a, 0x0c, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x4e, 0x6f, 0x74, 0x69, 0x66, 0x79, 0x12, 0x14,
-	0x2e, 0x61, 0x64, 0x61, 0x2e, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x4e, 0x6f, 0x74, 0x69, 0x66,
-	0x79, 0x52, 0x65, 0x71, 0x1a, 0x16, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x55, 0x70, 0x64, 0x61, 0x74,
-	0x65, 0x4e, 0x6f, 0x74, 0x69, 0x66, 0x79, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x3b,
-	0x0a, 0x0b, 0x53, 0x74, 0x61, 0x74, 0x73, 0x4e, 0x6f, 0x74, 0x69, 0x66, 0x79, 0x12, 0x13, 0x2e,
-	0x61, 0x64, 0x61, 0x2e, 0x53, 0x74, 0x61, 0x74, 0x73, 0x4e, 0x6f, 0x74, 0x69, 0x66, 0x79, 0x52,
-	0x65, 0x71, 0x1a, 0x15, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x53, 0x74, 0x61, 0x74, 0x73, 0x4e, 0x6f,
-	0x74, 0x69, 0x66, 0x79, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x3e, 0x0a, 0x0c, 0x4c,
-	0x69, 0x73, 0x74, 0x41, 0x75, 0x64, 0x69, 0x74, 0x4c, 0x6f, 0x67, 0x12, 0x14, 0x2e, 0x61, 0x64,
-	0x61, 0x2e, 0x4c, 0x69, 0x73, 0x74, 0x41, 0x75, 0x64, 0x69, 0x74, 0x4c, 0x6f, 0x67, 0x52, 0x65,
-	0x71, 0x1a, 0x16, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x4c, 0x69, 0x73, 0x74, 0x41, 0x75, 0x64, 0x69,
-	0x74, 0x4c, 0x6f, 0x67, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x38, 0x0a, 0x0a, 0x54,
-	0x68, 0x72, 0x65, 0x61, 0x74, 0x54, 0x6f, 0x70, 0x73, 0x12, 0x12, 0x2e, 0x61, 0x64, 0x61, 0x2e,
-	0x54, 0x68, 0x72, 0x65, 0x61, 0x74, 0x54, 0x6f, 0x70, 0x73, 0x52, 0x65, 0x71, 0x1a, 0x14, 0x2e,
-	0x61, 0x64, 0x61, 0x2e, 0x54, 0x68, 0x72, 0x65, 0x61, 0x74, 0x54, 0x6f, 0x70, 0x73, 0x52, 0x65,
-	0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x3e, 0x0a, 0x0c, 0x54, 0x68, 0x72, 0x65, 0x61, 0x74, 0x54,
-	0x72, 0x65, 0x6e, 0x64, 0x73, 0x12, 0x14, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x54, 0x68, 0x72, 0x65,
-	0x61, 0x74, 0x54, 0x72, 0x65, 0x6e, 0x64, 0x73, 0x52, 0x65, 0x71, 0x1a, 0x16, 0x2e, 0x61, 0x64,
-	0x61, 0x2e, 0x54, 0x68, 0x72, 0x65, 0x61, 0x74, 0x54, 0x72, 0x65, 0x6e, 0x64, 0x73, 0x52, 0x65,
-	0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x38, 0x0a, 0x0a, 0x4c, 0x69, 0x73, 0x74, 0x54, 0x68, 0x72,
-	0x65, 0x61, 0x74, 0x12, 0x12, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x4c, 0x69, 0x73, 0x74, 0x54, 0x68,
-	0x72, 0x65, 0x61, 0x74, 0x52, 0x65, 0x71, 0x1a, 0x14, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x4c, 0x69,
-	0x73, 0x74, 0x54, 0x68, 0x72, 0x65, 0x61, 0x74, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12,
-	0x44, 0x0a, 0x0e, 0x47, 0x65, 0x74, 0x54, 0x68, 0x72, 0x65, 0x61, 0x74, 0x4e, 0x61, 0x6d, 0x65,
-	0x73, 0x12, 0x16, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x47, 0x65, 0x74, 0x54, 0x68, 0x72, 0x65, 0x61,
-	0x74, 0x4e, 0x61, 0x6d, 0x65, 0x73, 0x52, 0x65, 0x71, 0x1a, 0x18, 0x2e, 0x61, 0x64, 0x61, 0x2e,
-	0x47, 0x65, 0x74, 0x54, 0x68, 0x72, 0x65, 0x61, 0x74, 0x4e, 0x61, 0x6d, 0x65, 0x73, 0x52, 0x65,
-	0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x44, 0x0a, 0x0e, 0x4c, 0x69, 0x73, 0x74, 0x54, 0x68, 0x72,
-	0x65, 0x61, 0x74, 0x52, 0x75, 0x6c, 0x65, 0x12, 0x16, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x4c, 0x69,
-	0x73, 0x74, 0x54, 0x68, 0x72, 0x65, 0x61, 0x74, 0x52, 0x75, 0x6c, 0x65, 0x52, 0x65, 0x71, 0x1a,
-	0x18, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x4c, 0x69, 0x73, 0x74, 0x54, 0x68, 0x72, 0x65, 0x61, 0x74,
-	0x52, 0x75, 0x6c, 0x65, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x4a, 0x0a, 0x10, 0x41,
-	0x63, 0x74, 0x69, 0x6f, 0x6e, 0x54, 0x68, 0x72, 0x65, 0x61, 0x74, 0x52, 0x75, 0x6c, 0x65, 0x12,
-	0x18, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x41, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x54, 0x68, 0x72, 0x65,
-	0x61, 0x74, 0x52, 0x75, 0x6c, 0x65, 0x52, 0x65, 0x71, 0x1a, 0x1a, 0x2e, 0x61, 0x64, 0x61, 0x2e,
-	0x41, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x54, 0x68, 0x72, 0x65, 0x61, 0x74, 0x52, 0x75, 0x6c, 0x65,
-	0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x35, 0x0a, 0x09, 0x47, 0x65, 0x74, 0x54, 0x68,
-	0x72, 0x65, 0x61, 0x74, 0x12, 0x11, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x47, 0x65, 0x74, 0x54, 0x68,
-	0x72, 0x65, 0x61, 0x74, 0x52, 0x65, 0x71, 0x1a, 0x13, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x47, 0x65,
-	0x74, 0x54, 0x68, 0x72, 0x65, 0x61, 0x74, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x3e,
-	0x0a, 0x0c, 0x41, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x54, 0x68, 0x72, 0x65, 0x61, 0x74, 0x12, 0x14,
-	0x2e, 0x61, 0x64, 0x61, 0x2e, 0x41, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x54, 0x68, 0x72, 0x65, 0x61,
-	0x74, 0x52, 0x65, 0x71, 0x1a, 0x16, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x41, 0x63, 0x74, 0x69, 0x6f,
-	0x6e, 0x54, 0x68, 0x72, 0x65, 0x61, 0x74, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x3e,
-	0x0a, 0x0c, 0x4c, 0x69, 0x73, 0x74, 0x41, 0x63, 0x74, 0x69, 0x76, 0x69, 0x74, 0x79, 0x12, 0x14,
-	0x2e, 0x61, 0x64, 0x61, 0x2e, 0x4c, 0x69, 0x73, 0x74, 0x41, 0x63, 0x74, 0x69, 0x76, 0x69, 0x74,
-	0x79, 0x52, 0x65, 0x71, 0x1a, 0x16, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x4c, 0x69, 0x73, 0x74, 0x41,
-	0x63, 0x74, 0x69, 0x76, 0x69, 0x74, 0x79, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x4a,
-	0x0a, 0x10, 0x47, 0x65, 0x74, 0x41, 0x63, 0x74, 0x69, 0x76, 0x69, 0x74, 0x79, 0x4e, 0x61, 0x6d,
-	0x65, 0x73, 0x12, 0x18, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x47, 0x65, 0x74, 0x41, 0x63, 0x74, 0x69,
-	0x76, 0x69, 0x74, 0x79, 0x4e, 0x61, 0x6d, 0x65, 0x73, 0x52, 0x65, 0x71, 0x1a, 0x1a, 0x2e, 0x61,
-	0x64, 0x61, 0x2e, 0x47, 0x65, 0x74, 0x41, 0x63, 0x74, 0x69, 0x76, 0x69, 0x74, 0x79, 0x4e, 0x61,
-	0x6d, 0x65, 0x73, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x3b, 0x0a, 0x0b, 0x47, 0x65,
-	0x74, 0x41, 0x63, 0x74, 0x69, 0x76, 0x69, 0x74, 0x79, 0x12, 0x13, 0x2e, 0x61, 0x64, 0x61, 0x2e,
-	0x47, 0x65, 0x74, 0x41, 0x63, 0x74, 0x69, 0x76, 0x69, 0x74, 0x79, 0x52, 0x65, 0x71, 0x1a, 0x15,
-	0x2e, 0x61, 0x64, 0x61, 0x2e, 0x47, 0x65, 0x74, 0x41, 0x63, 0x74, 0x69, 0x76, 0x69, 0x74, 0x79,
-	0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x44, 0x0a, 0x0e, 0x4c, 0x69, 0x73, 0x74, 0x54,
-	0x68, 0x72, 0x65, 0x61, 0x74, 0x43, 0x6f, 0x6e, 0x66, 0x12, 0x16, 0x2e, 0x61, 0x64, 0x61, 0x2e,
-	0x4c, 0x69, 0x73, 0x74, 0x54, 0x68, 0x72, 0x65, 0x61, 0x74, 0x43, 0x6f, 0x6e, 0x66, 0x52, 0x65,
-	0x71, 0x1a, 0x18, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x4c, 0x69, 0x73, 0x74, 0x54, 0x68, 0x72, 0x65,
-	0x61, 0x74, 0x43, 0x6f, 0x6e, 0x66, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x4a, 0x0a,
-	0x10, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x54, 0x68, 0x72, 0x65, 0x61, 0x74, 0x43, 0x6f, 0x6e,
-	0x66, 0x12, 0x18, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x54, 0x68,
-	0x72, 0x65, 0x61, 0x74, 0x43, 0x6f, 0x6e, 0x66, 0x52, 0x65, 0x71, 0x1a, 0x1a, 0x2e, 0x61, 0x64,
-	0x61, 0x2e, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x54, 0x68, 0x72, 0x65, 0x61, 0x74, 0x43, 0x6f,
-	0x6e, 0x66, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x50, 0x0a, 0x12, 0x4c, 0x69, 0x73,
-	0x74, 0x53, 0x65, 0x6e, 0x73, 0x69, 0x74, 0x69, 0x76, 0x65, 0x45, 0x6e, 0x74, 0x72, 0x79, 0x12,
-	0x1a, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x4c, 0x69, 0x73, 0x74, 0x53, 0x65, 0x6e, 0x73, 0x69, 0x74,
-	0x69, 0x76, 0x65, 0x45, 0x6e, 0x74, 0x72, 0x79, 0x52, 0x65, 0x71, 0x1a, 0x1c, 0x2e, 0x61, 0x64,
-	0x61, 0x2e, 0x4c, 0x69, 0x73, 0x74, 0x53, 0x65, 0x6e, 0x73, 0x69, 0x74, 0x69, 0x76, 0x65, 0x45,
-	0x6e, 0x74, 0x72, 0x79, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x4d, 0x0a, 0x11, 0x41,
-	0x64, 0x64, 0x53, 0x65, 0x6e, 0x73, 0x69, 0x74, 0x69, 0x76, 0x65, 0x45, 0x6e, 0x74, 0x72, 0x79,
-	0x12, 0x19, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x41, 0x64, 0x64, 0x53, 0x65, 0x6e, 0x73, 0x69, 0x74,
-	0x69, 0x76, 0x65, 0x45, 0x6e, 0x74, 0x72, 0x79, 0x52, 0x65, 0x71, 0x1a, 0x1b, 0x2e, 0x61, 0x64,
-	0x61, 0x2e, 0x41, 0x64, 0x64, 0x53, 0x65, 0x6e, 0x73, 0x69, 0x74, 0x69, 0x76, 0x65, 0x45, 0x6e,
-	0x74, 0x72, 0x79, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x47, 0x0a, 0x0f, 0x4c, 0x69,
-	0x73, 0x74, 0x44, 0x6f, 0x6d, 0x61, 0x69, 0x6e, 0x45, 0x6e, 0x74, 0x72, 0x79, 0x12, 0x17, 0x2e,
+	0x6b, 0x52, 0x65, 0x71, 0x1a, 0x17, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x41, 0x64, 0x64, 0x45, 0x78,
+	0x70, 0x6f, 0x72, 0x74, 0x54, 0x61, 0x73, 0x6b, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12,
+	0x4a, 0x0a, 0x10, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x45, 0x78, 0x70, 0x6f, 0x72, 0x74, 0x54,
+	0x61, 0x73, 0x6b, 0x12, 0x18, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65,
+	0x45, 0x78, 0x70, 0x6f, 0x72, 0x74, 0x54, 0x61, 0x73, 0x6b, 0x52, 0x65, 0x71, 0x1a, 0x1a, 0x2e,
+	0x61, 0x64, 0x61, 0x2e, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x45, 0x78, 0x70, 0x6f, 0x72, 0x74,
+	0x54, 0x61, 0x73, 0x6b, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x38, 0x0a, 0x0a, 0x4c,
+	0x69, 0x73, 0x74, 0x4e, 0x6f, 0x74, 0x69, 0x66, 0x79, 0x12, 0x12, 0x2e, 0x61, 0x64, 0x61, 0x2e,
+	0x4c, 0x69, 0x73, 0x74, 0x4e, 0x6f, 0x74, 0x69, 0x66, 0x79, 0x52, 0x65, 0x71, 0x1a, 0x14, 0x2e,
+	0x61, 0x64, 0x61, 0x2e, 0x4c, 0x69, 0x73, 0x74, 0x4e, 0x6f, 0x74, 0x69, 0x66, 0x79, 0x52, 0x65,
+	0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x3e, 0x0a, 0x0c, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x4e,
+	0x6f, 0x74, 0x69, 0x66, 0x79, 0x12, 0x14, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x55, 0x70, 0x64, 0x61,
+	0x74, 0x65, 0x4e, 0x6f, 0x74, 0x69, 0x66, 0x79, 0x52, 0x65, 0x71, 0x1a, 0x16, 0x2e, 0x61, 0x64,
+	0x61, 0x2e, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x4e, 0x6f, 0x74, 0x69, 0x66, 0x79, 0x52, 0x65,
+	0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x3b, 0x0a, 0x0b, 0x53, 0x74, 0x61, 0x74, 0x73, 0x4e, 0x6f,
+	0x74, 0x69, 0x66, 0x79, 0x12, 0x13, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x53, 0x74, 0x61, 0x74, 0x73,
+	0x4e, 0x6f, 0x74, 0x69, 0x66, 0x79, 0x52, 0x65, 0x71, 0x1a, 0x15, 0x2e, 0x61, 0x64, 0x61, 0x2e,
+	0x53, 0x74, 0x61, 0x74, 0x73, 0x4e, 0x6f, 0x74, 0x69, 0x66, 0x79, 0x52, 0x65, 0x70, 0x6c, 0x79,
+	0x22, 0x00, 0x12, 0x3e, 0x0a, 0x0c, 0x4c, 0x69, 0x73, 0x74, 0x41, 0x75, 0x64, 0x69, 0x74, 0x4c,
+	0x6f, 0x67, 0x12, 0x14, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x4c, 0x69, 0x73, 0x74, 0x41, 0x75, 0x64,
+	0x69, 0x74, 0x4c, 0x6f, 0x67, 0x52, 0x65, 0x71, 0x1a, 0x16, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x4c,
+	0x69, 0x73, 0x74, 0x41, 0x75, 0x64, 0x69, 0x74, 0x4c, 0x6f, 0x67, 0x52, 0x65, 0x70, 0x6c, 0x79,
+	0x22, 0x00, 0x12, 0x38, 0x0a, 0x0a, 0x54, 0x68, 0x72, 0x65, 0x61, 0x74, 0x54, 0x6f, 0x70, 0x73,
+	0x12, 0x12, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x54, 0x68, 0x72, 0x65, 0x61, 0x74, 0x54, 0x6f, 0x70,
+	0x73, 0x52, 0x65, 0x71, 0x1a, 0x14, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x54, 0x68, 0x72, 0x65, 0x61,
+	0x74, 0x54, 0x6f, 0x70, 0x73, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x3e, 0x0a, 0x0c,
+	0x54, 0x68, 0x72, 0x65, 0x61, 0x74, 0x54, 0x72, 0x65, 0x6e, 0x64, 0x73, 0x12, 0x14, 0x2e, 0x61,
+	0x64, 0x61, 0x2e, 0x54, 0x68, 0x72, 0x65, 0x61, 0x74, 0x54, 0x72, 0x65, 0x6e, 0x64, 0x73, 0x52,
+	0x65, 0x71, 0x1a, 0x16, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x54, 0x68, 0x72, 0x65, 0x61, 0x74, 0x54,
+	0x72, 0x65, 0x6e, 0x64, 0x73, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x38, 0x0a, 0x0a,
+	0x4c, 0x69, 0x73, 0x74, 0x54, 0x68, 0x72, 0x65, 0x61, 0x74, 0x12, 0x12, 0x2e, 0x61, 0x64, 0x61,
+	0x2e, 0x4c, 0x69, 0x73, 0x74, 0x54, 0x68, 0x72, 0x65, 0x61, 0x74, 0x52, 0x65, 0x71, 0x1a, 0x14,
+	0x2e, 0x61, 0x64, 0x61, 0x2e, 0x4c, 0x69, 0x73, 0x74, 0x54, 0x68, 0x72, 0x65, 0x61, 0x74, 0x52,
+	0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x44, 0x0a, 0x0e, 0x47, 0x65, 0x74, 0x54, 0x68, 0x72,
+	0x65, 0x61, 0x74, 0x4e, 0x61, 0x6d, 0x65, 0x73, 0x12, 0x16, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x47,
+	0x65, 0x74, 0x54, 0x68, 0x72, 0x65, 0x61, 0x74, 0x4e, 0x61, 0x6d, 0x65, 0x73, 0x52, 0x65, 0x71,
+	0x1a, 0x18, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x47, 0x65, 0x74, 0x54, 0x68, 0x72, 0x65, 0x61, 0x74,
+	0x4e, 0x61, 0x6d, 0x65, 0x73, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x44, 0x0a, 0x0e,
+	0x4c, 0x69, 0x73, 0x74, 0x54, 0x68, 0x72, 0x65, 0x61, 0x74, 0x52, 0x75, 0x6c, 0x65, 0x12, 0x16,
+	0x2e, 0x61, 0x64, 0x61, 0x2e, 0x4c, 0x69, 0x73, 0x74, 0x54, 0x68, 0x72, 0x65, 0x61, 0x74, 0x52,
+	0x75, 0x6c, 0x65, 0x52, 0x65, 0x71, 0x1a, 0x18, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x4c, 0x69, 0x73,
+	0x74, 0x54, 0x68, 0x72, 0x65, 0x61, 0x74, 0x52, 0x75, 0x6c, 0x65, 0x52, 0x65, 0x70, 0x6c, 0x79,
+	0x22, 0x00, 0x12, 0x4a, 0x0a, 0x10, 0x41, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x54, 0x68, 0x72, 0x65,
+	0x61, 0x74, 0x52, 0x75, 0x6c, 0x65, 0x12, 0x18, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x41, 0x63, 0x74,
+	0x69, 0x6f, 0x6e, 0x54, 0x68, 0x72, 0x65, 0x61, 0x74, 0x52, 0x75, 0x6c, 0x65, 0x52, 0x65, 0x71,
+	0x1a, 0x1a, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x41, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x54, 0x68, 0x72,
+	0x65, 0x61, 0x74, 0x52, 0x75, 0x6c, 0x65, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x35,
+	0x0a, 0x09, 0x47, 0x65, 0x74, 0x54, 0x68, 0x72, 0x65, 0x61, 0x74, 0x12, 0x11, 0x2e, 0x61, 0x64,
+	0x61, 0x2e, 0x47, 0x65, 0x74, 0x54, 0x68, 0x72, 0x65, 0x61, 0x74, 0x52, 0x65, 0x71, 0x1a, 0x13,
+	0x2e, 0x61, 0x64, 0x61, 0x2e, 0x47, 0x65, 0x74, 0x54, 0x68, 0x72, 0x65, 0x61, 0x74, 0x52, 0x65,
+	0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x3e, 0x0a, 0x0c, 0x41, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x54,
+	0x68, 0x72, 0x65, 0x61, 0x74, 0x12, 0x14, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x41, 0x63, 0x74, 0x69,
+	0x6f, 0x6e, 0x54, 0x68, 0x72, 0x65, 0x61, 0x74, 0x52, 0x65, 0x71, 0x1a, 0x16, 0x2e, 0x61, 0x64,
+	0x61, 0x2e, 0x41, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x54, 0x68, 0x72, 0x65, 0x61, 0x74, 0x52, 0x65,
+	0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x3e, 0x0a, 0x0c, 0x4c, 0x69, 0x73, 0x74, 0x41, 0x63, 0x74,
+	0x69, 0x76, 0x69, 0x74, 0x79, 0x12, 0x14, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x4c, 0x69, 0x73, 0x74,
+	0x41, 0x63, 0x74, 0x69, 0x76, 0x69, 0x74, 0x79, 0x52, 0x65, 0x71, 0x1a, 0x16, 0x2e, 0x61, 0x64,
+	0x61, 0x2e, 0x4c, 0x69, 0x73, 0x74, 0x41, 0x63, 0x74, 0x69, 0x76, 0x69, 0x74, 0x79, 0x52, 0x65,
+	0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x4a, 0x0a, 0x10, 0x47, 0x65, 0x74, 0x41, 0x63, 0x74, 0x69,
+	0x76, 0x69, 0x74, 0x79, 0x4e, 0x61, 0x6d, 0x65, 0x73, 0x12, 0x18, 0x2e, 0x61, 0x64, 0x61, 0x2e,
+	0x47, 0x65, 0x74, 0x41, 0x63, 0x74, 0x69, 0x76, 0x69, 0x74, 0x79, 0x4e, 0x61, 0x6d, 0x65, 0x73,
+	0x52, 0x65, 0x71, 0x1a, 0x1a, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x47, 0x65, 0x74, 0x41, 0x63, 0x74,
+	0x69, 0x76, 0x69, 0x74, 0x79, 0x4e, 0x61, 0x6d, 0x65, 0x73, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22,
+	0x00, 0x12, 0x3b, 0x0a, 0x0b, 0x47, 0x65, 0x74, 0x41, 0x63, 0x74, 0x69, 0x76, 0x69, 0x74, 0x79,
+	0x12, 0x13, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x47, 0x65, 0x74, 0x41, 0x63, 0x74, 0x69, 0x76, 0x69,
+	0x74, 0x79, 0x52, 0x65, 0x71, 0x1a, 0x15, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x47, 0x65, 0x74, 0x41,
+	0x63, 0x74, 0x69, 0x76, 0x69, 0x74, 0x79, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x44,
+	0x0a, 0x0e, 0x4c, 0x69, 0x73, 0x74, 0x54, 0x68, 0x72, 0x65, 0x61, 0x74, 0x43, 0x6f, 0x6e, 0x66,
+	0x12, 0x16, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x4c, 0x69, 0x73, 0x74, 0x54, 0x68, 0x72, 0x65, 0x61,
+	0x74, 0x43, 0x6f, 0x6e, 0x66, 0x52, 0x65, 0x71, 0x1a, 0x18, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x4c,
+	0x69, 0x73, 0x74, 0x54, 0x68, 0x72, 0x65, 0x61, 0x74, 0x43, 0x6f, 0x6e, 0x66, 0x52, 0x65, 0x70,
+	0x6c, 0x79, 0x22, 0x00, 0x12, 0x4a, 0x0a, 0x10, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x54, 0x68,
+	0x72, 0x65, 0x61, 0x74, 0x43, 0x6f, 0x6e, 0x66, 0x12, 0x18, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x55,
+	0x70, 0x64, 0x61, 0x74, 0x65, 0x54, 0x68, 0x72, 0x65, 0x61, 0x74, 0x43, 0x6f, 0x6e, 0x66, 0x52,
+	0x65, 0x71, 0x1a, 0x1a, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x54,
+	0x68, 0x72, 0x65, 0x61, 0x74, 0x43, 0x6f, 0x6e, 0x66, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00,
+	0x12, 0x50, 0x0a, 0x12, 0x4c, 0x69, 0x73, 0x74, 0x53, 0x65, 0x6e, 0x73, 0x69, 0x74, 0x69, 0x76,
+	0x65, 0x45, 0x6e, 0x74, 0x72, 0x79, 0x12, 0x1a, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x4c, 0x69, 0x73,
+	0x74, 0x53, 0x65, 0x6e, 0x73, 0x69, 0x74, 0x69, 0x76, 0x65, 0x45, 0x6e, 0x74, 0x72, 0x79, 0x52,
+	0x65, 0x71, 0x1a, 0x1c, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x4c, 0x69, 0x73, 0x74, 0x53, 0x65, 0x6e,
+	0x73, 0x69, 0x74, 0x69, 0x76, 0x65, 0x45, 0x6e, 0x74, 0x72, 0x79, 0x52, 0x65, 0x70, 0x6c, 0x79,
+	0x22, 0x00, 0x12, 0x4d, 0x0a, 0x11, 0x41, 0x64, 0x64, 0x53, 0x65, 0x6e, 0x73, 0x69, 0x74, 0x69,
+	0x76, 0x65, 0x45, 0x6e, 0x74, 0x72, 0x79, 0x12, 0x19, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x41, 0x64,
+	0x64, 0x53, 0x65, 0x6e, 0x73, 0x69, 0x74, 0x69, 0x76, 0x65, 0x45, 0x6e, 0x74, 0x72, 0x79, 0x52,
+	0x65, 0x71, 0x1a, 0x1b, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x41, 0x64, 0x64, 0x53, 0x65, 0x6e, 0x73,
+	0x69, 0x74, 0x69, 0x76, 0x65, 0x45, 0x6e, 0x74, 0x72, 0x79, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22,
+	0x00, 0x12, 0x47, 0x0a, 0x0f, 0x4c, 0x69, 0x73, 0x74, 0x44, 0x6f, 0x6d, 0x61, 0x69, 0x6e, 0x45,
+	0x6e, 0x74, 0x72, 0x79, 0x12, 0x17, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x4c, 0x69, 0x73, 0x74, 0x44,
+	0x6f, 0x6d, 0x61, 0x69, 0x6e, 0x45, 0x6e, 0x74, 0x72, 0x79, 0x52, 0x65, 0x71, 0x1a, 0x19, 0x2e,
 	0x61, 0x64, 0x61, 0x2e, 0x4c, 0x69, 0x73, 0x74, 0x44, 0x6f, 0x6d, 0x61, 0x69, 0x6e, 0x45, 0x6e,
-	0x74, 0x72, 0x79, 0x52, 0x65, 0x71, 0x1a, 0x19, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x4c, 0x69, 0x73,
-	0x74, 0x44, 0x6f, 0x6d, 0x61, 0x69, 0x6e, 0x45, 0x6e, 0x74, 0x72, 0x79, 0x52, 0x65, 0x70, 0x6c,
-	0x79, 0x22, 0x00, 0x12, 0x56, 0x0a, 0x14, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x53, 0x65, 0x6e,
-	0x73, 0x69, 0x74, 0x69, 0x76, 0x65, 0x45, 0x6e, 0x74, 0x72, 0x79, 0x12, 0x1c, 0x2e, 0x61, 0x64,
-	0x61, 0x2e, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x53, 0x65, 0x6e, 0x73, 0x69, 0x74, 0x69, 0x76,
-	0x65, 0x45, 0x6e, 0x74, 0x72, 0x79, 0x52, 0x65, 0x71, 0x1a, 0x1e, 0x2e, 0x61, 0x64, 0x61, 0x2e,
-	0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x53, 0x65, 0x6e, 0x73, 0x69, 0x74, 0x69, 0x76, 0x65, 0x45,
-	0x6e, 0x74, 0x72, 0x79, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x53, 0x0a, 0x13, 0x4c,
-	0x69, 0x73, 0x74, 0x54, 0x68, 0x72, 0x65, 0x61, 0x74, 0x57, 0x68, 0x69, 0x74, 0x65, 0x6c, 0x69,
-	0x73, 0x74, 0x12, 0x1b, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x4c, 0x69, 0x73, 0x74, 0x54, 0x68, 0x72,
-	0x65, 0x61, 0x74, 0x57, 0x68, 0x69, 0x74, 0x65, 0x6c, 0x69, 0x73, 0x74, 0x52, 0x65, 0x71, 0x1a,
-	0x1d, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x4c, 0x69, 0x73, 0x74, 0x54, 0x68, 0x72, 0x65, 0x61, 0x74,
+	0x74, 0x72, 0x79, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x56, 0x0a, 0x14, 0x44, 0x65,
+	0x6c, 0x65, 0x74, 0x65, 0x53, 0x65, 0x6e, 0x73, 0x69, 0x74, 0x69, 0x76, 0x65, 0x45, 0x6e, 0x74,
+	0x72, 0x79, 0x12, 0x1c, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x53,
+	0x65, 0x6e, 0x73, 0x69, 0x74, 0x69, 0x76, 0x65, 0x45, 0x6e, 0x74, 0x72, 0x79, 0x52, 0x65, 0x71,
+	0x1a, 0x1e, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x53, 0x65, 0x6e,
+	0x73, 0x69, 0x74, 0x69, 0x76, 0x65, 0x45, 0x6e, 0x74, 0x72, 0x79, 0x52, 0x65, 0x70, 0x6c, 0x79,
+	0x22, 0x00, 0x12, 0x53, 0x0a, 0x13, 0x4c, 0x69, 0x73, 0x74, 0x54, 0x68, 0x72, 0x65, 0x61, 0x74,
+	0x57, 0x68, 0x69, 0x74, 0x65, 0x6c, 0x69, 0x73, 0x74, 0x12, 0x1b, 0x2e, 0x61, 0x64, 0x61, 0x2e,
+	0x4c, 0x69, 0x73, 0x74, 0x54, 0x68, 0x72, 0x65, 0x61, 0x74, 0x57, 0x68, 0x69, 0x74, 0x65, 0x6c,
+	0x69, 0x73, 0x74, 0x52, 0x65, 0x71, 0x1a, 0x1d, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x4c, 0x69, 0x73,
+	0x74, 0x54, 0x68, 0x72, 0x65, 0x61, 0x74, 0x57, 0x68, 0x69, 0x74, 0x65, 0x6c, 0x69, 0x73, 0x74,
+	0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x5f, 0x0a, 0x17, 0x47, 0x65, 0x74, 0x54, 0x68,
+	0x72, 0x65, 0x61, 0x74, 0x57, 0x68, 0x69, 0x74, 0x65, 0x6c, 0x69, 0x73, 0x74, 0x46, 0x69, 0x65,
+	0x6c, 0x64, 0x12, 0x1f, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x47, 0x65, 0x74, 0x54, 0x68, 0x72, 0x65,
+	0x61, 0x74, 0x57, 0x68, 0x69, 0x74, 0x65, 0x6c, 0x69, 0x73, 0x74, 0x46, 0x69, 0x65, 0x6c, 0x64,
+	0x52, 0x65, 0x71, 0x1a, 0x21, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x47, 0x65, 0x74, 0x54, 0x68, 0x72,
+	0x65, 0x61, 0x74, 0x57, 0x68, 0x69, 0x74, 0x65, 0x6c, 0x69, 0x73, 0x74, 0x46, 0x69, 0x65, 0x6c,
+	0x64, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x50, 0x0a, 0x12, 0x41, 0x64, 0x64, 0x54,
+	0x68, 0x72, 0x65, 0x61, 0x74, 0x57, 0x68, 0x69, 0x74, 0x65, 0x6c, 0x69, 0x73, 0x74, 0x12, 0x1a,
+	0x2e, 0x61, 0x64, 0x61, 0x2e, 0x41, 0x64, 0x64, 0x54, 0x68, 0x72, 0x65, 0x61, 0x74, 0x57, 0x68,
+	0x69, 0x74, 0x65, 0x6c, 0x69, 0x73, 0x74, 0x52, 0x65, 0x71, 0x1a, 0x1c, 0x2e, 0x61, 0x64, 0x61,
+	0x2e, 0x41, 0x64, 0x64, 0x54, 0x68, 0x72, 0x65, 0x61, 0x74, 0x57, 0x68, 0x69, 0x74, 0x65, 0x6c,
+	0x69, 0x73, 0x74, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x59, 0x0a, 0x15, 0x55, 0x70,
+	0x64, 0x61, 0x74, 0x65, 0x54, 0x68, 0x72, 0x65, 0x61, 0x74, 0x57, 0x68, 0x69, 0x74, 0x65, 0x6c,
+	0x69, 0x73, 0x74, 0x12, 0x1d, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65,
+	0x54, 0x68, 0x72, 0x65, 0x61, 0x74, 0x57, 0x68, 0x69, 0x74, 0x65, 0x6c, 0x69, 0x73, 0x74, 0x52,
+	0x65, 0x71, 0x1a, 0x1f, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x54,
+	0x68, 0x72, 0x65, 0x61, 0x74, 0x57, 0x68, 0x69, 0x74, 0x65, 0x6c, 0x69, 0x73, 0x74, 0x52, 0x65,
+	0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x59, 0x0a, 0x15, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x54,
+	0x68, 0x72, 0x65, 0x61, 0x74, 0x57, 0x68, 0x69, 0x74, 0x65, 0x6c, 0x69, 0x73, 0x74, 0x12, 0x1d,
+	0x2e, 0x61, 0x64, 0x61, 0x2e, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x54, 0x68, 0x72, 0x65, 0x61,
+	0x74, 0x57, 0x68, 0x69, 0x74, 0x65, 0x6c, 0x69, 0x73, 0x74, 0x52, 0x65, 0x71, 0x1a, 0x1f, 0x2e,
+	0x61, 0x64, 0x61, 0x2e, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x54, 0x68, 0x72, 0x65, 0x61, 0x74,
 	0x57, 0x68, 0x69, 0x74, 0x65, 0x6c, 0x69, 0x73, 0x74, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00,
-	0x12, 0x5f, 0x0a, 0x17, 0x47, 0x65, 0x74, 0x54, 0x68, 0x72, 0x65, 0x61, 0x74, 0x57, 0x68, 0x69,
-	0x74, 0x65, 0x6c, 0x69, 0x73, 0x74, 0x46, 0x69, 0x65, 0x6c, 0x64, 0x12, 0x1f, 0x2e, 0x61, 0x64,
-	0x61, 0x2e, 0x47, 0x65, 0x74, 0x54, 0x68, 0x72, 0x65, 0x61, 0x74, 0x57, 0x68, 0x69, 0x74, 0x65,
-	0x6c, 0x69, 0x73, 0x74, 0x46, 0x69, 0x65, 0x6c, 0x64, 0x52, 0x65, 0x71, 0x1a, 0x21, 0x2e, 0x61,
-	0x64, 0x61, 0x2e, 0x47, 0x65, 0x74, 0x54, 0x68, 0x72, 0x65, 0x61, 0x74, 0x57, 0x68, 0x69, 0x74,
-	0x65, 0x6c, 0x69, 0x73, 0x74, 0x46, 0x69, 0x65, 0x6c, 0x64, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22,
-	0x00, 0x12, 0x50, 0x0a, 0x12, 0x41, 0x64, 0x64, 0x54, 0x68, 0x72, 0x65, 0x61, 0x74, 0x57, 0x68,
-	0x69, 0x74, 0x65, 0x6c, 0x69, 0x73, 0x74, 0x12, 0x1a, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x41, 0x64,
-	0x64, 0x54, 0x68, 0x72, 0x65, 0x61, 0x74, 0x57, 0x68, 0x69, 0x74, 0x65, 0x6c, 0x69, 0x73, 0x74,
-	0x52, 0x65, 0x71, 0x1a, 0x1c, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x41, 0x64, 0x64, 0x54, 0x68, 0x72,
-	0x65, 0x61, 0x74, 0x57, 0x68, 0x69, 0x74, 0x65, 0x6c, 0x69, 0x73, 0x74, 0x52, 0x65, 0x70, 0x6c,
-	0x79, 0x22, 0x00, 0x12, 0x59, 0x0a, 0x15, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x54, 0x68, 0x72,
-	0x65, 0x61, 0x74, 0x57, 0x68, 0x69, 0x74, 0x65, 0x6c, 0x69, 0x73, 0x74, 0x12, 0x1d, 0x2e, 0x61,
-	0x64, 0x61, 0x2e, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x54, 0x68, 0x72, 0x65, 0x61, 0x74, 0x57,
-	0x68, 0x69, 0x74, 0x65, 0x6c, 0x69, 0x73, 0x74, 0x52, 0x65, 0x71, 0x1a, 0x1f, 0x2e, 0x61, 0x64,
-	0x61, 0x2e, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x54, 0x68, 0x72, 0x65, 0x61, 0x74, 0x57, 0x68,
-	0x69, 0x74, 0x65, 0x6c, 0x69, 0x73, 0x74, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x59,
-	0x0a, 0x15, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x54, 0x68, 0x72, 0x65, 0x61, 0x74, 0x57, 0x68,
-	0x69, 0x74, 0x65, 0x6c, 0x69, 0x73, 0x74, 0x12, 0x1d, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x44, 0x65,
-	0x6c, 0x65, 0x74, 0x65, 0x54, 0x68, 0x72, 0x65, 0x61, 0x74, 0x57, 0x68, 0x69, 0x74, 0x65, 0x6c,
-	0x69, 0x73, 0x74, 0x52, 0x65, 0x71, 0x1a, 0x1f, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x44, 0x65, 0x6c,
-	0x65, 0x74, 0x65, 0x54, 0x68, 0x72, 0x65, 0x61, 0x74, 0x57, 0x68, 0x69, 0x74, 0x65, 0x6c, 0x69,
-	0x73, 0x74, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x47, 0x0a, 0x0f, 0x4c, 0x69, 0x73,
-	0x74, 0x54, 0x68, 0x72, 0x65, 0x61, 0x74, 0x42, 0x6c, 0x6f, 0x63, 0x6b, 0x12, 0x17, 0x2e, 0x61,
+	0x12, 0x47, 0x0a, 0x0f, 0x4c, 0x69, 0x73, 0x74, 0x54, 0x68, 0x72, 0x65, 0x61, 0x74, 0x42, 0x6c,
+	0x6f, 0x63, 0x6b, 0x12, 0x17, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x4c, 0x69, 0x73, 0x74, 0x54, 0x68,
+	0x72, 0x65, 0x61, 0x74, 0x42, 0x6c, 0x6f, 0x63, 0x6b, 0x52, 0x65, 0x71, 0x1a, 0x19, 0x2e, 0x61,
 	0x64, 0x61, 0x2e, 0x4c, 0x69, 0x73, 0x74, 0x54, 0x68, 0x72, 0x65, 0x61, 0x74, 0x42, 0x6c, 0x6f,
-	0x63, 0x6b, 0x52, 0x65, 0x71, 0x1a, 0x19, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x4c, 0x69, 0x73, 0x74,
-	0x54, 0x68, 0x72, 0x65, 0x61, 0x74, 0x42, 0x6c, 0x6f, 0x63, 0x6b, 0x52, 0x65, 0x70, 0x6c, 0x79,
-	0x22, 0x00, 0x12, 0x44, 0x0a, 0x0e, 0x41, 0x64, 0x64, 0x54, 0x68, 0x72, 0x65, 0x61, 0x74, 0x42,
-	0x6c, 0x6f, 0x63, 0x6b, 0x12, 0x16, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x41, 0x64, 0x64, 0x54, 0x68,
-	0x72, 0x65, 0x61, 0x74, 0x42, 0x6c, 0x6f, 0x63, 0x6b, 0x52, 0x65, 0x71, 0x1a, 0x18, 0x2e, 0x61,
-	0x64, 0x61, 0x2e, 0x41, 0x64, 0x64, 0x54, 0x68, 0x72, 0x65, 0x61, 0x74, 0x42, 0x6c, 0x6f, 0x63,
-	0x6b, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x4d, 0x0a, 0x11, 0x55, 0x70, 0x64, 0x61,
-	0x74, 0x65, 0x54, 0x68, 0x72, 0x65, 0x61, 0x74, 0x42, 0x6c, 0x6f, 0x63, 0x6b, 0x12, 0x19, 0x2e,
-	0x61, 0x64, 0x61, 0x2e, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x54, 0x68, 0x72, 0x65, 0x61, 0x74,
-	0x42, 0x6c, 0x6f, 0x63, 0x6b, 0x52, 0x65, 0x71, 0x1a, 0x1b, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x55,
-	0x70, 0x64, 0x61, 0x74, 0x65, 0x54, 0x68, 0x72, 0x65, 0x61, 0x74, 0x42, 0x6c, 0x6f, 0x63, 0x6b,
-	0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x4d, 0x0a, 0x11, 0x44, 0x65, 0x6c, 0x65, 0x74,
-	0x65, 0x54, 0x68, 0x72, 0x65, 0x61, 0x74, 0x42, 0x6c, 0x6f, 0x63, 0x6b, 0x12, 0x19, 0x2e, 0x61,
-	0x64, 0x61, 0x2e, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x54, 0x68, 0x72, 0x65, 0x61, 0x74, 0x42,
-	0x6c, 0x6f, 0x63, 0x6b, 0x52, 0x65, 0x71, 0x1a, 0x1b, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x44, 0x65,
-	0x6c, 0x65, 0x74, 0x65, 0x54, 0x68, 0x72, 0x65, 0x61, 0x74, 0x42, 0x6c, 0x6f, 0x63, 0x6b, 0x52,
-	0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x41, 0x0a, 0x0d, 0x53, 0x63, 0x61, 0x6e, 0x52, 0x69,
-	0x73, 0x6b, 0x53, 0x74, 0x61, 0x74, 0x73, 0x12, 0x15, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x53, 0x63,
-	0x61, 0x6e, 0x52, 0x69, 0x73, 0x6b, 0x53, 0x74, 0x61, 0x74, 0x73, 0x52, 0x65, 0x71, 0x1a, 0x17,
-	0x2e, 0x61, 0x64, 0x61, 0x2e, 0x53, 0x63, 0x61, 0x6e, 0x52, 0x69, 0x73, 0x6b, 0x53, 0x74, 0x61,
-	0x74, 0x73, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x3e, 0x0a, 0x0c, 0x4c, 0x69, 0x73,
-	0x74, 0x42, 0x61, 0x73, 0x65, 0x6c, 0x69, 0x6e, 0x65, 0x12, 0x14, 0x2e, 0x61, 0x64, 0x61, 0x2e,
-	0x4c, 0x69, 0x73, 0x74, 0x42, 0x61, 0x73, 0x65, 0x6c, 0x69, 0x6e, 0x65, 0x52, 0x65, 0x71, 0x1a,
-	0x16, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x4c, 0x69, 0x73, 0x74, 0x42, 0x61, 0x73, 0x65, 0x6c, 0x69,
-	0x6e, 0x65, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x3b, 0x0a, 0x0b, 0x47, 0x65, 0x74,
-	0x42, 0x61, 0x73, 0x65, 0x6c, 0x69, 0x6e, 0x65, 0x12, 0x13, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x47,
-	0x65, 0x74, 0x42, 0x61, 0x73, 0x65, 0x6c, 0x69, 0x6e, 0x65, 0x52, 0x65, 0x71, 0x1a, 0x15, 0x2e,
-	0x61, 0x64, 0x61, 0x2e, 0x47, 0x65, 0x74, 0x42, 0x61, 0x73, 0x65, 0x6c, 0x69, 0x6e, 0x65, 0x52,
-	0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x32, 0x0a, 0x08, 0x4c, 0x69, 0x73, 0x74, 0x4c, 0x65,
-	0x61, 0x6b, 0x12, 0x10, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x4c, 0x69, 0x73, 0x74, 0x4c, 0x65, 0x61,
-	0x6b, 0x52, 0x65, 0x71, 0x1a, 0x12, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x4c, 0x69, 0x73, 0x74, 0x4c,
-	0x65, 0x61, 0x6b, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x3b, 0x0a, 0x0b, 0x4c, 0x69,
-	0x73, 0x74, 0x57, 0x65, 0x61, 0x6b, 0x50, 0x77, 0x64, 0x12, 0x13, 0x2e, 0x61, 0x64, 0x61, 0x2e,
-	0x4c, 0x69, 0x73, 0x74, 0x57, 0x65, 0x61, 0x6b, 0x50, 0x77, 0x64, 0x52, 0x65, 0x71, 0x1a, 0x15,
-	0x2e, 0x61, 0x64, 0x61, 0x2e, 0x4c, 0x69, 0x73, 0x74, 0x57, 0x65, 0x61, 0x6b, 0x50, 0x77, 0x64,
-	0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x3e, 0x0a, 0x0c, 0x4c, 0x69, 0x73, 0x74, 0x53,
-	0x63, 0x61, 0x6e, 0x54, 0x61, 0x73, 0x6b, 0x12, 0x14, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x4c, 0x69,
-	0x73, 0x74, 0x53, 0x63, 0x61, 0x6e, 0x54, 0x61, 0x73, 0x6b, 0x52, 0x65, 0x71, 0x1a, 0x16, 0x2e,
-	0x61, 0x64, 0x61, 0x2e, 0x4c, 0x69, 0x73, 0x74, 0x53, 0x63, 0x61, 0x6e, 0x54, 0x61, 0x73, 0x6b,
-	0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x3b, 0x0a, 0x0b, 0x47, 0x65, 0x74, 0x53, 0x63,
-	0x61, 0x6e, 0x54, 0x61, 0x73, 0x6b, 0x12, 0x13, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x47, 0x65, 0x74,
-	0x53, 0x63, 0x61, 0x6e, 0x54, 0x61, 0x73, 0x6b, 0x52, 0x65, 0x71, 0x1a, 0x15, 0x2e, 0x61, 0x64,
-	0x61, 0x2e, 0x47, 0x65, 0x74, 0x53, 0x63, 0x61, 0x6e, 0x54, 0x61, 0x73, 0x6b, 0x52, 0x65, 0x70,
-	0x6c, 0x79, 0x22, 0x00, 0x12, 0x3b, 0x0a, 0x0b, 0x41, 0x64, 0x64, 0x53, 0x63, 0x61, 0x6e, 0x54,
-	0x61, 0x73, 0x6b, 0x12, 0x13, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x41, 0x64, 0x64, 0x53, 0x63, 0x61,
-	0x6e, 0x54, 0x61, 0x73, 0x6b, 0x52, 0x65, 0x71, 0x1a, 0x15, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x41,
-	0x64, 0x64, 0x53, 0x63, 0x61, 0x6e, 0x54, 0x61, 0x73, 0x6b, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22,
-	0x00, 0x12, 0x47, 0x0a, 0x0f, 0x52, 0x65, 0x63, 0x68, 0x65, 0x63, 0x6b, 0x53, 0x63, 0x61, 0x6e,
-	0x54, 0x61, 0x73, 0x6b, 0x12, 0x17, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x52, 0x65, 0x63, 0x68, 0x65,
-	0x63, 0x6b, 0x53, 0x63, 0x61, 0x6e, 0x54, 0x61, 0x73, 0x6b, 0x52, 0x65, 0x71, 0x1a, 0x19, 0x2e,
-	0x61, 0x64, 0x61, 0x2e, 0x52, 0x65, 0x63, 0x68, 0x65, 0x63, 0x6b, 0x53, 0x63, 0x61, 0x6e, 0x54,
-	0x61, 0x73, 0x6b, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x44, 0x0a, 0x0e, 0x44, 0x65,
-	0x6c, 0x65, 0x74, 0x65, 0x53, 0x63, 0x61, 0x6e, 0x54, 0x61, 0x73, 0x6b, 0x12, 0x16, 0x2e, 0x61,
-	0x64, 0x61, 0x2e, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x53, 0x63, 0x61, 0x6e, 0x54, 0x61, 0x73,
-	0x6b, 0x52, 0x65, 0x71, 0x1a, 0x18, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x44, 0x65, 0x6c, 0x65, 0x74,
-	0x65, 0x53, 0x63, 0x61, 0x6e, 0x54, 0x61, 0x73, 0x6b, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00,
-	0x12, 0x3e, 0x0a, 0x0c, 0x4c, 0x69, 0x73, 0x74, 0x53, 0x63, 0x61, 0x6e, 0x43, 0x6f, 0x6e, 0x66,
-	0x12, 0x14, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x4c, 0x69, 0x73, 0x74, 0x53, 0x63, 0x61, 0x6e, 0x43,
-	0x6f, 0x6e, 0x66, 0x52, 0x65, 0x71, 0x1a, 0x16, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x4c, 0x69, 0x73,
-	0x74, 0x53, 0x63, 0x61, 0x6e, 0x43, 0x6f, 0x6e, 0x66, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00,
-	0x12, 0x3b, 0x0a, 0x0b, 0x53, 0x65, 0x74, 0x53, 0x63, 0x61, 0x6e, 0x43, 0x6f, 0x6e, 0x66, 0x12,
-	0x13, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x53, 0x65, 0x74, 0x53, 0x63, 0x61, 0x6e, 0x43, 0x6f, 0x6e,
-	0x66, 0x52, 0x65, 0x71, 0x1a, 0x15, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x53, 0x65, 0x74, 0x53, 0x63,
-	0x61, 0x6e, 0x43, 0x6f, 0x6e, 0x66, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x3b, 0x0a,
-	0x0b, 0x47, 0x65, 0x74, 0x53, 0x63, 0x61, 0x6e, 0x43, 0x6f, 0x6e, 0x66, 0x12, 0x13, 0x2e, 0x61,
-	0x64, 0x61, 0x2e, 0x47, 0x65, 0x74, 0x53, 0x63, 0x61, 0x6e, 0x43, 0x6f, 0x6e, 0x66, 0x52, 0x65,
-	0x71, 0x1a, 0x15, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x47, 0x65, 0x74, 0x53, 0x63, 0x61, 0x6e, 0x43,
-	0x6f, 0x6e, 0x66, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x4a, 0x0a, 0x10, 0x47, 0x65,
-	0x74, 0x53, 0x63, 0x61, 0x6e, 0x54, 0x6d, 0x70, 0x6c, 0x4e, 0x61, 0x6d, 0x65, 0x73, 0x12, 0x18,
+	0x63, 0x6b, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x44, 0x0a, 0x0e, 0x41, 0x64, 0x64,
+	0x54, 0x68, 0x72, 0x65, 0x61, 0x74, 0x42, 0x6c, 0x6f, 0x63, 0x6b, 0x12, 0x16, 0x2e, 0x61, 0x64,
+	0x61, 0x2e, 0x41, 0x64, 0x64, 0x54, 0x68, 0x72, 0x65, 0x61, 0x74, 0x42, 0x6c, 0x6f, 0x63, 0x6b,
+	0x52, 0x65, 0x71, 0x1a, 0x18, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x41, 0x64, 0x64, 0x54, 0x68, 0x72,
+	0x65, 0x61, 0x74, 0x42, 0x6c, 0x6f, 0x63, 0x6b, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12,
+	0x4d, 0x0a, 0x11, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x54, 0x68, 0x72, 0x65, 0x61, 0x74, 0x42,
+	0x6c, 0x6f, 0x63, 0x6b, 0x12, 0x19, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x55, 0x70, 0x64, 0x61, 0x74,
+	0x65, 0x54, 0x68, 0x72, 0x65, 0x61, 0x74, 0x42, 0x6c, 0x6f, 0x63, 0x6b, 0x52, 0x65, 0x71, 0x1a,
+	0x1b, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x54, 0x68, 0x72, 0x65,
+	0x61, 0x74, 0x42, 0x6c, 0x6f, 0x63, 0x6b, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x4d,
+	0x0a, 0x11, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x54, 0x68, 0x72, 0x65, 0x61, 0x74, 0x42, 0x6c,
+	0x6f, 0x63, 0x6b, 0x12, 0x19, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65,
+	0x54, 0x68, 0x72, 0x65, 0x61, 0x74, 0x42, 0x6c, 0x6f, 0x63, 0x6b, 0x52, 0x65, 0x71, 0x1a, 0x1b,
+	0x2e, 0x61, 0x64, 0x61, 0x2e, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x54, 0x68, 0x72, 0x65, 0x61,
+	0x74, 0x42, 0x6c, 0x6f, 0x63, 0x6b, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x41, 0x0a,
+	0x0d, 0x4c, 0x69, 0x73, 0x74, 0x41, 0x6c, 0x65, 0x72, 0x74, 0x52, 0x75, 0x6c, 0x65, 0x12, 0x15,
+	0x2e, 0x61, 0x64, 0x61, 0x2e, 0x4c, 0x69, 0x73, 0x74, 0x41, 0x6c, 0x65, 0x72, 0x74, 0x52, 0x75,
+	0x6c, 0x65, 0x52, 0x65, 0x71, 0x1a, 0x17, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x4c, 0x69, 0x73, 0x74,
+	0x41, 0x6c, 0x65, 0x72, 0x74, 0x52, 0x75, 0x6c, 0x65, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00,
+	0x12, 0x3e, 0x0a, 0x0c, 0x41, 0x64, 0x64, 0x41, 0x6c, 0x65, 0x72, 0x74, 0x52, 0x75, 0x6c, 0x65,
+	0x12, 0x14, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x41, 0x64, 0x64, 0x41, 0x6c, 0x65, 0x72, 0x74, 0x52,
+	0x75, 0x6c, 0x65, 0x52, 0x65, 0x71, 0x1a, 0x16, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x41, 0x64, 0x64,
+	0x41, 0x6c, 0x65, 0x72, 0x74, 0x52, 0x75, 0x6c, 0x65, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00,
+	0x12, 0x47, 0x0a, 0x0f, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x41, 0x6c, 0x65, 0x72, 0x74, 0x52,
+	0x75, 0x6c, 0x65, 0x12, 0x17, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65,
+	0x41, 0x6c, 0x65, 0x72, 0x74, 0x52, 0x75, 0x6c, 0x65, 0x52, 0x65, 0x71, 0x1a, 0x19, 0x2e, 0x61,
+	0x64, 0x61, 0x2e, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x41, 0x6c, 0x65, 0x72, 0x74, 0x52, 0x75,
+	0x6c, 0x65, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x47, 0x0a, 0x0f, 0x44, 0x65, 0x6c,
+	0x65, 0x74, 0x65, 0x41, 0x6c, 0x65, 0x72, 0x74, 0x52, 0x75, 0x6c, 0x65, 0x12, 0x17, 0x2e, 0x61,
+	0x64, 0x61, 0x2e, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x41, 0x6c, 0x65, 0x72, 0x74, 0x52, 0x75,
+	0x6c, 0x65, 0x52, 0x65, 0x71, 0x1a, 0x19, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x44, 0x65, 0x6c, 0x65,
+	0x74, 0x65, 0x41, 0x6c, 0x65, 0x72, 0x74, 0x52, 0x75, 0x6c, 0x65, 0x52, 0x65, 0x70, 0x6c, 0x79,
+	0x22, 0x00, 0x12, 0x4a, 0x0a, 0x10, 0x4c, 0x69, 0x73, 0x74, 0x41, 0x63, 0x74, 0x69, 0x76, 0x69,
+	0x74, 0x79, 0x52, 0x75, 0x6c, 0x65, 0x12, 0x18, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x4c, 0x69, 0x73,
+	0x74, 0x41, 0x63, 0x74, 0x69, 0x76, 0x69, 0x74, 0x79, 0x52, 0x75, 0x6c, 0x65, 0x52, 0x65, 0x71,
+	0x1a, 0x1a, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x4c, 0x69, 0x73, 0x74, 0x41, 0x63, 0x74, 0x69, 0x76,
+	0x69, 0x74, 0x79, 0x52, 0x75, 0x6c, 0x65, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x47,
+	0x0a, 0x0f, 0x47, 0x65, 0x74, 0x41, 0x63, 0x74, 0x69, 0x76, 0x69, 0x74, 0x79, 0x52, 0x75, 0x6c,
+	0x65, 0x12, 0x17, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x47, 0x65, 0x74, 0x41, 0x63, 0x74, 0x69, 0x76,
+	0x69, 0x74, 0x79, 0x52, 0x75, 0x6c, 0x65, 0x52, 0x65, 0x71, 0x1a, 0x19, 0x2e, 0x61, 0x64, 0x61,
+	0x2e, 0x47, 0x65, 0x74, 0x41, 0x63, 0x74, 0x69, 0x76, 0x69, 0x74, 0x79, 0x52, 0x75, 0x6c, 0x65,
+	0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x47, 0x0a, 0x0f, 0x41, 0x64, 0x64, 0x41, 0x63,
+	0x74, 0x69, 0x76, 0x69, 0x74, 0x79, 0x52, 0x75, 0x6c, 0x65, 0x12, 0x17, 0x2e, 0x61, 0x64, 0x61,
+	0x2e, 0x41, 0x64, 0x64, 0x41, 0x63, 0x74, 0x69, 0x76, 0x69, 0x74, 0x79, 0x52, 0x75, 0x6c, 0x65,
+	0x52, 0x65, 0x71, 0x1a, 0x19, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x41, 0x64, 0x64, 0x41, 0x63, 0x74,
+	0x69, 0x76, 0x69, 0x74, 0x79, 0x52, 0x75, 0x6c, 0x65, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00,
+	0x12, 0x50, 0x0a, 0x12, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x41, 0x63, 0x74, 0x69, 0x76, 0x69,
+	0x74, 0x79, 0x52, 0x75, 0x6c, 0x65, 0x12, 0x1a, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x55, 0x70, 0x64,
+	0x61, 0x74, 0x65, 0x41, 0x63, 0x74, 0x69, 0x76, 0x69, 0x74, 0x79, 0x52, 0x75, 0x6c, 0x65, 0x52,
+	0x65, 0x71, 0x1a, 0x1c, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x41,
+	0x63, 0x74, 0x69, 0x76, 0x69, 0x74, 0x79, 0x52, 0x75, 0x6c, 0x65, 0x52, 0x65, 0x70, 0x6c, 0x79,
+	0x22, 0x00, 0x12, 0x50, 0x0a, 0x12, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x41, 0x63, 0x74, 0x69,
+	0x76, 0x69, 0x74, 0x79, 0x52, 0x75, 0x6c, 0x65, 0x12, 0x1a, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x44,
+	0x65, 0x6c, 0x65, 0x74, 0x65, 0x41, 0x63, 0x74, 0x69, 0x76, 0x69, 0x74, 0x79, 0x52, 0x75, 0x6c,
+	0x65, 0x52, 0x65, 0x71, 0x1a, 0x1c, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x44, 0x65, 0x6c, 0x65, 0x74,
+	0x65, 0x41, 0x63, 0x74, 0x69, 0x76, 0x69, 0x74, 0x79, 0x52, 0x75, 0x6c, 0x65, 0x52, 0x65, 0x70,
+	0x6c, 0x79, 0x22, 0x00, 0x12, 0x41, 0x0a, 0x0d, 0x53, 0x63, 0x61, 0x6e, 0x52, 0x69, 0x73, 0x6b,
+	0x53, 0x74, 0x61, 0x74, 0x73, 0x12, 0x15, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x53, 0x63, 0x61, 0x6e,
+	0x52, 0x69, 0x73, 0x6b, 0x53, 0x74, 0x61, 0x74, 0x73, 0x52, 0x65, 0x71, 0x1a, 0x17, 0x2e, 0x61,
+	0x64, 0x61, 0x2e, 0x53, 0x63, 0x61, 0x6e, 0x52, 0x69, 0x73, 0x6b, 0x53, 0x74, 0x61, 0x74, 0x73,
+	0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x3e, 0x0a, 0x0c, 0x4c, 0x69, 0x73, 0x74, 0x42,
+	0x61, 0x73, 0x65, 0x6c, 0x69, 0x6e, 0x65, 0x12, 0x14, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x4c, 0x69,
+	0x73, 0x74, 0x42, 0x61, 0x73, 0x65, 0x6c, 0x69, 0x6e, 0x65, 0x52, 0x65, 0x71, 0x1a, 0x16, 0x2e,
+	0x61, 0x64, 0x61, 0x2e, 0x4c, 0x69, 0x73, 0x74, 0x42, 0x61, 0x73, 0x65, 0x6c, 0x69, 0x6e, 0x65,
+	0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x3b, 0x0a, 0x0b, 0x47, 0x65, 0x74, 0x42, 0x61,
+	0x73, 0x65, 0x6c, 0x69, 0x6e, 0x65, 0x12, 0x13, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x47, 0x65, 0x74,
+	0x42, 0x61, 0x73, 0x65, 0x6c, 0x69, 0x6e, 0x65, 0x52, 0x65, 0x71, 0x1a, 0x15, 0x2e, 0x61, 0x64,
+	0x61, 0x2e, 0x47, 0x65, 0x74, 0x42, 0x61, 0x73, 0x65, 0x6c, 0x69, 0x6e, 0x65, 0x52, 0x65, 0x70,
+	0x6c, 0x79, 0x22, 0x00, 0x12, 0x32, 0x0a, 0x08, 0x4c, 0x69, 0x73, 0x74, 0x4c, 0x65, 0x61, 0x6b,
+	0x12, 0x10, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x4c, 0x69, 0x73, 0x74, 0x4c, 0x65, 0x61, 0x6b, 0x52,
+	0x65, 0x71, 0x1a, 0x12, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x4c, 0x69, 0x73, 0x74, 0x4c, 0x65, 0x61,
+	0x6b, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x3b, 0x0a, 0x0b, 0x4c, 0x69, 0x73, 0x74,
+	0x57, 0x65, 0x61, 0x6b, 0x50, 0x77, 0x64, 0x12, 0x13, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x4c, 0x69,
+	0x73, 0x74, 0x57, 0x65, 0x61, 0x6b, 0x50, 0x77, 0x64, 0x52, 0x65, 0x71, 0x1a, 0x15, 0x2e, 0x61,
+	0x64, 0x61, 0x2e, 0x4c, 0x69, 0x73, 0x74, 0x57, 0x65, 0x61, 0x6b, 0x50, 0x77, 0x64, 0x52, 0x65,
+	0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x3e, 0x0a, 0x0c, 0x4c, 0x69, 0x73, 0x74, 0x53, 0x63, 0x61,
+	0x6e, 0x54, 0x61, 0x73, 0x6b, 0x12, 0x14, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x4c, 0x69, 0x73, 0x74,
+	0x53, 0x63, 0x61, 0x6e, 0x54, 0x61, 0x73, 0x6b, 0x52, 0x65, 0x71, 0x1a, 0x16, 0x2e, 0x61, 0x64,
+	0x61, 0x2e, 0x4c, 0x69, 0x73, 0x74, 0x53, 0x63, 0x61, 0x6e, 0x54, 0x61, 0x73, 0x6b, 0x52, 0x65,
+	0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x3b, 0x0a, 0x0b, 0x47, 0x65, 0x74, 0x53, 0x63, 0x61, 0x6e,
+	0x54, 0x61, 0x73, 0x6b, 0x12, 0x13, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x47, 0x65, 0x74, 0x53, 0x63,
+	0x61, 0x6e, 0x54, 0x61, 0x73, 0x6b, 0x52, 0x65, 0x71, 0x1a, 0x15, 0x2e, 0x61, 0x64, 0x61, 0x2e,
+	0x47, 0x65, 0x74, 0x53, 0x63, 0x61, 0x6e, 0x54, 0x61, 0x73, 0x6b, 0x52, 0x65, 0x70, 0x6c, 0x79,
+	0x22, 0x00, 0x12, 0x3b, 0x0a, 0x0b, 0x41, 0x64, 0x64, 0x53, 0x63, 0x61, 0x6e, 0x54, 0x61, 0x73,
+	0x6b, 0x12, 0x13, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x41, 0x64, 0x64, 0x53, 0x63, 0x61, 0x6e, 0x54,
+	0x61, 0x73, 0x6b, 0x52, 0x65, 0x71, 0x1a, 0x15, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x41, 0x64, 0x64,
+	0x53, 0x63, 0x61, 0x6e, 0x54, 0x61, 0x73, 0x6b, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12,
+	0x47, 0x0a, 0x0f, 0x52, 0x65, 0x63, 0x68, 0x65, 0x63, 0x6b, 0x53, 0x63, 0x61, 0x6e, 0x54, 0x61,
+	0x73, 0x6b, 0x12, 0x17, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x52, 0x65, 0x63, 0x68, 0x65, 0x63, 0x6b,
+	0x53, 0x63, 0x61, 0x6e, 0x54, 0x61, 0x73, 0x6b, 0x52, 0x65, 0x71, 0x1a, 0x19, 0x2e, 0x61, 0x64,
+	0x61, 0x2e, 0x52, 0x65, 0x63, 0x68, 0x65, 0x63, 0x6b, 0x53, 0x63, 0x61, 0x6e, 0x54, 0x61, 0x73,
+	0x6b, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x44, 0x0a, 0x0e, 0x44, 0x65, 0x6c, 0x65,
+	0x74, 0x65, 0x53, 0x63, 0x61, 0x6e, 0x54, 0x61, 0x73, 0x6b, 0x12, 0x16, 0x2e, 0x61, 0x64, 0x61,
+	0x2e, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x53, 0x63, 0x61, 0x6e, 0x54, 0x61, 0x73, 0x6b, 0x52,
+	0x65, 0x71, 0x1a, 0x18, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x53,
+	0x63, 0x61, 0x6e, 0x54, 0x61, 0x73, 0x6b, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x3e,
+	0x0a, 0x0c, 0x4c, 0x69, 0x73, 0x74, 0x53, 0x63, 0x61, 0x6e, 0x43, 0x6f, 0x6e, 0x66, 0x12, 0x14,
+	0x2e, 0x61, 0x64, 0x61, 0x2e, 0x4c, 0x69, 0x73, 0x74, 0x53, 0x63, 0x61, 0x6e, 0x43, 0x6f, 0x6e,
+	0x66, 0x52, 0x65, 0x71, 0x1a, 0x16, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x4c, 0x69, 0x73, 0x74, 0x53,
+	0x63, 0x61, 0x6e, 0x43, 0x6f, 0x6e, 0x66, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x3b,
+	0x0a, 0x0b, 0x53, 0x65, 0x74, 0x53, 0x63, 0x61, 0x6e, 0x43, 0x6f, 0x6e, 0x66, 0x12, 0x13, 0x2e,
+	0x61, 0x64, 0x61, 0x2e, 0x53, 0x65, 0x74, 0x53, 0x63, 0x61, 0x6e, 0x43, 0x6f, 0x6e, 0x66, 0x52,
+	0x65, 0x71, 0x1a, 0x15, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x53, 0x65, 0x74, 0x53, 0x63, 0x61, 0x6e,
+	0x43, 0x6f, 0x6e, 0x66, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x3b, 0x0a, 0x0b, 0x47,
+	0x65, 0x74, 0x53, 0x63, 0x61, 0x6e, 0x43, 0x6f, 0x6e, 0x66, 0x12, 0x13, 0x2e, 0x61, 0x64, 0x61,
+	0x2e, 0x47, 0x65, 0x74, 0x53, 0x63, 0x61, 0x6e, 0x43, 0x6f, 0x6e, 0x66, 0x52, 0x65, 0x71, 0x1a,
+	0x15, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x47, 0x65, 0x74, 0x53, 0x63, 0x61, 0x6e, 0x43, 0x6f, 0x6e,
+	0x66, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x4a, 0x0a, 0x10, 0x47, 0x65, 0x74, 0x53,
+	0x63, 0x61, 0x6e, 0x54, 0x6d, 0x70, 0x6c, 0x4e, 0x61, 0x6d, 0x65, 0x73, 0x12, 0x18, 0x2e, 0x61,
+	0x64, 0x61, 0x2e, 0x47, 0x65, 0x74, 0x53, 0x63, 0x61, 0x6e, 0x54, 0x6d, 0x70, 0x6c, 0x4e, 0x61,
+	0x6d, 0x65, 0x73, 0x52, 0x65, 0x71, 0x1a, 0x1a, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x47, 0x65, 0x74,
+	0x53, 0x63, 0x61, 0x6e, 0x54, 0x6d, 0x70, 0x6c, 0x4e, 0x61, 0x6d, 0x65, 0x73, 0x52, 0x65, 0x70,
+	0x6c, 0x79, 0x22, 0x00, 0x12, 0x44, 0x0a, 0x0e, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x53, 0x63,
+	0x61, 0x6e, 0x43, 0x6f, 0x6e, 0x66, 0x12, 0x16, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x55, 0x70, 0x64,
+	0x61, 0x74, 0x65, 0x53, 0x63, 0x61, 0x6e, 0x43, 0x6f, 0x6e, 0x66, 0x52, 0x65, 0x71, 0x1a, 0x18,
+	0x2e, 0x61, 0x64, 0x61, 0x2e, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x53, 0x63, 0x61, 0x6e, 0x43,
+	0x6f, 0x6e, 0x66, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x3e, 0x0a, 0x0c, 0x4c, 0x69,
+	0x73, 0x74, 0x53, 0x63, 0x61, 0x6e, 0x54, 0x6d, 0x70, 0x6c, 0x12, 0x14, 0x2e, 0x61, 0x64, 0x61,
+	0x2e, 0x4c, 0x69, 0x73, 0x74, 0x53, 0x63, 0x61, 0x6e, 0x54, 0x6d, 0x70, 0x6c, 0x52, 0x65, 0x71,
+	0x1a, 0x16, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x4c, 0x69, 0x73, 0x74, 0x53, 0x63, 0x61, 0x6e, 0x54,
+	0x6d, 0x70, 0x6c, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x3b, 0x0a, 0x0b, 0x47, 0x65,
+	0x74, 0x53, 0x63, 0x61, 0x6e, 0x54, 0x6d, 0x70, 0x6c, 0x12, 0x13, 0x2e, 0x61, 0x64, 0x61, 0x2e,
+	0x47, 0x65, 0x74, 0x53, 0x63, 0x61, 0x6e, 0x54, 0x6d, 0x70, 0x6c, 0x52, 0x65, 0x71, 0x1a, 0x15,
 	0x2e, 0x61, 0x64, 0x61, 0x2e, 0x47, 0x65, 0x74, 0x53, 0x63, 0x61, 0x6e, 0x54, 0x6d, 0x70, 0x6c,
-	0x4e, 0x61, 0x6d, 0x65, 0x73, 0x52, 0x65, 0x71, 0x1a, 0x1a, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x47,
-	0x65, 0x74, 0x53, 0x63, 0x61, 0x6e, 0x54, 0x6d, 0x70, 0x6c, 0x4e, 0x61, 0x6d, 0x65, 0x73, 0x52,
-	0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x44, 0x0a, 0x0e, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65,
-	0x53, 0x63, 0x61, 0x6e, 0x43, 0x6f, 0x6e, 0x66, 0x12, 0x16, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x55,
-	0x70, 0x64, 0x61, 0x74, 0x65, 0x53, 0x63, 0x61, 0x6e, 0x43, 0x6f, 0x6e, 0x66, 0x52, 0x65, 0x71,
-	0x1a, 0x18, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x53, 0x63, 0x61,
-	0x6e, 0x43, 0x6f, 0x6e, 0x66, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x3e, 0x0a, 0x0c,
-	0x4c, 0x69, 0x73, 0x74, 0x53, 0x63, 0x61, 0x6e, 0x54, 0x6d, 0x70, 0x6c, 0x12, 0x14, 0x2e, 0x61,
-	0x64, 0x61, 0x2e, 0x4c, 0x69, 0x73, 0x74, 0x53, 0x63, 0x61, 0x6e, 0x54, 0x6d, 0x70, 0x6c, 0x52,
-	0x65, 0x71, 0x1a, 0x16, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x4c, 0x69, 0x73, 0x74, 0x53, 0x63, 0x61,
-	0x6e, 0x54, 0x6d, 0x70, 0x6c, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x3b, 0x0a, 0x0b,
-	0x47, 0x65, 0x74, 0x53, 0x63, 0x61, 0x6e, 0x54, 0x6d, 0x70, 0x6c, 0x12, 0x13, 0x2e, 0x61, 0x64,
-	0x61, 0x2e, 0x47, 0x65, 0x74, 0x53, 0x63, 0x61, 0x6e, 0x54, 0x6d, 0x70, 0x6c, 0x52, 0x65, 0x71,
-	0x1a, 0x15, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x47, 0x65, 0x74, 0x53, 0x63, 0x61, 0x6e, 0x54, 0x6d,
-	0x70, 0x6c, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x44, 0x0a, 0x0e, 0x55, 0x70, 0x64,
-	0x61, 0x74, 0x65, 0x53, 0x63, 0x61, 0x6e, 0x54, 0x6d, 0x70, 0x6c, 0x12, 0x16, 0x2e, 0x61, 0x64,
-	0x61, 0x2e, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x53, 0x63, 0x61, 0x6e, 0x54, 0x6d, 0x70, 0x6c,
-	0x52, 0x65, 0x71, 0x1a, 0x18, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65,
-	0x53, 0x63, 0x61, 0x6e, 0x54, 0x6d, 0x70, 0x6c, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12,
-	0x44, 0x0a, 0x0e, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x53, 0x63, 0x61, 0x6e, 0x54, 0x6d, 0x70,
-	0x6c, 0x12, 0x16, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x53, 0x63,
-	0x61, 0x6e, 0x54, 0x6d, 0x70, 0x6c, 0x52, 0x65, 0x71, 0x1a, 0x18, 0x2e, 0x61, 0x64, 0x61, 0x2e,
-	0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x53, 0x63, 0x61, 0x6e, 0x54, 0x6d, 0x70, 0x6c, 0x52, 0x65,
-	0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x3b, 0x0a, 0x0b, 0x41, 0x64, 0x64, 0x53, 0x63, 0x61, 0x6e,
-	0x54, 0x6d, 0x70, 0x6c, 0x12, 0x13, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x41, 0x64, 0x64, 0x53, 0x63,
-	0x61, 0x6e, 0x54, 0x6d, 0x70, 0x6c, 0x52, 0x65, 0x71, 0x1a, 0x15, 0x2e, 0x61, 0x64, 0x61, 0x2e,
-	0x41, 0x64, 0x64, 0x53, 0x63, 0x61, 0x6e, 0x54, 0x6d, 0x70, 0x6c, 0x52, 0x65, 0x70, 0x6c, 0x79,
-	0x22, 0x00, 0x12, 0x44, 0x0a, 0x0e, 0x4c, 0x69, 0x73, 0x74, 0x53, 0x63, 0x61, 0x6e, 0x50, 0x6c,
-	0x75, 0x67, 0x69, 0x6e, 0x12, 0x16, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x4c, 0x69, 0x73, 0x74, 0x53,
-	0x63, 0x61, 0x6e, 0x50, 0x6c, 0x75, 0x67, 0x69, 0x6e, 0x52, 0x65, 0x71, 0x1a, 0x18, 0x2e, 0x61,
-	0x64, 0x61, 0x2e, 0x4c, 0x69, 0x73, 0x74, 0x53, 0x63, 0x61, 0x6e, 0x50, 0x6c, 0x75, 0x67, 0x69,
-	0x6e, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x44, 0x0a, 0x0e, 0x44, 0x61, 0x73, 0x68,
-	0x62, 0x6f, 0x61, 0x72, 0x64, 0x53, 0x74, 0x61, 0x74, 0x73, 0x12, 0x16, 0x2e, 0x61, 0x64, 0x61,
-	0x2e, 0x44, 0x61, 0x73, 0x68, 0x62, 0x6f, 0x61, 0x72, 0x64, 0x53, 0x74, 0x61, 0x74, 0x73, 0x52,
-	0x65, 0x71, 0x1a, 0x18, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x44, 0x61, 0x73, 0x68, 0x62, 0x6f, 0x61,
-	0x72, 0x64, 0x53, 0x74, 0x61, 0x74, 0x73, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x47,
-	0x0a, 0x0f, 0x44, 0x61, 0x73, 0x68, 0x62, 0x6f, 0x61, 0x72, 0x64, 0x54, 0x72, 0x65, 0x6e, 0x64,
-	0x73, 0x12, 0x17, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x44, 0x61, 0x73, 0x68, 0x62, 0x6f, 0x61, 0x72,
-	0x64, 0x54, 0x72, 0x65, 0x6e, 0x64, 0x73, 0x52, 0x65, 0x71, 0x1a, 0x19, 0x2e, 0x61, 0x64, 0x61,
-	0x2e, 0x44, 0x61, 0x73, 0x68, 0x62, 0x6f, 0x61, 0x72, 0x64, 0x54, 0x72, 0x65, 0x6e, 0x64, 0x73,
-	0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x4d, 0x0a, 0x11, 0x44, 0x61, 0x73, 0x68, 0x62,
-	0x6f, 0x61, 0x72, 0x64, 0x4c, 0x6f, 0x67, 0x53, 0x74, 0x61, 0x74, 0x73, 0x12, 0x19, 0x2e, 0x61,
-	0x64, 0x61, 0x2e, 0x44, 0x61, 0x73, 0x68, 0x62, 0x6f, 0x61, 0x72, 0x64, 0x4c, 0x6f, 0x67, 0x53,
-	0x74, 0x61, 0x74, 0x73, 0x52, 0x65, 0x71, 0x1a, 0x1b, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x44, 0x61,
-	0x73, 0x68, 0x62, 0x6f, 0x61, 0x72, 0x64, 0x4c, 0x6f, 0x67, 0x53, 0x74, 0x61, 0x74, 0x73, 0x52,
-	0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x42, 0x07, 0x5a, 0x05, 0x2e, 0x2f, 0x3b, 0x76, 0x32, 0x62,
-	0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x44, 0x0a, 0x0e, 0x55, 0x70, 0x64, 0x61, 0x74,
+	0x65, 0x53, 0x63, 0x61, 0x6e, 0x54, 0x6d, 0x70, 0x6c, 0x12, 0x16, 0x2e, 0x61, 0x64, 0x61, 0x2e,
+	0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x53, 0x63, 0x61, 0x6e, 0x54, 0x6d, 0x70, 0x6c, 0x52, 0x65,
+	0x71, 0x1a, 0x18, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x53, 0x63,
+	0x61, 0x6e, 0x54, 0x6d, 0x70, 0x6c, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x44, 0x0a,
+	0x0e, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x53, 0x63, 0x61, 0x6e, 0x54, 0x6d, 0x70, 0x6c, 0x12,
+	0x16, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x53, 0x63, 0x61, 0x6e,
+	0x54, 0x6d, 0x70, 0x6c, 0x52, 0x65, 0x71, 0x1a, 0x18, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x44, 0x65,
+	0x6c, 0x65, 0x74, 0x65, 0x53, 0x63, 0x61, 0x6e, 0x54, 0x6d, 0x70, 0x6c, 0x52, 0x65, 0x70, 0x6c,
+	0x79, 0x22, 0x00, 0x12, 0x3b, 0x0a, 0x0b, 0x41, 0x64, 0x64, 0x53, 0x63, 0x61, 0x6e, 0x54, 0x6d,
+	0x70, 0x6c, 0x12, 0x13, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x41, 0x64, 0x64, 0x53, 0x63, 0x61, 0x6e,
+	0x54, 0x6d, 0x70, 0x6c, 0x52, 0x65, 0x71, 0x1a, 0x15, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x41, 0x64,
+	0x64, 0x53, 0x63, 0x61, 0x6e, 0x54, 0x6d, 0x70, 0x6c, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00,
+	0x12, 0x44, 0x0a, 0x0e, 0x4c, 0x69, 0x73, 0x74, 0x53, 0x63, 0x61, 0x6e, 0x50, 0x6c, 0x75, 0x67,
+	0x69, 0x6e, 0x12, 0x16, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x4c, 0x69, 0x73, 0x74, 0x53, 0x63, 0x61,
+	0x6e, 0x50, 0x6c, 0x75, 0x67, 0x69, 0x6e, 0x52, 0x65, 0x71, 0x1a, 0x18, 0x2e, 0x61, 0x64, 0x61,
+	0x2e, 0x4c, 0x69, 0x73, 0x74, 0x53, 0x63, 0x61, 0x6e, 0x50, 0x6c, 0x75, 0x67, 0x69, 0x6e, 0x52,
+	0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x44, 0x0a, 0x0e, 0x44, 0x61, 0x73, 0x68, 0x62, 0x6f,
+	0x61, 0x72, 0x64, 0x53, 0x74, 0x61, 0x74, 0x73, 0x12, 0x16, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x44,
+	0x61, 0x73, 0x68, 0x62, 0x6f, 0x61, 0x72, 0x64, 0x53, 0x74, 0x61, 0x74, 0x73, 0x52, 0x65, 0x71,
+	0x1a, 0x18, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x44, 0x61, 0x73, 0x68, 0x62, 0x6f, 0x61, 0x72, 0x64,
+	0x53, 0x74, 0x61, 0x74, 0x73, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x47, 0x0a, 0x0f,
+	0x44, 0x61, 0x73, 0x68, 0x62, 0x6f, 0x61, 0x72, 0x64, 0x54, 0x72, 0x65, 0x6e, 0x64, 0x73, 0x12,
+	0x17, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x44, 0x61, 0x73, 0x68, 0x62, 0x6f, 0x61, 0x72, 0x64, 0x54,
+	0x72, 0x65, 0x6e, 0x64, 0x73, 0x52, 0x65, 0x71, 0x1a, 0x19, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x44,
+	0x61, 0x73, 0x68, 0x62, 0x6f, 0x61, 0x72, 0x64, 0x54, 0x72, 0x65, 0x6e, 0x64, 0x73, 0x52, 0x65,
+	0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x4d, 0x0a, 0x11, 0x44, 0x61, 0x73, 0x68, 0x62, 0x6f, 0x61,
+	0x72, 0x64, 0x4c, 0x6f, 0x67, 0x53, 0x74, 0x61, 0x74, 0x73, 0x12, 0x19, 0x2e, 0x61, 0x64, 0x61,
+	0x2e, 0x44, 0x61, 0x73, 0x68, 0x62, 0x6f, 0x61, 0x72, 0x64, 0x4c, 0x6f, 0x67, 0x53, 0x74, 0x61,
+	0x74, 0x73, 0x52, 0x65, 0x71, 0x1a, 0x1b, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x44, 0x61, 0x73, 0x68,
+	0x62, 0x6f, 0x61, 0x72, 0x64, 0x4c, 0x6f, 0x67, 0x53, 0x74, 0x61, 0x74, 0x73, 0x52, 0x65, 0x70,
+	0x6c, 0x79, 0x22, 0x00, 0x42, 0x07, 0x5a, 0x05, 0x2e, 0x2f, 0x3b, 0x76, 0x32, 0x62, 0x06, 0x70,
+	0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
@@ -17986,8 +20094,8 @@ func file_ada_proto_rawDescGZIP() []byte {
 	return file_ada_proto_rawDescData
 }
 
-var file_ada_proto_msgTypes = make([]protoimpl.MessageInfo, 269)
-var file_ada_proto_goTypes = []any{
+var file_ada_proto_msgTypes = make([]protoimpl.MessageInfo, 289)
+var file_ada_proto_goTypes = []interface{}{
 	(*ModelPage)(nil),                                // 0: ada.ModelPage
 	(*LoginReq)(nil),                                 // 1: ada.LoginReq
 	(*LoginReply)(nil),                               // 2: ada.LoginReply
@@ -18191,372 +20299,414 @@ var file_ada_proto_goTypes = []any{
 	(*DashboardTrendsReply)(nil),                     // 200: ada.DashboardTrendsReply
 	(*DashboardLogStatsReq)(nil),                     // 201: ada.DashboardLogStatsReq
 	(*DashboardLogStatsReply)(nil),                   // 202: ada.DashboardLogStatsReply
-	(*ListUserReply_Details)(nil),                    // 203: ada.ListUserReply.Details
-	(*ListDomainReplyDcList)(nil),                    // 204: ada.ListDomainReply.dcList
-	(*ListDomainReply_Details)(nil),                  // 205: ada.ListDomainReply.Details
-	nil,                                              // 206: ada.ListDomainReply.Details.DomainInfoEntry
-	(*ListSensorReplyMapSlice)(nil),                  // 207: ada.ListSensorReply.mapSlice
-	(*ListSensorReply_Details)(nil),                  // 208: ada.ListSensorReply.Details
-	nil,                                              // 209: ada.ListSensorReply.mapSlice.EventEntry
-	nil,                                              // 210: ada.ListSensorReply.Details.NetIfaceEntry
-	nil,                                              // 211: ada.ListSensorReply.Details.PerfLimitEntry
-	nil,                                              // 212: ada.UpdateSensorReq.PerfLimitEntry
-	nil,                                              // 213: ada.GetSystemInfoReply.StatsCfgEntry
-	nil,                                              // 214: ada.SetSystemStatsCfgReq.StatsEntry
-	(*ListAuditLogReply_Details)(nil),                // 215: ada.ListAuditLogReply.Details
-	(*ListNotifyConfReply_Details)(nil),              // 216: ada.ListNotifyConfReply.Details
-	nil,                                              // 217: ada.ListNotifyConfReply.Details.MetadataEntry
-	nil,                                              // 218: ada.UpdateNotifyConfReq.MetadataEntry
-	nil,                                              // 219: ada.TestNotifyConfReq.MetadataEntry
-	(*ListExportTaskReply_Details)(nil),              // 220: ada.ListExportTaskReply.Details
-	nil,                                              // 221: ada.ListExportTaskReply.Details.ParamsEntry
-	nil,                                              // 222: ada.AddExportTaskReq.ParamsEntry
-	(*ListNotifyReply_Details)(nil),                  // 223: ada.ListNotifyReply.Details
-	nil,                                              // 224: ada.ListNotifyReply.Details.ParamsEntry
-	(*ThreatTopsReply_Details)(nil),                  // 225: ada.ThreatTopsReply.Details
-	(*ThreatTrendsReply_Item)(nil),                   // 226: ada.ThreatTrendsReply.Item
-	(*AttackFlowReply_Field)(nil),                    // 227: ada.AttackFlowReply.Field
-	nil,                                              // 228: ada.AttackFlowReply.Field.ItemEntry
-	(*ListThreatReq_Details)(nil),                    // 229: ada.ListThreatReq.Details
-	(*ListThreatReply_Details)(nil),                  // 230: ada.ListThreatReply.Details
-	nil,                                              // 231: ada.GetThreatNamesReply.NamesEntry
-	(*ListThreatRuleReply_Details)(nil),              // 232: ada.ListThreatRuleReply.Details
-	nil,                                              // 233: ada.GetThreatReply.FieldDataEntry
-	nil,                                              // 234: ada.ActivityDetails.FieldDataEntry
-	nil,                                              // 235: ada.GetActivityNamesReply.NamesEntry
-	(*ListSensitiveEntryReply_Details)(nil),          // 236: ada.ListSensitiveEntryReply.Details
-	(*ListThreatWhitelistReply_Details)(nil),         // 237: ada.ListThreatWhitelistReply.Details
-	(*ListThreatWhitelistReply_DetailsRuleInfo)(nil), // 238: ada.ListThreatWhitelistReply.Details.ruleInfo
-	nil,                                      // 239: ada.ListThreatWhitelistReply.Details.ruleInfo.InfoEntry
-	(*AddThreatWhitelistReqRuleInfo)(nil),    // 240: ada.AddThreatWhitelistReq.ruleInfo
-	nil,                                      // 241: ada.AddThreatWhitelistReq.ruleInfo.InfoEntry
-	(*UpdateThreatWhitelistReqRuleInfo)(nil), // 242: ada.UpdateThreatWhitelistReq.ruleInfo
-	nil,                                      // 243: ada.UpdateThreatWhitelistReq.ruleInfo.InfoEntry
-	(*ListThreatBlockReply_Results)(nil),     // 244: ada.ListThreatBlockReply.Results
-	(*ListThreatBlockReply_Details)(nil),     // 245: ada.ListThreatBlockReply.Details
-	nil,                                      // 246: ada.ListThreatBlockReply.Results.InfoEntry
-	(*ScanRiskStatsReply_Details)(nil),       // 247: ada.ScanRiskStatsReply.Details
-	(*ListBaselineReply_Details)(nil),        // 248: ada.ListBaselineReply.Details
-	(*GetBaselineReplyEntryInfo)(nil),        // 249: ada.GetBaselineReply.entryInfo
-	nil,                                      // 250: ada.GetBaselineReply.entryInfo.InfoEntry
-	(*ListLeakReply_Details)(nil),            // 251: ada.ListLeakReply.Details
-	(*ListWeakPwdReply_Details)(nil),         // 252: ada.ListWeakPwdReply.Details
-	(*ListScanTaskReply_Details)(nil),        // 253: ada.ListScanTaskReply.Details
-	(*GetScanTaskReply_Details)(nil),         // 254: ada.GetScanTaskReply.Details
-	nil,                                      // 255: ada.GetScanTaskReply.Details.ParamsEntry
-	nil,                                      // 256: ada.AddScanTaskReq.PlansEntry
-	nil,                                      // 257: ada.scanConfDetail.PlansEntry
-	(*GetScanTmplNamesReplyTmplNames)(nil),   // 258: ada.GetScanTmplNamesReply.tmplNames
-	nil,                                      // 259: ada.UpdateScanConfReq.PlansEntry
-	(*ListScanTmplReply_Details)(nil),        // 260: ada.ListScanTmplReply.Details
-	nil,                                      // 261: ada.pluginInfo.MetaDataEntry
-	nil,                                      // 262: ada.pluginInfoV2.MetaDataEntry
-	nil,                                      // 263: ada.DashboardStatsReply.AssetEntry
-	nil,                                      // 264: ada.DashboardStatsReply.AlertEntry
-	nil,                                      // 265: ada.DashboardStatsReply.BaselineEntry
-	nil,                                      // 266: ada.DashboardStatsReply.LeakEntry
-	nil,                                      // 267: ada.DashboardStatsReply.WeakpwdEntry
-	(*DashboardLogStatsReplyLogStatsList)(nil), // 268: ada.DashboardLogStatsReply.logStatsList
+	(*ListAlertRuleReq)(nil),                         // 203: ada.ListAlertRuleReq
+	(*AlertRuleInfo)(nil),                            // 204: ada.AlertRuleInfo
+	(*ListAlertRuleReply)(nil),                       // 205: ada.ListAlertRuleReply
+	(*AddAlertRuleReq)(nil),                          // 206: ada.AddAlertRuleReq
+	(*AddAlertRuleReply)(nil),                        // 207: ada.AddAlertRuleReply
+	(*UpdateAlertRuleReq)(nil),                       // 208: ada.UpdateAlertRuleReq
+	(*UpdateAlertRuleReply)(nil),                     // 209: ada.UpdateAlertRuleReply
+	(*DeleteAlertRuleReq)(nil),                       // 210: ada.DeleteAlertRuleReq
+	(*DeleteAlertRuleReply)(nil),                     // 211: ada.DeleteAlertRuleReply
+	(*ListActivityRuleReq)(nil),                      // 212: ada.ListActivityRuleReq
+	(*ActivityRuleInfo)(nil),                         // 213: ada.ActivityRuleInfo
+	(*ListActivityRuleReply)(nil),                    // 214: ada.ListActivityRuleReply
+	(*GetActivityRuleReq)(nil),                       // 215: ada.GetActivityRuleReq
+	(*GetActivityRuleReply)(nil),                     // 216: ada.GetActivityRuleReply
+	(*AddActivityRuleReq)(nil),                       // 217: ada.AddActivityRuleReq
+	(*AddActivityRuleReply)(nil),                     // 218: ada.AddActivityRuleReply
+	(*UpdateActivityRuleReq)(nil),                    // 219: ada.UpdateActivityRuleReq
+	(*UpdateActivityRuleReply)(nil),                  // 220: ada.UpdateActivityRuleReply
+	(*DeleteActivityRuleReq)(nil),                    // 221: ada.DeleteActivityRuleReq
+	(*DeleteActivityRuleReply)(nil),                  // 222: ada.DeleteActivityRuleReply
+	(*ListUserReply_Details)(nil),                    // 223: ada.ListUserReply.Details
+	(*ListDomainReplyDcList)(nil),                    // 224: ada.ListDomainReply.dcList
+	(*ListDomainReply_Details)(nil),                  // 225: ada.ListDomainReply.Details
+	nil,                                              // 226: ada.ListDomainReply.Details.DomainInfoEntry
+	(*ListSensorReplyMapSlice)(nil),                  // 227: ada.ListSensorReply.mapSlice
+	(*ListSensorReply_Details)(nil),                  // 228: ada.ListSensorReply.Details
+	nil,                                              // 229: ada.ListSensorReply.mapSlice.EventEntry
+	nil,                                              // 230: ada.ListSensorReply.Details.NetIfaceEntry
+	nil,                                              // 231: ada.ListSensorReply.Details.PerfLimitEntry
+	nil,                                              // 232: ada.UpdateSensorReq.PerfLimitEntry
+	nil,                                              // 233: ada.GetSystemInfoReply.StatsCfgEntry
+	nil,                                              // 234: ada.SetSystemStatsCfgReq.StatsEntry
+	(*ListAuditLogReply_Details)(nil),                // 235: ada.ListAuditLogReply.Details
+	(*ListNotifyConfReply_Details)(nil),              // 236: ada.ListNotifyConfReply.Details
+	nil,                                              // 237: ada.ListNotifyConfReply.Details.MetadataEntry
+	nil,                                              // 238: ada.UpdateNotifyConfReq.MetadataEntry
+	nil,                                              // 239: ada.TestNotifyConfReq.MetadataEntry
+	(*ListExportTaskReply_Details)(nil),              // 240: ada.ListExportTaskReply.Details
+	nil,                                              // 241: ada.ListExportTaskReply.Details.ParamsEntry
+	nil,                                              // 242: ada.AddExportTaskReq.ParamsEntry
+	(*ListNotifyReply_Details)(nil),                  // 243: ada.ListNotifyReply.Details
+	nil,                                              // 244: ada.ListNotifyReply.Details.ParamsEntry
+	(*ThreatTopsReply_Details)(nil),                  // 245: ada.ThreatTopsReply.Details
+	(*ThreatTrendsReply_Item)(nil),                   // 246: ada.ThreatTrendsReply.Item
+	(*AttackFlowReply_Field)(nil),                    // 247: ada.AttackFlowReply.Field
+	nil,                                              // 248: ada.AttackFlowReply.Field.ItemEntry
+	(*ListThreatReq_Details)(nil),                    // 249: ada.ListThreatReq.Details
+	(*ListThreatReply_Details)(nil),                  // 250: ada.ListThreatReply.Details
+	nil,                                              // 251: ada.GetThreatNamesReply.NamesEntry
+	(*ListThreatRuleReply_Details)(nil),              // 252: ada.ListThreatRuleReply.Details
+	nil,                                              // 253: ada.GetThreatReply.FieldDataEntry
+	nil,                                              // 254: ada.ActivityDetails.FieldDataEntry
+	nil,                                              // 255: ada.GetActivityNamesReply.NamesEntry
+	(*ListSensitiveEntryReply_Details)(nil),          // 256: ada.ListSensitiveEntryReply.Details
+	(*ListThreatWhitelistReply_Details)(nil),         // 257: ada.ListThreatWhitelistReply.Details
+	(*ListThreatWhitelistReply_DetailsRuleInfo)(nil), // 258: ada.ListThreatWhitelistReply.Details.ruleInfo
+	nil,                                      // 259: ada.ListThreatWhitelistReply.Details.ruleInfo.InfoEntry
+	(*AddThreatWhitelistReqRuleInfo)(nil),    // 260: ada.AddThreatWhitelistReq.ruleInfo
+	nil,                                      // 261: ada.AddThreatWhitelistReq.ruleInfo.InfoEntry
+	(*UpdateThreatWhitelistReqRuleInfo)(nil), // 262: ada.UpdateThreatWhitelistReq.ruleInfo
+	nil,                                      // 263: ada.UpdateThreatWhitelistReq.ruleInfo.InfoEntry
+	(*ListThreatBlockReply_Results)(nil),     // 264: ada.ListThreatBlockReply.Results
+	(*ListThreatBlockReply_Details)(nil),     // 265: ada.ListThreatBlockReply.Details
+	nil,                                      // 266: ada.ListThreatBlockReply.Results.InfoEntry
+	(*ScanRiskStatsReply_Details)(nil),       // 267: ada.ScanRiskStatsReply.Details
+	(*ListBaselineReply_Details)(nil),        // 268: ada.ListBaselineReply.Details
+	(*GetBaselineReplyEntryInfo)(nil),        // 269: ada.GetBaselineReply.entryInfo
+	nil,                                      // 270: ada.GetBaselineReply.entryInfo.InfoEntry
+	(*ListLeakReply_Details)(nil),            // 271: ada.ListLeakReply.Details
+	(*ListWeakPwdReply_Details)(nil),         // 272: ada.ListWeakPwdReply.Details
+	(*ListScanTaskReply_Details)(nil),        // 273: ada.ListScanTaskReply.Details
+	(*GetScanTaskReply_Details)(nil),         // 274: ada.GetScanTaskReply.Details
+	nil,                                      // 275: ada.GetScanTaskReply.Details.ParamsEntry
+	nil,                                      // 276: ada.AddScanTaskReq.PlansEntry
+	nil,                                      // 277: ada.scanConfDetail.PlansEntry
+	(*GetScanTmplNamesReplyTmplNames)(nil),   // 278: ada.GetScanTmplNamesReply.tmplNames
+	nil,                                      // 279: ada.UpdateScanConfReq.PlansEntry
+	(*ListScanTmplReply_Details)(nil),        // 280: ada.ListScanTmplReply.Details
+	nil,                                      // 281: ada.pluginInfo.MetaDataEntry
+	nil,                                      // 282: ada.pluginInfoV2.MetaDataEntry
+	nil,                                      // 283: ada.DashboardStatsReply.AssetEntry
+	nil,                                      // 284: ada.DashboardStatsReply.AlertEntry
+	nil,                                      // 285: ada.DashboardStatsReply.BaselineEntry
+	nil,                                      // 286: ada.DashboardStatsReply.LeakEntry
+	nil,                                      // 287: ada.DashboardStatsReply.WeakpwdEntry
+	(*DashboardLogStatsReplyLogStatsList)(nil), // 288: ada.DashboardLogStatsReply.logStatsList
 }
 var file_ada_proto_depIdxs = []int32{
 	0,   // 0: ada.ListUserReply.page:type_name -> ada.ModelPage
-	203, // 1: ada.ListUserReply.List:type_name -> ada.ListUserReply.Details
+	223, // 1: ada.ListUserReply.List:type_name -> ada.ListUserReply.Details
 	0,   // 2: ada.ListDomainReply.page:type_name -> ada.ModelPage
-	205, // 3: ada.ListDomainReply.List:type_name -> ada.ListDomainReply.Details
+	225, // 3: ada.ListDomainReply.List:type_name -> ada.ListDomainReply.Details
 	0,   // 4: ada.ListSensorReply.page:type_name -> ada.ModelPage
-	208, // 5: ada.ListSensorReply.List:type_name -> ada.ListSensorReply.Details
-	212, // 6: ada.UpdateSensorReq.perfLimit:type_name -> ada.UpdateSensorReq.PerfLimitEntry
-	213, // 7: ada.GetSystemInfoReply.statsCfg:type_name -> ada.GetSystemInfoReply.StatsCfgEntry
+	228, // 5: ada.ListSensorReply.List:type_name -> ada.ListSensorReply.Details
+	232, // 6: ada.UpdateSensorReq.perfLimit:type_name -> ada.UpdateSensorReq.PerfLimitEntry
+	233, // 7: ada.GetSystemInfoReply.statsCfg:type_name -> ada.GetSystemInfoReply.StatsCfgEntry
 	66,  // 8: ada.GetSystemStatsReply.stats:type_name -> ada.StatsInfo
-	214, // 9: ada.SetSystemStatsCfgReq.stats:type_name -> ada.SetSystemStatsCfgReq.StatsEntry
+	234, // 9: ada.SetSystemStatsCfgReq.stats:type_name -> ada.SetSystemStatsCfgReq.StatsEntry
 	0,   // 10: ada.ListAuditLogReply.page:type_name -> ada.ModelPage
-	215, // 11: ada.ListAuditLogReply.List:type_name -> ada.ListAuditLogReply.Details
-	216, // 12: ada.ListNotifyConfReply.list:type_name -> ada.ListNotifyConfReply.Details
+	235, // 11: ada.ListAuditLogReply.List:type_name -> ada.ListAuditLogReply.Details
+	236, // 12: ada.ListNotifyConfReply.list:type_name -> ada.ListNotifyConfReply.Details
 	0,   // 13: ada.ListNotifyConfReply.page:type_name -> ada.ModelPage
-	218, // 14: ada.UpdateNotifyConfReq.metadata:type_name -> ada.UpdateNotifyConfReq.MetadataEntry
-	219, // 15: ada.TestNotifyConfReq.metadata:type_name -> ada.TestNotifyConfReq.MetadataEntry
+	238, // 14: ada.UpdateNotifyConfReq.metadata:type_name -> ada.UpdateNotifyConfReq.MetadataEntry
+	239, // 15: ada.TestNotifyConfReq.metadata:type_name -> ada.TestNotifyConfReq.MetadataEntry
 	0,   // 16: ada.ListExportTaskReply.page:type_name -> ada.ModelPage
-	220, // 17: ada.ListExportTaskReply.list:type_name -> ada.ListExportTaskReply.Details
-	222, // 18: ada.AddExportTaskReq.params:type_name -> ada.AddExportTaskReq.ParamsEntry
+	240, // 17: ada.ListExportTaskReply.list:type_name -> ada.ListExportTaskReply.Details
+	242, // 18: ada.AddExportTaskReq.params:type_name -> ada.AddExportTaskReq.ParamsEntry
 	0,   // 19: ada.ListNotifyReply.page:type_name -> ada.ModelPage
-	223, // 20: ada.ListNotifyReply.List:type_name -> ada.ListNotifyReply.Details
-	225, // 21: ada.ThreatTopsReply.List:type_name -> ada.ThreatTopsReply.Details
-	226, // 22: ada.ThreatTrendsReply.List:type_name -> ada.ThreatTrendsReply.Item
-	227, // 23: ada.AttackFlowReply.fields:type_name -> ada.AttackFlowReply.Field
-	229, // 24: ada.ListThreatReq.advancedSearch:type_name -> ada.ListThreatReq.Details
+	243, // 20: ada.ListNotifyReply.List:type_name -> ada.ListNotifyReply.Details
+	245, // 21: ada.ThreatTopsReply.List:type_name -> ada.ThreatTopsReply.Details
+	246, // 22: ada.ThreatTrendsReply.List:type_name -> ada.ThreatTrendsReply.Item
+	247, // 23: ada.AttackFlowReply.fields:type_name -> ada.AttackFlowReply.Field
+	249, // 24: ada.ListThreatReq.advancedSearch:type_name -> ada.ListThreatReq.Details
 	0,   // 25: ada.ListThreatReply.page:type_name -> ada.ModelPage
-	230, // 26: ada.ListThreatReply.List:type_name -> ada.ListThreatReply.Details
-	231, // 27: ada.GetThreatNamesReply.names:type_name -> ada.GetThreatNamesReply.NamesEntry
-	232, // 28: ada.ListThreatRuleReply.List:type_name -> ada.ListThreatRuleReply.Details
-	233, // 29: ada.GetThreatReply.fieldData:type_name -> ada.GetThreatReply.FieldDataEntry
+	250, // 26: ada.ListThreatReply.List:type_name -> ada.ListThreatReply.Details
+	251, // 27: ada.GetThreatNamesReply.names:type_name -> ada.GetThreatNamesReply.NamesEntry
+	252, // 28: ada.ListThreatRuleReply.List:type_name -> ada.ListThreatRuleReply.Details
+	253, // 29: ada.GetThreatReply.fieldData:type_name -> ada.GetThreatReply.FieldDataEntry
 	102, // 30: ada.GetThreatReply.attackFlow:type_name -> ada.AttackFlowReply
 	116, // 31: ada.GetThreatReply.activities:type_name -> ada.ActivityDetails
-	234, // 32: ada.ActivityDetails.fieldData:type_name -> ada.ActivityDetails.FieldDataEntry
+	254, // 32: ada.ActivityDetails.fieldData:type_name -> ada.ActivityDetails.FieldDataEntry
 	0,   // 33: ada.ListActivityReply.page:type_name -> ada.ModelPage
 	116, // 34: ada.ListActivityReply.List:type_name -> ada.ActivityDetails
-	235, // 35: ada.GetActivityNamesReply.names:type_name -> ada.GetActivityNamesReply.NamesEntry
+	255, // 35: ada.GetActivityNamesReply.names:type_name -> ada.GetActivityNamesReply.NamesEntry
 	116, // 36: ada.GetActivityReply.details:type_name -> ada.ActivityDetails
 	0,   // 37: ada.ListSensitiveEntryReply.page:type_name -> ada.ModelPage
-	236, // 38: ada.ListSensitiveEntryReply.List:type_name -> ada.ListSensitiveEntryReply.Details
+	256, // 38: ada.ListSensitiveEntryReply.List:type_name -> ada.ListSensitiveEntryReply.Details
 	0,   // 39: ada.ListThreatWhitelistReply.page:type_name -> ada.ModelPage
-	237, // 40: ada.ListThreatWhitelistReply.List:type_name -> ada.ListThreatWhitelistReply.Details
-	240, // 41: ada.AddThreatWhitelistReq.rules:type_name -> ada.AddThreatWhitelistReq.ruleInfo
-	242, // 42: ada.UpdateThreatWhitelistReq.rules:type_name -> ada.UpdateThreatWhitelistReq.ruleInfo
+	257, // 40: ada.ListThreatWhitelistReply.List:type_name -> ada.ListThreatWhitelistReply.Details
+	260, // 41: ada.AddThreatWhitelistReq.rules:type_name -> ada.AddThreatWhitelistReq.ruleInfo
+	262, // 42: ada.UpdateThreatWhitelistReq.rules:type_name -> ada.UpdateThreatWhitelistReq.ruleInfo
 	0,   // 43: ada.ListThreatBlockReply.page:type_name -> ada.ModelPage
-	245, // 44: ada.ListThreatBlockReply.List:type_name -> ada.ListThreatBlockReply.Details
-	247, // 45: ada.ScanRiskStatsReply.List:type_name -> ada.ScanRiskStatsReply.Details
+	265, // 44: ada.ListThreatBlockReply.List:type_name -> ada.ListThreatBlockReply.Details
+	267, // 45: ada.ScanRiskStatsReply.List:type_name -> ada.ScanRiskStatsReply.Details
 	0,   // 46: ada.ListBaselineReply.page:type_name -> ada.ModelPage
-	248, // 47: ada.ListBaselineReply.List:type_name -> ada.ListBaselineReply.Details
-	249, // 48: ada.GetBaselineReply.entries:type_name -> ada.GetBaselineReply.entryInfo
+	268, // 47: ada.ListBaselineReply.List:type_name -> ada.ListBaselineReply.Details
+	269, // 48: ada.GetBaselineReply.entries:type_name -> ada.GetBaselineReply.entryInfo
 	0,   // 49: ada.ListLeakReply.page:type_name -> ada.ModelPage
-	251, // 50: ada.ListLeakReply.List:type_name -> ada.ListLeakReply.Details
+	271, // 50: ada.ListLeakReply.List:type_name -> ada.ListLeakReply.Details
 	0,   // 51: ada.ListWeakPwdReply.page:type_name -> ada.ModelPage
-	252, // 52: ada.ListWeakPwdReply.List:type_name -> ada.ListWeakPwdReply.Details
+	272, // 52: ada.ListWeakPwdReply.List:type_name -> ada.ListWeakPwdReply.Details
 	0,   // 53: ada.ListScanTaskReply.page:type_name -> ada.ModelPage
-	253, // 54: ada.ListScanTaskReply.List:type_name -> ada.ListScanTaskReply.Details
+	273, // 54: ada.ListScanTaskReply.List:type_name -> ada.ListScanTaskReply.Details
 	0,   // 55: ada.GetScanTaskReply.page:type_name -> ada.ModelPage
-	254, // 56: ada.GetScanTaskReply.List:type_name -> ada.GetScanTaskReply.Details
-	256, // 57: ada.AddScanTaskReq.plans:type_name -> ada.AddScanTaskReq.PlansEntry
+	274, // 56: ada.GetScanTaskReply.List:type_name -> ada.GetScanTaskReply.Details
+	276, // 57: ada.AddScanTaskReq.plans:type_name -> ada.AddScanTaskReq.PlansEntry
 	0,   // 58: ada.ListScanConfReply.page:type_name -> ada.ModelPage
 	174, // 59: ada.ListScanConfReply.List:type_name -> ada.scanConfDetail
-	257, // 60: ada.scanConfDetail.plans:type_name -> ada.scanConfDetail.PlansEntry
+	277, // 60: ada.scanConfDetail.plans:type_name -> ada.scanConfDetail.PlansEntry
 	174, // 61: ada.GetScanConfReply.Detail:type_name -> ada.scanConfDetail
-	258, // 62: ada.GetScanTmplNamesReply.List:type_name -> ada.GetScanTmplNamesReply.tmplNames
-	259, // 63: ada.UpdateScanConfReq.plans:type_name -> ada.UpdateScanConfReq.PlansEntry
+	278, // 62: ada.GetScanTmplNamesReply.List:type_name -> ada.GetScanTmplNamesReply.tmplNames
+	279, // 63: ada.UpdateScanConfReq.plans:type_name -> ada.UpdateScanConfReq.PlansEntry
 	0,   // 64: ada.ListScanTmplReply.page:type_name -> ada.ModelPage
-	260, // 65: ada.ListScanTmplReply.List:type_name -> ada.ListScanTmplReply.Details
-	261, // 66: ada.pluginInfo.metaData:type_name -> ada.pluginInfo.MetaDataEntry
+	280, // 65: ada.ListScanTmplReply.List:type_name -> ada.ListScanTmplReply.Details
+	281, // 66: ada.pluginInfo.metaData:type_name -> ada.pluginInfo.MetaDataEntry
 	186, // 67: ada.GetScanTmplReply.Plugins:type_name -> ada.pluginInfo
 	192, // 68: ada.UpdateScanTmplReq.Plugins:type_name -> ada.pluginInfoV2
-	262, // 69: ada.pluginInfoV2.metaData:type_name -> ada.pluginInfoV2.MetaDataEntry
+	282, // 69: ada.pluginInfoV2.metaData:type_name -> ada.pluginInfoV2.MetaDataEntry
 	192, // 70: ada.AddScanTmplReq.Plugins:type_name -> ada.pluginInfoV2
 	186, // 71: ada.ListScanPluginReply.Plugins:type_name -> ada.pluginInfo
-	263, // 72: ada.DashboardStatsReply.asset:type_name -> ada.DashboardStatsReply.AssetEntry
-	264, // 73: ada.DashboardStatsReply.alert:type_name -> ada.DashboardStatsReply.AlertEntry
-	265, // 74: ada.DashboardStatsReply.baseline:type_name -> ada.DashboardStatsReply.BaselineEntry
-	266, // 75: ada.DashboardStatsReply.leak:type_name -> ada.DashboardStatsReply.LeakEntry
-	267, // 76: ada.DashboardStatsReply.weakpwd:type_name -> ada.DashboardStatsReply.WeakpwdEntry
-	268, // 77: ada.DashboardLogStatsReply.List:type_name -> ada.DashboardLogStatsReply.logStatsList
-	206, // 78: ada.ListDomainReply.Details.domainInfo:type_name -> ada.ListDomainReply.Details.DomainInfoEntry
-	204, // 79: ada.ListDomainReply.Details.DCs:type_name -> ada.ListDomainReply.dcList
-	209, // 80: ada.ListSensorReply.mapSlice.event:type_name -> ada.ListSensorReply.mapSlice.EventEntry
-	210, // 81: ada.ListSensorReply.Details.netIface:type_name -> ada.ListSensorReply.Details.NetIfaceEntry
-	211, // 82: ada.ListSensorReply.Details.perfLimit:type_name -> ada.ListSensorReply.Details.PerfLimitEntry
-	207, // 83: ada.ListSensorReply.Details.events:type_name -> ada.ListSensorReply.mapSlice
-	217, // 84: ada.ListNotifyConfReply.Details.metadata:type_name -> ada.ListNotifyConfReply.Details.MetadataEntry
-	221, // 85: ada.ListExportTaskReply.Details.params:type_name -> ada.ListExportTaskReply.Details.ParamsEntry
-	224, // 86: ada.ListNotifyReply.Details.params:type_name -> ada.ListNotifyReply.Details.ParamsEntry
-	228, // 87: ada.AttackFlowReply.Field.item:type_name -> ada.AttackFlowReply.Field.ItemEntry
-	102, // 88: ada.ListThreatReply.Details.attackFlow:type_name -> ada.AttackFlowReply
-	238, // 89: ada.ListThreatWhitelistReply.Details.rules:type_name -> ada.ListThreatWhitelistReply.Details.ruleInfo
-	239, // 90: ada.ListThreatWhitelistReply.Details.ruleInfo.info:type_name -> ada.ListThreatWhitelistReply.Details.ruleInfo.InfoEntry
-	241, // 91: ada.AddThreatWhitelistReq.ruleInfo.info:type_name -> ada.AddThreatWhitelistReq.ruleInfo.InfoEntry
-	243, // 92: ada.UpdateThreatWhitelistReq.ruleInfo.info:type_name -> ada.UpdateThreatWhitelistReq.ruleInfo.InfoEntry
-	246, // 93: ada.ListThreatBlockReply.Results.info:type_name -> ada.ListThreatBlockReply.Results.InfoEntry
-	244, // 94: ada.ListThreatBlockReply.Details.results:type_name -> ada.ListThreatBlockReply.Results
-	250, // 95: ada.GetBaselineReply.entryInfo.info:type_name -> ada.GetBaselineReply.entryInfo.InfoEntry
-	255, // 96: ada.GetScanTaskReply.Details.params:type_name -> ada.GetScanTaskReply.Details.ParamsEntry
-	1,   // 97: ada.ADA.Login:input_type -> ada.LoginReq
-	3,   // 98: ada.ADA.Logout:input_type -> ada.LogoutReq
-	5,   // 99: ada.ADA.ListUser:input_type -> ada.ListUserReq
-	7,   // 100: ada.ADA.AddUser:input_type -> ada.AddUserReq
-	9,   // 101: ada.ADA.UpdateUser:input_type -> ada.UpdateUserReq
-	11,  // 102: ada.ADA.UpdateUserPassword:input_type -> ada.UpdateUserPasswordReq
-	13,  // 103: ada.ADA.DeleteUser:input_type -> ada.DeleteUserReq
-	15,  // 104: ada.ADA.UserExists:input_type -> ada.UserExistsReq
-	17,  // 105: ada.ADA.CheckMfa:input_type -> ada.CheckMfaReq
-	19,  // 106: ada.ADA.EnableMfa:input_type -> ada.EnableMfaReq
-	21,  // 107: ada.ADA.DisableMfa:input_type -> ada.DisableMfaReq
-	23,  // 108: ada.ADA.UpdateAvatar:input_type -> ada.UpdateAvatarReq
-	25,  // 109: ada.ADA.ResetPassword:input_type -> ada.ResetPasswordReq
-	27,  // 110: ada.ADA.GetPwdUpdateTm:input_type -> ada.GetPwdUpdateTmReq
-	29,  // 111: ada.ADA.ListDomain:input_type -> ada.ListDomainReq
-	31,  // 112: ada.ADA.AddDomain:input_type -> ada.AddDomainReq
-	33,  // 113: ada.ADA.TestDomain:input_type -> ada.TestDomainReq
-	35,  // 114: ada.ADA.UpdateDomain:input_type -> ada.UpdateDomainReq
-	37,  // 115: ada.ADA.DeleteDomain:input_type -> ada.DeleteDomainReq
-	39,  // 116: ada.ADA.UpdateDomainData:input_type -> ada.UpdateDomainDataReq
-	41,  // 117: ada.ADA.DeploySensor:input_type -> ada.DeploySensorReq
-	43,  // 118: ada.ADA.ListSensor:input_type -> ada.ListSensorReq
-	45,  // 119: ada.ADA.UpdateSensor:input_type -> ada.UpdateSensorReq
-	47,  // 120: ada.ADA.DownloadSensor:input_type -> ada.DownloadSensorReq
-	49,  // 121: ada.ADA.CmdSensor:input_type -> ada.CmdSensorReq
-	51,  // 122: ada.ADA.UpdateSensorVersion:input_type -> ada.UpdateSensorVersionReq
-	53,  // 123: ada.ADA.GetSystemInfo:input_type -> ada.GetSystemInfoReq
-	55,  // 124: ada.ADA.GetSystemIcon:input_type -> ada.GetSystemIconReq
-	57,  // 125: ada.ADA.UpdateSystemIcon:input_type -> ada.UpdateSystemIconReq
-	59,  // 126: ada.ADA.UpdateNtpAddress:input_type -> ada.UpdateNtpAddressReq
-	61,  // 127: ada.ADA.UpdateSystemLanguage:input_type -> ada.UpdateSystemLanguageReq
-	63,  // 128: ada.ADA.UpdateSystemIP:input_type -> ada.UpdateSystemIPReq
-	65,  // 129: ada.ADA.GetSystemStats:input_type -> ada.GetSystemStatsReq
-	68,  // 130: ada.ADA.SetSystemStatsCfg:input_type -> ada.SetSystemStatsCfgReq
-	72,  // 131: ada.ADA.GetLicense:input_type -> ada.GetLicenseReq
-	74,  // 132: ada.ADA.UpdateLicense:input_type -> ada.UpdateLicenseReq
-	76,  // 133: ada.ADA.NetworkDebug:input_type -> ada.NetworkDebugReq
-	78,  // 134: ada.ADA.ListNotifyConf:input_type -> ada.ListNotifyConfReq
-	80,  // 135: ada.ADA.UpdateNotifyConf:input_type -> ada.UpdateNotifyConfReq
-	82,  // 136: ada.ADA.EnableNotifyConf:input_type -> ada.EnableNotifyConfReq
-	84,  // 137: ada.ADA.TestNotifyConf:input_type -> ada.TestNotifyConfReq
-	86,  // 138: ada.ADA.ListExportTask:input_type -> ada.ListExportTaskReq
-	88,  // 139: ada.ADA.AddExportTask:input_type -> ada.AddExportTaskReq
-	90,  // 140: ada.ADA.DeleteExportTask:input_type -> ada.DeleteExportTaskReq
-	92,  // 141: ada.ADA.ListNotify:input_type -> ada.ListNotifyReq
-	94,  // 142: ada.ADA.UpdateNotify:input_type -> ada.UpdateNotifyReq
-	96,  // 143: ada.ADA.StatsNotify:input_type -> ada.StatsNotifyReq
-	70,  // 144: ada.ADA.ListAuditLog:input_type -> ada.ListAuditLogReq
-	98,  // 145: ada.ADA.ThreatTops:input_type -> ada.ThreatTopsReq
-	100, // 146: ada.ADA.ThreatTrends:input_type -> ada.ThreatTrendsReq
-	103, // 147: ada.ADA.ListThreat:input_type -> ada.ListThreatReq
-	105, // 148: ada.ADA.GetThreatNames:input_type -> ada.GetThreatNamesReq
-	107, // 149: ada.ADA.ListThreatRule:input_type -> ada.ListThreatRuleReq
-	109, // 150: ada.ADA.ActionThreatRule:input_type -> ada.ActionThreatRuleReq
-	111, // 151: ada.ADA.GetThreat:input_type -> ada.GetThreatReq
-	113, // 152: ada.ADA.ActionThreat:input_type -> ada.ActionThreatReq
-	115, // 153: ada.ADA.ListActivity:input_type -> ada.ListActivityReq
-	118, // 154: ada.ADA.GetActivityNames:input_type -> ada.GetActivityNamesReq
-	120, // 155: ada.ADA.GetActivity:input_type -> ada.GetActivityReq
-	122, // 156: ada.ADA.ListThreatConf:input_type -> ada.ListThreatConfReq
-	124, // 157: ada.ADA.UpdateThreatConf:input_type -> ada.UpdateThreatConfReq
-	126, // 158: ada.ADA.ListSensitiveEntry:input_type -> ada.ListSensitiveEntryReq
-	128, // 159: ada.ADA.AddSensitiveEntry:input_type -> ada.AddSensitiveEntryReq
-	130, // 160: ada.ADA.ListDomainEntry:input_type -> ada.ListDomainEntryReq
-	132, // 161: ada.ADA.DeleteSensitiveEntry:input_type -> ada.DeleteSensitiveEntryReq
-	134, // 162: ada.ADA.ListThreatWhitelist:input_type -> ada.ListThreatWhitelistReq
-	136, // 163: ada.ADA.GetThreatWhitelistField:input_type -> ada.GetThreatWhitelistFieldReq
-	138, // 164: ada.ADA.AddThreatWhitelist:input_type -> ada.AddThreatWhitelistReq
-	140, // 165: ada.ADA.UpdateThreatWhitelist:input_type -> ada.UpdateThreatWhitelistReq
-	142, // 166: ada.ADA.DeleteThreatWhitelist:input_type -> ada.DeleteThreatWhitelistReq
-	144, // 167: ada.ADA.ListThreatBlock:input_type -> ada.ListThreatBlockReq
-	146, // 168: ada.ADA.AddThreatBlock:input_type -> ada.AddThreatBlockReq
-	148, // 169: ada.ADA.UpdateThreatBlock:input_type -> ada.UpdateThreatBlockReq
-	150, // 170: ada.ADA.DeleteThreatBlock:input_type -> ada.DeleteThreatBlockReq
-	152, // 171: ada.ADA.ScanRiskStats:input_type -> ada.ScanRiskStatsReq
-	154, // 172: ada.ADA.ListBaseline:input_type -> ada.ListBaselineReq
-	156, // 173: ada.ADA.GetBaseline:input_type -> ada.GetBaselineReq
-	158, // 174: ada.ADA.ListLeak:input_type -> ada.ListLeakReq
-	160, // 175: ada.ADA.ListWeakPwd:input_type -> ada.ListWeakPwdReq
-	162, // 176: ada.ADA.ListScanTask:input_type -> ada.ListScanTaskReq
-	164, // 177: ada.ADA.GetScanTask:input_type -> ada.GetScanTaskReq
-	166, // 178: ada.ADA.AddScanTask:input_type -> ada.AddScanTaskReq
-	168, // 179: ada.ADA.RecheckScanTask:input_type -> ada.RecheckScanTaskReq
-	170, // 180: ada.ADA.DeleteScanTask:input_type -> ada.DeleteScanTaskReq
-	172, // 181: ada.ADA.ListScanConf:input_type -> ada.ListScanConfReq
-	175, // 182: ada.ADA.SetScanConf:input_type -> ada.SetScanConfReq
-	177, // 183: ada.ADA.GetScanConf:input_type -> ada.GetScanConfReq
-	179, // 184: ada.ADA.GetScanTmplNames:input_type -> ada.GetScanTmplNamesReq
-	181, // 185: ada.ADA.UpdateScanConf:input_type -> ada.UpdateScanConfReq
-	183, // 186: ada.ADA.ListScanTmpl:input_type -> ada.ListScanTmplReq
-	185, // 187: ada.ADA.GetScanTmpl:input_type -> ada.GetScanTmplReq
-	188, // 188: ada.ADA.UpdateScanTmpl:input_type -> ada.UpdateScanTmplReq
-	190, // 189: ada.ADA.DeleteScanTmpl:input_type -> ada.DeleteScanTmplReq
-	193, // 190: ada.ADA.AddScanTmpl:input_type -> ada.AddScanTmplReq
-	195, // 191: ada.ADA.ListScanPlugin:input_type -> ada.ListScanPluginReq
-	197, // 192: ada.ADA.DashboardStats:input_type -> ada.DashboardStatsReq
-	199, // 193: ada.ADA.DashboardTrends:input_type -> ada.DashboardTrendsReq
-	201, // 194: ada.ADA.DashboardLogStats:input_type -> ada.DashboardLogStatsReq
-	2,   // 195: ada.ADA.Login:output_type -> ada.LoginReply
-	4,   // 196: ada.ADA.Logout:output_type -> ada.LogoutReply
-	6,   // 197: ada.ADA.ListUser:output_type -> ada.ListUserReply
-	8,   // 198: ada.ADA.AddUser:output_type -> ada.AddUserReply
-	10,  // 199: ada.ADA.UpdateUser:output_type -> ada.UpdateUserReply
-	12,  // 200: ada.ADA.UpdateUserPassword:output_type -> ada.UpdateUserPasswordReply
-	14,  // 201: ada.ADA.DeleteUser:output_type -> ada.DeleteUserReply
-	16,  // 202: ada.ADA.UserExists:output_type -> ada.UserExistsReply
-	18,  // 203: ada.ADA.CheckMfa:output_type -> ada.CheckMfaReply
-	20,  // 204: ada.ADA.EnableMfa:output_type -> ada.EnableMfaReply
-	22,  // 205: ada.ADA.DisableMfa:output_type -> ada.DisableMfaReply
-	24,  // 206: ada.ADA.UpdateAvatar:output_type -> ada.UpdateAvatarReply
-	26,  // 207: ada.ADA.ResetPassword:output_type -> ada.ResetPasswordReply
-	28,  // 208: ada.ADA.GetPwdUpdateTm:output_type -> ada.GetPwdUpdateTmReply
-	30,  // 209: ada.ADA.ListDomain:output_type -> ada.ListDomainReply
-	32,  // 210: ada.ADA.AddDomain:output_type -> ada.AddDomainReply
-	34,  // 211: ada.ADA.TestDomain:output_type -> ada.TestDomainReply
-	36,  // 212: ada.ADA.UpdateDomain:output_type -> ada.UpdateDomainReply
-	38,  // 213: ada.ADA.DeleteDomain:output_type -> ada.DeleteDomainReply
-	40,  // 214: ada.ADA.UpdateDomainData:output_type -> ada.UpdateDomainDataReply
-	42,  // 215: ada.ADA.DeploySensor:output_type -> ada.DeploySensorReply
-	44,  // 216: ada.ADA.ListSensor:output_type -> ada.ListSensorReply
-	46,  // 217: ada.ADA.UpdateSensor:output_type -> ada.UpdateSensorReply
-	48,  // 218: ada.ADA.DownloadSensor:output_type -> ada.DownloadSensorReply
-	50,  // 219: ada.ADA.CmdSensor:output_type -> ada.CmdSensorReply
-	52,  // 220: ada.ADA.UpdateSensorVersion:output_type -> ada.UpdateSensorVersionReply
-	54,  // 221: ada.ADA.GetSystemInfo:output_type -> ada.GetSystemInfoReply
-	56,  // 222: ada.ADA.GetSystemIcon:output_type -> ada.GetSystemIconReply
-	58,  // 223: ada.ADA.UpdateSystemIcon:output_type -> ada.UpdateSystemIconReply
-	60,  // 224: ada.ADA.UpdateNtpAddress:output_type -> ada.UpdateNtpAddressReply
-	62,  // 225: ada.ADA.UpdateSystemLanguage:output_type -> ada.UpdateSystemLanguageReply
-	64,  // 226: ada.ADA.UpdateSystemIP:output_type -> ada.UpdateSystemIPReply
-	67,  // 227: ada.ADA.GetSystemStats:output_type -> ada.GetSystemStatsReply
-	69,  // 228: ada.ADA.SetSystemStatsCfg:output_type -> ada.SetSystemStatsCfgReply
-	73,  // 229: ada.ADA.GetLicense:output_type -> ada.GetLicenseReply
-	75,  // 230: ada.ADA.UpdateLicense:output_type -> ada.UpdateLicenseReply
-	77,  // 231: ada.ADA.NetworkDebug:output_type -> ada.NetworkDebugReply
-	79,  // 232: ada.ADA.ListNotifyConf:output_type -> ada.ListNotifyConfReply
-	81,  // 233: ada.ADA.UpdateNotifyConf:output_type -> ada.UpdateNotifyConfReply
-	83,  // 234: ada.ADA.EnableNotifyConf:output_type -> ada.EnableNotifyConfReply
-	85,  // 235: ada.ADA.TestNotifyConf:output_type -> ada.TestNotifyConfReply
-	87,  // 236: ada.ADA.ListExportTask:output_type -> ada.ListExportTaskReply
-	89,  // 237: ada.ADA.AddExportTask:output_type -> ada.AddExportTaskReply
-	91,  // 238: ada.ADA.DeleteExportTask:output_type -> ada.DeleteExportTaskReply
-	93,  // 239: ada.ADA.ListNotify:output_type -> ada.ListNotifyReply
-	95,  // 240: ada.ADA.UpdateNotify:output_type -> ada.UpdateNotifyReply
-	97,  // 241: ada.ADA.StatsNotify:output_type -> ada.StatsNotifyReply
-	71,  // 242: ada.ADA.ListAuditLog:output_type -> ada.ListAuditLogReply
-	99,  // 243: ada.ADA.ThreatTops:output_type -> ada.ThreatTopsReply
-	101, // 244: ada.ADA.ThreatTrends:output_type -> ada.ThreatTrendsReply
-	104, // 245: ada.ADA.ListThreat:output_type -> ada.ListThreatReply
-	106, // 246: ada.ADA.GetThreatNames:output_type -> ada.GetThreatNamesReply
-	108, // 247: ada.ADA.ListThreatRule:output_type -> ada.ListThreatRuleReply
-	110, // 248: ada.ADA.ActionThreatRule:output_type -> ada.ActionThreatRuleReply
-	112, // 249: ada.ADA.GetThreat:output_type -> ada.GetThreatReply
-	114, // 250: ada.ADA.ActionThreat:output_type -> ada.ActionThreatReply
-	117, // 251: ada.ADA.ListActivity:output_type -> ada.ListActivityReply
-	119, // 252: ada.ADA.GetActivityNames:output_type -> ada.GetActivityNamesReply
-	121, // 253: ada.ADA.GetActivity:output_type -> ada.GetActivityReply
-	123, // 254: ada.ADA.ListThreatConf:output_type -> ada.ListThreatConfReply
-	125, // 255: ada.ADA.UpdateThreatConf:output_type -> ada.UpdateThreatConfReply
-	127, // 256: ada.ADA.ListSensitiveEntry:output_type -> ada.ListSensitiveEntryReply
-	129, // 257: ada.ADA.AddSensitiveEntry:output_type -> ada.AddSensitiveEntryReply
-	131, // 258: ada.ADA.ListDomainEntry:output_type -> ada.ListDomainEntryReply
-	133, // 259: ada.ADA.DeleteSensitiveEntry:output_type -> ada.DeleteSensitiveEntryReply
-	135, // 260: ada.ADA.ListThreatWhitelist:output_type -> ada.ListThreatWhitelistReply
-	137, // 261: ada.ADA.GetThreatWhitelistField:output_type -> ada.GetThreatWhitelistFieldReply
-	139, // 262: ada.ADA.AddThreatWhitelist:output_type -> ada.AddThreatWhitelistReply
-	141, // 263: ada.ADA.UpdateThreatWhitelist:output_type -> ada.UpdateThreatWhitelistReply
-	143, // 264: ada.ADA.DeleteThreatWhitelist:output_type -> ada.DeleteThreatWhitelistReply
-	145, // 265: ada.ADA.ListThreatBlock:output_type -> ada.ListThreatBlockReply
-	147, // 266: ada.ADA.AddThreatBlock:output_type -> ada.AddThreatBlockReply
-	149, // 267: ada.ADA.UpdateThreatBlock:output_type -> ada.UpdateThreatBlockReply
-	151, // 268: ada.ADA.DeleteThreatBlock:output_type -> ada.DeleteThreatBlockReply
-	153, // 269: ada.ADA.ScanRiskStats:output_type -> ada.ScanRiskStatsReply
-	155, // 270: ada.ADA.ListBaseline:output_type -> ada.ListBaselineReply
-	157, // 271: ada.ADA.GetBaseline:output_type -> ada.GetBaselineReply
-	159, // 272: ada.ADA.ListLeak:output_type -> ada.ListLeakReply
-	161, // 273: ada.ADA.ListWeakPwd:output_type -> ada.ListWeakPwdReply
-	163, // 274: ada.ADA.ListScanTask:output_type -> ada.ListScanTaskReply
-	165, // 275: ada.ADA.GetScanTask:output_type -> ada.GetScanTaskReply
-	167, // 276: ada.ADA.AddScanTask:output_type -> ada.AddScanTaskReply
-	169, // 277: ada.ADA.RecheckScanTask:output_type -> ada.RecheckScanTaskReply
-	171, // 278: ada.ADA.DeleteScanTask:output_type -> ada.DeleteScanTaskReply
-	173, // 279: ada.ADA.ListScanConf:output_type -> ada.ListScanConfReply
-	176, // 280: ada.ADA.SetScanConf:output_type -> ada.SetScanConfReply
-	178, // 281: ada.ADA.GetScanConf:output_type -> ada.GetScanConfReply
-	180, // 282: ada.ADA.GetScanTmplNames:output_type -> ada.GetScanTmplNamesReply
-	182, // 283: ada.ADA.UpdateScanConf:output_type -> ada.UpdateScanConfReply
-	184, // 284: ada.ADA.ListScanTmpl:output_type -> ada.ListScanTmplReply
-	187, // 285: ada.ADA.GetScanTmpl:output_type -> ada.GetScanTmplReply
-	189, // 286: ada.ADA.UpdateScanTmpl:output_type -> ada.UpdateScanTmplReply
-	191, // 287: ada.ADA.DeleteScanTmpl:output_type -> ada.DeleteScanTmplReply
-	194, // 288: ada.ADA.AddScanTmpl:output_type -> ada.AddScanTmplReply
-	196, // 289: ada.ADA.ListScanPlugin:output_type -> ada.ListScanPluginReply
-	198, // 290: ada.ADA.DashboardStats:output_type -> ada.DashboardStatsReply
-	200, // 291: ada.ADA.DashboardTrends:output_type -> ada.DashboardTrendsReply
-	202, // 292: ada.ADA.DashboardLogStats:output_type -> ada.DashboardLogStatsReply
-	195, // [195:293] is the sub-list for method output_type
-	97,  // [97:195] is the sub-list for method input_type
-	97,  // [97:97] is the sub-list for extension type_name
-	97,  // [97:97] is the sub-list for extension extendee
-	0,   // [0:97] is the sub-list for field type_name
+	283, // 72: ada.DashboardStatsReply.asset:type_name -> ada.DashboardStatsReply.AssetEntry
+	284, // 73: ada.DashboardStatsReply.alert:type_name -> ada.DashboardStatsReply.AlertEntry
+	285, // 74: ada.DashboardStatsReply.baseline:type_name -> ada.DashboardStatsReply.BaselineEntry
+	286, // 75: ada.DashboardStatsReply.leak:type_name -> ada.DashboardStatsReply.LeakEntry
+	287, // 76: ada.DashboardStatsReply.weakpwd:type_name -> ada.DashboardStatsReply.WeakpwdEntry
+	288, // 77: ada.DashboardLogStatsReply.List:type_name -> ada.DashboardLogStatsReply.logStatsList
+	0,   // 78: ada.ListAlertRuleReply.page:type_name -> ada.ModelPage
+	204, // 79: ada.ListAlertRuleReply.rules:type_name -> ada.AlertRuleInfo
+	0,   // 80: ada.ListActivityRuleReply.page:type_name -> ada.ModelPage
+	213, // 81: ada.ListActivityRuleReply.rules:type_name -> ada.ActivityRuleInfo
+	226, // 82: ada.ListDomainReply.Details.domainInfo:type_name -> ada.ListDomainReply.Details.DomainInfoEntry
+	224, // 83: ada.ListDomainReply.Details.DCs:type_name -> ada.ListDomainReply.dcList
+	229, // 84: ada.ListSensorReply.mapSlice.event:type_name -> ada.ListSensorReply.mapSlice.EventEntry
+	230, // 85: ada.ListSensorReply.Details.netIface:type_name -> ada.ListSensorReply.Details.NetIfaceEntry
+	231, // 86: ada.ListSensorReply.Details.perfLimit:type_name -> ada.ListSensorReply.Details.PerfLimitEntry
+	227, // 87: ada.ListSensorReply.Details.events:type_name -> ada.ListSensorReply.mapSlice
+	237, // 88: ada.ListNotifyConfReply.Details.metadata:type_name -> ada.ListNotifyConfReply.Details.MetadataEntry
+	241, // 89: ada.ListExportTaskReply.Details.params:type_name -> ada.ListExportTaskReply.Details.ParamsEntry
+	244, // 90: ada.ListNotifyReply.Details.params:type_name -> ada.ListNotifyReply.Details.ParamsEntry
+	248, // 91: ada.AttackFlowReply.Field.item:type_name -> ada.AttackFlowReply.Field.ItemEntry
+	102, // 92: ada.ListThreatReply.Details.attackFlow:type_name -> ada.AttackFlowReply
+	258, // 93: ada.ListThreatWhitelistReply.Details.rules:type_name -> ada.ListThreatWhitelistReply.Details.ruleInfo
+	259, // 94: ada.ListThreatWhitelistReply.Details.ruleInfo.info:type_name -> ada.ListThreatWhitelistReply.Details.ruleInfo.InfoEntry
+	261, // 95: ada.AddThreatWhitelistReq.ruleInfo.info:type_name -> ada.AddThreatWhitelistReq.ruleInfo.InfoEntry
+	263, // 96: ada.UpdateThreatWhitelistReq.ruleInfo.info:type_name -> ada.UpdateThreatWhitelistReq.ruleInfo.InfoEntry
+	266, // 97: ada.ListThreatBlockReply.Results.info:type_name -> ada.ListThreatBlockReply.Results.InfoEntry
+	264, // 98: ada.ListThreatBlockReply.Details.results:type_name -> ada.ListThreatBlockReply.Results
+	270, // 99: ada.GetBaselineReply.entryInfo.info:type_name -> ada.GetBaselineReply.entryInfo.InfoEntry
+	275, // 100: ada.GetScanTaskReply.Details.params:type_name -> ada.GetScanTaskReply.Details.ParamsEntry
+	1,   // 101: ada.ADA.Login:input_type -> ada.LoginReq
+	3,   // 102: ada.ADA.Logout:input_type -> ada.LogoutReq
+	5,   // 103: ada.ADA.ListUser:input_type -> ada.ListUserReq
+	7,   // 104: ada.ADA.AddUser:input_type -> ada.AddUserReq
+	9,   // 105: ada.ADA.UpdateUser:input_type -> ada.UpdateUserReq
+	11,  // 106: ada.ADA.UpdateUserPassword:input_type -> ada.UpdateUserPasswordReq
+	13,  // 107: ada.ADA.DeleteUser:input_type -> ada.DeleteUserReq
+	15,  // 108: ada.ADA.UserExists:input_type -> ada.UserExistsReq
+	17,  // 109: ada.ADA.CheckMfa:input_type -> ada.CheckMfaReq
+	19,  // 110: ada.ADA.EnableMfa:input_type -> ada.EnableMfaReq
+	21,  // 111: ada.ADA.DisableMfa:input_type -> ada.DisableMfaReq
+	23,  // 112: ada.ADA.UpdateAvatar:input_type -> ada.UpdateAvatarReq
+	25,  // 113: ada.ADA.ResetPassword:input_type -> ada.ResetPasswordReq
+	27,  // 114: ada.ADA.GetPwdUpdateTm:input_type -> ada.GetPwdUpdateTmReq
+	29,  // 115: ada.ADA.ListDomain:input_type -> ada.ListDomainReq
+	31,  // 116: ada.ADA.AddDomain:input_type -> ada.AddDomainReq
+	33,  // 117: ada.ADA.TestDomain:input_type -> ada.TestDomainReq
+	35,  // 118: ada.ADA.UpdateDomain:input_type -> ada.UpdateDomainReq
+	37,  // 119: ada.ADA.DeleteDomain:input_type -> ada.DeleteDomainReq
+	39,  // 120: ada.ADA.UpdateDomainData:input_type -> ada.UpdateDomainDataReq
+	41,  // 121: ada.ADA.DeploySensor:input_type -> ada.DeploySensorReq
+	43,  // 122: ada.ADA.ListSensor:input_type -> ada.ListSensorReq
+	45,  // 123: ada.ADA.UpdateSensor:input_type -> ada.UpdateSensorReq
+	47,  // 124: ada.ADA.DownloadSensor:input_type -> ada.DownloadSensorReq
+	49,  // 125: ada.ADA.CmdSensor:input_type -> ada.CmdSensorReq
+	51,  // 126: ada.ADA.UpdateSensorVersion:input_type -> ada.UpdateSensorVersionReq
+	53,  // 127: ada.ADA.GetSystemInfo:input_type -> ada.GetSystemInfoReq
+	55,  // 128: ada.ADA.GetSystemIcon:input_type -> ada.GetSystemIconReq
+	57,  // 129: ada.ADA.UpdateSystemIcon:input_type -> ada.UpdateSystemIconReq
+	59,  // 130: ada.ADA.UpdateNtpAddress:input_type -> ada.UpdateNtpAddressReq
+	61,  // 131: ada.ADA.UpdateSystemLanguage:input_type -> ada.UpdateSystemLanguageReq
+	63,  // 132: ada.ADA.UpdateSystemIP:input_type -> ada.UpdateSystemIPReq
+	65,  // 133: ada.ADA.GetSystemStats:input_type -> ada.GetSystemStatsReq
+	68,  // 134: ada.ADA.SetSystemStatsCfg:input_type -> ada.SetSystemStatsCfgReq
+	72,  // 135: ada.ADA.GetLicense:input_type -> ada.GetLicenseReq
+	74,  // 136: ada.ADA.UpdateLicense:input_type -> ada.UpdateLicenseReq
+	76,  // 137: ada.ADA.NetworkDebug:input_type -> ada.NetworkDebugReq
+	78,  // 138: ada.ADA.ListNotifyConf:input_type -> ada.ListNotifyConfReq
+	80,  // 139: ada.ADA.UpdateNotifyConf:input_type -> ada.UpdateNotifyConfReq
+	82,  // 140: ada.ADA.EnableNotifyConf:input_type -> ada.EnableNotifyConfReq
+	84,  // 141: ada.ADA.TestNotifyConf:input_type -> ada.TestNotifyConfReq
+	86,  // 142: ada.ADA.ListExportTask:input_type -> ada.ListExportTaskReq
+	88,  // 143: ada.ADA.AddExportTask:input_type -> ada.AddExportTaskReq
+	90,  // 144: ada.ADA.DeleteExportTask:input_type -> ada.DeleteExportTaskReq
+	92,  // 145: ada.ADA.ListNotify:input_type -> ada.ListNotifyReq
+	94,  // 146: ada.ADA.UpdateNotify:input_type -> ada.UpdateNotifyReq
+	96,  // 147: ada.ADA.StatsNotify:input_type -> ada.StatsNotifyReq
+	70,  // 148: ada.ADA.ListAuditLog:input_type -> ada.ListAuditLogReq
+	98,  // 149: ada.ADA.ThreatTops:input_type -> ada.ThreatTopsReq
+	100, // 150: ada.ADA.ThreatTrends:input_type -> ada.ThreatTrendsReq
+	103, // 151: ada.ADA.ListThreat:input_type -> ada.ListThreatReq
+	105, // 152: ada.ADA.GetThreatNames:input_type -> ada.GetThreatNamesReq
+	107, // 153: ada.ADA.ListThreatRule:input_type -> ada.ListThreatRuleReq
+	109, // 154: ada.ADA.ActionThreatRule:input_type -> ada.ActionThreatRuleReq
+	111, // 155: ada.ADA.GetThreat:input_type -> ada.GetThreatReq
+	113, // 156: ada.ADA.ActionThreat:input_type -> ada.ActionThreatReq
+	115, // 157: ada.ADA.ListActivity:input_type -> ada.ListActivityReq
+	118, // 158: ada.ADA.GetActivityNames:input_type -> ada.GetActivityNamesReq
+	120, // 159: ada.ADA.GetActivity:input_type -> ada.GetActivityReq
+	122, // 160: ada.ADA.ListThreatConf:input_type -> ada.ListThreatConfReq
+	124, // 161: ada.ADA.UpdateThreatConf:input_type -> ada.UpdateThreatConfReq
+	126, // 162: ada.ADA.ListSensitiveEntry:input_type -> ada.ListSensitiveEntryReq
+	128, // 163: ada.ADA.AddSensitiveEntry:input_type -> ada.AddSensitiveEntryReq
+	130, // 164: ada.ADA.ListDomainEntry:input_type -> ada.ListDomainEntryReq
+	132, // 165: ada.ADA.DeleteSensitiveEntry:input_type -> ada.DeleteSensitiveEntryReq
+	134, // 166: ada.ADA.ListThreatWhitelist:input_type -> ada.ListThreatWhitelistReq
+	136, // 167: ada.ADA.GetThreatWhitelistField:input_type -> ada.GetThreatWhitelistFieldReq
+	138, // 168: ada.ADA.AddThreatWhitelist:input_type -> ada.AddThreatWhitelistReq
+	140, // 169: ada.ADA.UpdateThreatWhitelist:input_type -> ada.UpdateThreatWhitelistReq
+	142, // 170: ada.ADA.DeleteThreatWhitelist:input_type -> ada.DeleteThreatWhitelistReq
+	144, // 171: ada.ADA.ListThreatBlock:input_type -> ada.ListThreatBlockReq
+	146, // 172: ada.ADA.AddThreatBlock:input_type -> ada.AddThreatBlockReq
+	148, // 173: ada.ADA.UpdateThreatBlock:input_type -> ada.UpdateThreatBlockReq
+	150, // 174: ada.ADA.DeleteThreatBlock:input_type -> ada.DeleteThreatBlockReq
+	203, // 175: ada.ADA.ListAlertRule:input_type -> ada.ListAlertRuleReq
+	206, // 176: ada.ADA.AddAlertRule:input_type -> ada.AddAlertRuleReq
+	208, // 177: ada.ADA.UpdateAlertRule:input_type -> ada.UpdateAlertRuleReq
+	210, // 178: ada.ADA.DeleteAlertRule:input_type -> ada.DeleteAlertRuleReq
+	212, // 179: ada.ADA.ListActivityRule:input_type -> ada.ListActivityRuleReq
+	215, // 180: ada.ADA.GetActivityRule:input_type -> ada.GetActivityRuleReq
+	217, // 181: ada.ADA.AddActivityRule:input_type -> ada.AddActivityRuleReq
+	219, // 182: ada.ADA.UpdateActivityRule:input_type -> ada.UpdateActivityRuleReq
+	221, // 183: ada.ADA.DeleteActivityRule:input_type -> ada.DeleteActivityRuleReq
+	152, // 184: ada.ADA.ScanRiskStats:input_type -> ada.ScanRiskStatsReq
+	154, // 185: ada.ADA.ListBaseline:input_type -> ada.ListBaselineReq
+	156, // 186: ada.ADA.GetBaseline:input_type -> ada.GetBaselineReq
+	158, // 187: ada.ADA.ListLeak:input_type -> ada.ListLeakReq
+	160, // 188: ada.ADA.ListWeakPwd:input_type -> ada.ListWeakPwdReq
+	162, // 189: ada.ADA.ListScanTask:input_type -> ada.ListScanTaskReq
+	164, // 190: ada.ADA.GetScanTask:input_type -> ada.GetScanTaskReq
+	166, // 191: ada.ADA.AddScanTask:input_type -> ada.AddScanTaskReq
+	168, // 192: ada.ADA.RecheckScanTask:input_type -> ada.RecheckScanTaskReq
+	170, // 193: ada.ADA.DeleteScanTask:input_type -> ada.DeleteScanTaskReq
+	172, // 194: ada.ADA.ListScanConf:input_type -> ada.ListScanConfReq
+	175, // 195: ada.ADA.SetScanConf:input_type -> ada.SetScanConfReq
+	177, // 196: ada.ADA.GetScanConf:input_type -> ada.GetScanConfReq
+	179, // 197: ada.ADA.GetScanTmplNames:input_type -> ada.GetScanTmplNamesReq
+	181, // 198: ada.ADA.UpdateScanConf:input_type -> ada.UpdateScanConfReq
+	183, // 199: ada.ADA.ListScanTmpl:input_type -> ada.ListScanTmplReq
+	185, // 200: ada.ADA.GetScanTmpl:input_type -> ada.GetScanTmplReq
+	188, // 201: ada.ADA.UpdateScanTmpl:input_type -> ada.UpdateScanTmplReq
+	190, // 202: ada.ADA.DeleteScanTmpl:input_type -> ada.DeleteScanTmplReq
+	193, // 203: ada.ADA.AddScanTmpl:input_type -> ada.AddScanTmplReq
+	195, // 204: ada.ADA.ListScanPlugin:input_type -> ada.ListScanPluginReq
+	197, // 205: ada.ADA.DashboardStats:input_type -> ada.DashboardStatsReq
+	199, // 206: ada.ADA.DashboardTrends:input_type -> ada.DashboardTrendsReq
+	201, // 207: ada.ADA.DashboardLogStats:input_type -> ada.DashboardLogStatsReq
+	2,   // 208: ada.ADA.Login:output_type -> ada.LoginReply
+	4,   // 209: ada.ADA.Logout:output_type -> ada.LogoutReply
+	6,   // 210: ada.ADA.ListUser:output_type -> ada.ListUserReply
+	8,   // 211: ada.ADA.AddUser:output_type -> ada.AddUserReply
+	10,  // 212: ada.ADA.UpdateUser:output_type -> ada.UpdateUserReply
+	12,  // 213: ada.ADA.UpdateUserPassword:output_type -> ada.UpdateUserPasswordReply
+	14,  // 214: ada.ADA.DeleteUser:output_type -> ada.DeleteUserReply
+	16,  // 215: ada.ADA.UserExists:output_type -> ada.UserExistsReply
+	18,  // 216: ada.ADA.CheckMfa:output_type -> ada.CheckMfaReply
+	20,  // 217: ada.ADA.EnableMfa:output_type -> ada.EnableMfaReply
+	22,  // 218: ada.ADA.DisableMfa:output_type -> ada.DisableMfaReply
+	24,  // 219: ada.ADA.UpdateAvatar:output_type -> ada.UpdateAvatarReply
+	26,  // 220: ada.ADA.ResetPassword:output_type -> ada.ResetPasswordReply
+	28,  // 221: ada.ADA.GetPwdUpdateTm:output_type -> ada.GetPwdUpdateTmReply
+	30,  // 222: ada.ADA.ListDomain:output_type -> ada.ListDomainReply
+	32,  // 223: ada.ADA.AddDomain:output_type -> ada.AddDomainReply
+	34,  // 224: ada.ADA.TestDomain:output_type -> ada.TestDomainReply
+	36,  // 225: ada.ADA.UpdateDomain:output_type -> ada.UpdateDomainReply
+	38,  // 226: ada.ADA.DeleteDomain:output_type -> ada.DeleteDomainReply
+	40,  // 227: ada.ADA.UpdateDomainData:output_type -> ada.UpdateDomainDataReply
+	42,  // 228: ada.ADA.DeploySensor:output_type -> ada.DeploySensorReply
+	44,  // 229: ada.ADA.ListSensor:output_type -> ada.ListSensorReply
+	46,  // 230: ada.ADA.UpdateSensor:output_type -> ada.UpdateSensorReply
+	48,  // 231: ada.ADA.DownloadSensor:output_type -> ada.DownloadSensorReply
+	50,  // 232: ada.ADA.CmdSensor:output_type -> ada.CmdSensorReply
+	52,  // 233: ada.ADA.UpdateSensorVersion:output_type -> ada.UpdateSensorVersionReply
+	54,  // 234: ada.ADA.GetSystemInfo:output_type -> ada.GetSystemInfoReply
+	56,  // 235: ada.ADA.GetSystemIcon:output_type -> ada.GetSystemIconReply
+	58,  // 236: ada.ADA.UpdateSystemIcon:output_type -> ada.UpdateSystemIconReply
+	60,  // 237: ada.ADA.UpdateNtpAddress:output_type -> ada.UpdateNtpAddressReply
+	62,  // 238: ada.ADA.UpdateSystemLanguage:output_type -> ada.UpdateSystemLanguageReply
+	64,  // 239: ada.ADA.UpdateSystemIP:output_type -> ada.UpdateSystemIPReply
+	67,  // 240: ada.ADA.GetSystemStats:output_type -> ada.GetSystemStatsReply
+	69,  // 241: ada.ADA.SetSystemStatsCfg:output_type -> ada.SetSystemStatsCfgReply
+	73,  // 242: ada.ADA.GetLicense:output_type -> ada.GetLicenseReply
+	75,  // 243: ada.ADA.UpdateLicense:output_type -> ada.UpdateLicenseReply
+	77,  // 244: ada.ADA.NetworkDebug:output_type -> ada.NetworkDebugReply
+	79,  // 245: ada.ADA.ListNotifyConf:output_type -> ada.ListNotifyConfReply
+	81,  // 246: ada.ADA.UpdateNotifyConf:output_type -> ada.UpdateNotifyConfReply
+	83,  // 247: ada.ADA.EnableNotifyConf:output_type -> ada.EnableNotifyConfReply
+	85,  // 248: ada.ADA.TestNotifyConf:output_type -> ada.TestNotifyConfReply
+	87,  // 249: ada.ADA.ListExportTask:output_type -> ada.ListExportTaskReply
+	89,  // 250: ada.ADA.AddExportTask:output_type -> ada.AddExportTaskReply
+	91,  // 251: ada.ADA.DeleteExportTask:output_type -> ada.DeleteExportTaskReply
+	93,  // 252: ada.ADA.ListNotify:output_type -> ada.ListNotifyReply
+	95,  // 253: ada.ADA.UpdateNotify:output_type -> ada.UpdateNotifyReply
+	97,  // 254: ada.ADA.StatsNotify:output_type -> ada.StatsNotifyReply
+	71,  // 255: ada.ADA.ListAuditLog:output_type -> ada.ListAuditLogReply
+	99,  // 256: ada.ADA.ThreatTops:output_type -> ada.ThreatTopsReply
+	101, // 257: ada.ADA.ThreatTrends:output_type -> ada.ThreatTrendsReply
+	104, // 258: ada.ADA.ListThreat:output_type -> ada.ListThreatReply
+	106, // 259: ada.ADA.GetThreatNames:output_type -> ada.GetThreatNamesReply
+	108, // 260: ada.ADA.ListThreatRule:output_type -> ada.ListThreatRuleReply
+	110, // 261: ada.ADA.ActionThreatRule:output_type -> ada.ActionThreatRuleReply
+	112, // 262: ada.ADA.GetThreat:output_type -> ada.GetThreatReply
+	114, // 263: ada.ADA.ActionThreat:output_type -> ada.ActionThreatReply
+	117, // 264: ada.ADA.ListActivity:output_type -> ada.ListActivityReply
+	119, // 265: ada.ADA.GetActivityNames:output_type -> ada.GetActivityNamesReply
+	121, // 266: ada.ADA.GetActivity:output_type -> ada.GetActivityReply
+	123, // 267: ada.ADA.ListThreatConf:output_type -> ada.ListThreatConfReply
+	125, // 268: ada.ADA.UpdateThreatConf:output_type -> ada.UpdateThreatConfReply
+	127, // 269: ada.ADA.ListSensitiveEntry:output_type -> ada.ListSensitiveEntryReply
+	129, // 270: ada.ADA.AddSensitiveEntry:output_type -> ada.AddSensitiveEntryReply
+	131, // 271: ada.ADA.ListDomainEntry:output_type -> ada.ListDomainEntryReply
+	133, // 272: ada.ADA.DeleteSensitiveEntry:output_type -> ada.DeleteSensitiveEntryReply
+	135, // 273: ada.ADA.ListThreatWhitelist:output_type -> ada.ListThreatWhitelistReply
+	137, // 274: ada.ADA.GetThreatWhitelistField:output_type -> ada.GetThreatWhitelistFieldReply
+	139, // 275: ada.ADA.AddThreatWhitelist:output_type -> ada.AddThreatWhitelistReply
+	141, // 276: ada.ADA.UpdateThreatWhitelist:output_type -> ada.UpdateThreatWhitelistReply
+	143, // 277: ada.ADA.DeleteThreatWhitelist:output_type -> ada.DeleteThreatWhitelistReply
+	145, // 278: ada.ADA.ListThreatBlock:output_type -> ada.ListThreatBlockReply
+	147, // 279: ada.ADA.AddThreatBlock:output_type -> ada.AddThreatBlockReply
+	149, // 280: ada.ADA.UpdateThreatBlock:output_type -> ada.UpdateThreatBlockReply
+	151, // 281: ada.ADA.DeleteThreatBlock:output_type -> ada.DeleteThreatBlockReply
+	205, // 282: ada.ADA.ListAlertRule:output_type -> ada.ListAlertRuleReply
+	207, // 283: ada.ADA.AddAlertRule:output_type -> ada.AddAlertRuleReply
+	209, // 284: ada.ADA.UpdateAlertRule:output_type -> ada.UpdateAlertRuleReply
+	211, // 285: ada.ADA.DeleteAlertRule:output_type -> ada.DeleteAlertRuleReply
+	214, // 286: ada.ADA.ListActivityRule:output_type -> ada.ListActivityRuleReply
+	216, // 287: ada.ADA.GetActivityRule:output_type -> ada.GetActivityRuleReply
+	218, // 288: ada.ADA.AddActivityRule:output_type -> ada.AddActivityRuleReply
+	220, // 289: ada.ADA.UpdateActivityRule:output_type -> ada.UpdateActivityRuleReply
+	222, // 290: ada.ADA.DeleteActivityRule:output_type -> ada.DeleteActivityRuleReply
+	153, // 291: ada.ADA.ScanRiskStats:output_type -> ada.ScanRiskStatsReply
+	155, // 292: ada.ADA.ListBaseline:output_type -> ada.ListBaselineReply
+	157, // 293: ada.ADA.GetBaseline:output_type -> ada.GetBaselineReply
+	159, // 294: ada.ADA.ListLeak:output_type -> ada.ListLeakReply
+	161, // 295: ada.ADA.ListWeakPwd:output_type -> ada.ListWeakPwdReply
+	163, // 296: ada.ADA.ListScanTask:output_type -> ada.ListScanTaskReply
+	165, // 297: ada.ADA.GetScanTask:output_type -> ada.GetScanTaskReply
+	167, // 298: ada.ADA.AddScanTask:output_type -> ada.AddScanTaskReply
+	169, // 299: ada.ADA.RecheckScanTask:output_type -> ada.RecheckScanTaskReply
+	171, // 300: ada.ADA.DeleteScanTask:output_type -> ada.DeleteScanTaskReply
+	173, // 301: ada.ADA.ListScanConf:output_type -> ada.ListScanConfReply
+	176, // 302: ada.ADA.SetScanConf:output_type -> ada.SetScanConfReply
+	178, // 303: ada.ADA.GetScanConf:output_type -> ada.GetScanConfReply
+	180, // 304: ada.ADA.GetScanTmplNames:output_type -> ada.GetScanTmplNamesReply
+	182, // 305: ada.ADA.UpdateScanConf:output_type -> ada.UpdateScanConfReply
+	184, // 306: ada.ADA.ListScanTmpl:output_type -> ada.ListScanTmplReply
+	187, // 307: ada.ADA.GetScanTmpl:output_type -> ada.GetScanTmplReply
+	189, // 308: ada.ADA.UpdateScanTmpl:output_type -> ada.UpdateScanTmplReply
+	191, // 309: ada.ADA.DeleteScanTmpl:output_type -> ada.DeleteScanTmplReply
+	194, // 310: ada.ADA.AddScanTmpl:output_type -> ada.AddScanTmplReply
+	196, // 311: ada.ADA.ListScanPlugin:output_type -> ada.ListScanPluginReply
+	198, // 312: ada.ADA.DashboardStats:output_type -> ada.DashboardStatsReply
+	200, // 313: ada.ADA.DashboardTrends:output_type -> ada.DashboardTrendsReply
+	202, // 314: ada.ADA.DashboardLogStats:output_type -> ada.DashboardLogStatsReply
+	208, // [208:315] is the sub-list for method output_type
+	101, // [101:208] is the sub-list for method input_type
+	101, // [101:101] is the sub-list for extension type_name
+	101, // [101:101] is the sub-list for extension extendee
+	0,   // [0:101] is the sub-list for field type_name
 }
 
 func init() { file_ada_proto_init() }
@@ -18565,7 +20715,7 @@ func file_ada_proto_init() {
 		return
 	}
 	if !protoimpl.UnsafeEnabled {
-		file_ada_proto_msgTypes[0].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[0].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ModelPage); i {
 			case 0:
 				return &v.state
@@ -18577,7 +20727,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[1].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[1].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*LoginReq); i {
 			case 0:
 				return &v.state
@@ -18589,7 +20739,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[2].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[2].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*LoginReply); i {
 			case 0:
 				return &v.state
@@ -18601,7 +20751,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[3].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[3].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*LogoutReq); i {
 			case 0:
 				return &v.state
@@ -18613,7 +20763,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[4].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[4].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*LogoutReply); i {
 			case 0:
 				return &v.state
@@ -18625,7 +20775,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[5].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[5].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ListUserReq); i {
 			case 0:
 				return &v.state
@@ -18637,7 +20787,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[6].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[6].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ListUserReply); i {
 			case 0:
 				return &v.state
@@ -18649,7 +20799,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[7].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[7].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*AddUserReq); i {
 			case 0:
 				return &v.state
@@ -18661,7 +20811,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[8].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[8].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*AddUserReply); i {
 			case 0:
 				return &v.state
@@ -18673,7 +20823,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[9].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[9].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*UpdateUserReq); i {
 			case 0:
 				return &v.state
@@ -18685,7 +20835,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[10].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[10].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*UpdateUserReply); i {
 			case 0:
 				return &v.state
@@ -18697,7 +20847,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[11].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[11].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*UpdateUserPasswordReq); i {
 			case 0:
 				return &v.state
@@ -18709,7 +20859,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[12].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[12].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*UpdateUserPasswordReply); i {
 			case 0:
 				return &v.state
@@ -18721,7 +20871,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[13].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[13].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*DeleteUserReq); i {
 			case 0:
 				return &v.state
@@ -18733,7 +20883,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[14].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[14].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*DeleteUserReply); i {
 			case 0:
 				return &v.state
@@ -18745,7 +20895,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[15].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[15].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*UserExistsReq); i {
 			case 0:
 				return &v.state
@@ -18757,7 +20907,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[16].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[16].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*UserExistsReply); i {
 			case 0:
 				return &v.state
@@ -18769,7 +20919,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[17].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[17].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*CheckMfaReq); i {
 			case 0:
 				return &v.state
@@ -18781,7 +20931,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[18].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[18].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*CheckMfaReply); i {
 			case 0:
 				return &v.state
@@ -18793,7 +20943,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[19].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[19].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*EnableMfaReq); i {
 			case 0:
 				return &v.state
@@ -18805,7 +20955,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[20].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[20].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*EnableMfaReply); i {
 			case 0:
 				return &v.state
@@ -18817,7 +20967,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[21].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[21].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*DisableMfaReq); i {
 			case 0:
 				return &v.state
@@ -18829,7 +20979,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[22].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[22].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*DisableMfaReply); i {
 			case 0:
 				return &v.state
@@ -18841,7 +20991,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[23].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[23].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*UpdateAvatarReq); i {
 			case 0:
 				return &v.state
@@ -18853,7 +21003,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[24].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[24].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*UpdateAvatarReply); i {
 			case 0:
 				return &v.state
@@ -18865,7 +21015,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[25].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[25].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ResetPasswordReq); i {
 			case 0:
 				return &v.state
@@ -18877,7 +21027,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[26].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[26].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ResetPasswordReply); i {
 			case 0:
 				return &v.state
@@ -18889,7 +21039,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[27].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[27].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*GetPwdUpdateTmReq); i {
 			case 0:
 				return &v.state
@@ -18901,7 +21051,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[28].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[28].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*GetPwdUpdateTmReply); i {
 			case 0:
 				return &v.state
@@ -18913,7 +21063,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[29].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[29].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ListDomainReq); i {
 			case 0:
 				return &v.state
@@ -18925,7 +21075,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[30].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[30].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ListDomainReply); i {
 			case 0:
 				return &v.state
@@ -18937,7 +21087,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[31].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[31].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*AddDomainReq); i {
 			case 0:
 				return &v.state
@@ -18949,7 +21099,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[32].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[32].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*AddDomainReply); i {
 			case 0:
 				return &v.state
@@ -18961,7 +21111,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[33].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[33].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*TestDomainReq); i {
 			case 0:
 				return &v.state
@@ -18973,7 +21123,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[34].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[34].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*TestDomainReply); i {
 			case 0:
 				return &v.state
@@ -18985,7 +21135,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[35].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[35].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*UpdateDomainReq); i {
 			case 0:
 				return &v.state
@@ -18997,7 +21147,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[36].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[36].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*UpdateDomainReply); i {
 			case 0:
 				return &v.state
@@ -19009,7 +21159,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[37].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[37].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*DeleteDomainReq); i {
 			case 0:
 				return &v.state
@@ -19021,7 +21171,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[38].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[38].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*DeleteDomainReply); i {
 			case 0:
 				return &v.state
@@ -19033,7 +21183,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[39].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[39].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*UpdateDomainDataReq); i {
 			case 0:
 				return &v.state
@@ -19045,7 +21195,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[40].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[40].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*UpdateDomainDataReply); i {
 			case 0:
 				return &v.state
@@ -19057,7 +21207,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[41].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[41].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*DeploySensorReq); i {
 			case 0:
 				return &v.state
@@ -19069,7 +21219,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[42].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[42].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*DeploySensorReply); i {
 			case 0:
 				return &v.state
@@ -19081,7 +21231,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[43].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[43].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ListSensorReq); i {
 			case 0:
 				return &v.state
@@ -19093,7 +21243,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[44].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[44].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ListSensorReply); i {
 			case 0:
 				return &v.state
@@ -19105,7 +21255,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[45].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[45].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*UpdateSensorReq); i {
 			case 0:
 				return &v.state
@@ -19117,7 +21267,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[46].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[46].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*UpdateSensorReply); i {
 			case 0:
 				return &v.state
@@ -19129,7 +21279,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[47].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[47].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*DownloadSensorReq); i {
 			case 0:
 				return &v.state
@@ -19141,7 +21291,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[48].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[48].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*DownloadSensorReply); i {
 			case 0:
 				return &v.state
@@ -19153,7 +21303,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[49].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[49].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*CmdSensorReq); i {
 			case 0:
 				return &v.state
@@ -19165,7 +21315,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[50].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[50].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*CmdSensorReply); i {
 			case 0:
 				return &v.state
@@ -19177,7 +21327,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[51].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[51].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*UpdateSensorVersionReq); i {
 			case 0:
 				return &v.state
@@ -19189,7 +21339,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[52].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[52].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*UpdateSensorVersionReply); i {
 			case 0:
 				return &v.state
@@ -19201,7 +21351,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[53].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[53].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*GetSystemInfoReq); i {
 			case 0:
 				return &v.state
@@ -19213,7 +21363,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[54].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[54].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*GetSystemInfoReply); i {
 			case 0:
 				return &v.state
@@ -19225,7 +21375,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[55].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[55].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*GetSystemIconReq); i {
 			case 0:
 				return &v.state
@@ -19237,7 +21387,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[56].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[56].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*GetSystemIconReply); i {
 			case 0:
 				return &v.state
@@ -19249,7 +21399,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[57].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[57].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*UpdateSystemIconReq); i {
 			case 0:
 				return &v.state
@@ -19261,7 +21411,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[58].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[58].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*UpdateSystemIconReply); i {
 			case 0:
 				return &v.state
@@ -19273,7 +21423,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[59].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[59].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*UpdateNtpAddressReq); i {
 			case 0:
 				return &v.state
@@ -19285,7 +21435,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[60].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[60].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*UpdateNtpAddressReply); i {
 			case 0:
 				return &v.state
@@ -19297,7 +21447,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[61].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[61].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*UpdateSystemLanguageReq); i {
 			case 0:
 				return &v.state
@@ -19309,7 +21459,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[62].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[62].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*UpdateSystemLanguageReply); i {
 			case 0:
 				return &v.state
@@ -19321,7 +21471,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[63].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[63].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*UpdateSystemIPReq); i {
 			case 0:
 				return &v.state
@@ -19333,7 +21483,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[64].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[64].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*UpdateSystemIPReply); i {
 			case 0:
 				return &v.state
@@ -19345,7 +21495,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[65].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[65].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*GetSystemStatsReq); i {
 			case 0:
 				return &v.state
@@ -19357,7 +21507,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[66].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[66].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*StatsInfo); i {
 			case 0:
 				return &v.state
@@ -19369,7 +21519,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[67].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[67].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*GetSystemStatsReply); i {
 			case 0:
 				return &v.state
@@ -19381,7 +21531,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[68].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[68].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*SetSystemStatsCfgReq); i {
 			case 0:
 				return &v.state
@@ -19393,7 +21543,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[69].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[69].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*SetSystemStatsCfgReply); i {
 			case 0:
 				return &v.state
@@ -19405,7 +21555,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[70].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[70].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ListAuditLogReq); i {
 			case 0:
 				return &v.state
@@ -19417,7 +21567,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[71].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[71].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ListAuditLogReply); i {
 			case 0:
 				return &v.state
@@ -19429,7 +21579,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[72].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[72].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*GetLicenseReq); i {
 			case 0:
 				return &v.state
@@ -19441,7 +21591,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[73].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[73].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*GetLicenseReply); i {
 			case 0:
 				return &v.state
@@ -19453,7 +21603,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[74].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[74].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*UpdateLicenseReq); i {
 			case 0:
 				return &v.state
@@ -19465,7 +21615,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[75].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[75].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*UpdateLicenseReply); i {
 			case 0:
 				return &v.state
@@ -19477,7 +21627,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[76].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[76].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*NetworkDebugReq); i {
 			case 0:
 				return &v.state
@@ -19489,7 +21639,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[77].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[77].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*NetworkDebugReply); i {
 			case 0:
 				return &v.state
@@ -19501,7 +21651,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[78].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[78].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ListNotifyConfReq); i {
 			case 0:
 				return &v.state
@@ -19513,7 +21663,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[79].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[79].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ListNotifyConfReply); i {
 			case 0:
 				return &v.state
@@ -19525,7 +21675,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[80].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[80].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*UpdateNotifyConfReq); i {
 			case 0:
 				return &v.state
@@ -19537,7 +21687,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[81].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[81].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*UpdateNotifyConfReply); i {
 			case 0:
 				return &v.state
@@ -19549,7 +21699,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[82].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[82].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*EnableNotifyConfReq); i {
 			case 0:
 				return &v.state
@@ -19561,7 +21711,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[83].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[83].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*EnableNotifyConfReply); i {
 			case 0:
 				return &v.state
@@ -19573,7 +21723,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[84].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[84].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*TestNotifyConfReq); i {
 			case 0:
 				return &v.state
@@ -19585,7 +21735,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[85].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[85].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*TestNotifyConfReply); i {
 			case 0:
 				return &v.state
@@ -19597,7 +21747,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[86].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[86].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ListExportTaskReq); i {
 			case 0:
 				return &v.state
@@ -19609,7 +21759,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[87].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[87].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ListExportTaskReply); i {
 			case 0:
 				return &v.state
@@ -19621,7 +21771,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[88].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[88].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*AddExportTaskReq); i {
 			case 0:
 				return &v.state
@@ -19633,7 +21783,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[89].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[89].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*AddExportTaskReply); i {
 			case 0:
 				return &v.state
@@ -19645,7 +21795,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[90].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[90].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*DeleteExportTaskReq); i {
 			case 0:
 				return &v.state
@@ -19657,7 +21807,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[91].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[91].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*DeleteExportTaskReply); i {
 			case 0:
 				return &v.state
@@ -19669,7 +21819,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[92].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[92].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ListNotifyReq); i {
 			case 0:
 				return &v.state
@@ -19681,7 +21831,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[93].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[93].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ListNotifyReply); i {
 			case 0:
 				return &v.state
@@ -19693,7 +21843,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[94].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[94].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*UpdateNotifyReq); i {
 			case 0:
 				return &v.state
@@ -19705,7 +21855,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[95].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[95].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*UpdateNotifyReply); i {
 			case 0:
 				return &v.state
@@ -19717,7 +21867,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[96].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[96].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*StatsNotifyReq); i {
 			case 0:
 				return &v.state
@@ -19729,7 +21879,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[97].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[97].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*StatsNotifyReply); i {
 			case 0:
 				return &v.state
@@ -19741,7 +21891,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[98].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[98].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ThreatTopsReq); i {
 			case 0:
 				return &v.state
@@ -19753,7 +21903,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[99].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[99].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ThreatTopsReply); i {
 			case 0:
 				return &v.state
@@ -19765,7 +21915,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[100].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[100].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ThreatTrendsReq); i {
 			case 0:
 				return &v.state
@@ -19777,7 +21927,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[101].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[101].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ThreatTrendsReply); i {
 			case 0:
 				return &v.state
@@ -19789,7 +21939,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[102].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[102].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*AttackFlowReply); i {
 			case 0:
 				return &v.state
@@ -19801,7 +21951,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[103].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[103].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ListThreatReq); i {
 			case 0:
 				return &v.state
@@ -19813,7 +21963,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[104].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[104].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ListThreatReply); i {
 			case 0:
 				return &v.state
@@ -19825,7 +21975,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[105].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[105].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*GetThreatNamesReq); i {
 			case 0:
 				return &v.state
@@ -19837,7 +21987,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[106].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[106].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*GetThreatNamesReply); i {
 			case 0:
 				return &v.state
@@ -19849,7 +21999,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[107].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[107].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ListThreatRuleReq); i {
 			case 0:
 				return &v.state
@@ -19861,7 +22011,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[108].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[108].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ListThreatRuleReply); i {
 			case 0:
 				return &v.state
@@ -19873,7 +22023,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[109].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[109].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ActionThreatRuleReq); i {
 			case 0:
 				return &v.state
@@ -19885,7 +22035,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[110].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[110].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ActionThreatRuleReply); i {
 			case 0:
 				return &v.state
@@ -19897,7 +22047,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[111].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[111].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*GetThreatReq); i {
 			case 0:
 				return &v.state
@@ -19909,7 +22059,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[112].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[112].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*GetThreatReply); i {
 			case 0:
 				return &v.state
@@ -19921,7 +22071,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[113].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[113].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ActionThreatReq); i {
 			case 0:
 				return &v.state
@@ -19933,7 +22083,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[114].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[114].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ActionThreatReply); i {
 			case 0:
 				return &v.state
@@ -19945,7 +22095,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[115].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[115].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ListActivityReq); i {
 			case 0:
 				return &v.state
@@ -19957,7 +22107,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[116].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[116].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ActivityDetails); i {
 			case 0:
 				return &v.state
@@ -19969,7 +22119,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[117].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[117].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ListActivityReply); i {
 			case 0:
 				return &v.state
@@ -19981,7 +22131,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[118].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[118].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*GetActivityNamesReq); i {
 			case 0:
 				return &v.state
@@ -19993,7 +22143,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[119].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[119].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*GetActivityNamesReply); i {
 			case 0:
 				return &v.state
@@ -20005,7 +22155,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[120].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[120].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*GetActivityReq); i {
 			case 0:
 				return &v.state
@@ -20017,7 +22167,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[121].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[121].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*GetActivityReply); i {
 			case 0:
 				return &v.state
@@ -20029,7 +22179,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[122].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[122].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ListThreatConfReq); i {
 			case 0:
 				return &v.state
@@ -20041,7 +22191,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[123].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[123].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ListThreatConfReply); i {
 			case 0:
 				return &v.state
@@ -20053,7 +22203,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[124].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[124].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*UpdateThreatConfReq); i {
 			case 0:
 				return &v.state
@@ -20065,7 +22215,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[125].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[125].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*UpdateThreatConfReply); i {
 			case 0:
 				return &v.state
@@ -20077,7 +22227,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[126].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[126].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ListSensitiveEntryReq); i {
 			case 0:
 				return &v.state
@@ -20089,7 +22239,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[127].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[127].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ListSensitiveEntryReply); i {
 			case 0:
 				return &v.state
@@ -20101,7 +22251,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[128].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[128].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*AddSensitiveEntryReq); i {
 			case 0:
 				return &v.state
@@ -20113,7 +22263,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[129].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[129].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*AddSensitiveEntryReply); i {
 			case 0:
 				return &v.state
@@ -20125,7 +22275,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[130].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[130].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ListDomainEntryReq); i {
 			case 0:
 				return &v.state
@@ -20137,7 +22287,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[131].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[131].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ListDomainEntryReply); i {
 			case 0:
 				return &v.state
@@ -20149,7 +22299,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[132].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[132].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*DeleteSensitiveEntryReq); i {
 			case 0:
 				return &v.state
@@ -20161,7 +22311,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[133].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[133].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*DeleteSensitiveEntryReply); i {
 			case 0:
 				return &v.state
@@ -20173,7 +22323,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[134].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[134].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ListThreatWhitelistReq); i {
 			case 0:
 				return &v.state
@@ -20185,7 +22335,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[135].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[135].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ListThreatWhitelistReply); i {
 			case 0:
 				return &v.state
@@ -20197,7 +22347,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[136].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[136].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*GetThreatWhitelistFieldReq); i {
 			case 0:
 				return &v.state
@@ -20209,7 +22359,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[137].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[137].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*GetThreatWhitelistFieldReply); i {
 			case 0:
 				return &v.state
@@ -20221,7 +22371,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[138].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[138].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*AddThreatWhitelistReq); i {
 			case 0:
 				return &v.state
@@ -20233,7 +22383,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[139].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[139].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*AddThreatWhitelistReply); i {
 			case 0:
 				return &v.state
@@ -20245,7 +22395,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[140].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[140].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*UpdateThreatWhitelistReq); i {
 			case 0:
 				return &v.state
@@ -20257,7 +22407,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[141].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[141].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*UpdateThreatWhitelistReply); i {
 			case 0:
 				return &v.state
@@ -20269,7 +22419,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[142].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[142].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*DeleteThreatWhitelistReq); i {
 			case 0:
 				return &v.state
@@ -20281,7 +22431,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[143].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[143].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*DeleteThreatWhitelistReply); i {
 			case 0:
 				return &v.state
@@ -20293,7 +22443,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[144].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[144].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ListThreatBlockReq); i {
 			case 0:
 				return &v.state
@@ -20305,7 +22455,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[145].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[145].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ListThreatBlockReply); i {
 			case 0:
 				return &v.state
@@ -20317,7 +22467,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[146].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[146].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*AddThreatBlockReq); i {
 			case 0:
 				return &v.state
@@ -20329,7 +22479,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[147].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[147].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*AddThreatBlockReply); i {
 			case 0:
 				return &v.state
@@ -20341,7 +22491,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[148].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[148].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*UpdateThreatBlockReq); i {
 			case 0:
 				return &v.state
@@ -20353,7 +22503,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[149].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[149].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*UpdateThreatBlockReply); i {
 			case 0:
 				return &v.state
@@ -20365,7 +22515,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[150].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[150].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*DeleteThreatBlockReq); i {
 			case 0:
 				return &v.state
@@ -20377,7 +22527,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[151].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[151].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*DeleteThreatBlockReply); i {
 			case 0:
 				return &v.state
@@ -20389,7 +22539,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[152].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[152].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ScanRiskStatsReq); i {
 			case 0:
 				return &v.state
@@ -20401,7 +22551,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[153].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[153].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ScanRiskStatsReply); i {
 			case 0:
 				return &v.state
@@ -20413,7 +22563,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[154].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[154].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ListBaselineReq); i {
 			case 0:
 				return &v.state
@@ -20425,7 +22575,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[155].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[155].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ListBaselineReply); i {
 			case 0:
 				return &v.state
@@ -20437,7 +22587,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[156].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[156].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*GetBaselineReq); i {
 			case 0:
 				return &v.state
@@ -20449,7 +22599,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[157].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[157].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*GetBaselineReply); i {
 			case 0:
 				return &v.state
@@ -20461,7 +22611,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[158].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[158].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ListLeakReq); i {
 			case 0:
 				return &v.state
@@ -20473,7 +22623,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[159].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[159].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ListLeakReply); i {
 			case 0:
 				return &v.state
@@ -20485,7 +22635,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[160].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[160].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ListWeakPwdReq); i {
 			case 0:
 				return &v.state
@@ -20497,7 +22647,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[161].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[161].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ListWeakPwdReply); i {
 			case 0:
 				return &v.state
@@ -20509,7 +22659,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[162].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[162].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ListScanTaskReq); i {
 			case 0:
 				return &v.state
@@ -20521,7 +22671,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[163].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[163].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ListScanTaskReply); i {
 			case 0:
 				return &v.state
@@ -20533,7 +22683,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[164].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[164].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*GetScanTaskReq); i {
 			case 0:
 				return &v.state
@@ -20545,7 +22695,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[165].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[165].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*GetScanTaskReply); i {
 			case 0:
 				return &v.state
@@ -20557,7 +22707,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[166].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[166].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*AddScanTaskReq); i {
 			case 0:
 				return &v.state
@@ -20569,7 +22719,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[167].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[167].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*AddScanTaskReply); i {
 			case 0:
 				return &v.state
@@ -20581,7 +22731,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[168].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[168].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*RecheckScanTaskReq); i {
 			case 0:
 				return &v.state
@@ -20593,7 +22743,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[169].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[169].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*RecheckScanTaskReply); i {
 			case 0:
 				return &v.state
@@ -20605,7 +22755,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[170].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[170].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*DeleteScanTaskReq); i {
 			case 0:
 				return &v.state
@@ -20617,7 +22767,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[171].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[171].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*DeleteScanTaskReply); i {
 			case 0:
 				return &v.state
@@ -20629,7 +22779,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[172].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[172].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ListScanConfReq); i {
 			case 0:
 				return &v.state
@@ -20641,7 +22791,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[173].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[173].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ListScanConfReply); i {
 			case 0:
 				return &v.state
@@ -20653,7 +22803,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[174].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[174].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ScanConfDetail); i {
 			case 0:
 				return &v.state
@@ -20665,7 +22815,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[175].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[175].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*SetScanConfReq); i {
 			case 0:
 				return &v.state
@@ -20677,7 +22827,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[176].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[176].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*SetScanConfReply); i {
 			case 0:
 				return &v.state
@@ -20689,7 +22839,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[177].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[177].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*GetScanConfReq); i {
 			case 0:
 				return &v.state
@@ -20701,7 +22851,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[178].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[178].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*GetScanConfReply); i {
 			case 0:
 				return &v.state
@@ -20713,7 +22863,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[179].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[179].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*GetScanTmplNamesReq); i {
 			case 0:
 				return &v.state
@@ -20725,7 +22875,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[180].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[180].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*GetScanTmplNamesReply); i {
 			case 0:
 				return &v.state
@@ -20737,7 +22887,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[181].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[181].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*UpdateScanConfReq); i {
 			case 0:
 				return &v.state
@@ -20749,7 +22899,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[182].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[182].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*UpdateScanConfReply); i {
 			case 0:
 				return &v.state
@@ -20761,7 +22911,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[183].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[183].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ListScanTmplReq); i {
 			case 0:
 				return &v.state
@@ -20773,7 +22923,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[184].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[184].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ListScanTmplReply); i {
 			case 0:
 				return &v.state
@@ -20785,7 +22935,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[185].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[185].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*GetScanTmplReq); i {
 			case 0:
 				return &v.state
@@ -20797,7 +22947,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[186].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[186].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*PluginInfo); i {
 			case 0:
 				return &v.state
@@ -20809,7 +22959,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[187].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[187].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*GetScanTmplReply); i {
 			case 0:
 				return &v.state
@@ -20821,7 +22971,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[188].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[188].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*UpdateScanTmplReq); i {
 			case 0:
 				return &v.state
@@ -20833,7 +22983,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[189].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[189].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*UpdateScanTmplReply); i {
 			case 0:
 				return &v.state
@@ -20845,7 +22995,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[190].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[190].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*DeleteScanTmplReq); i {
 			case 0:
 				return &v.state
@@ -20857,7 +23007,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[191].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[191].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*DeleteScanTmplReply); i {
 			case 0:
 				return &v.state
@@ -20869,7 +23019,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[192].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[192].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*PluginInfoV2); i {
 			case 0:
 				return &v.state
@@ -20881,7 +23031,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[193].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[193].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*AddScanTmplReq); i {
 			case 0:
 				return &v.state
@@ -20893,7 +23043,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[194].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[194].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*AddScanTmplReply); i {
 			case 0:
 				return &v.state
@@ -20905,7 +23055,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[195].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[195].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ListScanPluginReq); i {
 			case 0:
 				return &v.state
@@ -20917,7 +23067,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[196].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[196].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ListScanPluginReply); i {
 			case 0:
 				return &v.state
@@ -20929,7 +23079,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[197].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[197].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*DashboardStatsReq); i {
 			case 0:
 				return &v.state
@@ -20941,7 +23091,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[198].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[198].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*DashboardStatsReply); i {
 			case 0:
 				return &v.state
@@ -20953,7 +23103,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[199].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[199].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*DashboardTrendsReq); i {
 			case 0:
 				return &v.state
@@ -20965,7 +23115,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[200].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[200].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*DashboardTrendsReply); i {
 			case 0:
 				return &v.state
@@ -20977,7 +23127,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[201].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[201].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*DashboardLogStatsReq); i {
 			case 0:
 				return &v.state
@@ -20989,7 +23139,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[202].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[202].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*DashboardLogStatsReply); i {
 			case 0:
 				return &v.state
@@ -21001,7 +23151,247 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[203].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[203].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*ListAlertRuleReq); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_ada_proto_msgTypes[204].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*AlertRuleInfo); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_ada_proto_msgTypes[205].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*ListAlertRuleReply); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_ada_proto_msgTypes[206].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*AddAlertRuleReq); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_ada_proto_msgTypes[207].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*AddAlertRuleReply); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_ada_proto_msgTypes[208].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*UpdateAlertRuleReq); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_ada_proto_msgTypes[209].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*UpdateAlertRuleReply); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_ada_proto_msgTypes[210].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*DeleteAlertRuleReq); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_ada_proto_msgTypes[211].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*DeleteAlertRuleReply); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_ada_proto_msgTypes[212].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*ListActivityRuleReq); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_ada_proto_msgTypes[213].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*ActivityRuleInfo); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_ada_proto_msgTypes[214].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*ListActivityRuleReply); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_ada_proto_msgTypes[215].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*GetActivityRuleReq); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_ada_proto_msgTypes[216].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*GetActivityRuleReply); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_ada_proto_msgTypes[217].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*AddActivityRuleReq); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_ada_proto_msgTypes[218].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*AddActivityRuleReply); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_ada_proto_msgTypes[219].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*UpdateActivityRuleReq); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_ada_proto_msgTypes[220].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*UpdateActivityRuleReply); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_ada_proto_msgTypes[221].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*DeleteActivityRuleReq); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_ada_proto_msgTypes[222].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*DeleteActivityRuleReply); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_ada_proto_msgTypes[223].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ListUserReply_Details); i {
 			case 0:
 				return &v.state
@@ -21013,7 +23403,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[204].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[224].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ListDomainReplyDcList); i {
 			case 0:
 				return &v.state
@@ -21025,7 +23415,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[205].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[225].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ListDomainReply_Details); i {
 			case 0:
 				return &v.state
@@ -21037,7 +23427,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[207].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[227].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ListSensorReplyMapSlice); i {
 			case 0:
 				return &v.state
@@ -21049,7 +23439,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[208].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[228].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ListSensorReply_Details); i {
 			case 0:
 				return &v.state
@@ -21061,7 +23451,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[215].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[235].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ListAuditLogReply_Details); i {
 			case 0:
 				return &v.state
@@ -21073,7 +23463,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[216].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[236].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ListNotifyConfReply_Details); i {
 			case 0:
 				return &v.state
@@ -21085,7 +23475,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[220].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[240].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ListExportTaskReply_Details); i {
 			case 0:
 				return &v.state
@@ -21097,7 +23487,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[223].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[243].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ListNotifyReply_Details); i {
 			case 0:
 				return &v.state
@@ -21109,7 +23499,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[225].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[245].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ThreatTopsReply_Details); i {
 			case 0:
 				return &v.state
@@ -21121,7 +23511,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[226].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[246].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ThreatTrendsReply_Item); i {
 			case 0:
 				return &v.state
@@ -21133,7 +23523,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[227].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[247].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*AttackFlowReply_Field); i {
 			case 0:
 				return &v.state
@@ -21145,7 +23535,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[229].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[249].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ListThreatReq_Details); i {
 			case 0:
 				return &v.state
@@ -21157,7 +23547,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[230].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[250].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ListThreatReply_Details); i {
 			case 0:
 				return &v.state
@@ -21169,7 +23559,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[232].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[252].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ListThreatRuleReply_Details); i {
 			case 0:
 				return &v.state
@@ -21181,7 +23571,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[236].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[256].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ListSensitiveEntryReply_Details); i {
 			case 0:
 				return &v.state
@@ -21193,7 +23583,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[237].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[257].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ListThreatWhitelistReply_Details); i {
 			case 0:
 				return &v.state
@@ -21205,7 +23595,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[238].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[258].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ListThreatWhitelistReply_DetailsRuleInfo); i {
 			case 0:
 				return &v.state
@@ -21217,7 +23607,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[240].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[260].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*AddThreatWhitelistReqRuleInfo); i {
 			case 0:
 				return &v.state
@@ -21229,7 +23619,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[242].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[262].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*UpdateThreatWhitelistReqRuleInfo); i {
 			case 0:
 				return &v.state
@@ -21241,7 +23631,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[244].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[264].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ListThreatBlockReply_Results); i {
 			case 0:
 				return &v.state
@@ -21253,7 +23643,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[245].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[265].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ListThreatBlockReply_Details); i {
 			case 0:
 				return &v.state
@@ -21265,7 +23655,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[247].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[267].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ScanRiskStatsReply_Details); i {
 			case 0:
 				return &v.state
@@ -21277,7 +23667,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[248].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[268].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ListBaselineReply_Details); i {
 			case 0:
 				return &v.state
@@ -21289,7 +23679,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[249].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[269].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*GetBaselineReplyEntryInfo); i {
 			case 0:
 				return &v.state
@@ -21301,7 +23691,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[251].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[271].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ListLeakReply_Details); i {
 			case 0:
 				return &v.state
@@ -21313,7 +23703,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[252].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[272].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ListWeakPwdReply_Details); i {
 			case 0:
 				return &v.state
@@ -21325,7 +23715,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[253].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[273].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ListScanTaskReply_Details); i {
 			case 0:
 				return &v.state
@@ -21337,7 +23727,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[254].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[274].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*GetScanTaskReply_Details); i {
 			case 0:
 				return &v.state
@@ -21349,7 +23739,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[258].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[278].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*GetScanTmplNamesReplyTmplNames); i {
 			case 0:
 				return &v.state
@@ -21361,7 +23751,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[260].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[280].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ListScanTmplReply_Details); i {
 			case 0:
 				return &v.state
@@ -21373,7 +23763,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[268].Exporter = func(v any, i int) any {
+		file_ada_proto_msgTypes[288].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*DashboardLogStatsReplyLogStatsList); i {
 			case 0:
 				return &v.state
@@ -21392,7 +23782,7 @@ func file_ada_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_ada_proto_rawDesc,
 			NumEnums:      0,
-			NumMessages:   269,
+			NumMessages:   289,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
@@ -21508,6 +23898,16 @@ type ADAClient interface {
 	AddThreatBlock(ctx context.Context, in *AddThreatBlockReq, opts ...grpc.CallOption) (*AddThreatBlockReply, error)
 	UpdateThreatBlock(ctx context.Context, in *UpdateThreatBlockReq, opts ...grpc.CallOption) (*UpdateThreatBlockReply, error)
 	DeleteThreatBlock(ctx context.Context, in *DeleteThreatBlockReq, opts ...grpc.CallOption) (*DeleteThreatBlockReply, error)
+	// Rule Management (Alert Rules & Activity Rules)
+	ListAlertRule(ctx context.Context, in *ListAlertRuleReq, opts ...grpc.CallOption) (*ListAlertRuleReply, error)
+	AddAlertRule(ctx context.Context, in *AddAlertRuleReq, opts ...grpc.CallOption) (*AddAlertRuleReply, error)
+	UpdateAlertRule(ctx context.Context, in *UpdateAlertRuleReq, opts ...grpc.CallOption) (*UpdateAlertRuleReply, error)
+	DeleteAlertRule(ctx context.Context, in *DeleteAlertRuleReq, opts ...grpc.CallOption) (*DeleteAlertRuleReply, error)
+	ListActivityRule(ctx context.Context, in *ListActivityRuleReq, opts ...grpc.CallOption) (*ListActivityRuleReply, error)
+	GetActivityRule(ctx context.Context, in *GetActivityRuleReq, opts ...grpc.CallOption) (*GetActivityRuleReply, error)
+	AddActivityRule(ctx context.Context, in *AddActivityRuleReq, opts ...grpc.CallOption) (*AddActivityRuleReply, error)
+	UpdateActivityRule(ctx context.Context, in *UpdateActivityRuleReq, opts ...grpc.CallOption) (*UpdateActivityRuleReply, error)
+	DeleteActivityRule(ctx context.Context, in *DeleteActivityRuleReq, opts ...grpc.CallOption) (*DeleteActivityRuleReply, error)
 	// //////////////////////////////
 	// scanrisk主动检测dashboard
 	ScanRiskStats(ctx context.Context, in *ScanRiskStatsReq, opts ...grpc.CallOption) (*ScanRiskStatsReply, error)
@@ -22215,6 +24615,87 @@ func (c *aDAClient) DeleteThreatBlock(ctx context.Context, in *DeleteThreatBlock
 	return out, nil
 }
 
+func (c *aDAClient) ListAlertRule(ctx context.Context, in *ListAlertRuleReq, opts ...grpc.CallOption) (*ListAlertRuleReply, error) {
+	out := new(ListAlertRuleReply)
+	err := c.cc.Invoke(ctx, "/ada.ADA/ListAlertRule", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *aDAClient) AddAlertRule(ctx context.Context, in *AddAlertRuleReq, opts ...grpc.CallOption) (*AddAlertRuleReply, error) {
+	out := new(AddAlertRuleReply)
+	err := c.cc.Invoke(ctx, "/ada.ADA/AddAlertRule", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *aDAClient) UpdateAlertRule(ctx context.Context, in *UpdateAlertRuleReq, opts ...grpc.CallOption) (*UpdateAlertRuleReply, error) {
+	out := new(UpdateAlertRuleReply)
+	err := c.cc.Invoke(ctx, "/ada.ADA/UpdateAlertRule", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *aDAClient) DeleteAlertRule(ctx context.Context, in *DeleteAlertRuleReq, opts ...grpc.CallOption) (*DeleteAlertRuleReply, error) {
+	out := new(DeleteAlertRuleReply)
+	err := c.cc.Invoke(ctx, "/ada.ADA/DeleteAlertRule", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *aDAClient) ListActivityRule(ctx context.Context, in *ListActivityRuleReq, opts ...grpc.CallOption) (*ListActivityRuleReply, error) {
+	out := new(ListActivityRuleReply)
+	err := c.cc.Invoke(ctx, "/ada.ADA/ListActivityRule", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *aDAClient) GetActivityRule(ctx context.Context, in *GetActivityRuleReq, opts ...grpc.CallOption) (*GetActivityRuleReply, error) {
+	out := new(GetActivityRuleReply)
+	err := c.cc.Invoke(ctx, "/ada.ADA/GetActivityRule", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *aDAClient) AddActivityRule(ctx context.Context, in *AddActivityRuleReq, opts ...grpc.CallOption) (*AddActivityRuleReply, error) {
+	out := new(AddActivityRuleReply)
+	err := c.cc.Invoke(ctx, "/ada.ADA/AddActivityRule", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *aDAClient) UpdateActivityRule(ctx context.Context, in *UpdateActivityRuleReq, opts ...grpc.CallOption) (*UpdateActivityRuleReply, error) {
+	out := new(UpdateActivityRuleReply)
+	err := c.cc.Invoke(ctx, "/ada.ADA/UpdateActivityRule", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *aDAClient) DeleteActivityRule(ctx context.Context, in *DeleteActivityRuleReq, opts ...grpc.CallOption) (*DeleteActivityRuleReply, error) {
+	out := new(DeleteActivityRuleReply)
+	err := c.cc.Invoke(ctx, "/ada.ADA/DeleteActivityRule", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *aDAClient) ScanRiskStats(ctx context.Context, in *ScanRiskStatsReq, opts ...grpc.CallOption) (*ScanRiskStatsReply, error) {
 	out := new(ScanRiskStatsReply)
 	err := c.cc.Invoke(ctx, "/ada.ADA/ScanRiskStats", in, out, opts...)
@@ -22523,6 +25004,16 @@ type ADAServer interface {
 	AddThreatBlock(context.Context, *AddThreatBlockReq) (*AddThreatBlockReply, error)
 	UpdateThreatBlock(context.Context, *UpdateThreatBlockReq) (*UpdateThreatBlockReply, error)
 	DeleteThreatBlock(context.Context, *DeleteThreatBlockReq) (*DeleteThreatBlockReply, error)
+	// Rule Management (Alert Rules & Activity Rules)
+	ListAlertRule(context.Context, *ListAlertRuleReq) (*ListAlertRuleReply, error)
+	AddAlertRule(context.Context, *AddAlertRuleReq) (*AddAlertRuleReply, error)
+	UpdateAlertRule(context.Context, *UpdateAlertRuleReq) (*UpdateAlertRuleReply, error)
+	DeleteAlertRule(context.Context, *DeleteAlertRuleReq) (*DeleteAlertRuleReply, error)
+	ListActivityRule(context.Context, *ListActivityRuleReq) (*ListActivityRuleReply, error)
+	GetActivityRule(context.Context, *GetActivityRuleReq) (*GetActivityRuleReply, error)
+	AddActivityRule(context.Context, *AddActivityRuleReq) (*AddActivityRuleReply, error)
+	UpdateActivityRule(context.Context, *UpdateActivityRuleReq) (*UpdateActivityRuleReply, error)
+	DeleteActivityRule(context.Context, *DeleteActivityRuleReq) (*DeleteActivityRuleReply, error)
 	// //////////////////////////////
 	// scanrisk主动检测dashboard
 	ScanRiskStats(context.Context, *ScanRiskStatsReq) (*ScanRiskStatsReply, error)
@@ -22782,6 +25273,33 @@ func (*UnimplementedADAServer) UpdateThreatBlock(context.Context, *UpdateThreatB
 func (*UnimplementedADAServer) DeleteThreatBlock(context.Context, *DeleteThreatBlockReq) (*DeleteThreatBlockReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteThreatBlock not implemented")
 }
+func (*UnimplementedADAServer) ListAlertRule(context.Context, *ListAlertRuleReq) (*ListAlertRuleReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListAlertRule not implemented")
+}
+func (*UnimplementedADAServer) AddAlertRule(context.Context, *AddAlertRuleReq) (*AddAlertRuleReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AddAlertRule not implemented")
+}
+func (*UnimplementedADAServer) UpdateAlertRule(context.Context, *UpdateAlertRuleReq) (*UpdateAlertRuleReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateAlertRule not implemented")
+}
+func (*UnimplementedADAServer) DeleteAlertRule(context.Context, *DeleteAlertRuleReq) (*DeleteAlertRuleReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteAlertRule not implemented")
+}
+func (*UnimplementedADAServer) ListActivityRule(context.Context, *ListActivityRuleReq) (*ListActivityRuleReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListActivityRule not implemented")
+}
+func (*UnimplementedADAServer) GetActivityRule(context.Context, *GetActivityRuleReq) (*GetActivityRuleReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetActivityRule not implemented")
+}
+func (*UnimplementedADAServer) AddActivityRule(context.Context, *AddActivityRuleReq) (*AddActivityRuleReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AddActivityRule not implemented")
+}
+func (*UnimplementedADAServer) UpdateActivityRule(context.Context, *UpdateActivityRuleReq) (*UpdateActivityRuleReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateActivityRule not implemented")
+}
+func (*UnimplementedADAServer) DeleteActivityRule(context.Context, *DeleteActivityRuleReq) (*DeleteActivityRuleReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteActivityRule not implemented")
+}
 func (*UnimplementedADAServer) ScanRiskStats(context.Context, *ScanRiskStatsReq) (*ScanRiskStatsReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ScanRiskStats not implemented")
 }
@@ -22859,7 +25377,7 @@ func RegisterADAServer(s *grpc.Server, srv ADAServer) {
 	s.RegisterService(&_ADA_serviceDesc, srv)
 }
 
-func _ADA_Login_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
+func _ADA_Login_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(LoginReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -22871,13 +25389,13 @@ func _ADA_Login_Handler(srv any, ctx context.Context, dec func(any) error, inter
 		Server:     srv,
 		FullMethod: "/ada.ADA/Login",
 	}
-	handler := func(ctx context.Context, req any) (any, error) {
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ADAServer).Login(ctx, req.(*LoginReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_Logout_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
+func _ADA_Logout_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(LogoutReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -22889,13 +25407,13 @@ func _ADA_Logout_Handler(srv any, ctx context.Context, dec func(any) error, inte
 		Server:     srv,
 		FullMethod: "/ada.ADA/Logout",
 	}
-	handler := func(ctx context.Context, req any) (any, error) {
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ADAServer).Logout(ctx, req.(*LogoutReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_ListUser_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
+func _ADA_ListUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ListUserReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -22907,13 +25425,13 @@ func _ADA_ListUser_Handler(srv any, ctx context.Context, dec func(any) error, in
 		Server:     srv,
 		FullMethod: "/ada.ADA/ListUser",
 	}
-	handler := func(ctx context.Context, req any) (any, error) {
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ADAServer).ListUser(ctx, req.(*ListUserReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_AddUser_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
+func _ADA_AddUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(AddUserReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -22925,13 +25443,13 @@ func _ADA_AddUser_Handler(srv any, ctx context.Context, dec func(any) error, int
 		Server:     srv,
 		FullMethod: "/ada.ADA/AddUser",
 	}
-	handler := func(ctx context.Context, req any) (any, error) {
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ADAServer).AddUser(ctx, req.(*AddUserReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_UpdateUser_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
+func _ADA_UpdateUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(UpdateUserReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -22943,13 +25461,13 @@ func _ADA_UpdateUser_Handler(srv any, ctx context.Context, dec func(any) error, 
 		Server:     srv,
 		FullMethod: "/ada.ADA/UpdateUser",
 	}
-	handler := func(ctx context.Context, req any) (any, error) {
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ADAServer).UpdateUser(ctx, req.(*UpdateUserReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_UpdateUserPassword_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
+func _ADA_UpdateUserPassword_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(UpdateUserPasswordReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -22961,13 +25479,13 @@ func _ADA_UpdateUserPassword_Handler(srv any, ctx context.Context, dec func(any)
 		Server:     srv,
 		FullMethod: "/ada.ADA/UpdateUserPassword",
 	}
-	handler := func(ctx context.Context, req any) (any, error) {
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ADAServer).UpdateUserPassword(ctx, req.(*UpdateUserPasswordReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_DeleteUser_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
+func _ADA_DeleteUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(DeleteUserReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -22979,13 +25497,13 @@ func _ADA_DeleteUser_Handler(srv any, ctx context.Context, dec func(any) error, 
 		Server:     srv,
 		FullMethod: "/ada.ADA/DeleteUser",
 	}
-	handler := func(ctx context.Context, req any) (any, error) {
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ADAServer).DeleteUser(ctx, req.(*DeleteUserReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_UserExists_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
+func _ADA_UserExists_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(UserExistsReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -22997,13 +25515,13 @@ func _ADA_UserExists_Handler(srv any, ctx context.Context, dec func(any) error, 
 		Server:     srv,
 		FullMethod: "/ada.ADA/UserExists",
 	}
-	handler := func(ctx context.Context, req any) (any, error) {
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ADAServer).UserExists(ctx, req.(*UserExistsReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_CheckMfa_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
+func _ADA_CheckMfa_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(CheckMfaReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -23015,13 +25533,13 @@ func _ADA_CheckMfa_Handler(srv any, ctx context.Context, dec func(any) error, in
 		Server:     srv,
 		FullMethod: "/ada.ADA/CheckMfa",
 	}
-	handler := func(ctx context.Context, req any) (any, error) {
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ADAServer).CheckMfa(ctx, req.(*CheckMfaReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_EnableMfa_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
+func _ADA_EnableMfa_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(EnableMfaReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -23033,13 +25551,13 @@ func _ADA_EnableMfa_Handler(srv any, ctx context.Context, dec func(any) error, i
 		Server:     srv,
 		FullMethod: "/ada.ADA/EnableMfa",
 	}
-	handler := func(ctx context.Context, req any) (any, error) {
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ADAServer).EnableMfa(ctx, req.(*EnableMfaReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_DisableMfa_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
+func _ADA_DisableMfa_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(DisableMfaReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -23051,13 +25569,13 @@ func _ADA_DisableMfa_Handler(srv any, ctx context.Context, dec func(any) error, 
 		Server:     srv,
 		FullMethod: "/ada.ADA/DisableMfa",
 	}
-	handler := func(ctx context.Context, req any) (any, error) {
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ADAServer).DisableMfa(ctx, req.(*DisableMfaReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_UpdateAvatar_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
+func _ADA_UpdateAvatar_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(UpdateAvatarReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -23069,13 +25587,13 @@ func _ADA_UpdateAvatar_Handler(srv any, ctx context.Context, dec func(any) error
 		Server:     srv,
 		FullMethod: "/ada.ADA/UpdateAvatar",
 	}
-	handler := func(ctx context.Context, req any) (any, error) {
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ADAServer).UpdateAvatar(ctx, req.(*UpdateAvatarReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_ResetPassword_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
+func _ADA_ResetPassword_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ResetPasswordReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -23087,13 +25605,13 @@ func _ADA_ResetPassword_Handler(srv any, ctx context.Context, dec func(any) erro
 		Server:     srv,
 		FullMethod: "/ada.ADA/ResetPassword",
 	}
-	handler := func(ctx context.Context, req any) (any, error) {
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ADAServer).ResetPassword(ctx, req.(*ResetPasswordReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_GetPwdUpdateTm_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
+func _ADA_GetPwdUpdateTm_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetPwdUpdateTmReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -23105,13 +25623,13 @@ func _ADA_GetPwdUpdateTm_Handler(srv any, ctx context.Context, dec func(any) err
 		Server:     srv,
 		FullMethod: "/ada.ADA/GetPwdUpdateTm",
 	}
-	handler := func(ctx context.Context, req any) (any, error) {
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ADAServer).GetPwdUpdateTm(ctx, req.(*GetPwdUpdateTmReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_ListDomain_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
+func _ADA_ListDomain_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ListDomainReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -23123,13 +25641,13 @@ func _ADA_ListDomain_Handler(srv any, ctx context.Context, dec func(any) error, 
 		Server:     srv,
 		FullMethod: "/ada.ADA/ListDomain",
 	}
-	handler := func(ctx context.Context, req any) (any, error) {
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ADAServer).ListDomain(ctx, req.(*ListDomainReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_AddDomain_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
+func _ADA_AddDomain_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(AddDomainReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -23141,13 +25659,13 @@ func _ADA_AddDomain_Handler(srv any, ctx context.Context, dec func(any) error, i
 		Server:     srv,
 		FullMethod: "/ada.ADA/AddDomain",
 	}
-	handler := func(ctx context.Context, req any) (any, error) {
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ADAServer).AddDomain(ctx, req.(*AddDomainReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_TestDomain_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
+func _ADA_TestDomain_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(TestDomainReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -23159,13 +25677,13 @@ func _ADA_TestDomain_Handler(srv any, ctx context.Context, dec func(any) error, 
 		Server:     srv,
 		FullMethod: "/ada.ADA/TestDomain",
 	}
-	handler := func(ctx context.Context, req any) (any, error) {
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ADAServer).TestDomain(ctx, req.(*TestDomainReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_UpdateDomain_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
+func _ADA_UpdateDomain_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(UpdateDomainReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -23177,13 +25695,13 @@ func _ADA_UpdateDomain_Handler(srv any, ctx context.Context, dec func(any) error
 		Server:     srv,
 		FullMethod: "/ada.ADA/UpdateDomain",
 	}
-	handler := func(ctx context.Context, req any) (any, error) {
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ADAServer).UpdateDomain(ctx, req.(*UpdateDomainReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_DeleteDomain_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
+func _ADA_DeleteDomain_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(DeleteDomainReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -23195,13 +25713,13 @@ func _ADA_DeleteDomain_Handler(srv any, ctx context.Context, dec func(any) error
 		Server:     srv,
 		FullMethod: "/ada.ADA/DeleteDomain",
 	}
-	handler := func(ctx context.Context, req any) (any, error) {
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ADAServer).DeleteDomain(ctx, req.(*DeleteDomainReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_UpdateDomainData_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
+func _ADA_UpdateDomainData_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(UpdateDomainDataReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -23213,13 +25731,13 @@ func _ADA_UpdateDomainData_Handler(srv any, ctx context.Context, dec func(any) e
 		Server:     srv,
 		FullMethod: "/ada.ADA/UpdateDomainData",
 	}
-	handler := func(ctx context.Context, req any) (any, error) {
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ADAServer).UpdateDomainData(ctx, req.(*UpdateDomainDataReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_DeploySensor_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
+func _ADA_DeploySensor_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(DeploySensorReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -23231,13 +25749,13 @@ func _ADA_DeploySensor_Handler(srv any, ctx context.Context, dec func(any) error
 		Server:     srv,
 		FullMethod: "/ada.ADA/DeploySensor",
 	}
-	handler := func(ctx context.Context, req any) (any, error) {
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ADAServer).DeploySensor(ctx, req.(*DeploySensorReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_ListSensor_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
+func _ADA_ListSensor_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ListSensorReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -23249,13 +25767,13 @@ func _ADA_ListSensor_Handler(srv any, ctx context.Context, dec func(any) error, 
 		Server:     srv,
 		FullMethod: "/ada.ADA/ListSensor",
 	}
-	handler := func(ctx context.Context, req any) (any, error) {
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ADAServer).ListSensor(ctx, req.(*ListSensorReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_UpdateSensor_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
+func _ADA_UpdateSensor_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(UpdateSensorReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -23267,13 +25785,13 @@ func _ADA_UpdateSensor_Handler(srv any, ctx context.Context, dec func(any) error
 		Server:     srv,
 		FullMethod: "/ada.ADA/UpdateSensor",
 	}
-	handler := func(ctx context.Context, req any) (any, error) {
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ADAServer).UpdateSensor(ctx, req.(*UpdateSensorReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_DownloadSensor_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
+func _ADA_DownloadSensor_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(DownloadSensorReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -23285,13 +25803,13 @@ func _ADA_DownloadSensor_Handler(srv any, ctx context.Context, dec func(any) err
 		Server:     srv,
 		FullMethod: "/ada.ADA/DownloadSensor",
 	}
-	handler := func(ctx context.Context, req any) (any, error) {
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ADAServer).DownloadSensor(ctx, req.(*DownloadSensorReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_CmdSensor_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
+func _ADA_CmdSensor_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(CmdSensorReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -23303,13 +25821,13 @@ func _ADA_CmdSensor_Handler(srv any, ctx context.Context, dec func(any) error, i
 		Server:     srv,
 		FullMethod: "/ada.ADA/CmdSensor",
 	}
-	handler := func(ctx context.Context, req any) (any, error) {
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ADAServer).CmdSensor(ctx, req.(*CmdSensorReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_UpdateSensorVersion_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
+func _ADA_UpdateSensorVersion_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(UpdateSensorVersionReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -23321,13 +25839,13 @@ func _ADA_UpdateSensorVersion_Handler(srv any, ctx context.Context, dec func(any
 		Server:     srv,
 		FullMethod: "/ada.ADA/UpdateSensorVersion",
 	}
-	handler := func(ctx context.Context, req any) (any, error) {
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ADAServer).UpdateSensorVersion(ctx, req.(*UpdateSensorVersionReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_GetSystemInfo_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
+func _ADA_GetSystemInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetSystemInfoReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -23339,13 +25857,13 @@ func _ADA_GetSystemInfo_Handler(srv any, ctx context.Context, dec func(any) erro
 		Server:     srv,
 		FullMethod: "/ada.ADA/GetSystemInfo",
 	}
-	handler := func(ctx context.Context, req any) (any, error) {
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ADAServer).GetSystemInfo(ctx, req.(*GetSystemInfoReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_GetSystemIcon_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
+func _ADA_GetSystemIcon_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetSystemIconReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -23357,13 +25875,13 @@ func _ADA_GetSystemIcon_Handler(srv any, ctx context.Context, dec func(any) erro
 		Server:     srv,
 		FullMethod: "/ada.ADA/GetSystemIcon",
 	}
-	handler := func(ctx context.Context, req any) (any, error) {
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ADAServer).GetSystemIcon(ctx, req.(*GetSystemIconReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_UpdateSystemIcon_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
+func _ADA_UpdateSystemIcon_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(UpdateSystemIconReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -23375,13 +25893,13 @@ func _ADA_UpdateSystemIcon_Handler(srv any, ctx context.Context, dec func(any) e
 		Server:     srv,
 		FullMethod: "/ada.ADA/UpdateSystemIcon",
 	}
-	handler := func(ctx context.Context, req any) (any, error) {
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ADAServer).UpdateSystemIcon(ctx, req.(*UpdateSystemIconReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_UpdateNtpAddress_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
+func _ADA_UpdateNtpAddress_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(UpdateNtpAddressReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -23393,13 +25911,13 @@ func _ADA_UpdateNtpAddress_Handler(srv any, ctx context.Context, dec func(any) e
 		Server:     srv,
 		FullMethod: "/ada.ADA/UpdateNtpAddress",
 	}
-	handler := func(ctx context.Context, req any) (any, error) {
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ADAServer).UpdateNtpAddress(ctx, req.(*UpdateNtpAddressReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_UpdateSystemLanguage_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
+func _ADA_UpdateSystemLanguage_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(UpdateSystemLanguageReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -23411,13 +25929,13 @@ func _ADA_UpdateSystemLanguage_Handler(srv any, ctx context.Context, dec func(an
 		Server:     srv,
 		FullMethod: "/ada.ADA/UpdateSystemLanguage",
 	}
-	handler := func(ctx context.Context, req any) (any, error) {
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ADAServer).UpdateSystemLanguage(ctx, req.(*UpdateSystemLanguageReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_UpdateSystemIP_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
+func _ADA_UpdateSystemIP_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(UpdateSystemIPReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -23429,13 +25947,13 @@ func _ADA_UpdateSystemIP_Handler(srv any, ctx context.Context, dec func(any) err
 		Server:     srv,
 		FullMethod: "/ada.ADA/UpdateSystemIP",
 	}
-	handler := func(ctx context.Context, req any) (any, error) {
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ADAServer).UpdateSystemIP(ctx, req.(*UpdateSystemIPReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_GetSystemStats_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
+func _ADA_GetSystemStats_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetSystemStatsReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -23447,13 +25965,13 @@ func _ADA_GetSystemStats_Handler(srv any, ctx context.Context, dec func(any) err
 		Server:     srv,
 		FullMethod: "/ada.ADA/GetSystemStats",
 	}
-	handler := func(ctx context.Context, req any) (any, error) {
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ADAServer).GetSystemStats(ctx, req.(*GetSystemStatsReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_SetSystemStatsCfg_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
+func _ADA_SetSystemStatsCfg_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(SetSystemStatsCfgReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -23465,13 +25983,13 @@ func _ADA_SetSystemStatsCfg_Handler(srv any, ctx context.Context, dec func(any) 
 		Server:     srv,
 		FullMethod: "/ada.ADA/SetSystemStatsCfg",
 	}
-	handler := func(ctx context.Context, req any) (any, error) {
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ADAServer).SetSystemStatsCfg(ctx, req.(*SetSystemStatsCfgReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_GetLicense_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
+func _ADA_GetLicense_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetLicenseReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -23483,13 +26001,13 @@ func _ADA_GetLicense_Handler(srv any, ctx context.Context, dec func(any) error, 
 		Server:     srv,
 		FullMethod: "/ada.ADA/GetLicense",
 	}
-	handler := func(ctx context.Context, req any) (any, error) {
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ADAServer).GetLicense(ctx, req.(*GetLicenseReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_UpdateLicense_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
+func _ADA_UpdateLicense_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(UpdateLicenseReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -23501,13 +26019,13 @@ func _ADA_UpdateLicense_Handler(srv any, ctx context.Context, dec func(any) erro
 		Server:     srv,
 		FullMethod: "/ada.ADA/UpdateLicense",
 	}
-	handler := func(ctx context.Context, req any) (any, error) {
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ADAServer).UpdateLicense(ctx, req.(*UpdateLicenseReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_NetworkDebug_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
+func _ADA_NetworkDebug_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(NetworkDebugReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -23519,13 +26037,13 @@ func _ADA_NetworkDebug_Handler(srv any, ctx context.Context, dec func(any) error
 		Server:     srv,
 		FullMethod: "/ada.ADA/NetworkDebug",
 	}
-	handler := func(ctx context.Context, req any) (any, error) {
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ADAServer).NetworkDebug(ctx, req.(*NetworkDebugReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_ListNotifyConf_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
+func _ADA_ListNotifyConf_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ListNotifyConfReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -23537,13 +26055,13 @@ func _ADA_ListNotifyConf_Handler(srv any, ctx context.Context, dec func(any) err
 		Server:     srv,
 		FullMethod: "/ada.ADA/ListNotifyConf",
 	}
-	handler := func(ctx context.Context, req any) (any, error) {
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ADAServer).ListNotifyConf(ctx, req.(*ListNotifyConfReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_UpdateNotifyConf_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
+func _ADA_UpdateNotifyConf_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(UpdateNotifyConfReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -23555,13 +26073,13 @@ func _ADA_UpdateNotifyConf_Handler(srv any, ctx context.Context, dec func(any) e
 		Server:     srv,
 		FullMethod: "/ada.ADA/UpdateNotifyConf",
 	}
-	handler := func(ctx context.Context, req any) (any, error) {
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ADAServer).UpdateNotifyConf(ctx, req.(*UpdateNotifyConfReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_EnableNotifyConf_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
+func _ADA_EnableNotifyConf_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(EnableNotifyConfReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -23573,13 +26091,13 @@ func _ADA_EnableNotifyConf_Handler(srv any, ctx context.Context, dec func(any) e
 		Server:     srv,
 		FullMethod: "/ada.ADA/EnableNotifyConf",
 	}
-	handler := func(ctx context.Context, req any) (any, error) {
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ADAServer).EnableNotifyConf(ctx, req.(*EnableNotifyConfReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_TestNotifyConf_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
+func _ADA_TestNotifyConf_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(TestNotifyConfReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -23591,13 +26109,13 @@ func _ADA_TestNotifyConf_Handler(srv any, ctx context.Context, dec func(any) err
 		Server:     srv,
 		FullMethod: "/ada.ADA/TestNotifyConf",
 	}
-	handler := func(ctx context.Context, req any) (any, error) {
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ADAServer).TestNotifyConf(ctx, req.(*TestNotifyConfReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_ListExportTask_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
+func _ADA_ListExportTask_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ListExportTaskReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -23609,13 +26127,13 @@ func _ADA_ListExportTask_Handler(srv any, ctx context.Context, dec func(any) err
 		Server:     srv,
 		FullMethod: "/ada.ADA/ListExportTask",
 	}
-	handler := func(ctx context.Context, req any) (any, error) {
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ADAServer).ListExportTask(ctx, req.(*ListExportTaskReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_AddExportTask_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
+func _ADA_AddExportTask_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(AddExportTaskReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -23627,13 +26145,13 @@ func _ADA_AddExportTask_Handler(srv any, ctx context.Context, dec func(any) erro
 		Server:     srv,
 		FullMethod: "/ada.ADA/AddExportTask",
 	}
-	handler := func(ctx context.Context, req any) (any, error) {
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ADAServer).AddExportTask(ctx, req.(*AddExportTaskReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_DeleteExportTask_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
+func _ADA_DeleteExportTask_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(DeleteExportTaskReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -23645,13 +26163,13 @@ func _ADA_DeleteExportTask_Handler(srv any, ctx context.Context, dec func(any) e
 		Server:     srv,
 		FullMethod: "/ada.ADA/DeleteExportTask",
 	}
-	handler := func(ctx context.Context, req any) (any, error) {
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ADAServer).DeleteExportTask(ctx, req.(*DeleteExportTaskReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_ListNotify_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
+func _ADA_ListNotify_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ListNotifyReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -23663,13 +26181,13 @@ func _ADA_ListNotify_Handler(srv any, ctx context.Context, dec func(any) error, 
 		Server:     srv,
 		FullMethod: "/ada.ADA/ListNotify",
 	}
-	handler := func(ctx context.Context, req any) (any, error) {
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ADAServer).ListNotify(ctx, req.(*ListNotifyReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_UpdateNotify_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
+func _ADA_UpdateNotify_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(UpdateNotifyReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -23681,13 +26199,13 @@ func _ADA_UpdateNotify_Handler(srv any, ctx context.Context, dec func(any) error
 		Server:     srv,
 		FullMethod: "/ada.ADA/UpdateNotify",
 	}
-	handler := func(ctx context.Context, req any) (any, error) {
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ADAServer).UpdateNotify(ctx, req.(*UpdateNotifyReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_StatsNotify_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
+func _ADA_StatsNotify_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(StatsNotifyReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -23699,13 +26217,13 @@ func _ADA_StatsNotify_Handler(srv any, ctx context.Context, dec func(any) error,
 		Server:     srv,
 		FullMethod: "/ada.ADA/StatsNotify",
 	}
-	handler := func(ctx context.Context, req any) (any, error) {
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ADAServer).StatsNotify(ctx, req.(*StatsNotifyReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_ListAuditLog_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
+func _ADA_ListAuditLog_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ListAuditLogReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -23717,13 +26235,13 @@ func _ADA_ListAuditLog_Handler(srv any, ctx context.Context, dec func(any) error
 		Server:     srv,
 		FullMethod: "/ada.ADA/ListAuditLog",
 	}
-	handler := func(ctx context.Context, req any) (any, error) {
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ADAServer).ListAuditLog(ctx, req.(*ListAuditLogReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_ThreatTops_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
+func _ADA_ThreatTops_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ThreatTopsReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -23735,13 +26253,13 @@ func _ADA_ThreatTops_Handler(srv any, ctx context.Context, dec func(any) error, 
 		Server:     srv,
 		FullMethod: "/ada.ADA/ThreatTops",
 	}
-	handler := func(ctx context.Context, req any) (any, error) {
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ADAServer).ThreatTops(ctx, req.(*ThreatTopsReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_ThreatTrends_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
+func _ADA_ThreatTrends_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ThreatTrendsReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -23753,13 +26271,13 @@ func _ADA_ThreatTrends_Handler(srv any, ctx context.Context, dec func(any) error
 		Server:     srv,
 		FullMethod: "/ada.ADA/ThreatTrends",
 	}
-	handler := func(ctx context.Context, req any) (any, error) {
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ADAServer).ThreatTrends(ctx, req.(*ThreatTrendsReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_ListThreat_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
+func _ADA_ListThreat_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ListThreatReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -23771,13 +26289,13 @@ func _ADA_ListThreat_Handler(srv any, ctx context.Context, dec func(any) error, 
 		Server:     srv,
 		FullMethod: "/ada.ADA/ListThreat",
 	}
-	handler := func(ctx context.Context, req any) (any, error) {
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ADAServer).ListThreat(ctx, req.(*ListThreatReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_GetThreatNames_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
+func _ADA_GetThreatNames_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetThreatNamesReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -23789,13 +26307,13 @@ func _ADA_GetThreatNames_Handler(srv any, ctx context.Context, dec func(any) err
 		Server:     srv,
 		FullMethod: "/ada.ADA/GetThreatNames",
 	}
-	handler := func(ctx context.Context, req any) (any, error) {
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ADAServer).GetThreatNames(ctx, req.(*GetThreatNamesReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_ListThreatRule_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
+func _ADA_ListThreatRule_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ListThreatRuleReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -23807,13 +26325,13 @@ func _ADA_ListThreatRule_Handler(srv any, ctx context.Context, dec func(any) err
 		Server:     srv,
 		FullMethod: "/ada.ADA/ListThreatRule",
 	}
-	handler := func(ctx context.Context, req any) (any, error) {
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ADAServer).ListThreatRule(ctx, req.(*ListThreatRuleReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_ActionThreatRule_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
+func _ADA_ActionThreatRule_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ActionThreatRuleReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -23825,13 +26343,13 @@ func _ADA_ActionThreatRule_Handler(srv any, ctx context.Context, dec func(any) e
 		Server:     srv,
 		FullMethod: "/ada.ADA/ActionThreatRule",
 	}
-	handler := func(ctx context.Context, req any) (any, error) {
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ADAServer).ActionThreatRule(ctx, req.(*ActionThreatRuleReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_GetThreat_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
+func _ADA_GetThreat_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetThreatReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -23843,13 +26361,13 @@ func _ADA_GetThreat_Handler(srv any, ctx context.Context, dec func(any) error, i
 		Server:     srv,
 		FullMethod: "/ada.ADA/GetThreat",
 	}
-	handler := func(ctx context.Context, req any) (any, error) {
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ADAServer).GetThreat(ctx, req.(*GetThreatReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_ActionThreat_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
+func _ADA_ActionThreat_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ActionThreatReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -23861,13 +26379,13 @@ func _ADA_ActionThreat_Handler(srv any, ctx context.Context, dec func(any) error
 		Server:     srv,
 		FullMethod: "/ada.ADA/ActionThreat",
 	}
-	handler := func(ctx context.Context, req any) (any, error) {
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ADAServer).ActionThreat(ctx, req.(*ActionThreatReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_ListActivity_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
+func _ADA_ListActivity_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ListActivityReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -23879,13 +26397,13 @@ func _ADA_ListActivity_Handler(srv any, ctx context.Context, dec func(any) error
 		Server:     srv,
 		FullMethod: "/ada.ADA/ListActivity",
 	}
-	handler := func(ctx context.Context, req any) (any, error) {
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ADAServer).ListActivity(ctx, req.(*ListActivityReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_GetActivityNames_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
+func _ADA_GetActivityNames_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetActivityNamesReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -23897,13 +26415,13 @@ func _ADA_GetActivityNames_Handler(srv any, ctx context.Context, dec func(any) e
 		Server:     srv,
 		FullMethod: "/ada.ADA/GetActivityNames",
 	}
-	handler := func(ctx context.Context, req any) (any, error) {
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ADAServer).GetActivityNames(ctx, req.(*GetActivityNamesReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_GetActivity_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
+func _ADA_GetActivity_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetActivityReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -23915,13 +26433,13 @@ func _ADA_GetActivity_Handler(srv any, ctx context.Context, dec func(any) error,
 		Server:     srv,
 		FullMethod: "/ada.ADA/GetActivity",
 	}
-	handler := func(ctx context.Context, req any) (any, error) {
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ADAServer).GetActivity(ctx, req.(*GetActivityReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_ListThreatConf_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
+func _ADA_ListThreatConf_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ListThreatConfReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -23933,13 +26451,13 @@ func _ADA_ListThreatConf_Handler(srv any, ctx context.Context, dec func(any) err
 		Server:     srv,
 		FullMethod: "/ada.ADA/ListThreatConf",
 	}
-	handler := func(ctx context.Context, req any) (any, error) {
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ADAServer).ListThreatConf(ctx, req.(*ListThreatConfReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_UpdateThreatConf_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
+func _ADA_UpdateThreatConf_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(UpdateThreatConfReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -23951,13 +26469,13 @@ func _ADA_UpdateThreatConf_Handler(srv any, ctx context.Context, dec func(any) e
 		Server:     srv,
 		FullMethod: "/ada.ADA/UpdateThreatConf",
 	}
-	handler := func(ctx context.Context, req any) (any, error) {
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ADAServer).UpdateThreatConf(ctx, req.(*UpdateThreatConfReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_ListSensitiveEntry_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
+func _ADA_ListSensitiveEntry_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ListSensitiveEntryReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -23969,13 +26487,13 @@ func _ADA_ListSensitiveEntry_Handler(srv any, ctx context.Context, dec func(any)
 		Server:     srv,
 		FullMethod: "/ada.ADA/ListSensitiveEntry",
 	}
-	handler := func(ctx context.Context, req any) (any, error) {
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ADAServer).ListSensitiveEntry(ctx, req.(*ListSensitiveEntryReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_AddSensitiveEntry_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
+func _ADA_AddSensitiveEntry_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(AddSensitiveEntryReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -23987,13 +26505,13 @@ func _ADA_AddSensitiveEntry_Handler(srv any, ctx context.Context, dec func(any) 
 		Server:     srv,
 		FullMethod: "/ada.ADA/AddSensitiveEntry",
 	}
-	handler := func(ctx context.Context, req any) (any, error) {
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ADAServer).AddSensitiveEntry(ctx, req.(*AddSensitiveEntryReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_ListDomainEntry_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
+func _ADA_ListDomainEntry_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ListDomainEntryReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -24005,13 +26523,13 @@ func _ADA_ListDomainEntry_Handler(srv any, ctx context.Context, dec func(any) er
 		Server:     srv,
 		FullMethod: "/ada.ADA/ListDomainEntry",
 	}
-	handler := func(ctx context.Context, req any) (any, error) {
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ADAServer).ListDomainEntry(ctx, req.(*ListDomainEntryReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_DeleteSensitiveEntry_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
+func _ADA_DeleteSensitiveEntry_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(DeleteSensitiveEntryReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -24023,13 +26541,13 @@ func _ADA_DeleteSensitiveEntry_Handler(srv any, ctx context.Context, dec func(an
 		Server:     srv,
 		FullMethod: "/ada.ADA/DeleteSensitiveEntry",
 	}
-	handler := func(ctx context.Context, req any) (any, error) {
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ADAServer).DeleteSensitiveEntry(ctx, req.(*DeleteSensitiveEntryReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_ListThreatWhitelist_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
+func _ADA_ListThreatWhitelist_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ListThreatWhitelistReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -24041,13 +26559,13 @@ func _ADA_ListThreatWhitelist_Handler(srv any, ctx context.Context, dec func(any
 		Server:     srv,
 		FullMethod: "/ada.ADA/ListThreatWhitelist",
 	}
-	handler := func(ctx context.Context, req any) (any, error) {
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ADAServer).ListThreatWhitelist(ctx, req.(*ListThreatWhitelistReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_GetThreatWhitelistField_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
+func _ADA_GetThreatWhitelistField_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetThreatWhitelistFieldReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -24059,13 +26577,13 @@ func _ADA_GetThreatWhitelistField_Handler(srv any, ctx context.Context, dec func
 		Server:     srv,
 		FullMethod: "/ada.ADA/GetThreatWhitelistField",
 	}
-	handler := func(ctx context.Context, req any) (any, error) {
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ADAServer).GetThreatWhitelistField(ctx, req.(*GetThreatWhitelistFieldReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_AddThreatWhitelist_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
+func _ADA_AddThreatWhitelist_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(AddThreatWhitelistReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -24077,13 +26595,13 @@ func _ADA_AddThreatWhitelist_Handler(srv any, ctx context.Context, dec func(any)
 		Server:     srv,
 		FullMethod: "/ada.ADA/AddThreatWhitelist",
 	}
-	handler := func(ctx context.Context, req any) (any, error) {
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ADAServer).AddThreatWhitelist(ctx, req.(*AddThreatWhitelistReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_UpdateThreatWhitelist_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
+func _ADA_UpdateThreatWhitelist_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(UpdateThreatWhitelistReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -24095,13 +26613,13 @@ func _ADA_UpdateThreatWhitelist_Handler(srv any, ctx context.Context, dec func(a
 		Server:     srv,
 		FullMethod: "/ada.ADA/UpdateThreatWhitelist",
 	}
-	handler := func(ctx context.Context, req any) (any, error) {
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ADAServer).UpdateThreatWhitelist(ctx, req.(*UpdateThreatWhitelistReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_DeleteThreatWhitelist_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
+func _ADA_DeleteThreatWhitelist_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(DeleteThreatWhitelistReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -24113,13 +26631,13 @@ func _ADA_DeleteThreatWhitelist_Handler(srv any, ctx context.Context, dec func(a
 		Server:     srv,
 		FullMethod: "/ada.ADA/DeleteThreatWhitelist",
 	}
-	handler := func(ctx context.Context, req any) (any, error) {
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ADAServer).DeleteThreatWhitelist(ctx, req.(*DeleteThreatWhitelistReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_ListThreatBlock_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
+func _ADA_ListThreatBlock_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ListThreatBlockReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -24131,13 +26649,13 @@ func _ADA_ListThreatBlock_Handler(srv any, ctx context.Context, dec func(any) er
 		Server:     srv,
 		FullMethod: "/ada.ADA/ListThreatBlock",
 	}
-	handler := func(ctx context.Context, req any) (any, error) {
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ADAServer).ListThreatBlock(ctx, req.(*ListThreatBlockReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_AddThreatBlock_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
+func _ADA_AddThreatBlock_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(AddThreatBlockReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -24149,13 +26667,13 @@ func _ADA_AddThreatBlock_Handler(srv any, ctx context.Context, dec func(any) err
 		Server:     srv,
 		FullMethod: "/ada.ADA/AddThreatBlock",
 	}
-	handler := func(ctx context.Context, req any) (any, error) {
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ADAServer).AddThreatBlock(ctx, req.(*AddThreatBlockReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_UpdateThreatBlock_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
+func _ADA_UpdateThreatBlock_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(UpdateThreatBlockReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -24167,13 +26685,13 @@ func _ADA_UpdateThreatBlock_Handler(srv any, ctx context.Context, dec func(any) 
 		Server:     srv,
 		FullMethod: "/ada.ADA/UpdateThreatBlock",
 	}
-	handler := func(ctx context.Context, req any) (any, error) {
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ADAServer).UpdateThreatBlock(ctx, req.(*UpdateThreatBlockReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_DeleteThreatBlock_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
+func _ADA_DeleteThreatBlock_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(DeleteThreatBlockReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -24185,13 +26703,175 @@ func _ADA_DeleteThreatBlock_Handler(srv any, ctx context.Context, dec func(any) 
 		Server:     srv,
 		FullMethod: "/ada.ADA/DeleteThreatBlock",
 	}
-	handler := func(ctx context.Context, req any) (any, error) {
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ADAServer).DeleteThreatBlock(ctx, req.(*DeleteThreatBlockReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_ScanRiskStats_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
+func _ADA_ListAlertRule_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListAlertRuleReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ADAServer).ListAlertRule(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/ada.ADA/ListAlertRule",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ADAServer).ListAlertRule(ctx, req.(*ListAlertRuleReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ADA_AddAlertRule_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AddAlertRuleReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ADAServer).AddAlertRule(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/ada.ADA/AddAlertRule",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ADAServer).AddAlertRule(ctx, req.(*AddAlertRuleReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ADA_UpdateAlertRule_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateAlertRuleReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ADAServer).UpdateAlertRule(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/ada.ADA/UpdateAlertRule",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ADAServer).UpdateAlertRule(ctx, req.(*UpdateAlertRuleReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ADA_DeleteAlertRule_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteAlertRuleReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ADAServer).DeleteAlertRule(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/ada.ADA/DeleteAlertRule",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ADAServer).DeleteAlertRule(ctx, req.(*DeleteAlertRuleReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ADA_ListActivityRule_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListActivityRuleReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ADAServer).ListActivityRule(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/ada.ADA/ListActivityRule",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ADAServer).ListActivityRule(ctx, req.(*ListActivityRuleReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ADA_GetActivityRule_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetActivityRuleReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ADAServer).GetActivityRule(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/ada.ADA/GetActivityRule",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ADAServer).GetActivityRule(ctx, req.(*GetActivityRuleReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ADA_AddActivityRule_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AddActivityRuleReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ADAServer).AddActivityRule(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/ada.ADA/AddActivityRule",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ADAServer).AddActivityRule(ctx, req.(*AddActivityRuleReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ADA_UpdateActivityRule_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateActivityRuleReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ADAServer).UpdateActivityRule(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/ada.ADA/UpdateActivityRule",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ADAServer).UpdateActivityRule(ctx, req.(*UpdateActivityRuleReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ADA_DeleteActivityRule_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteActivityRuleReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ADAServer).DeleteActivityRule(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/ada.ADA/DeleteActivityRule",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ADAServer).DeleteActivityRule(ctx, req.(*DeleteActivityRuleReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ADA_ScanRiskStats_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ScanRiskStatsReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -24203,13 +26883,13 @@ func _ADA_ScanRiskStats_Handler(srv any, ctx context.Context, dec func(any) erro
 		Server:     srv,
 		FullMethod: "/ada.ADA/ScanRiskStats",
 	}
-	handler := func(ctx context.Context, req any) (any, error) {
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ADAServer).ScanRiskStats(ctx, req.(*ScanRiskStatsReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_ListBaseline_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
+func _ADA_ListBaseline_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ListBaselineReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -24221,13 +26901,13 @@ func _ADA_ListBaseline_Handler(srv any, ctx context.Context, dec func(any) error
 		Server:     srv,
 		FullMethod: "/ada.ADA/ListBaseline",
 	}
-	handler := func(ctx context.Context, req any) (any, error) {
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ADAServer).ListBaseline(ctx, req.(*ListBaselineReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_GetBaseline_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
+func _ADA_GetBaseline_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetBaselineReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -24239,13 +26919,13 @@ func _ADA_GetBaseline_Handler(srv any, ctx context.Context, dec func(any) error,
 		Server:     srv,
 		FullMethod: "/ada.ADA/GetBaseline",
 	}
-	handler := func(ctx context.Context, req any) (any, error) {
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ADAServer).GetBaseline(ctx, req.(*GetBaselineReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_ListLeak_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
+func _ADA_ListLeak_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ListLeakReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -24257,13 +26937,13 @@ func _ADA_ListLeak_Handler(srv any, ctx context.Context, dec func(any) error, in
 		Server:     srv,
 		FullMethod: "/ada.ADA/ListLeak",
 	}
-	handler := func(ctx context.Context, req any) (any, error) {
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ADAServer).ListLeak(ctx, req.(*ListLeakReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_ListWeakPwd_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
+func _ADA_ListWeakPwd_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ListWeakPwdReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -24275,13 +26955,13 @@ func _ADA_ListWeakPwd_Handler(srv any, ctx context.Context, dec func(any) error,
 		Server:     srv,
 		FullMethod: "/ada.ADA/ListWeakPwd",
 	}
-	handler := func(ctx context.Context, req any) (any, error) {
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ADAServer).ListWeakPwd(ctx, req.(*ListWeakPwdReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_ListScanTask_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
+func _ADA_ListScanTask_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ListScanTaskReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -24293,13 +26973,13 @@ func _ADA_ListScanTask_Handler(srv any, ctx context.Context, dec func(any) error
 		Server:     srv,
 		FullMethod: "/ada.ADA/ListScanTask",
 	}
-	handler := func(ctx context.Context, req any) (any, error) {
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ADAServer).ListScanTask(ctx, req.(*ListScanTaskReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_GetScanTask_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
+func _ADA_GetScanTask_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetScanTaskReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -24311,13 +26991,13 @@ func _ADA_GetScanTask_Handler(srv any, ctx context.Context, dec func(any) error,
 		Server:     srv,
 		FullMethod: "/ada.ADA/GetScanTask",
 	}
-	handler := func(ctx context.Context, req any) (any, error) {
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ADAServer).GetScanTask(ctx, req.(*GetScanTaskReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_AddScanTask_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
+func _ADA_AddScanTask_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(AddScanTaskReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -24329,13 +27009,13 @@ func _ADA_AddScanTask_Handler(srv any, ctx context.Context, dec func(any) error,
 		Server:     srv,
 		FullMethod: "/ada.ADA/AddScanTask",
 	}
-	handler := func(ctx context.Context, req any) (any, error) {
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ADAServer).AddScanTask(ctx, req.(*AddScanTaskReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_RecheckScanTask_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
+func _ADA_RecheckScanTask_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(RecheckScanTaskReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -24347,13 +27027,13 @@ func _ADA_RecheckScanTask_Handler(srv any, ctx context.Context, dec func(any) er
 		Server:     srv,
 		FullMethod: "/ada.ADA/RecheckScanTask",
 	}
-	handler := func(ctx context.Context, req any) (any, error) {
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ADAServer).RecheckScanTask(ctx, req.(*RecheckScanTaskReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_DeleteScanTask_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
+func _ADA_DeleteScanTask_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(DeleteScanTaskReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -24365,13 +27045,13 @@ func _ADA_DeleteScanTask_Handler(srv any, ctx context.Context, dec func(any) err
 		Server:     srv,
 		FullMethod: "/ada.ADA/DeleteScanTask",
 	}
-	handler := func(ctx context.Context, req any) (any, error) {
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ADAServer).DeleteScanTask(ctx, req.(*DeleteScanTaskReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_ListScanConf_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
+func _ADA_ListScanConf_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ListScanConfReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -24383,13 +27063,13 @@ func _ADA_ListScanConf_Handler(srv any, ctx context.Context, dec func(any) error
 		Server:     srv,
 		FullMethod: "/ada.ADA/ListScanConf",
 	}
-	handler := func(ctx context.Context, req any) (any, error) {
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ADAServer).ListScanConf(ctx, req.(*ListScanConfReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_SetScanConf_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
+func _ADA_SetScanConf_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(SetScanConfReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -24401,13 +27081,13 @@ func _ADA_SetScanConf_Handler(srv any, ctx context.Context, dec func(any) error,
 		Server:     srv,
 		FullMethod: "/ada.ADA/SetScanConf",
 	}
-	handler := func(ctx context.Context, req any) (any, error) {
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ADAServer).SetScanConf(ctx, req.(*SetScanConfReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_GetScanConf_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
+func _ADA_GetScanConf_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetScanConfReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -24419,13 +27099,13 @@ func _ADA_GetScanConf_Handler(srv any, ctx context.Context, dec func(any) error,
 		Server:     srv,
 		FullMethod: "/ada.ADA/GetScanConf",
 	}
-	handler := func(ctx context.Context, req any) (any, error) {
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ADAServer).GetScanConf(ctx, req.(*GetScanConfReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_GetScanTmplNames_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
+func _ADA_GetScanTmplNames_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetScanTmplNamesReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -24437,13 +27117,13 @@ func _ADA_GetScanTmplNames_Handler(srv any, ctx context.Context, dec func(any) e
 		Server:     srv,
 		FullMethod: "/ada.ADA/GetScanTmplNames",
 	}
-	handler := func(ctx context.Context, req any) (any, error) {
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ADAServer).GetScanTmplNames(ctx, req.(*GetScanTmplNamesReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_UpdateScanConf_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
+func _ADA_UpdateScanConf_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(UpdateScanConfReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -24455,13 +27135,13 @@ func _ADA_UpdateScanConf_Handler(srv any, ctx context.Context, dec func(any) err
 		Server:     srv,
 		FullMethod: "/ada.ADA/UpdateScanConf",
 	}
-	handler := func(ctx context.Context, req any) (any, error) {
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ADAServer).UpdateScanConf(ctx, req.(*UpdateScanConfReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_ListScanTmpl_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
+func _ADA_ListScanTmpl_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ListScanTmplReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -24473,13 +27153,13 @@ func _ADA_ListScanTmpl_Handler(srv any, ctx context.Context, dec func(any) error
 		Server:     srv,
 		FullMethod: "/ada.ADA/ListScanTmpl",
 	}
-	handler := func(ctx context.Context, req any) (any, error) {
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ADAServer).ListScanTmpl(ctx, req.(*ListScanTmplReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_GetScanTmpl_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
+func _ADA_GetScanTmpl_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetScanTmplReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -24491,13 +27171,13 @@ func _ADA_GetScanTmpl_Handler(srv any, ctx context.Context, dec func(any) error,
 		Server:     srv,
 		FullMethod: "/ada.ADA/GetScanTmpl",
 	}
-	handler := func(ctx context.Context, req any) (any, error) {
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ADAServer).GetScanTmpl(ctx, req.(*GetScanTmplReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_UpdateScanTmpl_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
+func _ADA_UpdateScanTmpl_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(UpdateScanTmplReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -24509,13 +27189,13 @@ func _ADA_UpdateScanTmpl_Handler(srv any, ctx context.Context, dec func(any) err
 		Server:     srv,
 		FullMethod: "/ada.ADA/UpdateScanTmpl",
 	}
-	handler := func(ctx context.Context, req any) (any, error) {
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ADAServer).UpdateScanTmpl(ctx, req.(*UpdateScanTmplReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_DeleteScanTmpl_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
+func _ADA_DeleteScanTmpl_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(DeleteScanTmplReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -24527,13 +27207,13 @@ func _ADA_DeleteScanTmpl_Handler(srv any, ctx context.Context, dec func(any) err
 		Server:     srv,
 		FullMethod: "/ada.ADA/DeleteScanTmpl",
 	}
-	handler := func(ctx context.Context, req any) (any, error) {
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ADAServer).DeleteScanTmpl(ctx, req.(*DeleteScanTmplReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_AddScanTmpl_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
+func _ADA_AddScanTmpl_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(AddScanTmplReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -24545,13 +27225,13 @@ func _ADA_AddScanTmpl_Handler(srv any, ctx context.Context, dec func(any) error,
 		Server:     srv,
 		FullMethod: "/ada.ADA/AddScanTmpl",
 	}
-	handler := func(ctx context.Context, req any) (any, error) {
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ADAServer).AddScanTmpl(ctx, req.(*AddScanTmplReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_ListScanPlugin_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
+func _ADA_ListScanPlugin_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ListScanPluginReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -24563,13 +27243,13 @@ func _ADA_ListScanPlugin_Handler(srv any, ctx context.Context, dec func(any) err
 		Server:     srv,
 		FullMethod: "/ada.ADA/ListScanPlugin",
 	}
-	handler := func(ctx context.Context, req any) (any, error) {
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ADAServer).ListScanPlugin(ctx, req.(*ListScanPluginReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_DashboardStats_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
+func _ADA_DashboardStats_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(DashboardStatsReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -24581,13 +27261,13 @@ func _ADA_DashboardStats_Handler(srv any, ctx context.Context, dec func(any) err
 		Server:     srv,
 		FullMethod: "/ada.ADA/DashboardStats",
 	}
-	handler := func(ctx context.Context, req any) (any, error) {
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ADAServer).DashboardStats(ctx, req.(*DashboardStatsReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_DashboardTrends_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
+func _ADA_DashboardTrends_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(DashboardTrendsReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -24599,13 +27279,13 @@ func _ADA_DashboardTrends_Handler(srv any, ctx context.Context, dec func(any) er
 		Server:     srv,
 		FullMethod: "/ada.ADA/DashboardTrends",
 	}
-	handler := func(ctx context.Context, req any) (any, error) {
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ADAServer).DashboardTrends(ctx, req.(*DashboardTrendsReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_DashboardLogStats_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
+func _ADA_DashboardLogStats_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(DashboardLogStatsReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -24617,7 +27297,7 @@ func _ADA_DashboardLogStats_Handler(srv any, ctx context.Context, dec func(any) 
 		Server:     srv,
 		FullMethod: "/ada.ADA/DashboardLogStats",
 	}
-	handler := func(ctx context.Context, req any) (any, error) {
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ADAServer).DashboardLogStats(ctx, req.(*DashboardLogStatsReq))
 	}
 	return interceptor(ctx, in, info, handler)
@@ -24922,6 +27602,42 @@ var _ADA_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "DeleteThreatBlock",
 			Handler:    _ADA_DeleteThreatBlock_Handler,
+		},
+		{
+			MethodName: "ListAlertRule",
+			Handler:    _ADA_ListAlertRule_Handler,
+		},
+		{
+			MethodName: "AddAlertRule",
+			Handler:    _ADA_AddAlertRule_Handler,
+		},
+		{
+			MethodName: "UpdateAlertRule",
+			Handler:    _ADA_UpdateAlertRule_Handler,
+		},
+		{
+			MethodName: "DeleteAlertRule",
+			Handler:    _ADA_DeleteAlertRule_Handler,
+		},
+		{
+			MethodName: "ListActivityRule",
+			Handler:    _ADA_ListActivityRule_Handler,
+		},
+		{
+			MethodName: "GetActivityRule",
+			Handler:    _ADA_GetActivityRule_Handler,
+		},
+		{
+			MethodName: "AddActivityRule",
+			Handler:    _ADA_AddActivityRule_Handler,
+		},
+		{
+			MethodName: "UpdateActivityRule",
+			Handler:    _ADA_UpdateActivityRule_Handler,
+		},
+		{
+			MethodName: "DeleteActivityRule",
+			Handler:    _ADA_DeleteActivityRule_Handler,
 		},
 		{
 			MethodName: "ScanRiskStats",

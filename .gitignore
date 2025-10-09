@@ -31,4 +31,6 @@ engine/rules/flow/TODO.txt
 scanner/scan_bussis.md
 scanner/worker/sc_enc.tar.gz
 scanner/worker/venv_enc.tar.gz
+scanner/worker/.sc
+scanner/worker/.venv
 
