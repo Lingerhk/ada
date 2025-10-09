@@ -214,8 +214,8 @@ func GetThreatEventByID(e *config.Env, id string) (*model.AlertEventESDB, error)
 	return &ae, nil
 }
 
-func GetThreatDescByID(e *config.Env, flowId string) (*model.AlertDesc, error) {
-	ad := model.AlertDesc{}
+func GetThreatDescByID(e *config.Env, flowId string) (*model.AlertRule, error) {
+	ad := model.AlertRule{}
 
 	err, _ := e.MongoCli.FindOne(ad.CollectName(), bson.M{"_id": flowId}, &ad)
 	if err != nil {
@@ -226,9 +226,9 @@ func GetThreatDescByID(e *config.Env, flowId string) (*model.AlertDesc, error) {
 	return &ad, nil
 }
 
-func GetAllThreatDesc(e *config.Env) ([]model.AlertDesc, error) {
-	var adList []model.AlertDesc
-	tb := (&model.AlertDesc{}).CollectName()
+func GetAllThreatDesc(e *config.Env) ([]model.AlertRule, error) {
+	var adList []model.AlertRule
+	tb := (&model.AlertRule{}).CollectName()
 
 	query := bson.M{}
 	err := e.MongoCli.FindAll(tb, query, &adList)
@@ -238,9 +238,9 @@ func GetAllThreatDesc(e *config.Env) ([]model.AlertDesc, error) {
 	return adList, nil
 }
 
-func FindThreatDescSelect(e *config.Env, levels []int32, enable []bool) ([]model.AlertDesc, error) {
-	var adList []model.AlertDesc
-	tb := (&model.AlertDesc{}).CollectName()
+func FindThreatDescSelect(e *config.Env, levels []int32, enable []bool) ([]model.AlertRule, error) {
+	var adList []model.AlertRule
+	tb := (&model.AlertRule{}).CollectName()
 
 	query := bson.M{}
 	if len(levels) > 0 {
@@ -258,7 +258,7 @@ func FindThreatDescSelect(e *config.Env, levels []int32, enable []bool) ([]model
 }
 
 func UpdateThreatDesc(e *config.Env, Id, typ string, switchVal bool) error {
-	var ad model.AlertDesc
+	var ad model.AlertRule
 
 	query := bson.M{"_id": Id}
 
@@ -274,7 +274,7 @@ func UpdateThreatDesc(e *config.Env, Id, typ string, switchVal bool) error {
 
 // GetThreatDescByID 需要优化该处，修改为通用方法
 func GetThreatFlowByID(e *config.Env, flowId string, fieldData map[string]string) (*model.AttackFlow, error) {
-	ad := model.AlertDesc{}
+	ad := model.AlertRule{}
 	err, _ := e.MongoCli.FindOne(ad.CollectName(), bson.M{"_id": flowId}, &ad)
 	if err != nil {
 		logger.Errorf("get threat desc err:%v", err)
