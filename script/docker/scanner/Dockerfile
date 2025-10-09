@@ -33,9 +33,9 @@ RUN wget https://www.python.org/ftp/python/3.7.10/Python-3.7.10.tgz && \
     tar xzf Python-3.7.10.tgz && \
     rm Python-3.7.10.tgz
 
-# 编译并安装 Python 3.7
+# 编译并安装 Python 3.7 (optimized for faster build - no PGO)
 WORKDIR /usr/src/Python-3.7.10
-RUN ./configure --enable-optimizations --disable-profiling && \
+RUN ./configure --with-ensurepip=install && \
     make -j"$(nproc)" && \
     make install
 
@@ -54,6 +54,9 @@ RUN set -x \
     && mkdir -p /home/adadmin/logs \
     && mkdir -p /home/adadmin/bin \
     && mkdir -p /home/adadmin/conf \
+    && chmod 755 /home/adadmin \
+    && chown -R adadmin:root /home/adadmin/logs \
+    && chown -R adadmin:root /home/adadmin/conf \
     && mkdir -p /var/lib/scada \
     && mkdir -p /var/log/scada \
     && chown -R adadmin:root /var/log/scada \
