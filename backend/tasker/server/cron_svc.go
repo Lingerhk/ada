@@ -108,14 +108,19 @@ func (cs *CronScheduler) Stop() {
 func (cs *CronScheduler) createScheduledJob(jobConf *model.ScanConf) (gocron.Job, error) {
 	jobID := jobConf.ID.Hex()
 
+	// Map gRPC method names to cron wrapper method names
+	cronMethodName := "Cron" + jobConf.TaskFun
+
 	// Create task function that will be executed
-	taskToRun := func() {
+	taskToRun := func(plans map[string]string) {
 		logger.Infof("Executing task: %s for job ID: %s, CycleType: %d", jobConf.TaskFun, jobID, jobConf.CycleType)
-		method := reflect.ValueOf(cs.Tasker).MethodByName(jobConf.TaskFun)
+		method := reflect.ValueOf(cs.Tasker).MethodByName(cronMethodName)
 		if method.IsValid() {
-			method.Call([]reflect.Value{})
+			// Pass plans as parameter using reflection
+			plansValue := reflect.ValueOf(plans)
+			method.Call([]reflect.Value{plansValue})
 		} else {
-			logger.Errorf("Task function %s not found for job ID: %s", jobConf.TaskFun, jobID)
+			logger.Errorf("Task function %s not found for job ID: %s", cronMethodName, jobID)
 		}
 	}
 

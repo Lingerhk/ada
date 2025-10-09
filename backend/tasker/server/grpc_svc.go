@@ -103,3 +103,35 @@ func (ts *TaskServer) ExportReportTask(ctx context.Context, in *api.ExportReport
 	taskState := asyncResult.GetState()
 	return &api.ExportReportTaskReply{TaskID: taskState.TaskUUID}, nil
 }
+
+// Cron wrapper methods (no gRPC context required)
+
+func (ts *TaskServer) CronScannerBaselineTask(plans map[string]string) error {
+	dtm, _ := json.Marshal(plans)
+	_, err := ts.taskSrv.SendTask(tasks.TaskScannerBaseline(string(dtm)))
+	if err != nil {
+		logger.Errorf("CronScannerBaselineTask error: %v", err)
+		return err
+	}
+	return nil
+}
+
+func (ts *TaskServer) CronScannerLeakTask(plans map[string]string) error {
+	dtm, _ := json.Marshal(plans)
+	_, err := ts.taskSrv.SendTask(tasks.TaskScannerLeak(string(dtm)))
+	if err != nil {
+		logger.Errorf("CronScannerLeakTask error: %v", err)
+		return err
+	}
+	return nil
+}
+
+func (ts *TaskServer) CronScannerWeakPwdTask(plans map[string]string) error {
+	dtm, _ := json.Marshal(plans)
+	_, err := ts.taskSrv.SendTask(tasks.TaskScannerWeakPwd(string(dtm)))
+	if err != nil {
+		logger.Errorf("CronScannerWeakPwdTask error: %v", err)
+		return err
+	}
+	return nil
+}
