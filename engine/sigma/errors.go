@@ -129,7 +129,7 @@ func (e ErrIncompleteTokenSeq) Error() string {
 // could be unmarshal issue
 type ErrInvalidKeywordConstruct struct {
 	Msg  string
-	Expr interface{}
+	Expr any
 }
 
 func (e ErrInvalidKeywordConstruct) Error() string {
@@ -144,7 +144,7 @@ func (e ErrInvalidKeywordConstruct) Error() string {
 // could be unmarshal issue
 type ErrInvalidSelectionConstruct struct {
 	Msg  string
-	Expr interface{}
+	Expr any
 }
 
 func (e ErrInvalidSelectionConstruct) Error() string {
@@ -179,7 +179,7 @@ func (e ErrInvalidKind) Error() string {
 type ErrUnsupportedExpression struct {
 	Msg      string
 	T        identType
-	Expr     interface{}
+	Expr     any
 	Critical bool
 }
 

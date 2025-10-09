@@ -132,7 +132,7 @@ func (s *SensorEvent) register(regMsg sCommon.AdaMessage) {
 	}
 
 	// add sensor info into redis hash
-	sensorInfo := make(map[string]interface{})
+	sensorInfo := make(map[string]any)
 	sensorInfo["version"] = sensor.Version
 	sensorInfo["ip"] = sensor.IP
 	sensorInfo["domain"] = sensor.Domain
@@ -260,7 +260,7 @@ func (s *SensorEvent) state(stateMsg sCommon.AdaMessage) {
 	}
 
 	// update redis cache
-	sensorInfo := make(map[string]interface{})
+	sensorInfo := make(map[string]any)
 	sensorInfo["version"] = sensor.Version
 	sensorInfo["timestamp"] = sensor.Timestamp
 	sensorInfo["last_online_tm"] = sensor.LastOnlineTm

@@ -957,7 +957,7 @@ func file_ada_task_proto_rawDescGZIP() []byte {
 }
 
 var file_ada_task_proto_msgTypes = make([]protoimpl.MessageInfo, 19)
-var file_ada_task_proto_goTypes = []interface{}{
+var file_ada_task_proto_goTypes = []any{
 	(*GetTaskStateReq)(nil),           // 0: api.GetTaskStateReq
 	(*GetTaskStateReply)(nil),         // 1: api.GetTaskStateReply
 	(*DomainStatusSyncTaskReq)(nil),   // 2: api.DomainStatusSyncTaskReq
@@ -1011,7 +1011,7 @@ func file_ada_task_proto_init() {
 		return
 	}
 	if !protoimpl.UnsafeEnabled {
-		file_ada_task_proto_msgTypes[0].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_task_proto_msgTypes[0].Exporter = func(v any, i int) any {
 			switch v := v.(*GetTaskStateReq); i {
 			case 0:
 				return &v.state
@@ -1023,7 +1023,7 @@ func file_ada_task_proto_init() {
 				return nil
 			}
 		}
-		file_ada_task_proto_msgTypes[1].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_task_proto_msgTypes[1].Exporter = func(v any, i int) any {
 			switch v := v.(*GetTaskStateReply); i {
 			case 0:
 				return &v.state
@@ -1035,7 +1035,7 @@ func file_ada_task_proto_init() {
 				return nil
 			}
 		}
-		file_ada_task_proto_msgTypes[2].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_task_proto_msgTypes[2].Exporter = func(v any, i int) any {
 			switch v := v.(*DomainStatusSyncTaskReq); i {
 			case 0:
 				return &v.state
@@ -1047,7 +1047,7 @@ func file_ada_task_proto_init() {
 				return nil
 			}
 		}
-		file_ada_task_proto_msgTypes[3].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_task_proto_msgTypes[3].Exporter = func(v any, i int) any {
 			switch v := v.(*DomainStatusSyncTaskReply); i {
 			case 0:
 				return &v.state
@@ -1059,7 +1059,7 @@ func file_ada_task_proto_init() {
 				return nil
 			}
 		}
-		file_ada_task_proto_msgTypes[4].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_task_proto_msgTypes[4].Exporter = func(v any, i int) any {
 			switch v := v.(*DomainLdapSyncTaskReq); i {
 			case 0:
 				return &v.state
@@ -1071,7 +1071,7 @@ func file_ada_task_proto_init() {
 				return nil
 			}
 		}
-		file_ada_task_proto_msgTypes[5].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_task_proto_msgTypes[5].Exporter = func(v any, i int) any {
 			switch v := v.(*DomainLdapSyncTaskReply); i {
 			case 0:
 				return &v.state
@@ -1083,7 +1083,7 @@ func file_ada_task_proto_init() {
 				return nil
 			}
 		}
-		file_ada_task_proto_msgTypes[6].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_task_proto_msgTypes[6].Exporter = func(v any, i int) any {
 			switch v := v.(*ScannerBaselineTaskReq); i {
 			case 0:
 				return &v.state
@@ -1095,7 +1095,7 @@ func file_ada_task_proto_init() {
 				return nil
 			}
 		}
-		file_ada_task_proto_msgTypes[7].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_task_proto_msgTypes[7].Exporter = func(v any, i int) any {
 			switch v := v.(*ScannerBaselineTaskReply); i {
 			case 0:
 				return &v.state
@@ -1107,7 +1107,7 @@ func file_ada_task_proto_init() {
 				return nil
 			}
 		}
-		file_ada_task_proto_msgTypes[8].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_task_proto_msgTypes[8].Exporter = func(v any, i int) any {
 			switch v := v.(*ScannerLeakTaskReq); i {
 			case 0:
 				return &v.state
@@ -1119,7 +1119,7 @@ func file_ada_task_proto_init() {
 				return nil
 			}
 		}
-		file_ada_task_proto_msgTypes[9].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_task_proto_msgTypes[9].Exporter = func(v any, i int) any {
 			switch v := v.(*ScannerLeakTaskReply); i {
 			case 0:
 				return &v.state
@@ -1131,7 +1131,7 @@ func file_ada_task_proto_init() {
 				return nil
 			}
 		}
-		file_ada_task_proto_msgTypes[10].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_task_proto_msgTypes[10].Exporter = func(v any, i int) any {
 			switch v := v.(*ScannerWeakPwdTaskReq); i {
 			case 0:
 				return &v.state
@@ -1143,7 +1143,7 @@ func file_ada_task_proto_init() {
 				return nil
 			}
 		}
-		file_ada_task_proto_msgTypes[11].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_task_proto_msgTypes[11].Exporter = func(v any, i int) any {
 			switch v := v.(*ScannerWeakPwdTaskReply); i {
 			case 0:
 				return &v.state
@@ -1155,7 +1155,7 @@ func file_ada_task_proto_init() {
 				return nil
 			}
 		}
-		file_ada_task_proto_msgTypes[12].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_task_proto_msgTypes[12].Exporter = func(v any, i int) any {
 			switch v := v.(*ScannerRecheckTaskReq); i {
 			case 0:
 				return &v.state
@@ -1167,7 +1167,7 @@ func file_ada_task_proto_init() {
 				return nil
 			}
 		}
-		file_ada_task_proto_msgTypes[13].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_task_proto_msgTypes[13].Exporter = func(v any, i int) any {
 			switch v := v.(*ScannerRecheckTaskReply); i {
 			case 0:
 				return &v.state
@@ -1179,7 +1179,7 @@ func file_ada_task_proto_init() {
 				return nil
 			}
 		}
-		file_ada_task_proto_msgTypes[14].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_task_proto_msgTypes[14].Exporter = func(v any, i int) any {
 			switch v := v.(*ExportReportTaskReq); i {
 			case 0:
 				return &v.state
@@ -1191,7 +1191,7 @@ func file_ada_task_proto_init() {
 				return nil
 			}
 		}
-		file_ada_task_proto_msgTypes[15].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_task_proto_msgTypes[15].Exporter = func(v any, i int) any {
 			switch v := v.(*ExportReportTaskReply); i {
 			case 0:
 				return &v.state
@@ -1379,7 +1379,7 @@ func RegisterADATaskServer(s *grpc.Server, srv ADATaskServer) {
 	s.RegisterService(&_ADATask_serviceDesc, srv)
 }
 
-func _ADATask_GetTaskState_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ADATask_GetTaskState_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
 	in := new(GetTaskStateReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -1391,13 +1391,13 @@ func _ADATask_GetTaskState_Handler(srv interface{}, ctx context.Context, dec fun
 		Server:     srv,
 		FullMethod: "/api.ADATask/GetTaskState",
 	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+	handler := func(ctx context.Context, req any) (any, error) {
 		return srv.(ADATaskServer).GetTaskState(ctx, req.(*GetTaskStateReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADATask_DomainStatusSyncTask_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ADATask_DomainStatusSyncTask_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
 	in := new(DomainStatusSyncTaskReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -1409,13 +1409,13 @@ func _ADATask_DomainStatusSyncTask_Handler(srv interface{}, ctx context.Context,
 		Server:     srv,
 		FullMethod: "/api.ADATask/DomainStatusSyncTask",
 	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+	handler := func(ctx context.Context, req any) (any, error) {
 		return srv.(ADATaskServer).DomainStatusSyncTask(ctx, req.(*DomainStatusSyncTaskReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADATask_DomainLdapSyncTask_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ADATask_DomainLdapSyncTask_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
 	in := new(DomainLdapSyncTaskReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -1427,13 +1427,13 @@ func _ADATask_DomainLdapSyncTask_Handler(srv interface{}, ctx context.Context, d
 		Server:     srv,
 		FullMethod: "/api.ADATask/DomainLdapSyncTask",
 	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+	handler := func(ctx context.Context, req any) (any, error) {
 		return srv.(ADATaskServer).DomainLdapSyncTask(ctx, req.(*DomainLdapSyncTaskReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADATask_ScannerBaselineTask_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ADATask_ScannerBaselineTask_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
 	in := new(ScannerBaselineTaskReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -1445,13 +1445,13 @@ func _ADATask_ScannerBaselineTask_Handler(srv interface{}, ctx context.Context, 
 		Server:     srv,
 		FullMethod: "/api.ADATask/ScannerBaselineTask",
 	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+	handler := func(ctx context.Context, req any) (any, error) {
 		return srv.(ADATaskServer).ScannerBaselineTask(ctx, req.(*ScannerBaselineTaskReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADATask_ScannerLeakTask_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ADATask_ScannerLeakTask_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
 	in := new(ScannerLeakTaskReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -1463,13 +1463,13 @@ func _ADATask_ScannerLeakTask_Handler(srv interface{}, ctx context.Context, dec 
 		Server:     srv,
 		FullMethod: "/api.ADATask/ScannerLeakTask",
 	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+	handler := func(ctx context.Context, req any) (any, error) {
 		return srv.(ADATaskServer).ScannerLeakTask(ctx, req.(*ScannerLeakTaskReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADATask_ScannerWeakPwdTask_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ADATask_ScannerWeakPwdTask_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
 	in := new(ScannerWeakPwdTaskReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -1481,13 +1481,13 @@ func _ADATask_ScannerWeakPwdTask_Handler(srv interface{}, ctx context.Context, d
 		Server:     srv,
 		FullMethod: "/api.ADATask/ScannerWeakPwdTask",
 	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+	handler := func(ctx context.Context, req any) (any, error) {
 		return srv.(ADATaskServer).ScannerWeakPwdTask(ctx, req.(*ScannerWeakPwdTaskReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADATask_ScannerRecheckTask_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ADATask_ScannerRecheckTask_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
 	in := new(ScannerRecheckTaskReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -1499,13 +1499,13 @@ func _ADATask_ScannerRecheckTask_Handler(srv interface{}, ctx context.Context, d
 		Server:     srv,
 		FullMethod: "/api.ADATask/ScannerRecheckTask",
 	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+	handler := func(ctx context.Context, req any) (any, error) {
 		return srv.(ADATaskServer).ScannerRecheckTask(ctx, req.(*ScannerRecheckTaskReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADATask_ExportReportTask_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ADATask_ExportReportTask_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
 	in := new(ExportReportTaskReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -1517,7 +1517,7 @@ func _ADATask_ExportReportTask_Handler(srv interface{}, ctx context.Context, dec
 		Server:     srv,
 		FullMethod: "/api.ADATask/ExportReportTask",
 	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+	handler := func(ctx context.Context, req any) (any, error) {
 		return srv.(ADATaskServer).ExportReportTask(ctx, req.(*ExportReportTaskReq))
 	}
 	return interceptor(ctx, in, info, handler)

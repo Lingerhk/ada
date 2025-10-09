@@ -40,7 +40,7 @@ func (t Tree) Eval(e Event) (*Result, bool) {
 					fieldMap[field] = fmt.Sprintf("%f", v)
 				case string:
 					fieldMap[field] = v
-				case []interface{}:
+				case []any:
 					// TODO: for the []array type, we only support match: []string, to: []int? []float?
 					// "attributes\":[\"sAMAccountName\",\"pwdLastSet\"]  =>  "attributes": "sAMAccountName,pwdLastSet"
 					var ret []string
@@ -261,11 +261,11 @@ func extractAndBuildBranches(d Detection, g *glob.Glob, noCollapseWS bool) ([]Br
 	return rules, nil
 }
 
-func extractWildcardIdents(d Detection, g *glob.Glob) ([]interface{}, error) {
+func extractWildcardIdents(d Detection, g *glob.Glob) ([]any, error) {
 	if g == nil {
 		return nil, fmt.Errorf("passed glob was nil (failed to compile)")
 	}
-	rules := make([]interface{}, 0)
+	rules := make([]any, 0)
 	for k, v := range d {
 		if (*g).Match(k) {
 			rules = append(rules, v)

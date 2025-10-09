@@ -14,7 +14,7 @@ type CeleryWorker struct {
 	broker          CeleryBroker
 	backend         CeleryBackend
 	numWorkers      int
-	registeredTasks map[string]interface{}
+	registeredTasks map[string]any
 	taskLock        sync.RWMutex
 	cancel          context.CancelFunc
 	workWG          sync.WaitGroup
@@ -27,7 +27,7 @@ func NewCeleryWorker(broker CeleryBroker, backend CeleryBackend, numWorkers int)
 		broker:          broker,
 		backend:         backend,
 		numWorkers:      numWorkers,
-		registeredTasks: map[string]interface{}{},
+		registeredTasks: map[string]any{},
 		rateLimitPeriod: 100 * time.Millisecond,
 	}
 }
@@ -94,14 +94,14 @@ func (w *CeleryWorker) GetNumWorkers() int {
 }
 
 // Register registers tasks (functions)
-func (w *CeleryWorker) Register(name string, task interface{}) {
+func (w *CeleryWorker) Register(name string, task any) {
 	w.taskLock.Lock()
 	w.registeredTasks[name] = task
 	w.taskLock.Unlock()
 }
 
 // GetTask retrieves registered task
-func (w *CeleryWorker) GetTask(name string) interface{} {
+func (w *CeleryWorker) GetTask(name string) any {
 	w.taskLock.RLock()
 	task, ok := w.registeredTasks[name]
 	if !ok {

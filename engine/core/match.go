@@ -178,7 +178,7 @@ func (e *EngineWorker) syncElasticsearch(ctx context.Context, alertBytes []byte)
 		return "", err
 	}
 
-	var r map[string]interface{}
+	var r map[string]any
 	if err := json.NewDecoder(res.Body).Decode(&r); err != nil {
 		logger.Errorf("Error parsing the response body: %v", err)
 		return "", err
@@ -205,7 +205,7 @@ func (e *EngineWorker) syncMongodb(act model.AlertActivityESDB) (primitive.Objec
 
 // cacheActivityMeta 将对应事件的概述信息cache到redis, ttl:6h
 func (e *EngineWorker) cacheActivityMeta(ctx context.Context, eId, mId, dcHostname string, result sigma.Result, rule *sigma.Rule) (string, error) {
-	eventInfo := make(map[string]interface{})
+	eventInfo := make(map[string]any)
 	eventInfo["mid"] = mId
 	eventInfo["eid"] = eId
 	eventInfo["sid"] = result.ID
@@ -281,7 +281,7 @@ func (e *EngineWorker) cacheInternalActivity(ctx context.Context, result sigma.R
 	switch rule.RdxKey {
 	case "rule_cache:aduser_info":
 		var domain string
-		eventInfo := make(map[string]interface{})
+		eventInfo := make(map[string]any)
 		eventInfo["timestamp"] = result.Timestamp
 		for field, val := range result.Fields {
 			switch field {

@@ -62,7 +62,7 @@ func (c UserClaim) Valid() error {
 
 // 解析token获取user消息
 func ParseToken(tokenStr, authSecret string) (*UserClaim, error) {
-	fn := func(token *jwt.Token) (interface{}, error) {
+	fn := func(token *jwt.Token) (any, error) {
 		return []byte(authSecret), nil
 	}
 

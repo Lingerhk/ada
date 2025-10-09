@@ -195,7 +195,7 @@ type ScanPlugin struct {
 	Points       float64                `bson:"points"`
 	SubType      string                 `bson:"sub_type"`
 	Level        int32                  `bson:"risk_level"`
-	MetaData     map[string]interface{} `bson:"meta_data"`
+	MetaData     map[string]any `bson:"meta_data"`
 	MetaDataDesc map[string]string      `bson:"meta_data_desc"`
 	Desc         string                 `bson:"desc"`
 	VerifyDesc   string                 `bson:"verify_desc"`
@@ -260,14 +260,14 @@ type PluginInfo struct {
 	Remark       string                 `bson:"remark"`
 	UpdateTm     int64                  `bson:"update_tm"`
 	RiskLevel    int32                  `bson:"risk_level"`
-	MetaData     map[string]interface{} `bson:"meta_data"`
+	MetaData     map[string]any `bson:"meta_data"`
 	MetaDataDesc map[string]string      `bson:"meta_data_desc"`
 }
 
 type SubTaskResult struct {
 	Status int32                  `bson:"status"` // 1|0|?
 	Desc   string                 `bson:"desc"`
-	Data   map[string]interface{} `bson:"data"` // baseline: {"instance_list": [{"k":"v"}]}; leak: {}; weakpwd: {"users": [obj1,...], "domain":xxx}
+	Data   map[string]any `bson:"data"` // baseline: {"instance_list": [{"k":"v"}]}; leak: {}; weakpwd: {"users": [obj1,...], "domain":xxx}
 	ErrMsg string                 `bson:"error"`
 	Plugin PluginInfo             `bson:"plugin"`
 }
@@ -279,7 +279,7 @@ type ScanSubTasks struct {
 	GroupID  string                 `bson:"group_id"`
 	Status   string                 `bson:"status"`
 	Result   SubTaskResult          `bson:"result"`
-	Params   map[string]interface{} `bson:"params"`
+	Params   map[string]any `bson:"params"`
 	ErrMsg   string                 `bson:"error_msg"`
 	CreateTm time.Time              `bson:"create_tm"`
 	UpdateTm time.Time              `bson:"update_tm"`
@@ -477,7 +477,7 @@ type AssetGroup struct {
 	AdminCount           int64              `bson:"adminCount"`
 	ObjectGUID           string             `bson:"objectGUID"`
 	ObjectCategory       string             `bson:"objectCategory"`
-	nTSecurityDescriptor interface{}        `bson:"nTSecurityDescriptor"`
+	nTSecurityDescriptor any        `bson:"nTSecurityDescriptor"`
 	WhenCreated          int64              `bson:"whenCreated"`
 	SyncTm               int64              `bson:"syncTm"`
 }
