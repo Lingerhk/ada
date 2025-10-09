@@ -310,7 +310,7 @@ func (p *Plugin) loadConfigureEvtPlugin(sensorIDKey string) {
 		logger.Debug("log event filter not set")
 	} else if v != "" {
 		// check event filter format: json {"ignores":[{"EventID":[1,2,3]}],"includes":[{"Level":[2,3]}]}
-		var eventFilter map[string]interface{}
+		var eventFilter map[string]any
 		err = json.Unmarshal([]byte(v), &eventFilter)
 		if err != nil {
 			logger.Errorf("unmarshal event filter err:%v", err)

@@ -27,7 +27,7 @@ const (
 	identKeyword
 )
 
-func checkIdentType(name string, data interface{}) identType {
+func checkIdentType(name string, data any) identType {
 	t := reflectIdentKind(data)
 	if strings.HasPrefix(name, "keyword") {
 		if data == nil {
@@ -40,11 +40,11 @@ func checkIdentType(name string, data interface{}) identType {
 	return t
 }
 
-func reflectIdentKind(data interface{}) identType {
+func reflectIdentKind(data any) identType {
 	switch v := data.(type) {
-	case map[string]interface{}, map[interface{}]interface{}:
+	case map[string]any, map[any]any:
 		return identSelection
-	case []interface{}:
+	case []any:
 		k, ok := isSameKind(v)
 		if !ok {
 			return identErr
@@ -60,7 +60,7 @@ func reflectIdentKind(data interface{}) identType {
 	}
 }
 
-func newRuleFromIdent(rule interface{}, kind identType, noCollapseWS bool) (Branch, error) {
+func newRuleFromIdent(rule any, kind identType, noCollapseWS bool) (Branch, error) {
 	switch kind {
 	case identKeyword:
 		return NewKeyword(rule, noCollapseWS)
@@ -90,11 +90,11 @@ func (k Keyword) Match(msg Event) (bool, bool) {
 	return false, true
 }
 
-func NewKeyword(expr interface{}, noCollapseWS bool) (*Keyword, error) {
+func NewKeyword(expr any, noCollapseWS bool) (*Keyword, error) {
 	switch val := expr.(type) {
 	case []string:
 		return newStringKeyword(TextPatternKeyword, false, noCollapseWS, val...)
-	case []interface{}:
+	case []any:
 		k, ok := isSameKind(val)
 		if !ok {
 			return nil, ErrInvalidKind{
@@ -220,7 +220,7 @@ func (s Selection) Match(msg Event) (bool, bool) {
 			if !v.Pattern.StringMatch(vt) {
 				return false, true
 			}
-		case []interface{}:
+		case []any:
 			// TODO: for the []array type, we only support match: []string, to: []int? []float?
 			// "attributes\":[\"sAMAccountName\",\"pwdLastSet\"]  =>  "attributes": "sAMAccountName,pwdLastSet"
 			var vtList []string
@@ -254,7 +254,7 @@ func (s *Selection) incrementMismatchCount() *Selection {
 	return s
 }
 
-func newSelectionFromMap(expr map[string]interface{}, noCollapseWS bool) (*Selection, error) {
+func newSelectionFromMap(expr map[string]any, noCollapseWS bool) (*Selection, error) {
 	sel := &Selection{S: make([]SelectionStringItem, 0)}
 	for key, pattern := range expr {
 		var mod TextPatternModifier
@@ -304,7 +304,7 @@ func newSelectionFromMap(expr map[string]interface{}, noCollapseWS bool) (*Selec
 				}
 				return append(sel.N, item)
 			}()
-		case []interface{}:
+		case []any:
 			// TODO - move this part to separate function and reuse in NewKeyword
 			k, ok := isSameKind(pat)
 			if !ok {
@@ -359,9 +359,9 @@ func newSelectionFromMap(expr map[string]interface{}, noCollapseWS bool) (*Selec
 	return sel, nil
 }
 
-func NewSelectionBranch(expr interface{}, noCollapseWS bool) (Branch, error) {
+func NewSelectionBranch(expr any, noCollapseWS bool) (Branch, error) {
 	switch v := expr.(type) {
-	case []interface{}:
+	case []any:
 		selections := make([]Branch, 0)
 		for _, item := range v {
 			b, err := NewSelectionBranch(item, noCollapseWS)
@@ -371,7 +371,7 @@ func NewSelectionBranch(expr interface{}, noCollapseWS bool) (Branch, error) {
 			selections = append(selections, b)
 		}
 		return NodeSimpleOr(selections).Reduce(), nil
-	case map[interface{}]interface{}:
+	case map[any]any:
 		return newSelectionFromMap(cleanUpInterfaceMap(v), noCollapseWS)
 	default:
 		return nil, ErrInvalidKind{
@@ -383,7 +383,7 @@ func NewSelectionBranch(expr interface{}, noCollapseWS bool) (Branch, error) {
 	}
 }
 
-func isSameKind(data []interface{}) (reflect.Kind, bool) {
+func isSameKind(data []any) (reflect.Kind, bool) {
 	var current, last reflect.Kind
 	for i, d := range data {
 		cType := reflect.TypeOf(d)
@@ -401,7 +401,7 @@ func isSameKind(data []interface{}) (reflect.Kind, bool) {
 	return current, true
 }
 
-func castIfaceToString(items []interface{}) []string {
+func castIfaceToString(items []any) []string {
 	tx := make([]string, 0)
 	for _, val := range items {
 		tx = append(tx, fmt.Sprintf("%v", val))
@@ -409,7 +409,7 @@ func castIfaceToString(items []interface{}) []string {
 	return tx
 }
 
-func castIfaceToInt(items []interface{}) []int {
+func castIfaceToInt(items []any) []int {
 	tx := make([]int, 0)
 	for _, val := range items {
 		if n, ok := val.(int); ok {
@@ -419,10 +419,10 @@ func castIfaceToInt(items []interface{}) []int {
 	return tx
 }
 
-// Yaml can have non-string keys, so go-yaml unmarshals to map[interface{}]interface{}
+// Yaml can have non-string keys, so go-yaml unmarshals to map[any]any
 // really annoying
-func cleanUpInterfaceMap(rx map[interface{}]interface{}) map[string]interface{} {
-	tx := make(map[string]interface{})
+func cleanUpInterfaceMap(rx map[any]any) map[string]any {
+	tx := make(map[string]any)
 	for k, v := range rx {
 		tx[fmt.Sprintf("%v", k)] = v
 	}

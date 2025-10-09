@@ -17987,7 +17987,7 @@ func file_ada_proto_rawDescGZIP() []byte {
 }
 
 var file_ada_proto_msgTypes = make([]protoimpl.MessageInfo, 269)
-var file_ada_proto_goTypes = []interface{}{
+var file_ada_proto_goTypes = []any{
 	(*ModelPage)(nil),                                // 0: ada.ModelPage
 	(*LoginReq)(nil),                                 // 1: ada.LoginReq
 	(*LoginReply)(nil),                               // 2: ada.LoginReply
@@ -18565,7 +18565,7 @@ func file_ada_proto_init() {
 		return
 	}
 	if !protoimpl.UnsafeEnabled {
-		file_ada_proto_msgTypes[0].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[0].Exporter = func(v any, i int) any {
 			switch v := v.(*ModelPage); i {
 			case 0:
 				return &v.state
@@ -18577,7 +18577,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[1].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[1].Exporter = func(v any, i int) any {
 			switch v := v.(*LoginReq); i {
 			case 0:
 				return &v.state
@@ -18589,7 +18589,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[2].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[2].Exporter = func(v any, i int) any {
 			switch v := v.(*LoginReply); i {
 			case 0:
 				return &v.state
@@ -18601,7 +18601,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[3].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[3].Exporter = func(v any, i int) any {
 			switch v := v.(*LogoutReq); i {
 			case 0:
 				return &v.state
@@ -18613,7 +18613,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[4].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[4].Exporter = func(v any, i int) any {
 			switch v := v.(*LogoutReply); i {
 			case 0:
 				return &v.state
@@ -18625,7 +18625,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[5].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[5].Exporter = func(v any, i int) any {
 			switch v := v.(*ListUserReq); i {
 			case 0:
 				return &v.state
@@ -18637,7 +18637,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[6].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[6].Exporter = func(v any, i int) any {
 			switch v := v.(*ListUserReply); i {
 			case 0:
 				return &v.state
@@ -18649,7 +18649,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[7].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[7].Exporter = func(v any, i int) any {
 			switch v := v.(*AddUserReq); i {
 			case 0:
 				return &v.state
@@ -18661,7 +18661,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[8].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[8].Exporter = func(v any, i int) any {
 			switch v := v.(*AddUserReply); i {
 			case 0:
 				return &v.state
@@ -18673,7 +18673,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[9].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[9].Exporter = func(v any, i int) any {
 			switch v := v.(*UpdateUserReq); i {
 			case 0:
 				return &v.state
@@ -18685,7 +18685,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[10].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[10].Exporter = func(v any, i int) any {
 			switch v := v.(*UpdateUserReply); i {
 			case 0:
 				return &v.state
@@ -18697,7 +18697,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[11].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[11].Exporter = func(v any, i int) any {
 			switch v := v.(*UpdateUserPasswordReq); i {
 			case 0:
 				return &v.state
@@ -18709,7 +18709,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[12].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[12].Exporter = func(v any, i int) any {
 			switch v := v.(*UpdateUserPasswordReply); i {
 			case 0:
 				return &v.state
@@ -18721,7 +18721,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[13].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[13].Exporter = func(v any, i int) any {
 			switch v := v.(*DeleteUserReq); i {
 			case 0:
 				return &v.state
@@ -18733,7 +18733,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[14].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[14].Exporter = func(v any, i int) any {
 			switch v := v.(*DeleteUserReply); i {
 			case 0:
 				return &v.state
@@ -18745,7 +18745,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[15].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[15].Exporter = func(v any, i int) any {
 			switch v := v.(*UserExistsReq); i {
 			case 0:
 				return &v.state
@@ -18757,7 +18757,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[16].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[16].Exporter = func(v any, i int) any {
 			switch v := v.(*UserExistsReply); i {
 			case 0:
 				return &v.state
@@ -18769,7 +18769,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[17].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[17].Exporter = func(v any, i int) any {
 			switch v := v.(*CheckMfaReq); i {
 			case 0:
 				return &v.state
@@ -18781,7 +18781,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[18].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[18].Exporter = func(v any, i int) any {
 			switch v := v.(*CheckMfaReply); i {
 			case 0:
 				return &v.state
@@ -18793,7 +18793,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[19].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[19].Exporter = func(v any, i int) any {
 			switch v := v.(*EnableMfaReq); i {
 			case 0:
 				return &v.state
@@ -18805,7 +18805,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[20].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[20].Exporter = func(v any, i int) any {
 			switch v := v.(*EnableMfaReply); i {
 			case 0:
 				return &v.state
@@ -18817,7 +18817,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[21].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[21].Exporter = func(v any, i int) any {
 			switch v := v.(*DisableMfaReq); i {
 			case 0:
 				return &v.state
@@ -18829,7 +18829,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[22].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[22].Exporter = func(v any, i int) any {
 			switch v := v.(*DisableMfaReply); i {
 			case 0:
 				return &v.state
@@ -18841,7 +18841,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[23].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[23].Exporter = func(v any, i int) any {
 			switch v := v.(*UpdateAvatarReq); i {
 			case 0:
 				return &v.state
@@ -18853,7 +18853,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[24].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[24].Exporter = func(v any, i int) any {
 			switch v := v.(*UpdateAvatarReply); i {
 			case 0:
 				return &v.state
@@ -18865,7 +18865,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[25].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[25].Exporter = func(v any, i int) any {
 			switch v := v.(*ResetPasswordReq); i {
 			case 0:
 				return &v.state
@@ -18877,7 +18877,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[26].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[26].Exporter = func(v any, i int) any {
 			switch v := v.(*ResetPasswordReply); i {
 			case 0:
 				return &v.state
@@ -18889,7 +18889,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[27].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[27].Exporter = func(v any, i int) any {
 			switch v := v.(*GetPwdUpdateTmReq); i {
 			case 0:
 				return &v.state
@@ -18901,7 +18901,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[28].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[28].Exporter = func(v any, i int) any {
 			switch v := v.(*GetPwdUpdateTmReply); i {
 			case 0:
 				return &v.state
@@ -18913,7 +18913,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[29].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[29].Exporter = func(v any, i int) any {
 			switch v := v.(*ListDomainReq); i {
 			case 0:
 				return &v.state
@@ -18925,7 +18925,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[30].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[30].Exporter = func(v any, i int) any {
 			switch v := v.(*ListDomainReply); i {
 			case 0:
 				return &v.state
@@ -18937,7 +18937,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[31].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[31].Exporter = func(v any, i int) any {
 			switch v := v.(*AddDomainReq); i {
 			case 0:
 				return &v.state
@@ -18949,7 +18949,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[32].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[32].Exporter = func(v any, i int) any {
 			switch v := v.(*AddDomainReply); i {
 			case 0:
 				return &v.state
@@ -18961,7 +18961,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[33].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[33].Exporter = func(v any, i int) any {
 			switch v := v.(*TestDomainReq); i {
 			case 0:
 				return &v.state
@@ -18973,7 +18973,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[34].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[34].Exporter = func(v any, i int) any {
 			switch v := v.(*TestDomainReply); i {
 			case 0:
 				return &v.state
@@ -18985,7 +18985,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[35].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[35].Exporter = func(v any, i int) any {
 			switch v := v.(*UpdateDomainReq); i {
 			case 0:
 				return &v.state
@@ -18997,7 +18997,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[36].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[36].Exporter = func(v any, i int) any {
 			switch v := v.(*UpdateDomainReply); i {
 			case 0:
 				return &v.state
@@ -19009,7 +19009,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[37].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[37].Exporter = func(v any, i int) any {
 			switch v := v.(*DeleteDomainReq); i {
 			case 0:
 				return &v.state
@@ -19021,7 +19021,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[38].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[38].Exporter = func(v any, i int) any {
 			switch v := v.(*DeleteDomainReply); i {
 			case 0:
 				return &v.state
@@ -19033,7 +19033,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[39].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[39].Exporter = func(v any, i int) any {
 			switch v := v.(*UpdateDomainDataReq); i {
 			case 0:
 				return &v.state
@@ -19045,7 +19045,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[40].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[40].Exporter = func(v any, i int) any {
 			switch v := v.(*UpdateDomainDataReply); i {
 			case 0:
 				return &v.state
@@ -19057,7 +19057,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[41].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[41].Exporter = func(v any, i int) any {
 			switch v := v.(*DeploySensorReq); i {
 			case 0:
 				return &v.state
@@ -19069,7 +19069,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[42].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[42].Exporter = func(v any, i int) any {
 			switch v := v.(*DeploySensorReply); i {
 			case 0:
 				return &v.state
@@ -19081,7 +19081,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[43].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[43].Exporter = func(v any, i int) any {
 			switch v := v.(*ListSensorReq); i {
 			case 0:
 				return &v.state
@@ -19093,7 +19093,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[44].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[44].Exporter = func(v any, i int) any {
 			switch v := v.(*ListSensorReply); i {
 			case 0:
 				return &v.state
@@ -19105,7 +19105,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[45].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[45].Exporter = func(v any, i int) any {
 			switch v := v.(*UpdateSensorReq); i {
 			case 0:
 				return &v.state
@@ -19117,7 +19117,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[46].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[46].Exporter = func(v any, i int) any {
 			switch v := v.(*UpdateSensorReply); i {
 			case 0:
 				return &v.state
@@ -19129,7 +19129,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[47].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[47].Exporter = func(v any, i int) any {
 			switch v := v.(*DownloadSensorReq); i {
 			case 0:
 				return &v.state
@@ -19141,7 +19141,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[48].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[48].Exporter = func(v any, i int) any {
 			switch v := v.(*DownloadSensorReply); i {
 			case 0:
 				return &v.state
@@ -19153,7 +19153,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[49].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[49].Exporter = func(v any, i int) any {
 			switch v := v.(*CmdSensorReq); i {
 			case 0:
 				return &v.state
@@ -19165,7 +19165,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[50].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[50].Exporter = func(v any, i int) any {
 			switch v := v.(*CmdSensorReply); i {
 			case 0:
 				return &v.state
@@ -19177,7 +19177,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[51].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[51].Exporter = func(v any, i int) any {
 			switch v := v.(*UpdateSensorVersionReq); i {
 			case 0:
 				return &v.state
@@ -19189,7 +19189,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[52].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[52].Exporter = func(v any, i int) any {
 			switch v := v.(*UpdateSensorVersionReply); i {
 			case 0:
 				return &v.state
@@ -19201,7 +19201,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[53].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[53].Exporter = func(v any, i int) any {
 			switch v := v.(*GetSystemInfoReq); i {
 			case 0:
 				return &v.state
@@ -19213,7 +19213,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[54].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[54].Exporter = func(v any, i int) any {
 			switch v := v.(*GetSystemInfoReply); i {
 			case 0:
 				return &v.state
@@ -19225,7 +19225,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[55].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[55].Exporter = func(v any, i int) any {
 			switch v := v.(*GetSystemIconReq); i {
 			case 0:
 				return &v.state
@@ -19237,7 +19237,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[56].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[56].Exporter = func(v any, i int) any {
 			switch v := v.(*GetSystemIconReply); i {
 			case 0:
 				return &v.state
@@ -19249,7 +19249,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[57].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[57].Exporter = func(v any, i int) any {
 			switch v := v.(*UpdateSystemIconReq); i {
 			case 0:
 				return &v.state
@@ -19261,7 +19261,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[58].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[58].Exporter = func(v any, i int) any {
 			switch v := v.(*UpdateSystemIconReply); i {
 			case 0:
 				return &v.state
@@ -19273,7 +19273,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[59].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[59].Exporter = func(v any, i int) any {
 			switch v := v.(*UpdateNtpAddressReq); i {
 			case 0:
 				return &v.state
@@ -19285,7 +19285,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[60].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[60].Exporter = func(v any, i int) any {
 			switch v := v.(*UpdateNtpAddressReply); i {
 			case 0:
 				return &v.state
@@ -19297,7 +19297,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[61].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[61].Exporter = func(v any, i int) any {
 			switch v := v.(*UpdateSystemLanguageReq); i {
 			case 0:
 				return &v.state
@@ -19309,7 +19309,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[62].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[62].Exporter = func(v any, i int) any {
 			switch v := v.(*UpdateSystemLanguageReply); i {
 			case 0:
 				return &v.state
@@ -19321,7 +19321,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[63].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[63].Exporter = func(v any, i int) any {
 			switch v := v.(*UpdateSystemIPReq); i {
 			case 0:
 				return &v.state
@@ -19333,7 +19333,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[64].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[64].Exporter = func(v any, i int) any {
 			switch v := v.(*UpdateSystemIPReply); i {
 			case 0:
 				return &v.state
@@ -19345,7 +19345,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[65].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[65].Exporter = func(v any, i int) any {
 			switch v := v.(*GetSystemStatsReq); i {
 			case 0:
 				return &v.state
@@ -19357,7 +19357,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[66].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[66].Exporter = func(v any, i int) any {
 			switch v := v.(*StatsInfo); i {
 			case 0:
 				return &v.state
@@ -19369,7 +19369,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[67].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[67].Exporter = func(v any, i int) any {
 			switch v := v.(*GetSystemStatsReply); i {
 			case 0:
 				return &v.state
@@ -19381,7 +19381,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[68].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[68].Exporter = func(v any, i int) any {
 			switch v := v.(*SetSystemStatsCfgReq); i {
 			case 0:
 				return &v.state
@@ -19393,7 +19393,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[69].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[69].Exporter = func(v any, i int) any {
 			switch v := v.(*SetSystemStatsCfgReply); i {
 			case 0:
 				return &v.state
@@ -19405,7 +19405,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[70].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[70].Exporter = func(v any, i int) any {
 			switch v := v.(*ListAuditLogReq); i {
 			case 0:
 				return &v.state
@@ -19417,7 +19417,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[71].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[71].Exporter = func(v any, i int) any {
 			switch v := v.(*ListAuditLogReply); i {
 			case 0:
 				return &v.state
@@ -19429,7 +19429,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[72].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[72].Exporter = func(v any, i int) any {
 			switch v := v.(*GetLicenseReq); i {
 			case 0:
 				return &v.state
@@ -19441,7 +19441,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[73].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[73].Exporter = func(v any, i int) any {
 			switch v := v.(*GetLicenseReply); i {
 			case 0:
 				return &v.state
@@ -19453,7 +19453,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[74].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[74].Exporter = func(v any, i int) any {
 			switch v := v.(*UpdateLicenseReq); i {
 			case 0:
 				return &v.state
@@ -19465,7 +19465,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[75].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[75].Exporter = func(v any, i int) any {
 			switch v := v.(*UpdateLicenseReply); i {
 			case 0:
 				return &v.state
@@ -19477,7 +19477,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[76].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[76].Exporter = func(v any, i int) any {
 			switch v := v.(*NetworkDebugReq); i {
 			case 0:
 				return &v.state
@@ -19489,7 +19489,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[77].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[77].Exporter = func(v any, i int) any {
 			switch v := v.(*NetworkDebugReply); i {
 			case 0:
 				return &v.state
@@ -19501,7 +19501,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[78].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[78].Exporter = func(v any, i int) any {
 			switch v := v.(*ListNotifyConfReq); i {
 			case 0:
 				return &v.state
@@ -19513,7 +19513,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[79].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[79].Exporter = func(v any, i int) any {
 			switch v := v.(*ListNotifyConfReply); i {
 			case 0:
 				return &v.state
@@ -19525,7 +19525,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[80].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[80].Exporter = func(v any, i int) any {
 			switch v := v.(*UpdateNotifyConfReq); i {
 			case 0:
 				return &v.state
@@ -19537,7 +19537,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[81].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[81].Exporter = func(v any, i int) any {
 			switch v := v.(*UpdateNotifyConfReply); i {
 			case 0:
 				return &v.state
@@ -19549,7 +19549,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[82].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[82].Exporter = func(v any, i int) any {
 			switch v := v.(*EnableNotifyConfReq); i {
 			case 0:
 				return &v.state
@@ -19561,7 +19561,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[83].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[83].Exporter = func(v any, i int) any {
 			switch v := v.(*EnableNotifyConfReply); i {
 			case 0:
 				return &v.state
@@ -19573,7 +19573,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[84].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[84].Exporter = func(v any, i int) any {
 			switch v := v.(*TestNotifyConfReq); i {
 			case 0:
 				return &v.state
@@ -19585,7 +19585,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[85].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[85].Exporter = func(v any, i int) any {
 			switch v := v.(*TestNotifyConfReply); i {
 			case 0:
 				return &v.state
@@ -19597,7 +19597,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[86].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[86].Exporter = func(v any, i int) any {
 			switch v := v.(*ListExportTaskReq); i {
 			case 0:
 				return &v.state
@@ -19609,7 +19609,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[87].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[87].Exporter = func(v any, i int) any {
 			switch v := v.(*ListExportTaskReply); i {
 			case 0:
 				return &v.state
@@ -19621,7 +19621,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[88].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[88].Exporter = func(v any, i int) any {
 			switch v := v.(*AddExportTaskReq); i {
 			case 0:
 				return &v.state
@@ -19633,7 +19633,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[89].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[89].Exporter = func(v any, i int) any {
 			switch v := v.(*AddExportTaskReply); i {
 			case 0:
 				return &v.state
@@ -19645,7 +19645,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[90].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[90].Exporter = func(v any, i int) any {
 			switch v := v.(*DeleteExportTaskReq); i {
 			case 0:
 				return &v.state
@@ -19657,7 +19657,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[91].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[91].Exporter = func(v any, i int) any {
 			switch v := v.(*DeleteExportTaskReply); i {
 			case 0:
 				return &v.state
@@ -19669,7 +19669,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[92].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[92].Exporter = func(v any, i int) any {
 			switch v := v.(*ListNotifyReq); i {
 			case 0:
 				return &v.state
@@ -19681,7 +19681,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[93].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[93].Exporter = func(v any, i int) any {
 			switch v := v.(*ListNotifyReply); i {
 			case 0:
 				return &v.state
@@ -19693,7 +19693,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[94].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[94].Exporter = func(v any, i int) any {
 			switch v := v.(*UpdateNotifyReq); i {
 			case 0:
 				return &v.state
@@ -19705,7 +19705,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[95].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[95].Exporter = func(v any, i int) any {
 			switch v := v.(*UpdateNotifyReply); i {
 			case 0:
 				return &v.state
@@ -19717,7 +19717,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[96].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[96].Exporter = func(v any, i int) any {
 			switch v := v.(*StatsNotifyReq); i {
 			case 0:
 				return &v.state
@@ -19729,7 +19729,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[97].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[97].Exporter = func(v any, i int) any {
 			switch v := v.(*StatsNotifyReply); i {
 			case 0:
 				return &v.state
@@ -19741,7 +19741,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[98].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[98].Exporter = func(v any, i int) any {
 			switch v := v.(*ThreatTopsReq); i {
 			case 0:
 				return &v.state
@@ -19753,7 +19753,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[99].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[99].Exporter = func(v any, i int) any {
 			switch v := v.(*ThreatTopsReply); i {
 			case 0:
 				return &v.state
@@ -19765,7 +19765,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[100].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[100].Exporter = func(v any, i int) any {
 			switch v := v.(*ThreatTrendsReq); i {
 			case 0:
 				return &v.state
@@ -19777,7 +19777,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[101].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[101].Exporter = func(v any, i int) any {
 			switch v := v.(*ThreatTrendsReply); i {
 			case 0:
 				return &v.state
@@ -19789,7 +19789,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[102].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[102].Exporter = func(v any, i int) any {
 			switch v := v.(*AttackFlowReply); i {
 			case 0:
 				return &v.state
@@ -19801,7 +19801,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[103].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[103].Exporter = func(v any, i int) any {
 			switch v := v.(*ListThreatReq); i {
 			case 0:
 				return &v.state
@@ -19813,7 +19813,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[104].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[104].Exporter = func(v any, i int) any {
 			switch v := v.(*ListThreatReply); i {
 			case 0:
 				return &v.state
@@ -19825,7 +19825,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[105].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[105].Exporter = func(v any, i int) any {
 			switch v := v.(*GetThreatNamesReq); i {
 			case 0:
 				return &v.state
@@ -19837,7 +19837,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[106].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[106].Exporter = func(v any, i int) any {
 			switch v := v.(*GetThreatNamesReply); i {
 			case 0:
 				return &v.state
@@ -19849,7 +19849,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[107].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[107].Exporter = func(v any, i int) any {
 			switch v := v.(*ListThreatRuleReq); i {
 			case 0:
 				return &v.state
@@ -19861,7 +19861,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[108].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[108].Exporter = func(v any, i int) any {
 			switch v := v.(*ListThreatRuleReply); i {
 			case 0:
 				return &v.state
@@ -19873,7 +19873,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[109].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[109].Exporter = func(v any, i int) any {
 			switch v := v.(*ActionThreatRuleReq); i {
 			case 0:
 				return &v.state
@@ -19885,7 +19885,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[110].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[110].Exporter = func(v any, i int) any {
 			switch v := v.(*ActionThreatRuleReply); i {
 			case 0:
 				return &v.state
@@ -19897,7 +19897,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[111].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[111].Exporter = func(v any, i int) any {
 			switch v := v.(*GetThreatReq); i {
 			case 0:
 				return &v.state
@@ -19909,7 +19909,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[112].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[112].Exporter = func(v any, i int) any {
 			switch v := v.(*GetThreatReply); i {
 			case 0:
 				return &v.state
@@ -19921,7 +19921,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[113].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[113].Exporter = func(v any, i int) any {
 			switch v := v.(*ActionThreatReq); i {
 			case 0:
 				return &v.state
@@ -19933,7 +19933,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[114].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[114].Exporter = func(v any, i int) any {
 			switch v := v.(*ActionThreatReply); i {
 			case 0:
 				return &v.state
@@ -19945,7 +19945,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[115].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[115].Exporter = func(v any, i int) any {
 			switch v := v.(*ListActivityReq); i {
 			case 0:
 				return &v.state
@@ -19957,7 +19957,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[116].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[116].Exporter = func(v any, i int) any {
 			switch v := v.(*ActivityDetails); i {
 			case 0:
 				return &v.state
@@ -19969,7 +19969,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[117].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[117].Exporter = func(v any, i int) any {
 			switch v := v.(*ListActivityReply); i {
 			case 0:
 				return &v.state
@@ -19981,7 +19981,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[118].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[118].Exporter = func(v any, i int) any {
 			switch v := v.(*GetActivityNamesReq); i {
 			case 0:
 				return &v.state
@@ -19993,7 +19993,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[119].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[119].Exporter = func(v any, i int) any {
 			switch v := v.(*GetActivityNamesReply); i {
 			case 0:
 				return &v.state
@@ -20005,7 +20005,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[120].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[120].Exporter = func(v any, i int) any {
 			switch v := v.(*GetActivityReq); i {
 			case 0:
 				return &v.state
@@ -20017,7 +20017,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[121].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[121].Exporter = func(v any, i int) any {
 			switch v := v.(*GetActivityReply); i {
 			case 0:
 				return &v.state
@@ -20029,7 +20029,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[122].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[122].Exporter = func(v any, i int) any {
 			switch v := v.(*ListThreatConfReq); i {
 			case 0:
 				return &v.state
@@ -20041,7 +20041,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[123].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[123].Exporter = func(v any, i int) any {
 			switch v := v.(*ListThreatConfReply); i {
 			case 0:
 				return &v.state
@@ -20053,7 +20053,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[124].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[124].Exporter = func(v any, i int) any {
 			switch v := v.(*UpdateThreatConfReq); i {
 			case 0:
 				return &v.state
@@ -20065,7 +20065,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[125].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[125].Exporter = func(v any, i int) any {
 			switch v := v.(*UpdateThreatConfReply); i {
 			case 0:
 				return &v.state
@@ -20077,7 +20077,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[126].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[126].Exporter = func(v any, i int) any {
 			switch v := v.(*ListSensitiveEntryReq); i {
 			case 0:
 				return &v.state
@@ -20089,7 +20089,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[127].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[127].Exporter = func(v any, i int) any {
 			switch v := v.(*ListSensitiveEntryReply); i {
 			case 0:
 				return &v.state
@@ -20101,7 +20101,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[128].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[128].Exporter = func(v any, i int) any {
 			switch v := v.(*AddSensitiveEntryReq); i {
 			case 0:
 				return &v.state
@@ -20113,7 +20113,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[129].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[129].Exporter = func(v any, i int) any {
 			switch v := v.(*AddSensitiveEntryReply); i {
 			case 0:
 				return &v.state
@@ -20125,7 +20125,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[130].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[130].Exporter = func(v any, i int) any {
 			switch v := v.(*ListDomainEntryReq); i {
 			case 0:
 				return &v.state
@@ -20137,7 +20137,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[131].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[131].Exporter = func(v any, i int) any {
 			switch v := v.(*ListDomainEntryReply); i {
 			case 0:
 				return &v.state
@@ -20149,7 +20149,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[132].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[132].Exporter = func(v any, i int) any {
 			switch v := v.(*DeleteSensitiveEntryReq); i {
 			case 0:
 				return &v.state
@@ -20161,7 +20161,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[133].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[133].Exporter = func(v any, i int) any {
 			switch v := v.(*DeleteSensitiveEntryReply); i {
 			case 0:
 				return &v.state
@@ -20173,7 +20173,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[134].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[134].Exporter = func(v any, i int) any {
 			switch v := v.(*ListThreatWhitelistReq); i {
 			case 0:
 				return &v.state
@@ -20185,7 +20185,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[135].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[135].Exporter = func(v any, i int) any {
 			switch v := v.(*ListThreatWhitelistReply); i {
 			case 0:
 				return &v.state
@@ -20197,7 +20197,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[136].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[136].Exporter = func(v any, i int) any {
 			switch v := v.(*GetThreatWhitelistFieldReq); i {
 			case 0:
 				return &v.state
@@ -20209,7 +20209,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[137].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[137].Exporter = func(v any, i int) any {
 			switch v := v.(*GetThreatWhitelistFieldReply); i {
 			case 0:
 				return &v.state
@@ -20221,7 +20221,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[138].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[138].Exporter = func(v any, i int) any {
 			switch v := v.(*AddThreatWhitelistReq); i {
 			case 0:
 				return &v.state
@@ -20233,7 +20233,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[139].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[139].Exporter = func(v any, i int) any {
 			switch v := v.(*AddThreatWhitelistReply); i {
 			case 0:
 				return &v.state
@@ -20245,7 +20245,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[140].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[140].Exporter = func(v any, i int) any {
 			switch v := v.(*UpdateThreatWhitelistReq); i {
 			case 0:
 				return &v.state
@@ -20257,7 +20257,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[141].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[141].Exporter = func(v any, i int) any {
 			switch v := v.(*UpdateThreatWhitelistReply); i {
 			case 0:
 				return &v.state
@@ -20269,7 +20269,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[142].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[142].Exporter = func(v any, i int) any {
 			switch v := v.(*DeleteThreatWhitelistReq); i {
 			case 0:
 				return &v.state
@@ -20281,7 +20281,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[143].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[143].Exporter = func(v any, i int) any {
 			switch v := v.(*DeleteThreatWhitelistReply); i {
 			case 0:
 				return &v.state
@@ -20293,7 +20293,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[144].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[144].Exporter = func(v any, i int) any {
 			switch v := v.(*ListThreatBlockReq); i {
 			case 0:
 				return &v.state
@@ -20305,7 +20305,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[145].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[145].Exporter = func(v any, i int) any {
 			switch v := v.(*ListThreatBlockReply); i {
 			case 0:
 				return &v.state
@@ -20317,7 +20317,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[146].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[146].Exporter = func(v any, i int) any {
 			switch v := v.(*AddThreatBlockReq); i {
 			case 0:
 				return &v.state
@@ -20329,7 +20329,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[147].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[147].Exporter = func(v any, i int) any {
 			switch v := v.(*AddThreatBlockReply); i {
 			case 0:
 				return &v.state
@@ -20341,7 +20341,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[148].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[148].Exporter = func(v any, i int) any {
 			switch v := v.(*UpdateThreatBlockReq); i {
 			case 0:
 				return &v.state
@@ -20353,7 +20353,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[149].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[149].Exporter = func(v any, i int) any {
 			switch v := v.(*UpdateThreatBlockReply); i {
 			case 0:
 				return &v.state
@@ -20365,7 +20365,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[150].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[150].Exporter = func(v any, i int) any {
 			switch v := v.(*DeleteThreatBlockReq); i {
 			case 0:
 				return &v.state
@@ -20377,7 +20377,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[151].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[151].Exporter = func(v any, i int) any {
 			switch v := v.(*DeleteThreatBlockReply); i {
 			case 0:
 				return &v.state
@@ -20389,7 +20389,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[152].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[152].Exporter = func(v any, i int) any {
 			switch v := v.(*ScanRiskStatsReq); i {
 			case 0:
 				return &v.state
@@ -20401,7 +20401,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[153].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[153].Exporter = func(v any, i int) any {
 			switch v := v.(*ScanRiskStatsReply); i {
 			case 0:
 				return &v.state
@@ -20413,7 +20413,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[154].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[154].Exporter = func(v any, i int) any {
 			switch v := v.(*ListBaselineReq); i {
 			case 0:
 				return &v.state
@@ -20425,7 +20425,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[155].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[155].Exporter = func(v any, i int) any {
 			switch v := v.(*ListBaselineReply); i {
 			case 0:
 				return &v.state
@@ -20437,7 +20437,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[156].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[156].Exporter = func(v any, i int) any {
 			switch v := v.(*GetBaselineReq); i {
 			case 0:
 				return &v.state
@@ -20449,7 +20449,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[157].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[157].Exporter = func(v any, i int) any {
 			switch v := v.(*GetBaselineReply); i {
 			case 0:
 				return &v.state
@@ -20461,7 +20461,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[158].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[158].Exporter = func(v any, i int) any {
 			switch v := v.(*ListLeakReq); i {
 			case 0:
 				return &v.state
@@ -20473,7 +20473,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[159].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[159].Exporter = func(v any, i int) any {
 			switch v := v.(*ListLeakReply); i {
 			case 0:
 				return &v.state
@@ -20485,7 +20485,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[160].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[160].Exporter = func(v any, i int) any {
 			switch v := v.(*ListWeakPwdReq); i {
 			case 0:
 				return &v.state
@@ -20497,7 +20497,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[161].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[161].Exporter = func(v any, i int) any {
 			switch v := v.(*ListWeakPwdReply); i {
 			case 0:
 				return &v.state
@@ -20509,7 +20509,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[162].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[162].Exporter = func(v any, i int) any {
 			switch v := v.(*ListScanTaskReq); i {
 			case 0:
 				return &v.state
@@ -20521,7 +20521,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[163].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[163].Exporter = func(v any, i int) any {
 			switch v := v.(*ListScanTaskReply); i {
 			case 0:
 				return &v.state
@@ -20533,7 +20533,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[164].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[164].Exporter = func(v any, i int) any {
 			switch v := v.(*GetScanTaskReq); i {
 			case 0:
 				return &v.state
@@ -20545,7 +20545,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[165].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[165].Exporter = func(v any, i int) any {
 			switch v := v.(*GetScanTaskReply); i {
 			case 0:
 				return &v.state
@@ -20557,7 +20557,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[166].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[166].Exporter = func(v any, i int) any {
 			switch v := v.(*AddScanTaskReq); i {
 			case 0:
 				return &v.state
@@ -20569,7 +20569,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[167].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[167].Exporter = func(v any, i int) any {
 			switch v := v.(*AddScanTaskReply); i {
 			case 0:
 				return &v.state
@@ -20581,7 +20581,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[168].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[168].Exporter = func(v any, i int) any {
 			switch v := v.(*RecheckScanTaskReq); i {
 			case 0:
 				return &v.state
@@ -20593,7 +20593,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[169].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[169].Exporter = func(v any, i int) any {
 			switch v := v.(*RecheckScanTaskReply); i {
 			case 0:
 				return &v.state
@@ -20605,7 +20605,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[170].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[170].Exporter = func(v any, i int) any {
 			switch v := v.(*DeleteScanTaskReq); i {
 			case 0:
 				return &v.state
@@ -20617,7 +20617,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[171].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[171].Exporter = func(v any, i int) any {
 			switch v := v.(*DeleteScanTaskReply); i {
 			case 0:
 				return &v.state
@@ -20629,7 +20629,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[172].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[172].Exporter = func(v any, i int) any {
 			switch v := v.(*ListScanConfReq); i {
 			case 0:
 				return &v.state
@@ -20641,7 +20641,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[173].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[173].Exporter = func(v any, i int) any {
 			switch v := v.(*ListScanConfReply); i {
 			case 0:
 				return &v.state
@@ -20653,7 +20653,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[174].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[174].Exporter = func(v any, i int) any {
 			switch v := v.(*ScanConfDetail); i {
 			case 0:
 				return &v.state
@@ -20665,7 +20665,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[175].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[175].Exporter = func(v any, i int) any {
 			switch v := v.(*SetScanConfReq); i {
 			case 0:
 				return &v.state
@@ -20677,7 +20677,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[176].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[176].Exporter = func(v any, i int) any {
 			switch v := v.(*SetScanConfReply); i {
 			case 0:
 				return &v.state
@@ -20689,7 +20689,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[177].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[177].Exporter = func(v any, i int) any {
 			switch v := v.(*GetScanConfReq); i {
 			case 0:
 				return &v.state
@@ -20701,7 +20701,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[178].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[178].Exporter = func(v any, i int) any {
 			switch v := v.(*GetScanConfReply); i {
 			case 0:
 				return &v.state
@@ -20713,7 +20713,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[179].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[179].Exporter = func(v any, i int) any {
 			switch v := v.(*GetScanTmplNamesReq); i {
 			case 0:
 				return &v.state
@@ -20725,7 +20725,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[180].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[180].Exporter = func(v any, i int) any {
 			switch v := v.(*GetScanTmplNamesReply); i {
 			case 0:
 				return &v.state
@@ -20737,7 +20737,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[181].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[181].Exporter = func(v any, i int) any {
 			switch v := v.(*UpdateScanConfReq); i {
 			case 0:
 				return &v.state
@@ -20749,7 +20749,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[182].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[182].Exporter = func(v any, i int) any {
 			switch v := v.(*UpdateScanConfReply); i {
 			case 0:
 				return &v.state
@@ -20761,7 +20761,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[183].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[183].Exporter = func(v any, i int) any {
 			switch v := v.(*ListScanTmplReq); i {
 			case 0:
 				return &v.state
@@ -20773,7 +20773,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[184].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[184].Exporter = func(v any, i int) any {
 			switch v := v.(*ListScanTmplReply); i {
 			case 0:
 				return &v.state
@@ -20785,7 +20785,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[185].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[185].Exporter = func(v any, i int) any {
 			switch v := v.(*GetScanTmplReq); i {
 			case 0:
 				return &v.state
@@ -20797,7 +20797,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[186].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[186].Exporter = func(v any, i int) any {
 			switch v := v.(*PluginInfo); i {
 			case 0:
 				return &v.state
@@ -20809,7 +20809,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[187].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[187].Exporter = func(v any, i int) any {
 			switch v := v.(*GetScanTmplReply); i {
 			case 0:
 				return &v.state
@@ -20821,7 +20821,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[188].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[188].Exporter = func(v any, i int) any {
 			switch v := v.(*UpdateScanTmplReq); i {
 			case 0:
 				return &v.state
@@ -20833,7 +20833,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[189].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[189].Exporter = func(v any, i int) any {
 			switch v := v.(*UpdateScanTmplReply); i {
 			case 0:
 				return &v.state
@@ -20845,7 +20845,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[190].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[190].Exporter = func(v any, i int) any {
 			switch v := v.(*DeleteScanTmplReq); i {
 			case 0:
 				return &v.state
@@ -20857,7 +20857,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[191].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[191].Exporter = func(v any, i int) any {
 			switch v := v.(*DeleteScanTmplReply); i {
 			case 0:
 				return &v.state
@@ -20869,7 +20869,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[192].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[192].Exporter = func(v any, i int) any {
 			switch v := v.(*PluginInfoV2); i {
 			case 0:
 				return &v.state
@@ -20881,7 +20881,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[193].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[193].Exporter = func(v any, i int) any {
 			switch v := v.(*AddScanTmplReq); i {
 			case 0:
 				return &v.state
@@ -20893,7 +20893,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[194].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[194].Exporter = func(v any, i int) any {
 			switch v := v.(*AddScanTmplReply); i {
 			case 0:
 				return &v.state
@@ -20905,7 +20905,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[195].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[195].Exporter = func(v any, i int) any {
 			switch v := v.(*ListScanPluginReq); i {
 			case 0:
 				return &v.state
@@ -20917,7 +20917,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[196].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[196].Exporter = func(v any, i int) any {
 			switch v := v.(*ListScanPluginReply); i {
 			case 0:
 				return &v.state
@@ -20929,7 +20929,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[197].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[197].Exporter = func(v any, i int) any {
 			switch v := v.(*DashboardStatsReq); i {
 			case 0:
 				return &v.state
@@ -20941,7 +20941,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[198].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[198].Exporter = func(v any, i int) any {
 			switch v := v.(*DashboardStatsReply); i {
 			case 0:
 				return &v.state
@@ -20953,7 +20953,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[199].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[199].Exporter = func(v any, i int) any {
 			switch v := v.(*DashboardTrendsReq); i {
 			case 0:
 				return &v.state
@@ -20965,7 +20965,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[200].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[200].Exporter = func(v any, i int) any {
 			switch v := v.(*DashboardTrendsReply); i {
 			case 0:
 				return &v.state
@@ -20977,7 +20977,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[201].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[201].Exporter = func(v any, i int) any {
 			switch v := v.(*DashboardLogStatsReq); i {
 			case 0:
 				return &v.state
@@ -20989,7 +20989,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[202].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[202].Exporter = func(v any, i int) any {
 			switch v := v.(*DashboardLogStatsReply); i {
 			case 0:
 				return &v.state
@@ -21001,7 +21001,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[203].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[203].Exporter = func(v any, i int) any {
 			switch v := v.(*ListUserReply_Details); i {
 			case 0:
 				return &v.state
@@ -21013,7 +21013,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[204].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[204].Exporter = func(v any, i int) any {
 			switch v := v.(*ListDomainReplyDcList); i {
 			case 0:
 				return &v.state
@@ -21025,7 +21025,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[205].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[205].Exporter = func(v any, i int) any {
 			switch v := v.(*ListDomainReply_Details); i {
 			case 0:
 				return &v.state
@@ -21037,7 +21037,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[207].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[207].Exporter = func(v any, i int) any {
 			switch v := v.(*ListSensorReplyMapSlice); i {
 			case 0:
 				return &v.state
@@ -21049,7 +21049,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[208].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[208].Exporter = func(v any, i int) any {
 			switch v := v.(*ListSensorReply_Details); i {
 			case 0:
 				return &v.state
@@ -21061,7 +21061,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[215].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[215].Exporter = func(v any, i int) any {
 			switch v := v.(*ListAuditLogReply_Details); i {
 			case 0:
 				return &v.state
@@ -21073,7 +21073,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[216].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[216].Exporter = func(v any, i int) any {
 			switch v := v.(*ListNotifyConfReply_Details); i {
 			case 0:
 				return &v.state
@@ -21085,7 +21085,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[220].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[220].Exporter = func(v any, i int) any {
 			switch v := v.(*ListExportTaskReply_Details); i {
 			case 0:
 				return &v.state
@@ -21097,7 +21097,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[223].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[223].Exporter = func(v any, i int) any {
 			switch v := v.(*ListNotifyReply_Details); i {
 			case 0:
 				return &v.state
@@ -21109,7 +21109,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[225].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[225].Exporter = func(v any, i int) any {
 			switch v := v.(*ThreatTopsReply_Details); i {
 			case 0:
 				return &v.state
@@ -21121,7 +21121,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[226].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[226].Exporter = func(v any, i int) any {
 			switch v := v.(*ThreatTrendsReply_Item); i {
 			case 0:
 				return &v.state
@@ -21133,7 +21133,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[227].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[227].Exporter = func(v any, i int) any {
 			switch v := v.(*AttackFlowReply_Field); i {
 			case 0:
 				return &v.state
@@ -21145,7 +21145,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[229].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[229].Exporter = func(v any, i int) any {
 			switch v := v.(*ListThreatReq_Details); i {
 			case 0:
 				return &v.state
@@ -21157,7 +21157,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[230].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[230].Exporter = func(v any, i int) any {
 			switch v := v.(*ListThreatReply_Details); i {
 			case 0:
 				return &v.state
@@ -21169,7 +21169,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[232].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[232].Exporter = func(v any, i int) any {
 			switch v := v.(*ListThreatRuleReply_Details); i {
 			case 0:
 				return &v.state
@@ -21181,7 +21181,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[236].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[236].Exporter = func(v any, i int) any {
 			switch v := v.(*ListSensitiveEntryReply_Details); i {
 			case 0:
 				return &v.state
@@ -21193,7 +21193,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[237].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[237].Exporter = func(v any, i int) any {
 			switch v := v.(*ListThreatWhitelistReply_Details); i {
 			case 0:
 				return &v.state
@@ -21205,7 +21205,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[238].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[238].Exporter = func(v any, i int) any {
 			switch v := v.(*ListThreatWhitelistReply_DetailsRuleInfo); i {
 			case 0:
 				return &v.state
@@ -21217,7 +21217,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[240].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[240].Exporter = func(v any, i int) any {
 			switch v := v.(*AddThreatWhitelistReqRuleInfo); i {
 			case 0:
 				return &v.state
@@ -21229,7 +21229,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[242].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[242].Exporter = func(v any, i int) any {
 			switch v := v.(*UpdateThreatWhitelistReqRuleInfo); i {
 			case 0:
 				return &v.state
@@ -21241,7 +21241,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[244].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[244].Exporter = func(v any, i int) any {
 			switch v := v.(*ListThreatBlockReply_Results); i {
 			case 0:
 				return &v.state
@@ -21253,7 +21253,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[245].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[245].Exporter = func(v any, i int) any {
 			switch v := v.(*ListThreatBlockReply_Details); i {
 			case 0:
 				return &v.state
@@ -21265,7 +21265,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[247].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[247].Exporter = func(v any, i int) any {
 			switch v := v.(*ScanRiskStatsReply_Details); i {
 			case 0:
 				return &v.state
@@ -21277,7 +21277,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[248].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[248].Exporter = func(v any, i int) any {
 			switch v := v.(*ListBaselineReply_Details); i {
 			case 0:
 				return &v.state
@@ -21289,7 +21289,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[249].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[249].Exporter = func(v any, i int) any {
 			switch v := v.(*GetBaselineReplyEntryInfo); i {
 			case 0:
 				return &v.state
@@ -21301,7 +21301,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[251].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[251].Exporter = func(v any, i int) any {
 			switch v := v.(*ListLeakReply_Details); i {
 			case 0:
 				return &v.state
@@ -21313,7 +21313,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[252].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[252].Exporter = func(v any, i int) any {
 			switch v := v.(*ListWeakPwdReply_Details); i {
 			case 0:
 				return &v.state
@@ -21325,7 +21325,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[253].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[253].Exporter = func(v any, i int) any {
 			switch v := v.(*ListScanTaskReply_Details); i {
 			case 0:
 				return &v.state
@@ -21337,7 +21337,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[254].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[254].Exporter = func(v any, i int) any {
 			switch v := v.(*GetScanTaskReply_Details); i {
 			case 0:
 				return &v.state
@@ -21349,7 +21349,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[258].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[258].Exporter = func(v any, i int) any {
 			switch v := v.(*GetScanTmplNamesReplyTmplNames); i {
 			case 0:
 				return &v.state
@@ -21361,7 +21361,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[260].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[260].Exporter = func(v any, i int) any {
 			switch v := v.(*ListScanTmplReply_Details); i {
 			case 0:
 				return &v.state
@@ -21373,7 +21373,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[268].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[268].Exporter = func(v any, i int) any {
 			switch v := v.(*DashboardLogStatsReplyLogStatsList); i {
 			case 0:
 				return &v.state
@@ -22859,7 +22859,7 @@ func RegisterADAServer(s *grpc.Server, srv ADAServer) {
 	s.RegisterService(&_ADA_serviceDesc, srv)
 }
 
-func _ADA_Login_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ADA_Login_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
 	in := new(LoginReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -22871,13 +22871,13 @@ func _ADA_Login_Handler(srv interface{}, ctx context.Context, dec func(interface
 		Server:     srv,
 		FullMethod: "/ada.ADA/Login",
 	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+	handler := func(ctx context.Context, req any) (any, error) {
 		return srv.(ADAServer).Login(ctx, req.(*LoginReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_Logout_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ADA_Logout_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
 	in := new(LogoutReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -22889,13 +22889,13 @@ func _ADA_Logout_Handler(srv interface{}, ctx context.Context, dec func(interfac
 		Server:     srv,
 		FullMethod: "/ada.ADA/Logout",
 	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+	handler := func(ctx context.Context, req any) (any, error) {
 		return srv.(ADAServer).Logout(ctx, req.(*LogoutReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_ListUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ADA_ListUser_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
 	in := new(ListUserReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -22907,13 +22907,13 @@ func _ADA_ListUser_Handler(srv interface{}, ctx context.Context, dec func(interf
 		Server:     srv,
 		FullMethod: "/ada.ADA/ListUser",
 	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+	handler := func(ctx context.Context, req any) (any, error) {
 		return srv.(ADAServer).ListUser(ctx, req.(*ListUserReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_AddUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ADA_AddUser_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
 	in := new(AddUserReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -22925,13 +22925,13 @@ func _ADA_AddUser_Handler(srv interface{}, ctx context.Context, dec func(interfa
 		Server:     srv,
 		FullMethod: "/ada.ADA/AddUser",
 	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+	handler := func(ctx context.Context, req any) (any, error) {
 		return srv.(ADAServer).AddUser(ctx, req.(*AddUserReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_UpdateUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ADA_UpdateUser_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
 	in := new(UpdateUserReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -22943,13 +22943,13 @@ func _ADA_UpdateUser_Handler(srv interface{}, ctx context.Context, dec func(inte
 		Server:     srv,
 		FullMethod: "/ada.ADA/UpdateUser",
 	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+	handler := func(ctx context.Context, req any) (any, error) {
 		return srv.(ADAServer).UpdateUser(ctx, req.(*UpdateUserReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_UpdateUserPassword_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ADA_UpdateUserPassword_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
 	in := new(UpdateUserPasswordReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -22961,13 +22961,13 @@ func _ADA_UpdateUserPassword_Handler(srv interface{}, ctx context.Context, dec f
 		Server:     srv,
 		FullMethod: "/ada.ADA/UpdateUserPassword",
 	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+	handler := func(ctx context.Context, req any) (any, error) {
 		return srv.(ADAServer).UpdateUserPassword(ctx, req.(*UpdateUserPasswordReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_DeleteUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ADA_DeleteUser_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
 	in := new(DeleteUserReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -22979,13 +22979,13 @@ func _ADA_DeleteUser_Handler(srv interface{}, ctx context.Context, dec func(inte
 		Server:     srv,
 		FullMethod: "/ada.ADA/DeleteUser",
 	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+	handler := func(ctx context.Context, req any) (any, error) {
 		return srv.(ADAServer).DeleteUser(ctx, req.(*DeleteUserReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_UserExists_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ADA_UserExists_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
 	in := new(UserExistsReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -22997,13 +22997,13 @@ func _ADA_UserExists_Handler(srv interface{}, ctx context.Context, dec func(inte
 		Server:     srv,
 		FullMethod: "/ada.ADA/UserExists",
 	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+	handler := func(ctx context.Context, req any) (any, error) {
 		return srv.(ADAServer).UserExists(ctx, req.(*UserExistsReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_CheckMfa_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ADA_CheckMfa_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
 	in := new(CheckMfaReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -23015,13 +23015,13 @@ func _ADA_CheckMfa_Handler(srv interface{}, ctx context.Context, dec func(interf
 		Server:     srv,
 		FullMethod: "/ada.ADA/CheckMfa",
 	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+	handler := func(ctx context.Context, req any) (any, error) {
 		return srv.(ADAServer).CheckMfa(ctx, req.(*CheckMfaReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_EnableMfa_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ADA_EnableMfa_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
 	in := new(EnableMfaReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -23033,13 +23033,13 @@ func _ADA_EnableMfa_Handler(srv interface{}, ctx context.Context, dec func(inter
 		Server:     srv,
 		FullMethod: "/ada.ADA/EnableMfa",
 	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+	handler := func(ctx context.Context, req any) (any, error) {
 		return srv.(ADAServer).EnableMfa(ctx, req.(*EnableMfaReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_DisableMfa_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ADA_DisableMfa_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
 	in := new(DisableMfaReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -23051,13 +23051,13 @@ func _ADA_DisableMfa_Handler(srv interface{}, ctx context.Context, dec func(inte
 		Server:     srv,
 		FullMethod: "/ada.ADA/DisableMfa",
 	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+	handler := func(ctx context.Context, req any) (any, error) {
 		return srv.(ADAServer).DisableMfa(ctx, req.(*DisableMfaReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_UpdateAvatar_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ADA_UpdateAvatar_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
 	in := new(UpdateAvatarReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -23069,13 +23069,13 @@ func _ADA_UpdateAvatar_Handler(srv interface{}, ctx context.Context, dec func(in
 		Server:     srv,
 		FullMethod: "/ada.ADA/UpdateAvatar",
 	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+	handler := func(ctx context.Context, req any) (any, error) {
 		return srv.(ADAServer).UpdateAvatar(ctx, req.(*UpdateAvatarReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_ResetPassword_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ADA_ResetPassword_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
 	in := new(ResetPasswordReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -23087,13 +23087,13 @@ func _ADA_ResetPassword_Handler(srv interface{}, ctx context.Context, dec func(i
 		Server:     srv,
 		FullMethod: "/ada.ADA/ResetPassword",
 	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+	handler := func(ctx context.Context, req any) (any, error) {
 		return srv.(ADAServer).ResetPassword(ctx, req.(*ResetPasswordReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_GetPwdUpdateTm_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ADA_GetPwdUpdateTm_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
 	in := new(GetPwdUpdateTmReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -23105,13 +23105,13 @@ func _ADA_GetPwdUpdateTm_Handler(srv interface{}, ctx context.Context, dec func(
 		Server:     srv,
 		FullMethod: "/ada.ADA/GetPwdUpdateTm",
 	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+	handler := func(ctx context.Context, req any) (any, error) {
 		return srv.(ADAServer).GetPwdUpdateTm(ctx, req.(*GetPwdUpdateTmReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_ListDomain_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ADA_ListDomain_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
 	in := new(ListDomainReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -23123,13 +23123,13 @@ func _ADA_ListDomain_Handler(srv interface{}, ctx context.Context, dec func(inte
 		Server:     srv,
 		FullMethod: "/ada.ADA/ListDomain",
 	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+	handler := func(ctx context.Context, req any) (any, error) {
 		return srv.(ADAServer).ListDomain(ctx, req.(*ListDomainReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_AddDomain_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ADA_AddDomain_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
 	in := new(AddDomainReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -23141,13 +23141,13 @@ func _ADA_AddDomain_Handler(srv interface{}, ctx context.Context, dec func(inter
 		Server:     srv,
 		FullMethod: "/ada.ADA/AddDomain",
 	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+	handler := func(ctx context.Context, req any) (any, error) {
 		return srv.(ADAServer).AddDomain(ctx, req.(*AddDomainReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_TestDomain_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ADA_TestDomain_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
 	in := new(TestDomainReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -23159,13 +23159,13 @@ func _ADA_TestDomain_Handler(srv interface{}, ctx context.Context, dec func(inte
 		Server:     srv,
 		FullMethod: "/ada.ADA/TestDomain",
 	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+	handler := func(ctx context.Context, req any) (any, error) {
 		return srv.(ADAServer).TestDomain(ctx, req.(*TestDomainReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_UpdateDomain_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ADA_UpdateDomain_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
 	in := new(UpdateDomainReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -23177,13 +23177,13 @@ func _ADA_UpdateDomain_Handler(srv interface{}, ctx context.Context, dec func(in
 		Server:     srv,
 		FullMethod: "/ada.ADA/UpdateDomain",
 	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+	handler := func(ctx context.Context, req any) (any, error) {
 		return srv.(ADAServer).UpdateDomain(ctx, req.(*UpdateDomainReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_DeleteDomain_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ADA_DeleteDomain_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
 	in := new(DeleteDomainReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -23195,13 +23195,13 @@ func _ADA_DeleteDomain_Handler(srv interface{}, ctx context.Context, dec func(in
 		Server:     srv,
 		FullMethod: "/ada.ADA/DeleteDomain",
 	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+	handler := func(ctx context.Context, req any) (any, error) {
 		return srv.(ADAServer).DeleteDomain(ctx, req.(*DeleteDomainReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_UpdateDomainData_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ADA_UpdateDomainData_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
 	in := new(UpdateDomainDataReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -23213,13 +23213,13 @@ func _ADA_UpdateDomainData_Handler(srv interface{}, ctx context.Context, dec fun
 		Server:     srv,
 		FullMethod: "/ada.ADA/UpdateDomainData",
 	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+	handler := func(ctx context.Context, req any) (any, error) {
 		return srv.(ADAServer).UpdateDomainData(ctx, req.(*UpdateDomainDataReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_DeploySensor_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ADA_DeploySensor_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
 	in := new(DeploySensorReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -23231,13 +23231,13 @@ func _ADA_DeploySensor_Handler(srv interface{}, ctx context.Context, dec func(in
 		Server:     srv,
 		FullMethod: "/ada.ADA/DeploySensor",
 	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+	handler := func(ctx context.Context, req any) (any, error) {
 		return srv.(ADAServer).DeploySensor(ctx, req.(*DeploySensorReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_ListSensor_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ADA_ListSensor_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
 	in := new(ListSensorReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -23249,13 +23249,13 @@ func _ADA_ListSensor_Handler(srv interface{}, ctx context.Context, dec func(inte
 		Server:     srv,
 		FullMethod: "/ada.ADA/ListSensor",
 	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+	handler := func(ctx context.Context, req any) (any, error) {
 		return srv.(ADAServer).ListSensor(ctx, req.(*ListSensorReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_UpdateSensor_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ADA_UpdateSensor_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
 	in := new(UpdateSensorReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -23267,13 +23267,13 @@ func _ADA_UpdateSensor_Handler(srv interface{}, ctx context.Context, dec func(in
 		Server:     srv,
 		FullMethod: "/ada.ADA/UpdateSensor",
 	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+	handler := func(ctx context.Context, req any) (any, error) {
 		return srv.(ADAServer).UpdateSensor(ctx, req.(*UpdateSensorReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_DownloadSensor_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ADA_DownloadSensor_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
 	in := new(DownloadSensorReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -23285,13 +23285,13 @@ func _ADA_DownloadSensor_Handler(srv interface{}, ctx context.Context, dec func(
 		Server:     srv,
 		FullMethod: "/ada.ADA/DownloadSensor",
 	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+	handler := func(ctx context.Context, req any) (any, error) {
 		return srv.(ADAServer).DownloadSensor(ctx, req.(*DownloadSensorReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_CmdSensor_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ADA_CmdSensor_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
 	in := new(CmdSensorReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -23303,13 +23303,13 @@ func _ADA_CmdSensor_Handler(srv interface{}, ctx context.Context, dec func(inter
 		Server:     srv,
 		FullMethod: "/ada.ADA/CmdSensor",
 	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+	handler := func(ctx context.Context, req any) (any, error) {
 		return srv.(ADAServer).CmdSensor(ctx, req.(*CmdSensorReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_UpdateSensorVersion_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ADA_UpdateSensorVersion_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
 	in := new(UpdateSensorVersionReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -23321,13 +23321,13 @@ func _ADA_UpdateSensorVersion_Handler(srv interface{}, ctx context.Context, dec 
 		Server:     srv,
 		FullMethod: "/ada.ADA/UpdateSensorVersion",
 	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+	handler := func(ctx context.Context, req any) (any, error) {
 		return srv.(ADAServer).UpdateSensorVersion(ctx, req.(*UpdateSensorVersionReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_GetSystemInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ADA_GetSystemInfo_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
 	in := new(GetSystemInfoReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -23339,13 +23339,13 @@ func _ADA_GetSystemInfo_Handler(srv interface{}, ctx context.Context, dec func(i
 		Server:     srv,
 		FullMethod: "/ada.ADA/GetSystemInfo",
 	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+	handler := func(ctx context.Context, req any) (any, error) {
 		return srv.(ADAServer).GetSystemInfo(ctx, req.(*GetSystemInfoReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_GetSystemIcon_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ADA_GetSystemIcon_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
 	in := new(GetSystemIconReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -23357,13 +23357,13 @@ func _ADA_GetSystemIcon_Handler(srv interface{}, ctx context.Context, dec func(i
 		Server:     srv,
 		FullMethod: "/ada.ADA/GetSystemIcon",
 	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+	handler := func(ctx context.Context, req any) (any, error) {
 		return srv.(ADAServer).GetSystemIcon(ctx, req.(*GetSystemIconReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_UpdateSystemIcon_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ADA_UpdateSystemIcon_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
 	in := new(UpdateSystemIconReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -23375,13 +23375,13 @@ func _ADA_UpdateSystemIcon_Handler(srv interface{}, ctx context.Context, dec fun
 		Server:     srv,
 		FullMethod: "/ada.ADA/UpdateSystemIcon",
 	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+	handler := func(ctx context.Context, req any) (any, error) {
 		return srv.(ADAServer).UpdateSystemIcon(ctx, req.(*UpdateSystemIconReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_UpdateNtpAddress_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ADA_UpdateNtpAddress_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
 	in := new(UpdateNtpAddressReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -23393,13 +23393,13 @@ func _ADA_UpdateNtpAddress_Handler(srv interface{}, ctx context.Context, dec fun
 		Server:     srv,
 		FullMethod: "/ada.ADA/UpdateNtpAddress",
 	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+	handler := func(ctx context.Context, req any) (any, error) {
 		return srv.(ADAServer).UpdateNtpAddress(ctx, req.(*UpdateNtpAddressReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_UpdateSystemLanguage_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ADA_UpdateSystemLanguage_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
 	in := new(UpdateSystemLanguageReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -23411,13 +23411,13 @@ func _ADA_UpdateSystemLanguage_Handler(srv interface{}, ctx context.Context, dec
 		Server:     srv,
 		FullMethod: "/ada.ADA/UpdateSystemLanguage",
 	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+	handler := func(ctx context.Context, req any) (any, error) {
 		return srv.(ADAServer).UpdateSystemLanguage(ctx, req.(*UpdateSystemLanguageReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_UpdateSystemIP_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ADA_UpdateSystemIP_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
 	in := new(UpdateSystemIPReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -23429,13 +23429,13 @@ func _ADA_UpdateSystemIP_Handler(srv interface{}, ctx context.Context, dec func(
 		Server:     srv,
 		FullMethod: "/ada.ADA/UpdateSystemIP",
 	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+	handler := func(ctx context.Context, req any) (any, error) {
 		return srv.(ADAServer).UpdateSystemIP(ctx, req.(*UpdateSystemIPReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_GetSystemStats_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ADA_GetSystemStats_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
 	in := new(GetSystemStatsReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -23447,13 +23447,13 @@ func _ADA_GetSystemStats_Handler(srv interface{}, ctx context.Context, dec func(
 		Server:     srv,
 		FullMethod: "/ada.ADA/GetSystemStats",
 	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+	handler := func(ctx context.Context, req any) (any, error) {
 		return srv.(ADAServer).GetSystemStats(ctx, req.(*GetSystemStatsReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_SetSystemStatsCfg_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ADA_SetSystemStatsCfg_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
 	in := new(SetSystemStatsCfgReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -23465,13 +23465,13 @@ func _ADA_SetSystemStatsCfg_Handler(srv interface{}, ctx context.Context, dec fu
 		Server:     srv,
 		FullMethod: "/ada.ADA/SetSystemStatsCfg",
 	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+	handler := func(ctx context.Context, req any) (any, error) {
 		return srv.(ADAServer).SetSystemStatsCfg(ctx, req.(*SetSystemStatsCfgReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_GetLicense_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ADA_GetLicense_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
 	in := new(GetLicenseReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -23483,13 +23483,13 @@ func _ADA_GetLicense_Handler(srv interface{}, ctx context.Context, dec func(inte
 		Server:     srv,
 		FullMethod: "/ada.ADA/GetLicense",
 	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+	handler := func(ctx context.Context, req any) (any, error) {
 		return srv.(ADAServer).GetLicense(ctx, req.(*GetLicenseReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_UpdateLicense_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ADA_UpdateLicense_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
 	in := new(UpdateLicenseReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -23501,13 +23501,13 @@ func _ADA_UpdateLicense_Handler(srv interface{}, ctx context.Context, dec func(i
 		Server:     srv,
 		FullMethod: "/ada.ADA/UpdateLicense",
 	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+	handler := func(ctx context.Context, req any) (any, error) {
 		return srv.(ADAServer).UpdateLicense(ctx, req.(*UpdateLicenseReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_NetworkDebug_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ADA_NetworkDebug_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
 	in := new(NetworkDebugReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -23519,13 +23519,13 @@ func _ADA_NetworkDebug_Handler(srv interface{}, ctx context.Context, dec func(in
 		Server:     srv,
 		FullMethod: "/ada.ADA/NetworkDebug",
 	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+	handler := func(ctx context.Context, req any) (any, error) {
 		return srv.(ADAServer).NetworkDebug(ctx, req.(*NetworkDebugReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_ListNotifyConf_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ADA_ListNotifyConf_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
 	in := new(ListNotifyConfReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -23537,13 +23537,13 @@ func _ADA_ListNotifyConf_Handler(srv interface{}, ctx context.Context, dec func(
 		Server:     srv,
 		FullMethod: "/ada.ADA/ListNotifyConf",
 	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+	handler := func(ctx context.Context, req any) (any, error) {
 		return srv.(ADAServer).ListNotifyConf(ctx, req.(*ListNotifyConfReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_UpdateNotifyConf_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ADA_UpdateNotifyConf_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
 	in := new(UpdateNotifyConfReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -23555,13 +23555,13 @@ func _ADA_UpdateNotifyConf_Handler(srv interface{}, ctx context.Context, dec fun
 		Server:     srv,
 		FullMethod: "/ada.ADA/UpdateNotifyConf",
 	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+	handler := func(ctx context.Context, req any) (any, error) {
 		return srv.(ADAServer).UpdateNotifyConf(ctx, req.(*UpdateNotifyConfReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_EnableNotifyConf_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ADA_EnableNotifyConf_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
 	in := new(EnableNotifyConfReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -23573,13 +23573,13 @@ func _ADA_EnableNotifyConf_Handler(srv interface{}, ctx context.Context, dec fun
 		Server:     srv,
 		FullMethod: "/ada.ADA/EnableNotifyConf",
 	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+	handler := func(ctx context.Context, req any) (any, error) {
 		return srv.(ADAServer).EnableNotifyConf(ctx, req.(*EnableNotifyConfReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_TestNotifyConf_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ADA_TestNotifyConf_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
 	in := new(TestNotifyConfReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -23591,13 +23591,13 @@ func _ADA_TestNotifyConf_Handler(srv interface{}, ctx context.Context, dec func(
 		Server:     srv,
 		FullMethod: "/ada.ADA/TestNotifyConf",
 	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+	handler := func(ctx context.Context, req any) (any, error) {
 		return srv.(ADAServer).TestNotifyConf(ctx, req.(*TestNotifyConfReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_ListExportTask_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ADA_ListExportTask_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
 	in := new(ListExportTaskReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -23609,13 +23609,13 @@ func _ADA_ListExportTask_Handler(srv interface{}, ctx context.Context, dec func(
 		Server:     srv,
 		FullMethod: "/ada.ADA/ListExportTask",
 	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+	handler := func(ctx context.Context, req any) (any, error) {
 		return srv.(ADAServer).ListExportTask(ctx, req.(*ListExportTaskReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_AddExportTask_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ADA_AddExportTask_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
 	in := new(AddExportTaskReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -23627,13 +23627,13 @@ func _ADA_AddExportTask_Handler(srv interface{}, ctx context.Context, dec func(i
 		Server:     srv,
 		FullMethod: "/ada.ADA/AddExportTask",
 	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+	handler := func(ctx context.Context, req any) (any, error) {
 		return srv.(ADAServer).AddExportTask(ctx, req.(*AddExportTaskReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_DeleteExportTask_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ADA_DeleteExportTask_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
 	in := new(DeleteExportTaskReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -23645,13 +23645,13 @@ func _ADA_DeleteExportTask_Handler(srv interface{}, ctx context.Context, dec fun
 		Server:     srv,
 		FullMethod: "/ada.ADA/DeleteExportTask",
 	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+	handler := func(ctx context.Context, req any) (any, error) {
 		return srv.(ADAServer).DeleteExportTask(ctx, req.(*DeleteExportTaskReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_ListNotify_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ADA_ListNotify_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
 	in := new(ListNotifyReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -23663,13 +23663,13 @@ func _ADA_ListNotify_Handler(srv interface{}, ctx context.Context, dec func(inte
 		Server:     srv,
 		FullMethod: "/ada.ADA/ListNotify",
 	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+	handler := func(ctx context.Context, req any) (any, error) {
 		return srv.(ADAServer).ListNotify(ctx, req.(*ListNotifyReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_UpdateNotify_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ADA_UpdateNotify_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
 	in := new(UpdateNotifyReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -23681,13 +23681,13 @@ func _ADA_UpdateNotify_Handler(srv interface{}, ctx context.Context, dec func(in
 		Server:     srv,
 		FullMethod: "/ada.ADA/UpdateNotify",
 	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+	handler := func(ctx context.Context, req any) (any, error) {
 		return srv.(ADAServer).UpdateNotify(ctx, req.(*UpdateNotifyReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_StatsNotify_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ADA_StatsNotify_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
 	in := new(StatsNotifyReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -23699,13 +23699,13 @@ func _ADA_StatsNotify_Handler(srv interface{}, ctx context.Context, dec func(int
 		Server:     srv,
 		FullMethod: "/ada.ADA/StatsNotify",
 	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+	handler := func(ctx context.Context, req any) (any, error) {
 		return srv.(ADAServer).StatsNotify(ctx, req.(*StatsNotifyReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_ListAuditLog_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ADA_ListAuditLog_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
 	in := new(ListAuditLogReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -23717,13 +23717,13 @@ func _ADA_ListAuditLog_Handler(srv interface{}, ctx context.Context, dec func(in
 		Server:     srv,
 		FullMethod: "/ada.ADA/ListAuditLog",
 	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+	handler := func(ctx context.Context, req any) (any, error) {
 		return srv.(ADAServer).ListAuditLog(ctx, req.(*ListAuditLogReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_ThreatTops_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ADA_ThreatTops_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
 	in := new(ThreatTopsReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -23735,13 +23735,13 @@ func _ADA_ThreatTops_Handler(srv interface{}, ctx context.Context, dec func(inte
 		Server:     srv,
 		FullMethod: "/ada.ADA/ThreatTops",
 	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+	handler := func(ctx context.Context, req any) (any, error) {
 		return srv.(ADAServer).ThreatTops(ctx, req.(*ThreatTopsReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_ThreatTrends_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ADA_ThreatTrends_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
 	in := new(ThreatTrendsReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -23753,13 +23753,13 @@ func _ADA_ThreatTrends_Handler(srv interface{}, ctx context.Context, dec func(in
 		Server:     srv,
 		FullMethod: "/ada.ADA/ThreatTrends",
 	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+	handler := func(ctx context.Context, req any) (any, error) {
 		return srv.(ADAServer).ThreatTrends(ctx, req.(*ThreatTrendsReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_ListThreat_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ADA_ListThreat_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
 	in := new(ListThreatReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -23771,13 +23771,13 @@ func _ADA_ListThreat_Handler(srv interface{}, ctx context.Context, dec func(inte
 		Server:     srv,
 		FullMethod: "/ada.ADA/ListThreat",
 	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+	handler := func(ctx context.Context, req any) (any, error) {
 		return srv.(ADAServer).ListThreat(ctx, req.(*ListThreatReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_GetThreatNames_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ADA_GetThreatNames_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
 	in := new(GetThreatNamesReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -23789,13 +23789,13 @@ func _ADA_GetThreatNames_Handler(srv interface{}, ctx context.Context, dec func(
 		Server:     srv,
 		FullMethod: "/ada.ADA/GetThreatNames",
 	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+	handler := func(ctx context.Context, req any) (any, error) {
 		return srv.(ADAServer).GetThreatNames(ctx, req.(*GetThreatNamesReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_ListThreatRule_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ADA_ListThreatRule_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
 	in := new(ListThreatRuleReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -23807,13 +23807,13 @@ func _ADA_ListThreatRule_Handler(srv interface{}, ctx context.Context, dec func(
 		Server:     srv,
 		FullMethod: "/ada.ADA/ListThreatRule",
 	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+	handler := func(ctx context.Context, req any) (any, error) {
 		return srv.(ADAServer).ListThreatRule(ctx, req.(*ListThreatRuleReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_ActionThreatRule_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ADA_ActionThreatRule_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
 	in := new(ActionThreatRuleReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -23825,13 +23825,13 @@ func _ADA_ActionThreatRule_Handler(srv interface{}, ctx context.Context, dec fun
 		Server:     srv,
 		FullMethod: "/ada.ADA/ActionThreatRule",
 	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+	handler := func(ctx context.Context, req any) (any, error) {
 		return srv.(ADAServer).ActionThreatRule(ctx, req.(*ActionThreatRuleReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_GetThreat_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ADA_GetThreat_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
 	in := new(GetThreatReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -23843,13 +23843,13 @@ func _ADA_GetThreat_Handler(srv interface{}, ctx context.Context, dec func(inter
 		Server:     srv,
 		FullMethod: "/ada.ADA/GetThreat",
 	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+	handler := func(ctx context.Context, req any) (any, error) {
 		return srv.(ADAServer).GetThreat(ctx, req.(*GetThreatReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_ActionThreat_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ADA_ActionThreat_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
 	in := new(ActionThreatReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -23861,13 +23861,13 @@ func _ADA_ActionThreat_Handler(srv interface{}, ctx context.Context, dec func(in
 		Server:     srv,
 		FullMethod: "/ada.ADA/ActionThreat",
 	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+	handler := func(ctx context.Context, req any) (any, error) {
 		return srv.(ADAServer).ActionThreat(ctx, req.(*ActionThreatReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_ListActivity_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ADA_ListActivity_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
 	in := new(ListActivityReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -23879,13 +23879,13 @@ func _ADA_ListActivity_Handler(srv interface{}, ctx context.Context, dec func(in
 		Server:     srv,
 		FullMethod: "/ada.ADA/ListActivity",
 	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+	handler := func(ctx context.Context, req any) (any, error) {
 		return srv.(ADAServer).ListActivity(ctx, req.(*ListActivityReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_GetActivityNames_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ADA_GetActivityNames_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
 	in := new(GetActivityNamesReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -23897,13 +23897,13 @@ func _ADA_GetActivityNames_Handler(srv interface{}, ctx context.Context, dec fun
 		Server:     srv,
 		FullMethod: "/ada.ADA/GetActivityNames",
 	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+	handler := func(ctx context.Context, req any) (any, error) {
 		return srv.(ADAServer).GetActivityNames(ctx, req.(*GetActivityNamesReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_GetActivity_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ADA_GetActivity_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
 	in := new(GetActivityReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -23915,13 +23915,13 @@ func _ADA_GetActivity_Handler(srv interface{}, ctx context.Context, dec func(int
 		Server:     srv,
 		FullMethod: "/ada.ADA/GetActivity",
 	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+	handler := func(ctx context.Context, req any) (any, error) {
 		return srv.(ADAServer).GetActivity(ctx, req.(*GetActivityReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_ListThreatConf_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ADA_ListThreatConf_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
 	in := new(ListThreatConfReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -23933,13 +23933,13 @@ func _ADA_ListThreatConf_Handler(srv interface{}, ctx context.Context, dec func(
 		Server:     srv,
 		FullMethod: "/ada.ADA/ListThreatConf",
 	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+	handler := func(ctx context.Context, req any) (any, error) {
 		return srv.(ADAServer).ListThreatConf(ctx, req.(*ListThreatConfReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_UpdateThreatConf_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ADA_UpdateThreatConf_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
 	in := new(UpdateThreatConfReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -23951,13 +23951,13 @@ func _ADA_UpdateThreatConf_Handler(srv interface{}, ctx context.Context, dec fun
 		Server:     srv,
 		FullMethod: "/ada.ADA/UpdateThreatConf",
 	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+	handler := func(ctx context.Context, req any) (any, error) {
 		return srv.(ADAServer).UpdateThreatConf(ctx, req.(*UpdateThreatConfReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_ListSensitiveEntry_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ADA_ListSensitiveEntry_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
 	in := new(ListSensitiveEntryReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -23969,13 +23969,13 @@ func _ADA_ListSensitiveEntry_Handler(srv interface{}, ctx context.Context, dec f
 		Server:     srv,
 		FullMethod: "/ada.ADA/ListSensitiveEntry",
 	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+	handler := func(ctx context.Context, req any) (any, error) {
 		return srv.(ADAServer).ListSensitiveEntry(ctx, req.(*ListSensitiveEntryReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_AddSensitiveEntry_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ADA_AddSensitiveEntry_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
 	in := new(AddSensitiveEntryReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -23987,13 +23987,13 @@ func _ADA_AddSensitiveEntry_Handler(srv interface{}, ctx context.Context, dec fu
 		Server:     srv,
 		FullMethod: "/ada.ADA/AddSensitiveEntry",
 	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+	handler := func(ctx context.Context, req any) (any, error) {
 		return srv.(ADAServer).AddSensitiveEntry(ctx, req.(*AddSensitiveEntryReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_ListDomainEntry_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ADA_ListDomainEntry_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
 	in := new(ListDomainEntryReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -24005,13 +24005,13 @@ func _ADA_ListDomainEntry_Handler(srv interface{}, ctx context.Context, dec func
 		Server:     srv,
 		FullMethod: "/ada.ADA/ListDomainEntry",
 	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+	handler := func(ctx context.Context, req any) (any, error) {
 		return srv.(ADAServer).ListDomainEntry(ctx, req.(*ListDomainEntryReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_DeleteSensitiveEntry_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ADA_DeleteSensitiveEntry_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
 	in := new(DeleteSensitiveEntryReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -24023,13 +24023,13 @@ func _ADA_DeleteSensitiveEntry_Handler(srv interface{}, ctx context.Context, dec
 		Server:     srv,
 		FullMethod: "/ada.ADA/DeleteSensitiveEntry",
 	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+	handler := func(ctx context.Context, req any) (any, error) {
 		return srv.(ADAServer).DeleteSensitiveEntry(ctx, req.(*DeleteSensitiveEntryReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_ListThreatWhitelist_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ADA_ListThreatWhitelist_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
 	in := new(ListThreatWhitelistReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -24041,13 +24041,13 @@ func _ADA_ListThreatWhitelist_Handler(srv interface{}, ctx context.Context, dec 
 		Server:     srv,
 		FullMethod: "/ada.ADA/ListThreatWhitelist",
 	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+	handler := func(ctx context.Context, req any) (any, error) {
 		return srv.(ADAServer).ListThreatWhitelist(ctx, req.(*ListThreatWhitelistReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_GetThreatWhitelistField_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ADA_GetThreatWhitelistField_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
 	in := new(GetThreatWhitelistFieldReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -24059,13 +24059,13 @@ func _ADA_GetThreatWhitelistField_Handler(srv interface{}, ctx context.Context, 
 		Server:     srv,
 		FullMethod: "/ada.ADA/GetThreatWhitelistField",
 	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+	handler := func(ctx context.Context, req any) (any, error) {
 		return srv.(ADAServer).GetThreatWhitelistField(ctx, req.(*GetThreatWhitelistFieldReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_AddThreatWhitelist_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ADA_AddThreatWhitelist_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
 	in := new(AddThreatWhitelistReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -24077,13 +24077,13 @@ func _ADA_AddThreatWhitelist_Handler(srv interface{}, ctx context.Context, dec f
 		Server:     srv,
 		FullMethod: "/ada.ADA/AddThreatWhitelist",
 	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+	handler := func(ctx context.Context, req any) (any, error) {
 		return srv.(ADAServer).AddThreatWhitelist(ctx, req.(*AddThreatWhitelistReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_UpdateThreatWhitelist_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ADA_UpdateThreatWhitelist_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
 	in := new(UpdateThreatWhitelistReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -24095,13 +24095,13 @@ func _ADA_UpdateThreatWhitelist_Handler(srv interface{}, ctx context.Context, de
 		Server:     srv,
 		FullMethod: "/ada.ADA/UpdateThreatWhitelist",
 	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+	handler := func(ctx context.Context, req any) (any, error) {
 		return srv.(ADAServer).UpdateThreatWhitelist(ctx, req.(*UpdateThreatWhitelistReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_DeleteThreatWhitelist_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ADA_DeleteThreatWhitelist_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
 	in := new(DeleteThreatWhitelistReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -24113,13 +24113,13 @@ func _ADA_DeleteThreatWhitelist_Handler(srv interface{}, ctx context.Context, de
 		Server:     srv,
 		FullMethod: "/ada.ADA/DeleteThreatWhitelist",
 	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+	handler := func(ctx context.Context, req any) (any, error) {
 		return srv.(ADAServer).DeleteThreatWhitelist(ctx, req.(*DeleteThreatWhitelistReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_ListThreatBlock_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ADA_ListThreatBlock_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
 	in := new(ListThreatBlockReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -24131,13 +24131,13 @@ func _ADA_ListThreatBlock_Handler(srv interface{}, ctx context.Context, dec func
 		Server:     srv,
 		FullMethod: "/ada.ADA/ListThreatBlock",
 	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+	handler := func(ctx context.Context, req any) (any, error) {
 		return srv.(ADAServer).ListThreatBlock(ctx, req.(*ListThreatBlockReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_AddThreatBlock_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ADA_AddThreatBlock_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
 	in := new(AddThreatBlockReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -24149,13 +24149,13 @@ func _ADA_AddThreatBlock_Handler(srv interface{}, ctx context.Context, dec func(
 		Server:     srv,
 		FullMethod: "/ada.ADA/AddThreatBlock",
 	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+	handler := func(ctx context.Context, req any) (any, error) {
 		return srv.(ADAServer).AddThreatBlock(ctx, req.(*AddThreatBlockReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_UpdateThreatBlock_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ADA_UpdateThreatBlock_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
 	in := new(UpdateThreatBlockReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -24167,13 +24167,13 @@ func _ADA_UpdateThreatBlock_Handler(srv interface{}, ctx context.Context, dec fu
 		Server:     srv,
 		FullMethod: "/ada.ADA/UpdateThreatBlock",
 	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+	handler := func(ctx context.Context, req any) (any, error) {
 		return srv.(ADAServer).UpdateThreatBlock(ctx, req.(*UpdateThreatBlockReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_DeleteThreatBlock_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ADA_DeleteThreatBlock_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
 	in := new(DeleteThreatBlockReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -24185,13 +24185,13 @@ func _ADA_DeleteThreatBlock_Handler(srv interface{}, ctx context.Context, dec fu
 		Server:     srv,
 		FullMethod: "/ada.ADA/DeleteThreatBlock",
 	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+	handler := func(ctx context.Context, req any) (any, error) {
 		return srv.(ADAServer).DeleteThreatBlock(ctx, req.(*DeleteThreatBlockReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_ScanRiskStats_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ADA_ScanRiskStats_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
 	in := new(ScanRiskStatsReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -24203,13 +24203,13 @@ func _ADA_ScanRiskStats_Handler(srv interface{}, ctx context.Context, dec func(i
 		Server:     srv,
 		FullMethod: "/ada.ADA/ScanRiskStats",
 	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+	handler := func(ctx context.Context, req any) (any, error) {
 		return srv.(ADAServer).ScanRiskStats(ctx, req.(*ScanRiskStatsReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_ListBaseline_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ADA_ListBaseline_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
 	in := new(ListBaselineReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -24221,13 +24221,13 @@ func _ADA_ListBaseline_Handler(srv interface{}, ctx context.Context, dec func(in
 		Server:     srv,
 		FullMethod: "/ada.ADA/ListBaseline",
 	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+	handler := func(ctx context.Context, req any) (any, error) {
 		return srv.(ADAServer).ListBaseline(ctx, req.(*ListBaselineReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_GetBaseline_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ADA_GetBaseline_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
 	in := new(GetBaselineReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -24239,13 +24239,13 @@ func _ADA_GetBaseline_Handler(srv interface{}, ctx context.Context, dec func(int
 		Server:     srv,
 		FullMethod: "/ada.ADA/GetBaseline",
 	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+	handler := func(ctx context.Context, req any) (any, error) {
 		return srv.(ADAServer).GetBaseline(ctx, req.(*GetBaselineReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_ListLeak_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ADA_ListLeak_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
 	in := new(ListLeakReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -24257,13 +24257,13 @@ func _ADA_ListLeak_Handler(srv interface{}, ctx context.Context, dec func(interf
 		Server:     srv,
 		FullMethod: "/ada.ADA/ListLeak",
 	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+	handler := func(ctx context.Context, req any) (any, error) {
 		return srv.(ADAServer).ListLeak(ctx, req.(*ListLeakReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_ListWeakPwd_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ADA_ListWeakPwd_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
 	in := new(ListWeakPwdReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -24275,13 +24275,13 @@ func _ADA_ListWeakPwd_Handler(srv interface{}, ctx context.Context, dec func(int
 		Server:     srv,
 		FullMethod: "/ada.ADA/ListWeakPwd",
 	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+	handler := func(ctx context.Context, req any) (any, error) {
 		return srv.(ADAServer).ListWeakPwd(ctx, req.(*ListWeakPwdReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_ListScanTask_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ADA_ListScanTask_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
 	in := new(ListScanTaskReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -24293,13 +24293,13 @@ func _ADA_ListScanTask_Handler(srv interface{}, ctx context.Context, dec func(in
 		Server:     srv,
 		FullMethod: "/ada.ADA/ListScanTask",
 	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+	handler := func(ctx context.Context, req any) (any, error) {
 		return srv.(ADAServer).ListScanTask(ctx, req.(*ListScanTaskReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_GetScanTask_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ADA_GetScanTask_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
 	in := new(GetScanTaskReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -24311,13 +24311,13 @@ func _ADA_GetScanTask_Handler(srv interface{}, ctx context.Context, dec func(int
 		Server:     srv,
 		FullMethod: "/ada.ADA/GetScanTask",
 	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+	handler := func(ctx context.Context, req any) (any, error) {
 		return srv.(ADAServer).GetScanTask(ctx, req.(*GetScanTaskReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_AddScanTask_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ADA_AddScanTask_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
 	in := new(AddScanTaskReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -24329,13 +24329,13 @@ func _ADA_AddScanTask_Handler(srv interface{}, ctx context.Context, dec func(int
 		Server:     srv,
 		FullMethod: "/ada.ADA/AddScanTask",
 	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+	handler := func(ctx context.Context, req any) (any, error) {
 		return srv.(ADAServer).AddScanTask(ctx, req.(*AddScanTaskReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_RecheckScanTask_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ADA_RecheckScanTask_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
 	in := new(RecheckScanTaskReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -24347,13 +24347,13 @@ func _ADA_RecheckScanTask_Handler(srv interface{}, ctx context.Context, dec func
 		Server:     srv,
 		FullMethod: "/ada.ADA/RecheckScanTask",
 	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+	handler := func(ctx context.Context, req any) (any, error) {
 		return srv.(ADAServer).RecheckScanTask(ctx, req.(*RecheckScanTaskReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_DeleteScanTask_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ADA_DeleteScanTask_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
 	in := new(DeleteScanTaskReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -24365,13 +24365,13 @@ func _ADA_DeleteScanTask_Handler(srv interface{}, ctx context.Context, dec func(
 		Server:     srv,
 		FullMethod: "/ada.ADA/DeleteScanTask",
 	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+	handler := func(ctx context.Context, req any) (any, error) {
 		return srv.(ADAServer).DeleteScanTask(ctx, req.(*DeleteScanTaskReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_ListScanConf_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ADA_ListScanConf_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
 	in := new(ListScanConfReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -24383,13 +24383,13 @@ func _ADA_ListScanConf_Handler(srv interface{}, ctx context.Context, dec func(in
 		Server:     srv,
 		FullMethod: "/ada.ADA/ListScanConf",
 	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+	handler := func(ctx context.Context, req any) (any, error) {
 		return srv.(ADAServer).ListScanConf(ctx, req.(*ListScanConfReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_SetScanConf_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ADA_SetScanConf_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
 	in := new(SetScanConfReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -24401,13 +24401,13 @@ func _ADA_SetScanConf_Handler(srv interface{}, ctx context.Context, dec func(int
 		Server:     srv,
 		FullMethod: "/ada.ADA/SetScanConf",
 	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+	handler := func(ctx context.Context, req any) (any, error) {
 		return srv.(ADAServer).SetScanConf(ctx, req.(*SetScanConfReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_GetScanConf_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ADA_GetScanConf_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
 	in := new(GetScanConfReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -24419,13 +24419,13 @@ func _ADA_GetScanConf_Handler(srv interface{}, ctx context.Context, dec func(int
 		Server:     srv,
 		FullMethod: "/ada.ADA/GetScanConf",
 	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+	handler := func(ctx context.Context, req any) (any, error) {
 		return srv.(ADAServer).GetScanConf(ctx, req.(*GetScanConfReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_GetScanTmplNames_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ADA_GetScanTmplNames_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
 	in := new(GetScanTmplNamesReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -24437,13 +24437,13 @@ func _ADA_GetScanTmplNames_Handler(srv interface{}, ctx context.Context, dec fun
 		Server:     srv,
 		FullMethod: "/ada.ADA/GetScanTmplNames",
 	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+	handler := func(ctx context.Context, req any) (any, error) {
 		return srv.(ADAServer).GetScanTmplNames(ctx, req.(*GetScanTmplNamesReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_UpdateScanConf_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ADA_UpdateScanConf_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
 	in := new(UpdateScanConfReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -24455,13 +24455,13 @@ func _ADA_UpdateScanConf_Handler(srv interface{}, ctx context.Context, dec func(
 		Server:     srv,
 		FullMethod: "/ada.ADA/UpdateScanConf",
 	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+	handler := func(ctx context.Context, req any) (any, error) {
 		return srv.(ADAServer).UpdateScanConf(ctx, req.(*UpdateScanConfReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_ListScanTmpl_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ADA_ListScanTmpl_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
 	in := new(ListScanTmplReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -24473,13 +24473,13 @@ func _ADA_ListScanTmpl_Handler(srv interface{}, ctx context.Context, dec func(in
 		Server:     srv,
 		FullMethod: "/ada.ADA/ListScanTmpl",
 	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+	handler := func(ctx context.Context, req any) (any, error) {
 		return srv.(ADAServer).ListScanTmpl(ctx, req.(*ListScanTmplReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_GetScanTmpl_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ADA_GetScanTmpl_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
 	in := new(GetScanTmplReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -24491,13 +24491,13 @@ func _ADA_GetScanTmpl_Handler(srv interface{}, ctx context.Context, dec func(int
 		Server:     srv,
 		FullMethod: "/ada.ADA/GetScanTmpl",
 	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+	handler := func(ctx context.Context, req any) (any, error) {
 		return srv.(ADAServer).GetScanTmpl(ctx, req.(*GetScanTmplReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_UpdateScanTmpl_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ADA_UpdateScanTmpl_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
 	in := new(UpdateScanTmplReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -24509,13 +24509,13 @@ func _ADA_UpdateScanTmpl_Handler(srv interface{}, ctx context.Context, dec func(
 		Server:     srv,
 		FullMethod: "/ada.ADA/UpdateScanTmpl",
 	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+	handler := func(ctx context.Context, req any) (any, error) {
 		return srv.(ADAServer).UpdateScanTmpl(ctx, req.(*UpdateScanTmplReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_DeleteScanTmpl_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ADA_DeleteScanTmpl_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
 	in := new(DeleteScanTmplReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -24527,13 +24527,13 @@ func _ADA_DeleteScanTmpl_Handler(srv interface{}, ctx context.Context, dec func(
 		Server:     srv,
 		FullMethod: "/ada.ADA/DeleteScanTmpl",
 	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+	handler := func(ctx context.Context, req any) (any, error) {
 		return srv.(ADAServer).DeleteScanTmpl(ctx, req.(*DeleteScanTmplReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_AddScanTmpl_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ADA_AddScanTmpl_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
 	in := new(AddScanTmplReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -24545,13 +24545,13 @@ func _ADA_AddScanTmpl_Handler(srv interface{}, ctx context.Context, dec func(int
 		Server:     srv,
 		FullMethod: "/ada.ADA/AddScanTmpl",
 	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+	handler := func(ctx context.Context, req any) (any, error) {
 		return srv.(ADAServer).AddScanTmpl(ctx, req.(*AddScanTmplReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_ListScanPlugin_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ADA_ListScanPlugin_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
 	in := new(ListScanPluginReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -24563,13 +24563,13 @@ func _ADA_ListScanPlugin_Handler(srv interface{}, ctx context.Context, dec func(
 		Server:     srv,
 		FullMethod: "/ada.ADA/ListScanPlugin",
 	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+	handler := func(ctx context.Context, req any) (any, error) {
 		return srv.(ADAServer).ListScanPlugin(ctx, req.(*ListScanPluginReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_DashboardStats_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ADA_DashboardStats_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
 	in := new(DashboardStatsReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -24581,13 +24581,13 @@ func _ADA_DashboardStats_Handler(srv interface{}, ctx context.Context, dec func(
 		Server:     srv,
 		FullMethod: "/ada.ADA/DashboardStats",
 	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+	handler := func(ctx context.Context, req any) (any, error) {
 		return srv.(ADAServer).DashboardStats(ctx, req.(*DashboardStatsReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_DashboardTrends_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ADA_DashboardTrends_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
 	in := new(DashboardTrendsReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -24599,13 +24599,13 @@ func _ADA_DashboardTrends_Handler(srv interface{}, ctx context.Context, dec func
 		Server:     srv,
 		FullMethod: "/ada.ADA/DashboardTrends",
 	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+	handler := func(ctx context.Context, req any) (any, error) {
 		return srv.(ADAServer).DashboardTrends(ctx, req.(*DashboardTrendsReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ADA_DashboardLogStats_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ADA_DashboardLogStats_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
 	in := new(DashboardLogStatsReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -24617,7 +24617,7 @@ func _ADA_DashboardLogStats_Handler(srv interface{}, ctx context.Context, dec fu
 		Server:     srv,
 		FullMethod: "/ada.ADA/DashboardLogStats",
 	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+	handler := func(ctx context.Context, req any) (any, error) {
 		return srv.(ADAServer).DashboardLogStats(ctx, req.(*DashboardLogStatsReq))
 	}
 	return interceptor(ctx, in, info, handler)

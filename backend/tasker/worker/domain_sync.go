@@ -202,7 +202,7 @@ func syncDomainDCList(e *Worker) error {
 			continue
 		}
 
-		var ipRelateMap = make(map[string]interface{})
+		var ipRelateMap = make(map[string]any)
 
 		for _, dc := range domain.DCList {
 			dcFullName := fmt.Sprintf("%s.%s", strings.ToLower(dc.HostName), domain.Name)

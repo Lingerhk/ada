@@ -15,17 +15,17 @@ type Collection struct {
 }
 
 // Find
-func (c *Collection) Find(filter interface{}) *Session {
+func (c *Collection) Find(filter any) *Session {
 	return &Session{filter: filter, collection: c.collection}
 }
 
 // Select
-func (c *Collection) Select(projection interface{}) *Session {
+func (c *Collection) Select(projection any) *Session {
 	return &Session{project: projection, collection: c.collection}
 }
 
 // Insert
-func (c *Collection) Insert(document interface{}) error {
+func (c *Collection) Insert(document any) error {
 	var err error
 	if _, err = c.collection.InsertOne(context.TODO(), document); err != nil {
 		return err
@@ -34,13 +34,13 @@ func (c *Collection) Insert(document interface{}) error {
 }
 
 // InsertWithResult
-func (c *Collection) InsertWithResult(document interface{}) (result *mongo.InsertOneResult, err error) {
+func (c *Collection) InsertWithResult(document any) (result *mongo.InsertOneResult, err error) {
 	result, err = c.collection.InsertOne(context.TODO(), document)
 	return
 }
 
 // InsertAll
-func (c *Collection) InsertAll(documents ...interface{}) error {
+func (c *Collection) InsertAll(documents ...any) error {
 	var err error
 	if _, err = c.collection.InsertMany(context.TODO(), documents); err != nil {
 		return err
@@ -49,13 +49,13 @@ func (c *Collection) InsertAll(documents ...interface{}) error {
 }
 
 // InsertAllWithResult
-func (c *Collection) InsertAllWithResult(documents []interface{}) (result *mongo.InsertManyResult, err error) {
+func (c *Collection) InsertAllWithResult(documents []any) (result *mongo.InsertManyResult, err error) {
 	result, err = c.collection.InsertMany(context.TODO(), documents)
 	return
 }
 
 // Update
-func (c *Collection) Update(selector interface{}, update interface{}, upsert ...bool) error {
+func (c *Collection) Update(selector any, update any, upsert ...bool) error {
 	if selector == nil {
 		selector = bson.D{}
 	}
@@ -76,7 +76,7 @@ func (c *Collection) Update(selector interface{}, update interface{}, upsert ...
 }
 
 // UpdateWithResult
-func (c *Collection) UpdateWithResult(selector interface{}, update interface{}, upsert ...bool) (result *mongo.UpdateResult, err error) {
+func (c *Collection) UpdateWithResult(selector any, update any, upsert ...bool) (result *mongo.UpdateResult, err error) {
 	if selector == nil {
 		selector = bson.D{}
 	}
@@ -93,12 +93,12 @@ func (c *Collection) UpdateWithResult(selector interface{}, update interface{}, 
 }
 
 // UpdateID
-func (c *Collection) UpdateID(id interface{}, update interface{}) error {
+func (c *Collection) UpdateID(id any, update any) error {
 	return c.Update(bson.M{"_id": id}, update)
 }
 
 // UpdateAll
-func (c *Collection) UpdateAll(selector interface{}, update interface{}, upsert ...bool) (*mongo.UpdateResult, error) {
+func (c *Collection) UpdateAll(selector any, update any, upsert ...bool) (*mongo.UpdateResult, error) {
 	if selector == nil {
 		selector = bson.D{}
 	}
@@ -120,7 +120,7 @@ func (c *Collection) UpdateAll(selector interface{}, update interface{}, upsert 
 }
 
 // Remove
-func (c *Collection) Remove(selector interface{}) error {
+func (c *Collection) Remove(selector any) error {
 	if selector == nil {
 		selector = bson.D{}
 	}
@@ -132,12 +132,12 @@ func (c *Collection) Remove(selector interface{}) error {
 }
 
 // RemoveID
-func (c *Collection) RemoveID(id interface{}) error {
+func (c *Collection) RemoveID(id any) error {
 	return c.Remove(bson.M{"_id": id})
 }
 
 // RemoveAll
-func (c *Collection) RemoveAll(selector interface{}) error {
+func (c *Collection) RemoveAll(selector any) error {
 	if selector == nil {
 		selector = bson.D{}
 	}
@@ -150,7 +150,7 @@ func (c *Collection) RemoveAll(selector interface{}) error {
 }
 
 // Count
-func (c *Collection) Count(selector interface{}) (int64, error) {
+func (c *Collection) Count(selector any) (int64, error) {
 	if selector == nil {
 		selector = bson.D{}
 	}
@@ -166,7 +166,7 @@ func (c *Collection) Drop() error {
 }
 
 // FindAndAutoInc
-func (c *Collection) FindAndAutoInc(name string, filter, update interface{}) (int32, error) {
+func (c *Collection) FindAndAutoInc(name string, filter, update any) (int32, error) {
 	opt := options.FindOneAndUpdateOptions{}
 	opt.SetUpsert(true)
 	opt.SetReturnDocument(options.After)
