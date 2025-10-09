@@ -5,7 +5,6 @@ import (
 	"ada/infra/mongo"
 	utime "ada/infra/time"
 	"context"
-	"embed"
 	"fmt"
 	"strconv"
 	"strings"
@@ -28,15 +27,15 @@ type Ruleset struct {
 	sigmaRuleTTLs map[string]int64 // sigma_id -> (max)ttl, 在FlowCleaner中按max ttl进行activity清理
 }
 
-func NewRuleset(redisCli *redis.Client, mongoCli mongo.DBAdaptor, flowRuleDir string, memFlowRules *embed.FS) (*Ruleset, error) {
+func NewRuleset(redisCli *redis.Client, mongoCli mongo.DBAdaptor, flowRuleDir string) (*Ruleset, error) {
 	// read flow rule from dir
-	files, err := NewRuleFileList([]string{flowRuleDir}, memFlowRules)
+	files, err := NewRuleFileList([]string{flowRuleDir})
 	if err != nil {
 		return nil, err
 	}
 
 	// load flow rules
-	flowRules, err := NewRuleList(files, memFlowRules)
+	flowRules, err := NewRuleList(files)
 	if err != nil {
 		return nil, err
 	}

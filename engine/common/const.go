@@ -1,7 +1,7 @@
 package common
 
 const (
-	RuleDir    = "/home/adadmin/ada/engine/rules"
+	RuleDir    = "/home/adadmin/rules"
 	RuleWinLog = "winlog"
 	RulePktLog = "pktlog"
 	RuleFlow   = "flow"

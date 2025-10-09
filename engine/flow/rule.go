@@ -5,10 +5,8 @@ import (
 	"ada/infra/base"
 	utime "ada/infra/time"
 	"context"
-	"embed"
 	"encoding/json"
 	"fmt"
-	"io/fs"
 	"os"
 	"path/filepath"
 	"strconv"
@@ -60,50 +58,36 @@ type FlowRule struct {
 	ExtFields    map[string][]string // 该字段不是flow yaml文件中的字段，仅用于内存存储. eg: {"sigma_id1":["field1","field2"],"sigma_id2":["field3"]} 这里的key(sigma_id)是全量，val是flow规则文件中的extField
 }
 
-func NewRuleFileList(dirs []string, memFlowRules *embed.FS) ([]string, error) {
+func NewRuleFileList(dirs []string) ([]string, error) {
 	out := make([]string, 0)
 
-	// 优先读取本地文件中的规则
-	if len(dirs) > 0 {
-		for _, dir := range dirs {
-			if err := filepath.Walk(dir, func(
-				path string,
-				info os.FileInfo,
-				err error,
-			) error {
-				if !info.IsDir() && strings.HasSuffix(path, "yml") {
-					out = append(out, path)
-				}
-				return err
-			}); err != nil {
-				return out, err
-			}
-		}
-		return out, nil
+	if len(dirs) == 0 {
+		return nil, fmt.Errorf("no rule directories provided")
 	}
 
-	// 如果memFlowRules不为空，则将memFlowRules中的所有sigma_id进行遍历，将对应的flow文件路径进行追加
-	err := fs.WalkDir(memFlowRules, ".", func(path string, d fs.DirEntry, err error) error {
-		if err != nil {
-			return err
-		}
-		if d.IsDir() {
+	for _, dir := range dirs {
+		if err := filepath.Walk(dir, func(
+			path string,
+			info os.FileInfo,
+			err error,
+		) error {
+			if err != nil {
+				return err
+			}
+			if !info.IsDir() && strings.HasSuffix(path, "yml") {
+				out = append(out, path)
+			}
 			return nil
+		}); err != nil {
+			return out, err
 		}
-		if strings.HasSuffix(path, "yml") {
-			out = append(out, path)
-		}
-		return nil
-	})
-	if err != nil {
-		return nil, err
 	}
 
 	return out, nil
 }
 
 // NewRuleList 	reads a list of sigma rule paths and parses them to rule objects
-func NewRuleList(files []string, memFlowRules *embed.FS) ([]FlowRule, error) {
+func NewRuleList(files []string) ([]FlowRule, error) {
 	if len(files) == 0 {
 		return nil, fmt.Errorf("missing rule file list")
 	}
@@ -114,9 +98,6 @@ func NewRuleList(files []string, memFlowRules *embed.FS) ([]FlowRule, error) {
 	rules := make([]FlowRule, 0)
 	for _, file := range files {
 		data, err = os.ReadFile(file)
-		if err != nil {
-			data, err = memFlowRules.ReadFile(file)
-		}
 		if err != nil {
 			return nil, err
 		}
