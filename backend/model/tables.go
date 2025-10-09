@@ -185,24 +185,24 @@ func (a *Sensor) CollectName() string {
 
 // ScanPlugin 列表
 type ScanPlugin struct {
-	ID           int32                  `bson:"_id,omitempty"`
-	Name         string                 `bson:"name"`
-	Display      string                 `bson:"display"`
-	Version      string                 `bson:"version"`
-	Enable       int32                  `bson:"enable"`
-	Category     string                 `bson:"category"`
-	Type         string                 `bson:"type"`
-	Points       float64                `bson:"points"`
-	SubType      string                 `bson:"sub_type"`
-	Level        int32                  `bson:"risk_level"`
-	MetaData     map[string]any `bson:"meta_data"`
-	MetaDataDesc map[string]string      `bson:"meta_data_desc"`
-	Desc         string                 `bson:"desc"`
-	VerifyDesc   string                 `bson:"verify_desc"`
-	Suggestion   string                 `bson:"suggestion"`
-	Reference    string                 `bson:"reference"`
-	Remark       string                 `bson:"remark"`
-	UpdateTm     int                    `bson:"update_tm"`
+	ID           int32             `bson:"_id,omitempty"`
+	Name         string            `bson:"name"`
+	Display      string            `bson:"display"`
+	Version      string            `bson:"version"`
+	Enable       int32             `bson:"enable"`
+	Category     string            `bson:"category"`
+	Type         string            `bson:"type"`
+	Points       float64           `bson:"points"`
+	SubType      string            `bson:"sub_type"`
+	Level        int32             `bson:"risk_level"`
+	MetaData     map[string]any    `bson:"meta_data"`
+	MetaDataDesc map[string]string `bson:"meta_data_desc"`
+	Desc         string            `bson:"desc"`
+	VerifyDesc   string            `bson:"verify_desc"`
+	Suggestion   string            `bson:"suggestion"`
+	Reference    string            `bson:"reference"`
+	Remark       string            `bson:"remark"`
+	UpdateTm     int               `bson:"update_tm"`
 }
 
 func (a *ScanPlugin) CollectName() string {
@@ -244,45 +244,45 @@ func (a *ScanTasks) CollectName() string {
 }
 
 type PluginInfo struct {
-	ID           int32                  `bson:"_id,omitempty"`
-	Name         string                 `bson:"name"`
-	Display      string                 `bson:"display"`
-	Version      string                 `bson:"version"`
-	Enable       int32                  `bson:"enable"`
-	Type         string                 `bson:"type"`
-	SubType      string                 `bson:"sub_type"`
-	Points       float64                `bson:"points"`
-	Category     string                 `bson:"category"`
-	Desc         string                 `bson:"desc"`
-	VerifyDesc   string                 `bson:"verify_desc"`
-	Suggestion   string                 `bson:"suggestion"`
-	Reference    string                 `bson:"reference"`
-	Remark       string                 `bson:"remark"`
-	UpdateTm     int64                  `bson:"update_tm"`
-	RiskLevel    int32                  `bson:"risk_level"`
-	MetaData     map[string]any `bson:"meta_data"`
-	MetaDataDesc map[string]string      `bson:"meta_data_desc"`
+	ID           int32             `bson:"_id,omitempty"`
+	Name         string            `bson:"name"`
+	Display      string            `bson:"display"`
+	Version      string            `bson:"version"`
+	Enable       int32             `bson:"enable"`
+	Type         string            `bson:"type"`
+	SubType      string            `bson:"sub_type"`
+	Points       float64           `bson:"points"`
+	Category     string            `bson:"category"`
+	Desc         string            `bson:"desc"`
+	VerifyDesc   string            `bson:"verify_desc"`
+	Suggestion   string            `bson:"suggestion"`
+	Reference    string            `bson:"reference"`
+	Remark       string            `bson:"remark"`
+	UpdateTm     int64             `bson:"update_tm"`
+	RiskLevel    int32             `bson:"risk_level"`
+	MetaData     map[string]any    `bson:"meta_data"`
+	MetaDataDesc map[string]string `bson:"meta_data_desc"`
 }
 
 type SubTaskResult struct {
-	Status int32                  `bson:"status"` // 1|0|?
-	Desc   string                 `bson:"desc"`
+	Status int32          `bson:"status"` // 1|0|?
+	Desc   string         `bson:"desc"`
 	Data   map[string]any `bson:"data"` // baseline: {"instance_list": [{"k":"v"}]}; leak: {}; weakpwd: {"users": [obj1,...], "domain":xxx}
-	ErrMsg string                 `bson:"error"`
-	Plugin PluginInfo             `bson:"plugin"`
+	ErrMsg string         `bson:"error"`
+	Plugin PluginInfo     `bson:"plugin"`
 }
 
 // ScanSubTasks 列表
 type ScanSubTasks struct {
-	ID       primitive.ObjectID     `bson:"_id,omitempty"`
-	TaskID   string                 `bson:"task_id"`
-	GroupID  string                 `bson:"group_id"`
-	Status   string                 `bson:"status"`
-	Result   SubTaskResult          `bson:"result"`
-	Params   map[string]any `bson:"params"`
-	ErrMsg   string                 `bson:"error_msg"`
-	CreateTm time.Time              `bson:"create_tm"`
-	UpdateTm time.Time              `bson:"update_tm"`
+	ID       primitive.ObjectID `bson:"_id,omitempty"`
+	TaskID   string             `bson:"task_id"`
+	GroupID  string             `bson:"group_id"`
+	Status   string             `bson:"status"`
+	Result   SubTaskResult      `bson:"result"`
+	Params   map[string]any     `bson:"params"`
+	ErrMsg   string             `bson:"error_msg"`
+	CreateTm time.Time          `bson:"create_tm"`
+	UpdateTm time.Time          `bson:"update_tm"`
 }
 
 func (a *ScanSubTasks) CollectName() string {
@@ -311,33 +311,79 @@ func (a *ScanConf) CollectName() string {
 
 // Sigma规则 描述表
 type AttackFlow struct {
+	Desc    string              `bson:"desc"`   // 描述
 	Fields  []map[string]string `bson:"fields"` // obj(支持ip/user/computer/dc), key, value. eg: {"obj":"ip","key":"$1.TargetUsername","value":"192.168.2.3"}
 	Relates []string            `bson:"relates"`
 }
-type AlertDesc struct {
-	ID           string     `bson:"_id,omitempty"`  // id
-	Title        string     `bson:"title"`          // 英文(sigma_title)
-	Enable       bool       `bson:"enable"`         // 启动状态 TODO:按domain
-	Level        int32      `bson:"level"`          // 威胁等级 5:critical, 4:high, 3:medium, 2:low, 1:info
-	AutoBlock    bool       `bson:"auto_block"`     // 是否自动阻断 TODO: 按domain 决定是否自动阻断
-	AttackFlow   AttackFlow `bson:"attack_flow"`    // 攻击描述图谱
-	NameEN       string     `bson:"name_en"`        // 规则名(英)
-	NameZH       string     `bson:"name_zh"`        // 规则名(中)
-	EventDescEN  string     `bson:"event_desc_en"`  // 事件概览(英)
-	EventDescZH  string     `bson:"event_desc_zh"`  // 事件概览(中)
-	EventTmplEN  string     `bson:"event_tmpl_en"`  // 事件描述模版(英)
-	EventTmplZH  string     `bson:"event_tmpl_zh"`  // 事件描述模版(中)
-	TypeEN       string     `bson:"type_en"`        // 规则分类(英)
-	TypeZH       string     `bson:"type_zh"`        // 规则分类(中)
-	SuggestionEN string     `bson:"suggestion_en"`  // 修复建议(英)
-	SuggestionZH string     `bson:"suggestion_zh"`  // 修复建议(中)
-	VerifyDescEN string     `bson:"verify_desc_en"` // 验证说明(英)
-	VerifyDescZH string     `bson:"verify_desc_zh"` // 验证说明(中)
-	UpdateTm     time.Time  `bson:"update_tm"`      // 修改时间
+
+type AlertDetection struct {
+	EventType  string   `bson:"event_type"`  // 事件类型
+	WinSize    int64    `bson:"win_size"`    // 窗口大小
+	Sorted     bool     `bson:"sorted"`      // 是否排序
+	SigmaRules []string `bson:"sigma_rules"` // 关联sigma规则
+	MatchBy    string   `bson:"match_by"`    // 匹配条件
 }
 
-func (r *AlertDesc) CollectName() string {
-	return "tb_alert_desc"
+type AlertRule struct {
+	ID          string         `bson:"_id,omitempty"` // id
+	Title       string         `bson:"title"`         // 事件标题
+	Description string         `bson:"description"`   // 事件描述
+	Enable      bool           `bson:"enable"`        // 启动状态
+	Level       int32          `bson:"level"`         // 威胁等级 5:critical, 4:high, 3:medium, 2:low, 1:info
+	Status      string         `bson:"status"`        // 规则状态: test|experimental|stable|deprecated
+	Tags        []string       `bson:"tags"`          // 规则标签
+	Logsource   string         `bson:"logsource"`     // 日志来源
+	Detection   AlertDetection `bson:"detection"`     // 检测配置
+	Type        string         `bson:"type"`          // 规则分类
+	References  []string       `bson:"references"`    // 规则参考
+	Suggestion  string         `bson:"suggestion"`    // 修复建议
+	Author      string         `bson:"author"`        // 作者
+	AutoBlock   bool           `bson:"auto_block"`    // 是否自动阻断
+	AttackFlow  AttackFlow     `bson:"attack_flow"`   // 攻击描述图谱
+	CreateTm    time.Time      `bson:"create_tm"`     // 创建时间
+	UpdateTm    time.Time      `bson:"update_tm"`     // 修改时间
+}
+
+func (r *AlertRule) CollectName() string {
+	return "tb_alert_rule"
+}
+
+// ActivityDetection stores the dynamic detection field from Sigma rules.
+// The structure varies by rule type:
+//
+// For winlog/pktlog rules (single event matching):
+//   - Contains dynamic selectors (selection1, filter1, etc.) as map keys
+//   - Contains "condition" field with boolean expression
+//     Example: {"selection1": {...}, "filter1": {...}, "condition": "selection1 and not filter1"}
+//
+// For flow rules (event correlation):
+//   - event_type: count | multi_eve | multi_pkt
+//   - win_size: time window like "30s", "3h"
+//   - sorted: boolean for ordered matching
+//   - selection: {sigma_id: [...], match_by: "..."}
+//     Example: {"event_type": "count", "win_size": "30s", "selection": {...}}
+type ActivityDetection map[string]any
+
+type AlertActivityRule struct {
+	ID           string            `bson:"_id,omitempty"`
+	Title        string            `bson:"title"`         // 规则标题
+	Description  string            `bson:"description"`   // 规则描述
+	Level        int32             `bson:"level"`         // 风险等级,5:critical, 4:high, 3:medium, 2:low, 1:info
+	Status       string            `bson:"status"`        // 状态, test|experimental|stable|deprecated
+	Tags         []string          `bson:"tags"`          // 标签(MITRE ATT&CK等)
+	Logsource    string            `bson:"logsource"`     // 日志来源
+	References   []string          `bson:"references"`    // 规则参考
+	Detection    ActivityDetection `bson:"detection"`     // 检测配置(动态结构)
+	RdxKey       string            `bson:"rdx_key"`       // 规则缓存key
+	Fields       []string          `bson:"fields"`        // 提取字段
+	UniqueFields []string          `bson:"unique_fields"` // 唯一字段hash
+	Author       string            `bson:"author"`        // 作者
+	CreateTm     time.Time         `bson:"create_tm"`     // 生成时间
+	UpdateTm     time.Time         `bson:"update_tm"`     // 修改时间
+}
+
+func (a *AlertActivityRule) CollectName() string {
+	return "tb_activity_rule"
 }
 
 // AlertActivityESDB 告警行为表(该表必须保持和engine/core/types.go:AlertActivityESDB一致)
@@ -477,7 +523,7 @@ type AssetGroup struct {
 	AdminCount           int64              `bson:"adminCount"`
 	ObjectGUID           string             `bson:"objectGUID"`
 	ObjectCategory       string             `bson:"objectCategory"`
-	nTSecurityDescriptor any        `bson:"nTSecurityDescriptor"`
+	nTSecurityDescriptor any                `bson:"nTSecurityDescriptor"`
 	WhenCreated          int64              `bson:"whenCreated"`
 	SyncTm               int64              `bson:"syncTm"`
 }
