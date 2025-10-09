@@ -253,7 +253,7 @@ func updateDomainByID(w *Worker, domain model.Domain) error {
 }
 
 func getSensorByDCHostName(w *Worker, dcHostName string) (*model.Sensor, error) {
-	query := bson.M{"dc_hostname": dcHostName}
+	query := bson.M{"dc_hostname": strings.ToLower(dcHostName)}
 	var sensor model.Sensor
 	err, _ := w.env.MongoCli.FindOne(sensor.CollectName(), query, &sensor)
 	if err != nil {

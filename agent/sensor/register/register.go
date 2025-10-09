@@ -45,12 +45,12 @@ func Register(rdx *redis.Client, regCode string) error {
 	if len(parts) > 1 {
 		domain := strings.Join(parts[1:], ".")
 		regMsg.Data["domain"] = domain
-		regMsg.Data["dc_hostname"] = parts[0]
+		regMsg.Data["dc_hostname"] = strings.ToLower(parts[0])
 	} else {
 		// If FQDN doesn't have domain parts, just use hostname
 		hostname, _ := os.Hostname()
 		regMsg.Data["domain"] = ""
-		regMsg.Data["dc_hostname"] = hostname
+		regMsg.Data["dc_hostname"] = strings.ToLower(hostname)
 	}
 
 	platform, _, platformVersion, err := host.PlatformInformation()
