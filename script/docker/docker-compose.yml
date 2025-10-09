@@ -74,6 +74,7 @@ services:
       - "80:80"
     volumes:
       - backend_data:/home/adadmin/logs:rw
+      - rules_data:/home/adadmin/rules:rw
     environment:
       - GIN_MODE=release
     depends_on:
@@ -92,6 +93,7 @@ services:
           - ada_engine
     volumes:
       - engine_data:/home/adadmin/logs:rw
+      - rules_data:/home/adadmin/rules:ro
     depends_on:
       - ada_elasticsearch
       - ada_redis
@@ -141,4 +143,6 @@ volumes:
   backend_data:
     driver: local
   engine_data:
+    driver: local
+  rules_data:
     driver: local
