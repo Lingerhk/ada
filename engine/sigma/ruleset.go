@@ -1,17 +1,13 @@
 package sigma
 
 import (
-	"embed"
 	"fmt"
-	"io/fs"
 	"os"
-	"strings"
 	"sync"
 )
 
 // Config is used as argument to creating a new ruleset
 type Config struct {
-	MemDirectory *embed.FS // load the rules into embed.FS
 	// root directory for recursive rule search
 	// rules must be readable files with "yml" suffix
 	Directory []string
@@ -28,38 +24,18 @@ type Config struct {
 }
 
 func (c Config) validate() error {
-	// 优先读取本地目录
-	if len(c.Directory) > 0 {
-		for _, dir := range c.Directory {
-			info, err := os.Stat(dir)
-			if os.IsNotExist(err) {
-				return fmt.Errorf("%s does not exist", dir)
-			}
-			if !info.IsDir() {
-				return fmt.Errorf("%s is not a directory", dir)
-			}
-		}
-		return nil
+	if len(c.Directory) == 0 {
+		return fmt.Errorf("no rule directories provided")
 	}
 
-	haveYml := false
-	err := fs.WalkDir(c.MemDirectory, ".", func(path string, d fs.DirEntry, err error) error {
-		if err != nil {
-			return err
+	for _, dir := range c.Directory {
+		info, err := os.Stat(dir)
+		if os.IsNotExist(err) {
+			return fmt.Errorf("%s does not exist", dir)
 		}
-		if d.IsDir() {
-			return nil
+		if !info.IsDir() {
+			return fmt.Errorf("%s is not a directory", dir)
 		}
-		if strings.HasSuffix(path, ".yml") {
-			haveYml = true
-		}
-		return nil
-	})
-	if err != nil {
-		return fmt.Errorf("walk embeded directory err: %v", err)
-	}
-	if !haveYml {
-		return fmt.Errorf("no yaml file found in embeded directory")
 	}
 
 	return nil
@@ -83,13 +59,13 @@ func NewRuleset(c Config, tags []string) (*Ruleset, error) {
 		return nil, err
 	}
 
-	files, err := NewRuleFileList(c.MemDirectory, c.Directory)
+	files, err := NewRuleFileList(c.Directory)
 	if err != nil {
 		return nil, err
 	}
 
 	var fail int
-	rules, err := NewRuleList(c.MemDirectory, files, !c.FailOnYamlParse, c.NoCollapseWS, tags, c.ExtractFields)
+	rules, err := NewRuleList(files, !c.FailOnYamlParse, c.NoCollapseWS, tags, c.ExtractFields)
 	if err != nil {
 		switch e := err.(type) {
 		case ErrBulkParseYaml:

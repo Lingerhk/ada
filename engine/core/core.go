@@ -9,7 +9,6 @@ import (
 	"ada/infra/license"
 	"ada/infra/mongo"
 	"context"
-	"embed"
 	"path/filepath"
 	"strings"
 	"sync"
@@ -20,17 +19,6 @@ import (
 	"github.com/redis/go-redis/v9"
 	logger "github.com/sirupsen/logrus"
 )
-
-// 说明: 编译时将rules目录cp到当前文件(package core)所在目录
-
-//go:embed rules/flow/*.yml
-var memFlowRules embed.FS
-
-//go:embed rules/winlog/*.yml
-var memWinLogRules embed.FS
-
-//go:embed rules/pktlog/*.yml
-var memPktLogRules embed.FS
 
 const activityIndexMapping = `{
   "settings": {
@@ -69,7 +57,7 @@ func New(env *config.Env) (*EngineWorker, error) {
 	pktLogRulePath := filepath.Join(common.RuleDir, common.RulePktLog)
 
 	// init sigma flow ruleset（必须在sigma rule初始化执行）
-	flowset, err := flow.NewRuleset(env.RedisCli, env.MongoCli, flowRulePath, &memFlowRules)
+	flowset, err := flow.NewRuleset(env.RedisCli, env.MongoCli, flowRulePath)
 	if err != nil {
 		logger.Errorf("init flow ruleset err %v", err)
 		cancel()
@@ -94,7 +82,6 @@ func New(env *config.Env) (*EngineWorker, error) {
 
 	// init sigma ruleset
 	winLogRule, err := sigma.NewRuleset(sigma.Config{
-		MemDirectory:    &memWinLogRules,
 		Directory:       []string{winLogRulePath},
 		NoCollapseWS:    false,
 		FailOnRuleParse: false,
@@ -111,7 +98,6 @@ func New(env *config.Env) (*EngineWorker, error) {
 	logger.Infof("loaded winlog ruleset, totoal:%d, failed:%d, unsupported:%d", winLogRule.Total, winLogRule.Failed, winLogRule.Unsupported)
 
 	pktLogRule, err := sigma.NewRuleset(sigma.Config{
-		MemDirectory:    &memPktLogRules,
 		Directory:       []string{pktLogRulePath},
 		NoCollapseWS:    false,
 		FailOnRuleParse: false,

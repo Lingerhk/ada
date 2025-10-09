@@ -11,10 +11,12 @@ RUN useradd -rm -d /home/adadmin -s /bin/bash -g root -G sudo -u 1001 adadmin
 
 RUN set -x \
     && mkdir -p /home/adadmin/logs \
-    && mkdir -p /home/adadmin/bin
+    && mkdir -p /home/adadmin/bin \
+    && mkdir -p /home/adadmin/rules
 
 COPY ./engine /home/adadmin/bin/
 COPY ./engine.yaml /home/adadmin/bin
+COPY ./rules /home/adadmin/rules
 
 USER adadmin
 WORKDIR /home/adadmin

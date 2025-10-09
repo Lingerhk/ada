@@ -2,9 +2,7 @@ package sigma
 
 import (
 	"bytes"
-	"embed"
 	"fmt"
-	"io/fs"
 	"os"
 	"path/filepath"
 	"strings"
@@ -119,7 +117,7 @@ func IsMultipart(data []byte) bool {
 }
 
 // NewRuleList 	reads a list of sigma rule paths and parses them to rule objects
-func NewRuleList(memDir *embed.FS, files []string, skip, noCollapseWS bool, tags []string, extFields map[string][]string) ([]RuleHandle, error) {
+func NewRuleList(files []string, skip, noCollapseWS bool, tags []string, extFields map[string][]string) ([]RuleHandle, error) {
 	if len(files) == 0 {
 		return nil, fmt.Errorf("missing rule file list")
 	}
@@ -131,9 +129,6 @@ func NewRuleList(memDir *embed.FS, files []string, skip, noCollapseWS bool, tags
 loop:
 	for i, path := range files {
 		data, err = os.ReadFile(path)
-		if err != nil {
-			data, err = memDir.ReadFile(path)
-		}
 		if err != nil {
 			return nil, err
 		}
@@ -230,43 +225,30 @@ type Results []Result
 // NewRuleFileList finds all yaml files from defined root directories
 // Subtree is scanned recursively
 // No file validation, other than suffix matching
-func NewRuleFileList(memDir *embed.FS, dirs []string) ([]string, error) {
+func NewRuleFileList(dirs []string) ([]string, error) {
 	out := make([]string, 0)
 
-	if len(dirs) > 0 {
-		for _, dir := range dirs {
-			if err := filepath.Walk(dir, func(
-				path string,
-				info os.FileInfo,
-				err error,
-			) error {
-				if !info.IsDir() && strings.HasSuffix(path, "yml") {
-					out = append(out, path)
-				}
-				return err
-			}); err != nil {
-				return out, err
-			}
-		}
-		return out, nil
+	if len(dirs) == 0 {
+		return nil, fmt.Errorf("no rule directories provided")
 	}
 
-	err := fs.WalkDir(memDir, ".", func(path string, d fs.DirEntry, err error) error {
-		if err != nil {
-			return err
-		}
-		if d.IsDir() {
+	for _, dir := range dirs {
+		if err := filepath.Walk(dir, func(
+			path string,
+			info os.FileInfo,
+			err error,
+		) error {
+			if err != nil {
+				return err
+			}
+			if !info.IsDir() && strings.HasSuffix(path, "yml") {
+				out = append(out, path)
+			}
 			return nil
+		}); err != nil {
+			return out, err
 		}
-		if strings.HasSuffix(path, ".yml") {
-			out = append(out, path)
-		}
-		return nil
-	})
-	if err != nil {
-		return nil, err
 	}
 
 	return out, nil
-
 }
