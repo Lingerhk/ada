@@ -21,8 +21,8 @@ const (
 )
 
 // 所有任务需在这里注册
-func GetTaskMap(w *worker.Worker) map[string]interface{} {
-	return map[string]interface{}{
+func GetTaskMap(w *worker.Worker) map[string]any {
+	return map[string]any{
 		DomainSyncName:      w.DomainSyncTask,
 		ADLdapSyncName:      w.ADLdapSyncTask,
 		SystemSyncName:      w.SystemSyncTask,

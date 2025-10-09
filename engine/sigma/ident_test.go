@@ -88,7 +88,7 @@ func (s simpleKeywordAuditEventExample1) Keywords() ([]string, bool) {
 }
 
 // Select implements Selector
-func (s simpleKeywordAuditEventExample1) Select(_ string) (interface{}, bool) {
+func (s simpleKeywordAuditEventExample1) Select(_ string) (any, bool) {
 	return nil, false
 }
 

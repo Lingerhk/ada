@@ -219,7 +219,7 @@ func (r *Ruleset) LoadRuleCache() error {
 	}
 
 	// read sigma_id list form flow_rule
-	sigmaIDMap := make(map[string]interface{})
+	sigmaIDMap := make(map[string]any)
 	for _, fRule := range r.FlowRules {
 		if len(fRule.Detection.Selection.SigmaID) == 0 {
 			logger.Warnf("ignore empty sigma_id flow_rule:%s", fRule.ID)

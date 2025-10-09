@@ -253,7 +253,7 @@ func getFieldRdxVal(redisCli *redis.Client, field2 string, acts []flowActivity) 
 		keyPrefix := strings.TrimPrefix(parts[0], "key_")                                            // key_ada:engine:user:%s:sensitive_users
 		params := strings.Split(strings.ReplaceAll(strings.TrimSuffix(parts[1], ")"), " ", ""), ",") // [$s1.TargetDomainName]
 
-		var paramVals []interface{}
+		var paramVals []any
 		for _, param := range params {
 			idx, val := parseConditionKV(param)
 			fieldVal := strings.ToLower(getFieldVal(val, acts[idx]))

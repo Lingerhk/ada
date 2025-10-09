@@ -15,7 +15,7 @@ import (
 	logger "github.com/sirupsen/logrus"
 )
 
-func toBytes(obj interface{}) ([]byte, error) {
+func toBytes(obj any) ([]byte, error) {
 	var buffBin bytes.Buffer
 
 	encoderBin := gob.NewEncoder(&buffBin)
@@ -26,7 +26,7 @@ func toBytes(obj interface{}) ([]byte, error) {
 	return buffBin.Bytes(), nil
 }
 
-func toB64String(obj interface{}) (string, error) {
+func toB64String(obj any) (string, error) {
 	b, err := toBytes(obj)
 	if err != nil {
 		return "", err
@@ -35,14 +35,14 @@ func toB64String(obj interface{}) (string, error) {
 	return base64.StdEncoding.EncodeToString(b), nil
 }
 
-func fromBytes(obj interface{}, b []byte) error {
+func fromBytes(obj any, b []byte) error {
 	buffBin := bytes.NewBuffer(b)
 	decoder := gob.NewDecoder(buffBin)
 
 	return decoder.Decode(obj)
 }
 
-func fromB64String(obj interface{}, s string) error {
+func fromB64String(obj any, s string) error {
 	b, err := base64.StdEncoding.DecodeString(s)
 	if err != nil {
 		return err

@@ -24,12 +24,12 @@ type Session struct {
 	db          string
 	uri         string
 	m           sync.RWMutex
-	filter      interface{}
+	filter      any
 	limit       *int64
-	project     interface{}
+	project     any
 	skip        *int64
-	sort        interface{}
-	distinct    interface{}
+	sort        any
+	distinct    any
 }
 
 // New session
@@ -134,20 +134,20 @@ func (s *Session) Skip(skip int64) *Session {
 }
 
 // Sort specifies the order in which to return documents.
-func (s *Session) Sort(sort interface{}) *Session {
+func (s *Session) Sort(sort any) *Session {
 	s.sort = sort
 	return s
 }
 
 // Select is used to determine which fields are displayed or not displayed in the returned results
 // Format: bson.M{"age": 1} means that only the age field is displayed
-func (s *Session) Select(projection interface{}) *Session {
+func (s *Session) Select(projection any) *Session {
 	s.project = projection
 	return s
 }
 
 // One returns one document
-func (s *Session) One(result interface{}) error {
+func (s *Session) One(result any) error {
 	opt := options.FindOne()
 
 	if s.sort != nil {
@@ -171,7 +171,7 @@ func (s *Session) One(result interface{}) error {
 }
 
 // All find all
-func (s *Session) All(result interface{}) error {
+func (s *Session) All(result any) error {
 	resultv := reflect.ValueOf(result)
 	if resultv.Kind() != reflect.Ptr {
 		return fmt.Errorf("results argument must be a pointer to a slice, but was a %s", resultv.Kind())
@@ -231,7 +231,7 @@ func (s *Session) All(result interface{}) error {
 }
 
 // Pipe find all
-func (s *Session) Pipe(pipeline, result interface{}) error {
+func (s *Session) Pipe(pipeline, result any) error {
 	resultv := reflect.ValueOf(result)
 	if resultv.Kind() != reflect.Ptr {
 		panic("result argument must be a slice address")
@@ -277,7 +277,7 @@ func (s *Session) Pipe(pipeline, result interface{}) error {
 	return nil
 }
 
-func (s *Session) Distinct(distinct string) ([]interface{}, error) {
+func (s *Session) Distinct(distinct string) ([]any, error) {
 
 	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
 	defer cancel()

@@ -28,7 +28,7 @@ func (w *Worker) SystemSyncTask() error {
 func saveStatsInfo(redisCli *redis.Client) {
 	ctx := context.Background()
 	ts := time.Now().Unix()
-	var infoMap = make(map[string]interface{})
+	var infoMap = make(map[string]any)
 
 	// 说明: Data节点(ES状态)在receiver模块完成(因为task_worker模块没有es cli)，并更新到ada:server:stats:info
 
