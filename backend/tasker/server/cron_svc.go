@@ -113,7 +113,7 @@ func (cs *CronScheduler) createScheduledJob(jobConf *model.ScanConf) (gocron.Job
 		logger.Infof("Executing task: %s for job ID: %s, CycleType: %d", jobConf.TaskFun, jobID, jobConf.CycleType)
 		method := reflect.ValueOf(cs.Tasker).MethodByName(jobConf.TaskFun)
 		if method.IsValid() {
-			method.Call(nil)
+			method.Call([]reflect.Value{})
 		} else {
 			logger.Errorf("Task function %s not found for job ID: %s", jobConf.TaskFun, jobID)
 		}
