@@ -213,9 +213,9 @@ func (s *SensorEvent) state(stateMsg sCommon.AdaMessage) {
 
 	// update IP related hostname in redis key: cache.DomainIPRelateDCNameKey
 	for _, ipList := range cardInfo {
-		for _, ip := range strings.Split(ipList, ",") {
+		for ip := range strings.SplitSeq(ipList, ",") {
 			domainIPRelateDCNameKey := cache.DomainIPRelateDCNameKey(ip)
-			err = s.redisCli.HSet(ctx, domainIPRelateDCNameKey, stateMsg.Data["fqdn"]).Err()
+			err = s.redisCli.Set(ctx, domainIPRelateDCNameKey, stateMsg.Data["fqdn"], 0).Err()
 			if err != nil {
 				logger.Errorf("redis set domainIPRelateDCNameKey err:%v", err)
 				return
