@@ -124,6 +124,8 @@ services:
         aliases:
           - scanner
           - ada_scanner
+    volumes:
+      - scanner_data:/home/adadmin/logs:rw    
     depends_on:
       - ada_mongodb
       - ada_redis
@@ -143,6 +145,8 @@ volumes:
   backend_data:
     driver: local
   engine_data:
+    driver: local
+  scanner_data:
     driver: local
   rules_data:
     driver: local
