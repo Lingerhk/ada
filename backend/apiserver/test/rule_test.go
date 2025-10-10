@@ -2,6 +2,7 @@ package test
 
 import (
 	v2 "ada/backend/apiserver/api/v2"
+	"ada/backend/common"
 	"encoding/json"
 	"testing"
 
@@ -118,7 +119,7 @@ func TestAddAlertRule(t *testing.T) {
 			Logsource:   "flow",
 			Detection:   string(detectionJSON),
 			Type:        "suspicious_activity",
-			References:  []string{"https://attack.mitre.org/"},
+			Reference:   "https://attack.mitre.org/",
 			Suggestion:  "Review the activity and investigate if necessary",
 			Author:      "unit_test",
 			AutoBlock:   false,
@@ -329,6 +330,19 @@ func TestGetActivityRule(t *testing.T) {
 	})
 }
 
+// TestGetAlertTypes tests getting alert types
+func TestGetAlertTypes(t *testing.T) {
+	Convey("Test GetAlertTypes API", t, func() {
+		resp, err := ADACli.cli.GetAlertTypes(ADACli.ctx, &v2.GetAlertTypesReq{})
+		if err != nil {
+			t.Logf("GetAlertTypes failed: %v", err)
+			return
+		}
+		t.Logf("Alert Types: %v", resp.AlertTypes)
+		So(len(resp.AlertTypes), ShouldEqual, len(common.RuleTypeMap))
+	})
+}
+
 // TestAddActivityRule tests creating a new Sigma rule
 func TestAddActivityRule(t *testing.T) {
 	Convey("Test AddActivityRule API", t, func() {
@@ -344,19 +358,19 @@ func TestAddActivityRule(t *testing.T) {
 		detectionJSON, _ := json.Marshal(detection)
 
 		req := &v2.AddActivityRuleReq{
-			ID:          "winlog-9999-9999", // Test rule ID
-			Title:       "Test Failed Logon - Automated Test",
-			Description: "Detects failed logon attempts for testing",
-			Level:       2, // low
-			Status:      "test",
-			Tags:        []string{"TA0001", "T1078", "test"},
-			Logsource:   "windows",
-			References:  []string{"https://attack.mitre.org/techniques/T1078/"},
-			Detection:   string(detectionJSON),
-			RdxKey:      "rule_cache:test_failed_logon",
-			Fields:      []string{"Hostname", "TargetUserName", "IpAddress"},
+			ID:           "winlog-9999-9999", // Test rule ID
+			Title:        "Test Failed Logon - Automated Test",
+			Description:  "Detects failed logon attempts for testing",
+			Level:        2, // low
+			Status:       "test",
+			Tags:         []string{"TA0001", "T1078", "test"},
+			Logsource:    "windows",
+			Reference:    "https://attack.mitre.org/techniques/T1078/",
+			Detection:    string(detectionJSON),
+			RdxKey:       "rule_cache:test_failed_logon",
+			Fields:       []string{"Hostname", "TargetUserName", "IpAddress"},
 			UniqueFields: []string{"Hostname", "TargetUserName"},
-			Author:      "unit_test",
+			Author:       "unit_test",
 		}
 
 		resp, err := ADACli.cli.AddActivityRule(ADACli.ctx, req)

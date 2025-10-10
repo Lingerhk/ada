@@ -5,6 +5,7 @@ import (
 
 	v2 "ada/backend/apiserver/api/v2"
 	"ada/backend/apiserver/server"
+	"ada/backend/common"
 	"ada/backend/model"
 
 	logger "github.com/sirupsen/logrus"
@@ -91,11 +92,11 @@ func (s *ADAServiceV2) AddAlertRule(ctx context.Context, in *v2.AddAlertRuleReq)
 		Tags:        in.Tags,
 		Logsource:   in.Logsource,
 		Detection: model.AlertDetection{
-			EventType:  detection["event_type"].(string),
-			MatchBy:    detection["match_by"].(string),
+			EventType: detection["event_type"].(string),
+			MatchBy:   detection["match_by"].(string),
 		},
 		Type:       in.Type,
-		Reference: in.Reference,
+		Reference:  in.Reference,
 		Suggestion: in.Suggestion,
 		Author:     in.Author,
 		AutoBlock:  in.AutoBlock,
@@ -195,6 +196,13 @@ func (s *ADAServiceV2) DeleteAlertRule(ctx context.Context, in *v2.DeleteAlertRu
 
 	return &v2.DeleteAlertRuleReply{
 		Result: "SUCCESS",
+	}, nil
+}
+
+// GetAlertTypes
+func (s *ADAServiceV2) GetAlertTypes(ctx context.Context, in *v2.GetAlertTypesReq) (*v2.GetAlertTypesReply, error) {
+	return &v2.GetAlertTypesReply{
+		AlertTypes: common.RuleTypeMap,
 	}, nil
 }
 
