@@ -95,7 +95,7 @@ func (s *ADAServiceV2) AddAlertRule(ctx context.Context, in *v2.AddAlertRuleReq)
 			MatchBy:    detection["match_by"].(string),
 		},
 		Type:       in.Type,
-		References: in.References,
+		Reference: in.Reference,
 		Suggestion: in.Suggestion,
 		Author:     in.Author,
 		AutoBlock:  in.AutoBlock,
@@ -162,8 +162,8 @@ func (s *ADAServiceV2) UpdateAlertRule(ctx context.Context, in *v2.UpdateAlertRu
 	if in.Type != "" {
 		updates["type"] = in.Type
 	}
-	if len(in.References) > 0 {
-		updates["references"] = in.References
+	if in.Reference != "" {
+		updates["reference"] = in.Reference
 	}
 	if in.Suggestion != "" {
 		updates["suggestion"] = in.Suggestion
@@ -236,7 +236,7 @@ func (s *ADAServiceV2) ListActivityRule(ctx context.Context, in *v2.ListActivity
 			Status:       rule.Status,
 			Tags:         rule.Tags,
 			Logsource:    rule.Logsource,
-			References:   rule.References,
+			Reference:    rule.Reference,
 			RdxKey:       rule.RdxKey,
 			Fields:       rule.Fields,
 			UniqueFields: rule.UniqueFields,
@@ -278,7 +278,7 @@ func (s *ADAServiceV2) GetActivityRule(ctx context.Context, in *v2.GetActivityRu
 		Status:       rule.Status,
 		Tags:         rule.Tags,
 		Logsource:    rule.Logsource,
-		References:   rule.References,
+		Reference:    rule.Reference,
 		Detection:    detectionJSON,
 		RdxKey:       rule.RdxKey,
 		Fields:       rule.Fields,
@@ -304,7 +304,7 @@ func (s *ADAServiceV2) AddActivityRule(ctx context.Context, in *v2.AddActivityRu
 		Status:       in.Status,
 		Tags:         in.Tags,
 		Logsource:    in.Logsource,
-		References:   in.References,
+		Reference:    in.Reference,
 		Detection:    detection,
 		RdxKey:       in.RdxKey,
 		Fields:       in.Fields,
@@ -345,8 +345,8 @@ func (s *ADAServiceV2) UpdateActivityRule(ctx context.Context, in *v2.UpdateActi
 	if in.Logsource != "" {
 		updates["logsource"] = in.Logsource
 	}
-	if len(in.References) > 0 {
-		updates["references"] = in.References
+	if in.Reference != "" {
+		updates["reference"] = in.Reference
 	}
 	if in.Detection != "" {
 		detection, err := server.ParseDetectionJSON(in.Detection)

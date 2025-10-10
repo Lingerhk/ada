@@ -106,7 +106,7 @@ func importFlowRules(env *config.Env, rulesDir string) error {
 				MatchBy:    getMatchBy(rule.Detection),
 			},
 			Type:       "correlation",
-			References: rule.References,
+			Reference:  strings.Join(rule.References, "; "),
 			Author:     rule.Author,
 			AutoBlock:  false,
 			CreateTm:   time.Now(),
@@ -159,7 +159,7 @@ func importActivityRules(env *config.Env, rulesDir string, ruleType string) erro
 			Status:       rule.Status,
 			Tags:         rule.Tags,
 			Logsource:    getLogsource(rule.Logsource),
-			References:   rule.References,
+			Reference:    strings.Join(rule.References, "; "),
 			Detection:    rule.Detection,
 			RdxKey:       rule.RdxKey,
 			Fields:       rule.Fields,
@@ -259,7 +259,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	rulesBaseDir := "/home/adadmin/ada/engine/rules"
+	rulesBaseDir := "/home/adadmin/adaegis/ada/engine/rules"
 
 	fmt.Println("=== Importing Flow Rules to tb_alert_rule ===")
 	if err := importFlowRules(env, filepath.Join(rulesBaseDir, "flow")); err != nil {

@@ -335,7 +335,7 @@ type AlertRule struct {
 	Logsource   string         `bson:"logsource"`     // 日志来源
 	Detection   AlertDetection `bson:"detection"`     // 检测配置
 	Type        string         `bson:"type"`          // 规则分类
-	References  []string       `bson:"references"`    // 规则参考
+	Reference   string         `bson:"reference"`     // 规则参考
 	Suggestion  string         `bson:"suggestion"`    // 修复建议
 	Author      string         `bson:"author"`        // 作者
 	AutoBlock   bool           `bson:"auto_block"`    // 是否自动阻断
@@ -372,7 +372,7 @@ type AlertActivityRule struct {
 	Status       string            `bson:"status"`        // 状态, test|experimental|stable|deprecated
 	Tags         []string          `bson:"tags"`          // 标签(MITRE ATT&CK等)
 	Logsource    string            `bson:"logsource"`     // 日志来源
-	References   []string          `bson:"references"`    // 规则参考
+	Reference    string            `bson:"reference"`     // 规则参考
 	Detection    ActivityDetection `bson:"detection"`     // 检测配置(动态结构)
 	RdxKey       string            `bson:"rdx_key"`       // 规则缓存key
 	Fields       []string          `bson:"fields"`        // 提取字段

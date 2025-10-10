@@ -856,6 +856,7 @@ message AttackFlowReply{ // 攻击流图定义
   }
   repeated Field fields = 1;
   repeated string relates = 2;
+  string desc = 3;
 }
 
 message ListThreatReq{
@@ -893,7 +894,6 @@ message ListThreatReply{
     repeated string tags = 12; // tags
     AttackFlowReply attackFlow = 13; // 攻击流图
     int32 duration = 14; // 持续时间，单位s
-    string eventTmpl = 15; // 告警模板说明
     string startTm = 16; // 开始时间
     string endTm = 17; // 结束时间
   }
@@ -962,10 +962,9 @@ message GetThreatReply {
   map<string, string> fieldData = 18; // fieldData信息
   AttackFlowReply attackFlow = 19; // 攻击流图
   repeated ActivityDetails activities = 20; // activity list
-  string eventTmpl = 21; // 告警模板说明
-  string suggestion = 22; // 修复建议
-  string verifyDesc = 23; // 误报排查
-  string remark = 24; // 添加备注说明
+  string suggestion = 21; // 修复建议
+  string reference = 22; // 误报排查
+  string remark = 23; // 添加备注说明
 }
 
 message ActionThreatReq{
@@ -1686,7 +1685,7 @@ message AddAlertRuleReq {
   string logsource = 7;
   string detection = 8 [(validator.field) = {string_not_empty: true}]; // JSON string
   string type = 9;
-  repeated string references = 10;
+  string reference = 10;
   string suggestion = 11;
   string author = 12;
   bool autoBlock = 13;
@@ -1708,7 +1707,7 @@ message UpdateAlertRuleReq {
   string logsource = 8;
   string detection = 9; // JSON string
   string type = 10;
-  repeated string references = 11;
+  string reference = 11;
   string suggestion = 12;
   string author = 13;
   bool autoBlock = 14;
@@ -1748,7 +1747,7 @@ message ActivityRuleInfo {
   string status = 5; // 规则状态
   repeated string tags = 6; // 标签
   string logsource = 7; // 日志来源
-  repeated string references = 8; // 参考链接
+  string reference = 8; // 参考链接
   string rdxKey = 9; // Redis缓存key
   repeated string fields = 10; // 提取字段
   repeated string uniqueFields = 11; // 唯一字段
@@ -1774,7 +1773,7 @@ message GetActivityRuleReply {
   string status = 5;
   repeated string tags = 6;
   string logsource = 7;
-  repeated string references = 8;
+  string reference = 8;
   string detection = 9; // JSON string of dynamic detection
   string rdxKey = 10;
   repeated string fields = 11;
@@ -1792,7 +1791,7 @@ message AddActivityRuleReq {
   string status = 5;
   repeated string tags = 6;
   string logsource = 7;
-  repeated string references = 8;
+  string reference = 8;
   string detection = 9 [(validator.field) = {string_not_empty: true}]; // JSON string
   string rdxKey = 10;
   repeated string fields = 11;
@@ -1813,7 +1812,7 @@ message UpdateActivityRuleReq {
   string status = 5;
   repeated string tags = 6;
   string logsource = 7;
-  repeated string references = 8;
+  string reference = 8;
   string detection = 9; // JSON string
   string rdxKey = 10;
   repeated string fields = 11;
