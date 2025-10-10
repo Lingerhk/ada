@@ -96,13 +96,6 @@ func (s *ADAServiceV2) ListThreat(ctx context.Context, in *v2.ListThreatReq) (*v
 	ret := v2.ListThreatReply{}
 
 	for _, r := range events {
-		ad, err := server.GetThreatDescByID(s.env, r.FlowId)
-		if err != nil {
-			logger.Errorf("GetThreatDescByID(%s) err:%v, will ignore this event!", r.FlowId, err)
-			continue
-		}
-		eventTmpl := ad.Description
-
 		ret.List = append(ret.List,
 			&v2.ListThreatReply_Details{
 				ID:          r.ID.Hex(),
@@ -119,7 +112,6 @@ func (s *ADAServiceV2) ListThreat(ctx context.Context, in *v2.ListThreatReq) (*v
 				Tags:        r.Tags,
 				AttackFlow:  getAttackFlow(s.env, r.FlowId, r.FieldData),
 				Duration:    int32(r.EndTs-r.StartTs) / 1000,
-				EventTmpl:   eventTmpl,
 				StartTm:     time.UnixMilli(r.StartTs).String(),
 				EndTm:       time.UnixMilli(r.EndTs).String(),
 			})
@@ -175,10 +167,6 @@ func (s *ADAServiceV2) GetThreat(ctx context.Context, in *v2.GetThreatReq) (*v2.
 		})
 	}
 
-	eventTmpl := ad.Description
-	suggestion := ad.Suggestion
-	verifyDesc := ad.Description // Use description as verify description
-
 	ret := v2.GetThreatReply{
 		ID:         ae.ID.Hex(),
 		Title:      ae.Title,
@@ -197,9 +185,8 @@ func (s *ADAServiceV2) GetThreat(ctx context.Context, in *v2.GetThreatReq) (*v2.
 		EndTm:      time.UnixMilli(ae.EndTs).String(),
 		FieldData:  ae.FieldData,
 		AttackFlow: getAttackFlow(s.env, ae.FlowId, ae.FieldData),
-		EventTmpl:  eventTmpl,
-		Suggestion: suggestion,
-		VerifyDesc: verifyDesc,
+		Suggestion: ad.Suggestion,
+		Reference:  ad.Reference,
 		Remark:     ae.Remark,
 	}
 
