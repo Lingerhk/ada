@@ -15,15 +15,11 @@ import (
 
 // Alert Rule (Flow Rules) Operations
 
-func ListAlertRule(e *config.Env, ids []string, levels []int32, status []string, enable *bool, keyword string, tags []string, logsource string, sortTm int32, limit, offset int32) ([]*model.AlertRule, int64, error) {
+func ListAlertRule(e *config.Env, levels []int32, status []string, enable *bool, keyword string, tags []string, sortTm int32, limit, offset int32) ([]*model.AlertRule, int64, error) {
 	tb := (&model.AlertRule{}).CollectName()
 
 	// Build query
 	query := bson.D{}
-
-	if len(ids) > 0 {
-		query = append(query, bson.E{Key: "_id", Value: bson.D{{Key: "$in", Value: ids}}})
-	}
 
 	if len(levels) > 0 {
 		query = append(query, bson.E{Key: "level", Value: bson.D{{Key: "$in", Value: levels}}})
@@ -47,10 +43,6 @@ func ListAlertRule(e *config.Env, ids []string, levels []int32, status []string,
 
 	if len(tags) > 0 {
 		query = append(query, bson.E{Key: "tags", Value: bson.D{{Key: "$in", Value: tags}}})
-	}
-
-	if logsource != "" {
-		query = append(query, bson.E{Key: "logsource", Value: logsource})
 	}
 
 	// Get total count

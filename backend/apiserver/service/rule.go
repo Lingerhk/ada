@@ -30,13 +30,11 @@ func (s *ADAServiceV2) ListAlertRule(ctx context.Context, in *v2.ListAlertRuleRe
 
 	rules, total, err := server.ListAlertRule(
 		s.env,
-		in.IDs,
 		in.Level,
 		in.Status,
 		enablePtr,
 		in.Keyword,
 		in.Tags,
-		in.Logsource,
 		in.SortTm,
 		limit,
 		offset,
@@ -49,6 +47,12 @@ func (s *ADAServiceV2) ListAlertRule(ctx context.Context, in *v2.ListAlertRuleRe
 	// Convert to reply
 	var ruleInfos []*v2.AlertRuleInfo
 	for _, rule := range rules {
+		// Ensure tags is never nil
+		tags := rule.Tags
+		if tags == nil {
+			tags = []string{}
+		}
+
 		ruleInfo := &v2.AlertRuleInfo{
 			ID:          rule.ID,
 			Title:       rule.Title,
@@ -56,10 +60,12 @@ func (s *ADAServiceV2) ListAlertRule(ctx context.Context, in *v2.ListAlertRuleRe
 			Enable:      rule.Enable,
 			Level:       rule.Level,
 			Status:      rule.Status,
-			Tags:        rule.Tags,
+			Tags:        tags,
 			Logsource:   rule.Logsource,
 			Type:        rule.Type,
 			Author:      rule.Author,
+			Reference:   rule.Reference,
+			Suggestion:  rule.Suggestion,
 			AutoBlock:   rule.AutoBlock,
 			CreateTm:    rule.CreateTm.Format("2006-01-02 15:04:05"),
 			UpdateTm:    rule.UpdateTm.Format("2006-01-02 15:04:05"),
@@ -236,18 +242,32 @@ func (s *ADAServiceV2) ListActivityRule(ctx context.Context, in *v2.ListActivity
 	// Convert to reply
 	var ruleInfos []*v2.ActivityRuleInfo
 	for _, rule := range rules {
+		// Ensure slices are never nil
+		tags := rule.Tags
+		if tags == nil {
+			tags = []string{}
+		}
+		fields := rule.Fields
+		if fields == nil {
+			fields = []string{}
+		}
+		uniqueFields := rule.UniqueFields
+		if uniqueFields == nil {
+			uniqueFields = []string{}
+		}
+
 		ruleInfo := &v2.ActivityRuleInfo{
 			ID:           rule.ID,
 			Title:        rule.Title,
 			Description:  rule.Description,
 			Level:        rule.Level,
 			Status:       rule.Status,
-			Tags:         rule.Tags,
+			Tags:         tags,
 			Logsource:    rule.Logsource,
 			Reference:    rule.Reference,
 			RdxKey:       rule.RdxKey,
-			Fields:       rule.Fields,
-			UniqueFields: rule.UniqueFields,
+			Fields:       fields,
+			UniqueFields: uniqueFields,
 			Author:       rule.Author,
 			CreateTm:     rule.CreateTm.Format("2006-01-02 15:04:05"),
 			UpdateTm:     rule.UpdateTm.Format("2006-01-02 15:04:05"),

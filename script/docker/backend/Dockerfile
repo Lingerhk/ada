@@ -27,7 +27,9 @@ RUN set -x \
 
 RUN set -x \
     && mkdir -p /home/adadmin/download/report \
-    && mkdir -p /home/adadmin/download/sensor
+    && mkdir -p /home/adadmin/download/sensor \
+    && chown -R adadmin:root /home/adadmin/download/report \
+    && chown -R adadmin:root /home/adadmin/download/sensor
 
 COPY adaegis.zip /home/adadmin/download/sensor/adaegis.zip
 COPY install-adaegis.ps1 /home/adadmin/download/sensor/install-adaegis.ps1
