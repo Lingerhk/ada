@@ -72,6 +72,7 @@ services:
           - ada_backend
     ports:
       - "80:80"
+      - "9092:9092/udp"
     volumes:
       - backend_data:/home/adadmin/logs:rw
       - rules_data:/home/adadmin/rules:rw
