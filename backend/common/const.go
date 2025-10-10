@@ -1,11 +1,9 @@
 package common
 
-const RDX_CRYPT_SECRET = "3a43d7a31b3ca37d" // redis数据加密密钥
-
 // 常量定义
 const (
-	DOWNLOAD_PATH = "/home/adaegis/ada/download"
-	RESOURCE_PATH = "/home/adaegis/ada/resources"
+	ROOT_PATH        = "/home/adadmin"    // 项目根路径
+	RDX_CRYPT_SECRET = "3a43d7a31b3ca37d" // redis数据加密密钥
 )
 
 // 域控制器状态

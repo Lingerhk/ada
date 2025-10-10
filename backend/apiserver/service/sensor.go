@@ -292,7 +292,7 @@ func (s *ADAServiceV2) DownloadSensor(ctx context.Context, in *v2.DownloadSensor
 	}
 
 	sensorName := fmt.Sprintf("ada_sensor_installer_%s_%s.exe", in.Type, newVer)
-	sensorPath := path.Join(common.DOWNLOAD_PATH, "sensor", newVer, sensorName)
+	sensorPath := path.Join(common.ROOT_PATH, "download", "sensor", newVer, sensorName)
 	sensorFile, err := os.Open(sensorPath)
 	if err != nil {
 		logger.Errorf("sensor not found err:%v", err)
@@ -300,7 +300,7 @@ func (s *ADAServiceV2) DownloadSensor(ctx context.Context, in *v2.DownloadSensor
 	}
 	defer sensorFile.Close()
 
-	newPath := path.Join(common.DOWNLOAD_PATH, "sensor", sensorName)
+	newPath := path.Join(common.ROOT_PATH, "download", "sensor", sensorName)
 	newFile, err := os.Create(newPath)
 	if err != nil {
 		logger.Errorf("create file err:%v", err)

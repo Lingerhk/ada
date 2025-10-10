@@ -79,7 +79,7 @@ func (s *ADAServiceV2) GetSystemIcon(ctx context.Context, in *v2.GetSystemIconRe
 	}
 
 	if si.SystemIcon == "" {
-		originIcon := path.Join(common.RESOURCE_PATH, "image", "favicon.png")
+		originIcon := path.Join(common.ROOT_PATH, "static", "favicon.png")
 		fCnt, err := os.ReadFile(originIcon)
 		if err != nil {
 			logger.Warnf("read file err:%v", err)

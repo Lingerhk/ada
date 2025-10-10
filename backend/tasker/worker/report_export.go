@@ -7,13 +7,14 @@ import (
 	"ada/infra/mongo"
 	"encoding/json"
 	"fmt"
+	"path"
+	"strings"
+	"time"
+
 	"github.com/google/uuid"
 	logger "github.com/sirupsen/logrus"
 	"github.com/xuri/excelize/v2"
 	"go.mongodb.org/mongo-driver/bson"
-	"path"
-	"strings"
-	"time"
 )
 
 type exportReportParams struct {
@@ -205,7 +206,7 @@ func exportAlertEventReport(mongoCli mongo.DBAdaptor, startTm, endTm time.Time, 
 		}
 	}
 	fileId := uuid.NewString()
-	dstPath := path.Join(baseCommon.DOWNLOAD_PATH, "report", fmt.Sprintf("%s.xlsx", fileId))
+	dstPath := path.Join(baseCommon.ROOT_PATH, "download", "report", fmt.Sprintf("%s.xlsx", fileId))
 	if err = f.SaveAs(dstPath); err != nil {
 		logger.Errorf("save file(dstPath:%s) err:%v", dstPath, err)
 		return fileId, err
@@ -329,7 +330,7 @@ func exportAlertActivityReport(mongoCli mongo.DBAdaptor, startTm, endTm time.Tim
 		}
 	}
 	fileId := uuid.NewString()
-	dstPath := path.Join(baseCommon.DOWNLOAD_PATH, "report", fmt.Sprintf("%s.xlsx", fileId))
+	dstPath := path.Join(baseCommon.ROOT_PATH, "download", "report", fmt.Sprintf("%s.xlsx", fileId))
 	if err = f.SaveAs(dstPath); err != nil {
 		logger.Errorf("save file(dstPath:%s) err:%v", dstPath, err)
 		return fileId, err
@@ -455,7 +456,7 @@ func exportBaselineReport(mongoCli mongo.DBAdaptor, startTm, endTm time.Time, do
 		}
 	}
 	fileId := uuid.NewString()
-	dstPath := path.Join(baseCommon.DOWNLOAD_PATH, "report", fmt.Sprintf("%s.xlsx", fileId))
+	dstPath := path.Join(baseCommon.ROOT_PATH, "download", "report", fmt.Sprintf("%s.xlsx", fileId))
 	if err = f.SaveAs(dstPath); err != nil {
 		logger.Errorf("save file(dstPath:%s) err:%v", dstPath, err)
 		return fileId, err
@@ -570,7 +571,7 @@ func exportLeakReport(mongoCli mongo.DBAdaptor, startTm, endTm time.Time, domain
 		}
 	}
 	fileId := uuid.NewString()
-	dstPath := path.Join(baseCommon.DOWNLOAD_PATH, "report", fmt.Sprintf("%s.xlsx", fileId))
+	dstPath := path.Join(baseCommon.ROOT_PATH, "download", "report", fmt.Sprintf("%s.xlsx", fileId))
 	if err = f.SaveAs(dstPath); err != nil {
 		logger.Errorf("save file(dstPath:%s) err:%v", dstPath, err)
 		return fileId, err
@@ -697,7 +698,7 @@ func exportWeakPwdReport(mongoCli mongo.DBAdaptor, startTm, endTm time.Time, dom
 		}
 	}
 	fileId := uuid.NewString()
-	dstPath := path.Join(baseCommon.DOWNLOAD_PATH, "report", fmt.Sprintf("%s.xlsx", fileId))
+	dstPath := path.Join(baseCommon.ROOT_PATH, "download", "report", fmt.Sprintf("%s.xlsx", fileId))
 	if err = f.SaveAs(dstPath); err != nil {
 		logger.Errorf("save file(dstPath:%s) err:%v", dstPath, err)
 		return fileId, err
@@ -765,7 +766,7 @@ func exportAuditReport(mongoCli mongo.DBAdaptor, startTm, endTm time.Time) (stri
 	}
 
 	fileId := uuid.NewString()
-	dstPath := path.Join(baseCommon.DOWNLOAD_PATH, "report", fmt.Sprintf("%s.xlsx", fileId))
+	dstPath := path.Join(baseCommon.ROOT_PATH, "download", "report", fmt.Sprintf("%s.xlsx", fileId))
 	if err = f.SaveAs(dstPath); err != nil {
 		logger.Errorf("save file(dstPath:%s) err:%v", dstPath, err)
 		return fileId, err

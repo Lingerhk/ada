@@ -97,7 +97,7 @@ func (s *ADAServiceV2) DeleteExportTask(ctx context.Context, in *v2.DeleteExport
 	}
 
 	if tk.Status == "finish" {
-		taskFile := filepath.Join(baseCommon.DOWNLOAD_PATH, "report", fmt.Sprintf("%s.%s", tk.FilePath, tk.FileType))
+		taskFile := filepath.Join(baseCommon.ROOT_PATH, "download", "report", fmt.Sprintf("%s.%s", tk.FilePath, tk.FileType))
 		if err := os.Remove(taskFile); err != nil {
 			logger.Warnf("try to delete task file(%s) err:%v, will ignore!", taskFile, err)
 		}
