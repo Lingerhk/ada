@@ -150,4 +150,5 @@ volumes:
   scanner_data:
     driver: local
   rules_data:
+    external: true
     driver: local
