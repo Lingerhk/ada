@@ -47,4 +47,6 @@ COPY tasker.yaml /home/adadmin/conf/
 USER root
 WORKDIR /home/adadmin
 
+EXPOSE 80/tcp 9092/udp
+
 CMD ["/usr/bin/supervisord", "-n", "-c", "/etc/supervisor/supervisord.conf"]
