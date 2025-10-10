@@ -120,6 +120,7 @@ service ADA {
   rpc AddAlertRule(AddAlertRuleReq) returns (AddAlertRuleReply) {} // 添加告警规则
   rpc UpdateAlertRule(UpdateAlertRuleReq) returns (UpdateAlertRuleReply) {} // 更新告警规则
   rpc DeleteAlertRule(DeleteAlertRuleReq) returns (DeleteAlertRuleReply) {} // 删除告警规则
+  rpc GetAlertTypes(GetAlertTypesReq) returns (GetAlertTypesReply) {} // 删除告警规则
   rpc ListActivityRule(ListActivityRuleReq) returns (ListActivityRuleReply) {} // Sigma规则列表
   rpc GetActivityRule(GetActivityRuleReq) returns (GetActivityRuleReply) {} // 获取Sigma规则详情
   rpc AddActivityRule(AddActivityRuleReq) returns (AddActivityRuleReply) {} // 添加Sigma规则
@@ -1723,6 +1724,12 @@ message DeleteAlertRuleReq {
 
 message DeleteAlertRuleReply {
   string result = 1;
+}
+
+message GetAlertTypesReq{}
+
+message GetAlertTypesReply{
+  map <string, string> alertTypes = 1;
 }
 
 // Activity Rule (Sigma Rules) Messages

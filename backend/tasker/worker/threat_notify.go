@@ -161,7 +161,7 @@ func sendEmailNotify(n notifyInfo, conf model.NotifyConf) error {
 		logger.Error("parse email.port in metadata failed")
 		return fmt.Errorf("parse email.port in metadata failed")
 	}
-	address := fmt.Sprintf("%s:%s", host, port)
+	address := net.JoinHostPort(host, port)
 	_, err := net.DialTimeout("tcp", address, time.Second*20)
 	if err != nil {
 		logger.Errorf("network connect %s err:%v", address, err)

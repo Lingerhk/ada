@@ -86,6 +86,21 @@ var RuleTagMap = map[string]string{
 	RT_Impact:              "影响",
 }
 
+var RuleTypeMap = map[string]string{
+	"InitialAccess":       "初始访问",
+	"Execution":           "命令执行",
+	"Persistence":         "持久化",
+	"PrivilegeEscalation": "权限提升",
+	"DefenseEvasion":      "防御绕过",
+	"CredentialAccess":    "凭据操作",
+	"Discovery":           "渗透信息收集",
+	"LateralMovement":     "横向移动",
+	"Collection":          "敏感信息采集",
+	"CommandControl":      "C2控制",
+	"ExfilTration":        "数据窃取",
+	"Impact":              "影响",
+}
+
 // ScanTypeDescMap scanrisk type desc
 var ScanTypeDescMap = map[string]string{
 	// 基线类型定义:
