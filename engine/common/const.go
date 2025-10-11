@@ -23,6 +23,8 @@ const (
 	AlertActivityCachePrefix = "ada:engine:activity_cache"
 
 	AlertNotifyQueueKey = "ada:server:notify_queue" // 告警Notify推送队列(taskworker进行notify)
+
+	EngineReloadChannel = "ada:engine:reload" // Redis pub/sub channel for engine rule reload
 )
 
 // flow规则支持的类型

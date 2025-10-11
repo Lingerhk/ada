@@ -41,7 +41,7 @@ func (s *ADAServiceV2) ListAlertRule(ctx context.Context, in *v2.ListAlertRuleRe
 	)
 	if err != nil {
 		logger.Errorf("ListAlertRule failed: %v", err)
-		return nil, status.Error(codes.Internal, "查询告警规则失败")
+		return nil, status.Error(codes.Internal, s.I18n("Threat.AlertRule.QueryFailed"))
 	}
 
 	// Convert to reply
@@ -86,7 +86,7 @@ func (s *ADAServiceV2) AddAlertRule(ctx context.Context, in *v2.AddAlertRuleReq)
 	// Parse detection JSON
 	detection, err := server.ParseDetectionJSON(in.Detection)
 	if err != nil {
-		return nil, status.Error(codes.InvalidArgument, "检测配置JSON格式错误")
+		return nil, status.Error(codes.InvalidArgument, s.I18n("Threat.AlertRule.InvalidDetectionFormat"))
 	}
 
 	rule := &model.AlertRule{
@@ -126,7 +126,18 @@ func (s *ADAServiceV2) AddAlertRule(ctx context.Context, in *v2.AddAlertRuleReq)
 	err = server.AddAlertRule(s.env, rule)
 	if err != nil {
 		logger.Errorf("AddAlertRule failed: %v", err)
-		return nil, status.Error(codes.Internal, "添加告警规则失败")
+		return nil, status.Error(codes.Internal, s.I18n("Threat.AlertRule.AddFailed"))
+	}
+
+	// Write rule to disk file
+	if err := server.WriteAlertRuleToFile(rule); err != nil {
+		logger.Errorf("Failed to write alert rule to file: %v", err)
+		// Don't fail the request, just log the error
+	}
+
+	// Send reload signal to engine via Redis
+	if err := server.SendReloadSignalToEngine(s.env); err != nil {
+		logger.Errorf("Failed to send reload signal to engine: %v", err)
 	}
 
 	return &v2.AddAlertRuleReply{
@@ -162,7 +173,7 @@ func (s *ADAServiceV2) UpdateAlertRule(ctx context.Context, in *v2.UpdateAlertRu
 	if in.Detection != "" {
 		detection, err := server.ParseDetectionJSON(in.Detection)
 		if err != nil {
-			return nil, status.Error(codes.InvalidArgument, "检测配置JSON格式错误")
+			return nil, status.Error(codes.InvalidArgument, s.I18n("Threat.AlertRule.InvalidDetectionFormat"))
 		}
 		updates["detection"] = detection
 	}
@@ -185,7 +196,22 @@ func (s *ADAServiceV2) UpdateAlertRule(ctx context.Context, in *v2.UpdateAlertRu
 	err := server.UpdateAlertRule(s.env, in.ID, updates)
 	if err != nil {
 		logger.Errorf("UpdateAlertRule failed: %v", err)
-		return nil, status.Error(codes.Internal, "更新告警规则失败")
+		return nil, status.Error(codes.Internal, s.I18n("Threat.AlertRule.UpdateFailed"))
+	}
+
+	// Fetch updated rule from database and write to file
+	updatedRule, err := server.GetAlertRuleByID(s.env, in.ID)
+	if err != nil {
+		logger.Errorf("Failed to fetch updated rule: %v", err)
+	} else {
+		if err := server.WriteAlertRuleToFile(updatedRule); err != nil {
+			logger.Errorf("Failed to write updated alert rule to file: %v", err)
+		}
+
+		// Send SIGHUP to engine to reload rules
+		if err := server.SendReloadSignalToEngine(s.env); err != nil {
+			logger.Errorf("Failed to send SIGHUP to engine: %v", err)
+		}
 	}
 
 	return &v2.UpdateAlertRuleReply{
@@ -197,7 +223,17 @@ func (s *ADAServiceV2) DeleteAlertRule(ctx context.Context, in *v2.DeleteAlertRu
 	err := server.DeleteAlertRule(s.env, in.ID)
 	if err != nil {
 		logger.Errorf("DeleteAlertRule failed: %v", err)
-		return nil, status.Error(codes.Internal, "删除告警规则失败")
+		return nil, status.Error(codes.Internal, s.I18n("Threat.AlertRule.DeleteFailed"))
+	}
+
+	// Delete rule file from disk
+	if err := server.DeleteAlertRuleFile(in.ID); err != nil {
+		logger.Errorf("Failed to delete alert rule file: %v", err)
+	}
+
+	// Send SIGHUP to engine to reload rules
+	if err := server.SendReloadSignalToEngine(s.env); err != nil {
+		logger.Errorf("Failed to send SIGHUP to engine: %v", err)
 	}
 
 	return &v2.DeleteAlertRuleReply{
@@ -236,7 +272,7 @@ func (s *ADAServiceV2) ListActivityRule(ctx context.Context, in *v2.ListActivity
 	)
 	if err != nil {
 		logger.Errorf("ListActivityRule failed: %v", err)
-		return nil, status.Error(codes.Internal, "查询Sigma规则失败")
+		return nil, status.Error(codes.Internal, s.I18n("Threat.ActivityRule.QueryFailed"))
 	}
 
 	// Convert to reply
@@ -288,14 +324,14 @@ func (s *ADAServiceV2) GetActivityRule(ctx context.Context, in *v2.GetActivityRu
 	rule, err := server.GetActivityRuleByID(s.env, in.ID)
 	if err != nil {
 		logger.Errorf("GetActivityRule failed: %v", err)
-		return nil, status.Error(codes.NotFound, "Sigma规则不存在")
+		return nil, status.Error(codes.NotFound, s.I18n("Threat.ActivityRule.NotFound"))
 	}
 
 	// Convert detection to JSON
 	detectionJSON, err := server.DetectionToJSON(rule.Detection)
 	if err != nil {
 		logger.Errorf("Failed to convert detection to JSON: %v", err)
-		return nil, status.Error(codes.Internal, "获取规则详情失败")
+		return nil, status.Error(codes.Internal, s.I18n("Threat.ActivityRule.GetDetailFailed"))
 	}
 
 	return &v2.GetActivityRuleReply{
@@ -321,7 +357,7 @@ func (s *ADAServiceV2) AddActivityRule(ctx context.Context, in *v2.AddActivityRu
 	// Parse detection JSON
 	detection, err := server.ParseDetectionJSON(in.Detection)
 	if err != nil {
-		return nil, status.Error(codes.InvalidArgument, "检测配置JSON格式错误")
+		return nil, status.Error(codes.InvalidArgument, s.I18n("Threat.ActivityRule.InvalidDetectionFormat"))
 	}
 
 	rule := &model.AlertActivityRule{
@@ -343,7 +379,17 @@ func (s *ADAServiceV2) AddActivityRule(ctx context.Context, in *v2.AddActivityRu
 	err = server.AddActivityRule(s.env, rule)
 	if err != nil {
 		logger.Errorf("AddActivityRule failed: %v", err)
-		return nil, status.Error(codes.Internal, "添加Sigma规则失败")
+		return nil, status.Error(codes.Internal, s.I18n("Threat.ActivityRule.AddFailed"))
+	}
+
+	// Write rule to disk file
+	if err := server.WriteActivityRuleToFile(rule); err != nil {
+		logger.Errorf("Failed to write activity rule to file: %v", err)
+	}
+
+	// Send SIGHUP to engine to reload rules
+	if err := server.SendReloadSignalToEngine(s.env); err != nil {
+		logger.Errorf("Failed to send SIGHUP to engine: %v", err)
 	}
 
 	return &v2.AddActivityRuleReply{
@@ -379,7 +425,7 @@ func (s *ADAServiceV2) UpdateActivityRule(ctx context.Context, in *v2.UpdateActi
 	if in.Detection != "" {
 		detection, err := server.ParseDetectionJSON(in.Detection)
 		if err != nil {
-			return nil, status.Error(codes.InvalidArgument, "检测配置JSON格式错误")
+			return nil, status.Error(codes.InvalidArgument, s.I18n("Threat.ActivityRule.InvalidDetectionFormat"))
 		}
 		updates["detection"] = detection
 	}
@@ -399,7 +445,22 @@ func (s *ADAServiceV2) UpdateActivityRule(ctx context.Context, in *v2.UpdateActi
 	err := server.UpdateActivityRule(s.env, in.ID, updates)
 	if err != nil {
 		logger.Errorf("UpdateActivityRule failed: %v", err)
-		return nil, status.Error(codes.Internal, "更新Sigma规则失败")
+		return nil, status.Error(codes.Internal, s.I18n("Threat.ActivityRule.UpdateFailed"))
+	}
+
+	// Fetch updated rule from database and write to file
+	updatedRule, err := server.GetActivityRuleByID(s.env, in.ID)
+	if err != nil {
+		logger.Errorf("Failed to fetch updated activity rule: %v", err)
+	} else {
+		if err := server.WriteActivityRuleToFile(updatedRule); err != nil {
+			logger.Errorf("Failed to write updated activity rule to file: %v", err)
+		}
+
+		// Send SIGHUP to engine to reload rules
+		if err := server.SendReloadSignalToEngine(s.env); err != nil {
+			logger.Errorf("Failed to send SIGHUP to engine: %v", err)
+		}
 	}
 
 	return &v2.UpdateActivityRuleReply{
@@ -411,7 +472,17 @@ func (s *ADAServiceV2) DeleteActivityRule(ctx context.Context, in *v2.DeleteActi
 	err := server.DeleteActivityRule(s.env, in.ID)
 	if err != nil {
 		logger.Errorf("DeleteActivityRule failed: %v", err)
-		return nil, status.Error(codes.Internal, "删除Sigma规则失败")
+		return nil, status.Error(codes.Internal, s.I18n("Threat.ActivityRule.DeleteFailed"))
+	}
+
+	// Delete rule file from disk
+	if err := server.DeleteActivityRuleFile(in.ID); err != nil {
+		logger.Errorf("Failed to delete activity rule file: %v", err)
+	}
+
+	// Send SIGHUP to engine to reload rules
+	if err := server.SendReloadSignalToEngine(s.env); err != nil {
+		logger.Errorf("Failed to send SIGHUP to engine: %v", err)
 	}
 
 	return &v2.DeleteActivityRuleReply{

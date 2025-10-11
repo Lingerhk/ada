@@ -234,6 +234,22 @@ var I18nLangZhMap = map[string]any{
 		"ThreatRule": map[string]any{
 			"GetThreatRuleNamesFailed": "获取威胁规则名称失败",
 		},
+		"AlertRule": map[string]any{
+			"QueryFailed":            "查询告警规则失败",
+			"InvalidDetectionFormat": "检测配置YAML格式错误",
+			"AddFailed":              "添加告警规则失败",
+			"UpdateFailed":           "更新告警规则失败",
+			"DeleteFailed":           "删除告警规则失败",
+		},
+		"ActivityRule": map[string]any{
+			"QueryFailed":            "查询Sigma规则失败",
+			"NotFound":               "Sigma规则不存在",
+			"GetDetailFailed":        "获取规则详情失败",
+			"InvalidDetectionFormat": "检测配置YAML格式错误",
+			"AddFailed":              "添加Sigma规则失败",
+			"UpdateFailed":           "更新Sigma规则失败",
+			"DeleteFailed":           "删除Sigma规则失败",
+		},
 		"SensitiveEntry": map[string]any{
 			"GetSensitiveEntryListFailed": "获取敏感配置失败",
 			"DomainNameEmpty":             "选择域和名称条目不能为空",

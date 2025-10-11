@@ -122,3 +122,10 @@ const (
 	LangZh = "ZH"
 	LangEn = "EN"
 )
+
+// rule type
+const (
+	RuleTypeFlow   = "flow"
+	RuleTypeWinLog = "winlog"
+	RuleTypePktLog = "pktlog"
+)

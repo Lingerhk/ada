@@ -40,7 +40,7 @@ type EngineWorker struct {
 	mongoCli   mongo.DBAdaptor
 	esCli      *elasticsearch.Client
 	ruleset    map[string]*sigma.Ruleset
-	Flowset    *flow.Ruleset // TODO: 单元测试需要，后期改为flowset
+	Flowset    *flow.Ruleset
 	cancel     context.CancelFunc
 	workerStop bool
 	mu         sync.RWMutex // 读写锁，用于保护pending
@@ -209,6 +209,127 @@ func (e *EngineWorker) Stop() {
 	e.workerStop = true
 }
 
+// Reload reloads all rule files from disk without stopping the engine
+func (e *EngineWorker) Reload() error {
+	logger.Infof("Reloading rules from %s...", common.RuleDir)
+
+	flowRulePath := filepath.Join(common.RuleDir, common.RuleFlow)
+	winLogRulePath := filepath.Join(common.RuleDir, common.RuleWinLog)
+	pktLogRulePath := filepath.Join(common.RuleDir, common.RulePktLog)
+
+	// Reload flow ruleset
+	newFlowset, err := flow.NewRuleset(e.redisCli, e.mongoCli, flowRulePath)
+	if err != nil {
+		logger.Errorf("Failed to reload flow ruleset: %v", err)
+		return err
+	}
+	logger.Infof("Reloaded flow ruleset from %s", flowRulePath)
+
+	// Rebuild sigma extended fields map from new flowset
+	var sigmaExtFields = make(map[string][]string)
+	for _, f := range newFlowset.FlowRules {
+		for sid, fields := range f.ExtFields {
+			if v, ok := sigmaExtFields[sid]; ok {
+				sigmaExtFields[sid] = append(v, fields...)
+				sigmaExtFields[sid] = base.RemoveDuplicate(sigmaExtFields[sid])
+			} else {
+				sigmaExtFields[sid] = base.RemoveDuplicate(fields)
+			}
+		}
+	}
+
+	// Reload sigma rulesets
+	newWinLogRule, err := sigma.NewRuleset(sigma.Config{
+		Directory:       []string{winLogRulePath},
+		NoCollapseWS:    false,
+		FailOnRuleParse: false,
+		FailOnYamlParse: false,
+		ExtractFields:   sigmaExtFields,
+	}, nil)
+	if err != nil {
+		logger.Errorf("Failed to reload winlog ruleset: %v", err)
+		return err
+	}
+	logger.Infof("Reloaded winlog ruleset, total:%d, failed:%d, unsupported:%d", newWinLogRule.Total, newWinLogRule.Failed, newWinLogRule.Unsupported)
+
+	newPktLogRule, err := sigma.NewRuleset(sigma.Config{
+		Directory:       []string{pktLogRulePath},
+		NoCollapseWS:    false,
+		FailOnRuleParse: false,
+		FailOnYamlParse: false,
+		ExtractFields:   sigmaExtFields,
+	}, nil)
+	if err != nil {
+		logger.Errorf("Failed to reload pktlog ruleset: %v", err)
+		return err
+	}
+	logger.Infof("Reloaded pktlog ruleset, total:%d, failed:%d, unsupported:%d", newPktLogRule.Total, newPktLogRule.Failed, newPktLogRule.Unsupported)
+
+	// Check flow-sigma rule consistency
+	for sid := range sigmaExtFields {
+		if newWinLogRule.GetRule(sid) == nil && newPktLogRule.GetRule(sid) == nil {
+			logger.Warnf("Flow related sigma_id(%s) not found in sigma ruleset", sid)
+		}
+	}
+
+	// Atomically replace old rulesets with new ones (thread-safe)
+	e.mu.Lock()
+	e.Flowset = newFlowset
+	e.ruleset[common.RuleWinLog] = newWinLogRule
+	e.ruleset[common.RulePktLog] = newPktLogRule
+	e.mu.Unlock()
+
+	// Reload rule cache
+	if err := e.Flowset.LoadRuleCache(); err != nil {
+		logger.Errorf("Failed to reload rule cache: %v", err)
+		return err
+	}
+
+	// Update flow fields cache
+	var flowAllFields = make(map[string][]string)
+	for _, f := range e.Flowset.FlowRules {
+		var fields []string
+		for sid, item := range f.ExtFields {
+			fields = append(fields, item...)
+
+			for _, sigmaRules := range e.ruleset {
+				if v, ok := sigmaRules.FieldsMap[sid]; ok {
+					fields = append(fields, v...)
+					break
+				}
+			}
+		}
+
+		if v, ok := flowAllFields[f.ID]; ok {
+			flowAllFields[f.ID] = append(v, fields...)
+			flowAllFields[f.ID] = base.RemoveDuplicate(flowAllFields[f.ID])
+		} else {
+			flowAllFields[f.ID] = base.RemoveDuplicate(fields)
+		}
+	}
+
+	// Update Redis cache
+	ctx := context.Background()
+	err = e.redisCli.Del(ctx, common.FlowFieldMapKey).Err()
+	if err != nil {
+		logger.Errorf("Failed to delete old flow fields cache: %v", err)
+		return err
+	}
+
+	fieldMap := make(map[string]string)
+	for flowId, fields := range flowAllFields {
+		fieldMap[flowId] = strings.Join(fields, ",")
+	}
+	err = e.redisCli.HMSet(ctx, common.FlowFieldMapKey, fieldMap).Err()
+	if err != nil {
+		logger.Errorf("Failed to update flow fields cache: %v", err)
+		return err
+	}
+
+	logger.Info("Rules reloaded successfully")
+	return nil
+}
+
 func (e *EngineWorker) FlowMatcher() {
 	// run as goroutine to match flow event
 	for {
@@ -295,6 +416,39 @@ func (e *EngineWorker) RuntimeCheck() {
 					e.Stop()
 					return
 				}
+			}
+		}
+	}
+}
+
+// RuleReloader listens for reload signals from Redis pub/sub
+func (e *EngineWorker) RuleReloader() {
+	ctx := context.Background()
+	pubsub := e.redisCli.Subscribe(ctx, common.EngineReloadChannel)
+	defer pubsub.Close()
+
+	logger.Infof("Listening for reload signals on Redis channel '%s'", common.EngineReloadChannel)
+
+	// Wait for confirmation that subscription is created
+	_, err := pubsub.Receive(ctx)
+	if err != nil {
+		logger.Errorf("Failed to subscribe to reload channel: %v", err)
+		return
+	}
+
+	// Create channel for receiving messages
+	ch := pubsub.Channel()
+
+	for {
+		select {
+		case <-e.ctx.Done():
+			return
+		case msg := <-ch:
+			logger.Infof("Received reload signal: %s", msg.Payload)
+			if err := e.Reload(); err != nil {
+				logger.Errorf("Failed to reload rules: %v", err)
+			} else {
+				logger.Info("Rules reloaded successfully via Redis signal")
 			}
 		}
 	}
