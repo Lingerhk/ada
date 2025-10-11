@@ -234,6 +234,22 @@ var I18nLangEnMap = map[string]any{
 		"ThreatRule": map[string]any{
 			"GetThreatRuleNamesFailed": "Get threat rule names failed",
 		},
+		"AlertRule": map[string]any{
+			"QueryFailed":            "Query alert rules failed",
+			"InvalidDetectionFormat": "Invalid detection YAML format",
+			"AddFailed":              "Add alert rule failed",
+			"UpdateFailed":           "Update alert rule failed",
+			"DeleteFailed":           "Delete alert rule failed",
+		},
+		"ActivityRule": map[string]any{
+			"QueryFailed":            "Query activity rules failed",
+			"NotFound":               "Activity rule not found",
+			"GetDetailFailed":        "Get rule detail failed",
+			"InvalidDetectionFormat": "Invalid detection YAML format",
+			"AddFailed":              "Add activity rule failed",
+			"UpdateFailed":           "Update activity rule failed",
+			"DeleteFailed":           "Delete activity rule failed",
+		},
 		"SensitiveEntry": map[string]any{
 			"GetSensitiveEntryListFailed": "Get sensitive entry list failed",
 			"DomainNameEmpty":             "Domain and name cannot be empty",

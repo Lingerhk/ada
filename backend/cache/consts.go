@@ -23,4 +23,6 @@ const (
 	FlowFieldMapKey = "ada:engine:flow_field_map" // hash flow_id:fields (split by ",")
 
 	FlowWhitelistPrefixKey = "ada:engine:flow_whitelist" // hash flow_id:whitelist_id:conditions (split by "|[AND]|"
+
+	EngineReloadChannel = "ada:engine:reload" // Redis pub/sub channel for engine rule reload
 )
