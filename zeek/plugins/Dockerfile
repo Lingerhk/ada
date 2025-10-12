@@ -1,5 +1,5 @@
-# Build the ada_zeek based on zeek:7.1.0(local)
-ARG IMAGE=zeek:7.1.0
+# Build the ada_zeek based on zeek:8.0.1(local)
+ARG IMAGE=zeek:8.0.1
 FROM $IMAGE
 
 RUN apt-get update && apt-get -y --no-install-recommends install \

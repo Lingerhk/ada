@@ -508,7 +508,7 @@ func (s *SyslogServer) pktlogSync(ctx context.Context, event string) {
 	item := esutil.BulkIndexerItem{
 		Action: "index",
 		Index:  s.pktLogIndexName,
-		Body:   strings.NewReader(pktlog[1]),
+		Body:   strings.NewReader("{" + pktlog[1]), // add "{" to the beginning of the pktlog json
 		// OnFailure is the optional callback for each failed operation
 		OnFailure: func(
 			ctx context.Context,
