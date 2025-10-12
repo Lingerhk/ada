@@ -121,11 +121,14 @@ service ADA {
   rpc UpdateAlertRule(UpdateAlertRuleReq) returns (UpdateAlertRuleReply) {} // 更新告警规则
   rpc DeleteAlertRule(DeleteAlertRuleReq) returns (DeleteAlertRuleReply) {} // 删除告警规则
   rpc GetAlertTypes(GetAlertTypesReq) returns (GetAlertTypesReply) {} // 删除告警规则
+  rpc GetAlertRuleTags(GetAlertRuleTagsReq) returns (GetAlertRuleTagsReply) {} // 获取所有规则标签
   rpc ListActivityRule(ListActivityRuleReq) returns (ListActivityRuleReply) {} // Sigma规则列表
   rpc GetActivityRule(GetActivityRuleReq) returns (GetActivityRuleReply) {} // 获取Sigma规则详情
   rpc AddActivityRule(AddActivityRuleReq) returns (AddActivityRuleReply) {} // 添加Sigma规则
   rpc UpdateActivityRule(UpdateActivityRuleReq) returns (UpdateActivityRuleReply) {} // 更新Sigma规则
   rpc DeleteActivityRule(DeleteActivityRuleReq) returns (DeleteActivityRuleReply) {} // 删除Sigma规则
+  rpc GetActivityRuleFields(GetActivityRuleFieldsReq) returns (GetActivityRuleFieldsReply) {} // 获取所有行为规则Fields
+  rpc GetActivityRuleUniqueFields(GetActivityRuleUniqueFieldsReq) returns (GetActivityRuleUniqueFieldsReply) {} // 获取所有行为规则UniqueFields
 
   ////////////////////////////////
   // scanrisk主动检测dashboard
@@ -1730,6 +1733,24 @@ message GetAlertTypesReq{}
 
 message GetAlertTypesReply{
   map <string, string> alertTypes = 1;
+}
+
+message GetAlertRuleTagsReq{}
+
+message GetAlertRuleTagsReply{
+  repeated string tags = 1; // 所有规则标签列表
+}
+
+message GetActivityRuleFieldsReq{}
+
+message GetActivityRuleFieldsReply{
+  repeated string fields = 1; // 所有行为规则Fields列表
+}
+
+message GetActivityRuleUniqueFieldsReq{}
+
+message GetActivityRuleUniqueFieldsReply{
+  repeated string uniqueFields = 1; // 所有行为规则UniqueFields列表
 }
 
 // Activity Rule (Sigma Rules) Messages

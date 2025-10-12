@@ -1526,6 +1526,24 @@ func (this *GetAlertTypesReply) Validate() error {
 	// Validation of proto3 map<> fields is unsupported.
 	return nil
 }
+func (this *GetAlertRuleTagsReq) Validate() error {
+	return nil
+}
+func (this *GetAlertRuleTagsReply) Validate() error {
+	return nil
+}
+func (this *GetActivityRuleFieldsReq) Validate() error {
+	return nil
+}
+func (this *GetActivityRuleFieldsReply) Validate() error {
+	return nil
+}
+func (this *GetActivityRuleUniqueFieldsReq) Validate() error {
+	return nil
+}
+func (this *GetActivityRuleUniqueFieldsReply) Validate() error {
+	return nil
+}
 func (this *ListActivityRuleReq) Validate() error {
 	if !(this.PageIdx > 0) {
 		return github_com_mwitkow_go_proto_validators.FieldError("PageIdx", fmt.Errorf(`value '%v' must be greater than '0'`, this.PageIdx))

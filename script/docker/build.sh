@@ -30,7 +30,9 @@ build_frontend() {
 
 # build backend
 build_backend() {
-    cd backend || exit;
+    cd ${ada_path} || exit;
+    make apiserver task_server task_worker
+    cd ${ada_path}/script/docker/backend || exit;
     cp ${ada_path}/agent/script/adaegis.zip ./
     cp ${ada_path}/agent/script/install-adaegis.ps1 ./
     cp ${ada_path}/agent/script/uninstall-adaegis.ps1 ./
