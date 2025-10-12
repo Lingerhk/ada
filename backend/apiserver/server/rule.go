@@ -276,3 +276,110 @@ func DetectionToJSON(detection model.ActivityDetection) (string, error) {
 	}
 	return string(data), nil
 }
+
+// GetAllRuleTags returns all unique tags from AlertRule and AlertActivityRule collections
+func GetAllRuleTags(e *config.Env) ([]string, error) {
+	tagsMap := make(map[string]bool)
+
+	// Get tags from AlertRule collection
+	alertRuleTb := (&model.AlertRule{}).CollectName()
+	var alertRules []model.AlertRule
+	err := e.MongoCli.FindAll(alertRuleTb, bson.D{}, &alertRules)
+	if err != nil {
+		logger.Errorf("find alert rules err:%v", err)
+		return nil, err
+	}
+
+	for _, rule := range alertRules {
+		for _, tag := range rule.Tags {
+			if tag != "" {
+				tagsMap[tag] = true
+			}
+		}
+	}
+
+	// Get tags from AlertActivityRule collection
+	activityRuleTb := (&model.AlertActivityRule{}).CollectName()
+	var activityRules []model.AlertActivityRule
+	err = e.MongoCli.FindAll(activityRuleTb, bson.D{}, &activityRules)
+	if err != nil {
+		logger.Errorf("find activity rules err:%v", err)
+		return nil, err
+	}
+
+	for _, rule := range activityRules {
+		for _, tag := range rule.Tags {
+			if tag != "" {
+				tagsMap[tag] = true
+			}
+		}
+	}
+
+	// Convert map to slice
+	tags := make([]string, 0, len(tagsMap))
+	for tag := range tagsMap {
+		tags = append(tags, tag)
+	}
+
+	return tags, nil
+}
+
+// GetAllActivityRuleFields returns all unique fields from AlertActivityRule collection
+func GetAllActivityRuleFields(e *config.Env) ([]string, error) {
+	fieldsMap := make(map[string]bool)
+
+	// Get fields from AlertActivityRule collection
+	activityRuleTb := (&model.AlertActivityRule{}).CollectName()
+	var activityRules []model.AlertActivityRule
+	err := e.MongoCli.FindAll(activityRuleTb, bson.D{}, &activityRules)
+	if err != nil {
+		logger.Errorf("find activity rules err:%v", err)
+		return nil, err
+	}
+
+	for _, rule := range activityRules {
+		for _, field := range rule.Fields {
+			if field != "" {
+				fieldsMap[field] = true
+			}
+		}
+	}
+
+	// Convert map to slice
+	fields := make([]string, 0, len(fieldsMap))
+	for field := range fieldsMap {
+		fields = append(fields, field)
+	}
+
+	return fields, nil
+}
+
+// GetAllActivityRuleUniqueFields returns all unique uniqueFields from AlertActivityRule collection
+func GetAllActivityRuleUniqueFields(e *config.Env) ([]string, error) {
+	uniqueFieldsMap := make(map[string]bool)
+
+	// Get uniqueFields from AlertActivityRule collection
+	activityRuleTb := (&model.AlertActivityRule{}).CollectName()
+	var activityRules []model.AlertActivityRule
+	err := e.MongoCli.FindAll(activityRuleTb, bson.D{}, &activityRules)
+	if err != nil {
+		logger.Errorf("find activity rules err:%v", err)
+		return nil, err
+	}
+
+	for _, rule := range activityRules {
+		for _, field := range rule.UniqueFields {
+			if field != "" {
+				uniqueFieldsMap[field] = true
+			}
+		}
+	}
+
+	// Convert map to slice
+	uniqueFields := make([]string, 0, len(uniqueFieldsMap))
+	for field := range uniqueFieldsMap {
+		uniqueFields = append(uniqueFields, field)
+	}
+
+	return uniqueFields, nil
+}

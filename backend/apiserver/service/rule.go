@@ -248,7 +248,43 @@ func (s *ADAServiceV2) GetAlertTypes(ctx context.Context, in *v2.GetAlertTypesRe
 	}, nil
 }
 
+// GetAlertRuleTags
+func (s *ADAServiceV2) GetAlertRuleTags(ctx context.Context, in *v2.GetAlertRuleTagsReq) (*v2.GetAlertRuleTagsReply, error) {
+	tags, err := server.GetAllRuleTags(s.env)
+	if err != nil {
+		logger.Errorf("get all rule tags err:%v", err)
+		return nil, status.Error(codes.Internal, s.I18n("InternalError"))
+	}
+	return &v2.GetAlertRuleTagsReply{
+		Tags: tags,
+	}, nil
+}
+
 // Activity Rule methods (Sigma rules)
+
+// GetActivityRuleFields
+func (s *ADAServiceV2) GetActivityRuleFields(ctx context.Context, in *v2.GetActivityRuleFieldsReq) (*v2.GetActivityRuleFieldsReply, error) {
+	fields, err := server.GetAllActivityRuleFields(s.env)
+	if err != nil {
+		logger.Errorf("get all activity rule fields err:%v", err)
+		return nil, status.Error(codes.Internal, s.I18n("InternalError"))
+	}
+	return &v2.GetActivityRuleFieldsReply{
+		Fields: fields,
+	}, nil
+}
+
+// GetActivityRuleUniqueFields
+func (s *ADAServiceV2) GetActivityRuleUniqueFields(ctx context.Context, in *v2.GetActivityRuleUniqueFieldsReq) (*v2.GetActivityRuleUniqueFieldsReply, error) {
+	uniqueFields, err := server.GetAllActivityRuleUniqueFields(s.env)
+	if err != nil {
+		logger.Errorf("get all activity rule unique fields err:%v", err)
+		return nil, status.Error(codes.Internal, s.I18n("InternalError"))
+	}
+	return &v2.GetActivityRuleUniqueFieldsReply{
+		UniqueFields: uniqueFields,
+	}, nil
+}
 
 func (s *ADAServiceV2) ListActivityRule(ctx context.Context, in *v2.ListActivityRuleReq) (*v2.ListActivityRuleReply, error) {
 	limit := in.PageSize
