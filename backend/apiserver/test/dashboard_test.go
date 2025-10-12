@@ -8,6 +8,70 @@ import (
 	. "github.com/smartystreets/goconvey/convey"
 )
 
+func TestDashboardStats(t *testing.T) {
+	req := v2.DashboardStatsReq{
+		Domain: "all", // Or a specific domain known to exist in your test environment
+	}
+
+	Convey("Test API DashboardStats", t, func() {
+		resp, err := ADACli.cli.DashboardStats(ADACli.ctx, &req)
+
+		Convey("Check for gRPC errors", func() {
+			So(err, ShouldBeNil)
+		})
+
+		Convey("Check response validity", func() {
+			So(resp, ShouldNotBeNil)
+
+			// Check asset counts
+			if total, ok := resp.Asset["total"]; ok {
+				So(total, ShouldBeGreaterThanOrEqualTo, 0)
+				fmt.Printf("Asset Total: %d\n", total)
+			}
+			if today, ok := resp.Asset["today"]; ok {
+				So(today, ShouldBeGreaterThanOrEqualTo, 0)
+				fmt.Printf("Asset Today: %d\n", today)
+			}
+
+			// Check alert counts by level
+			fmt.Println("Alert counts by level:")
+			for level, count := range resp.Alert {
+				So(count, ShouldBeGreaterThanOrEqualTo, 0)
+				fmt.Printf("  %s: %d\n", level, count)
+			}
+
+			// Check baseline counts by level
+			fmt.Println("Baseline counts by level:")
+			for level, count := range resp.Baseline {
+				So(count, ShouldBeGreaterThanOrEqualTo, 0)
+				fmt.Printf("  %s: %d\n", level, count)
+			}
+
+			// Check leak counts by level
+			fmt.Println("Leak counts by level:")
+			for level, count := range resp.Leak {
+				So(count, ShouldBeGreaterThanOrEqualTo, 0)
+				fmt.Printf("  %s: %d\n", level, count)
+			}
+
+			// Check weakpwd counts
+			fmt.Println("Weak password counts:")
+			for key, count := range resp.Weakpwd {
+				So(count, ShouldBeGreaterThanOrEqualTo, 0)
+				fmt.Printf("  %s: %d\n", key, count)
+			}
+		})
+
+		// Log the complete response for inspection
+		fmt.Printf("\nComplete DashboardStats Response:\n")
+		fmt.Printf("Asset: %+v\n", resp.Asset)
+		fmt.Printf("Alert: %+v\n", resp.Alert)
+		fmt.Printf("Baseline: %+v\n", resp.Baseline)
+		fmt.Printf("Leak: %+v\n", resp.Leak)
+		fmt.Printf("Weakpwd: %+v\n", resp.Weakpwd)
+	})
+}
+
 func TestDashboardLogStats(t *testing.T) {
 	// It's assumed ADACli and ADACli.ctx are initialized similarly to domain_test.go
 	// You might need a setup function (e.g., TestMain) if not already present.

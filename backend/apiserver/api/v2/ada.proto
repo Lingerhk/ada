@@ -1611,9 +1611,9 @@ message DashboardStatsReq{
 message DashboardStatsReply{
   map<string, int32> asset = 1; // 监控资产数: {"total": 121323, "today": 12}
   map<string, int32> alert = 2; // 告警数: {"high": 2, "medium ": 3, "low": 1}
-  map<string, int32> baseline = 3; // 告警数: {"high": 2, "medium ": 3, "low": 1}
-  map<string, int32> leak = 4; // 告警数: {"high": 2, "medium ": 3, "low": 1}
-  map<string, int32> weakpwd = 5; // 告警数: {"high": 2, "medium ": 3, "low": 1}
+  map<string, int32> baseline = 3; // 基线数: {"high": 2, "medium ": 3, "low": 1}
+  map<string, int32> leak = 4; // 漏洞数: {"high": 2, "medium ": 3, "low": 1}
+  map<string, int32> weakpwd = 5; // 弱口令数: {"high": 2, "medium ": 3, "low": 1}
 }
 
 message DashboardTrendsReq{
