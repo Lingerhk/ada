@@ -12199,9 +12199,9 @@ type DashboardStatsReply struct {
 
 	Asset    map[string]int32 `protobuf:"bytes,1,rep,name=asset,proto3" json:"asset,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"varint,2,opt,name=value,proto3"`       // 监控资产数: {"total": 121323, "today": 12}
 	Alert    map[string]int32 `protobuf:"bytes,2,rep,name=alert,proto3" json:"alert,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"varint,2,opt,name=value,proto3"`       // 告警数: {"high": 2, "medium ": 3, "low": 1}
-	Baseline map[string]int32 `protobuf:"bytes,3,rep,name=baseline,proto3" json:"baseline,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"varint,2,opt,name=value,proto3"` // 告警数: {"high": 2, "medium ": 3, "low": 1}
-	Leak     map[string]int32 `protobuf:"bytes,4,rep,name=leak,proto3" json:"leak,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"varint,2,opt,name=value,proto3"`         // 告警数: {"high": 2, "medium ": 3, "low": 1}
-	Weakpwd  map[string]int32 `protobuf:"bytes,5,rep,name=weakpwd,proto3" json:"weakpwd,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"varint,2,opt,name=value,proto3"`   // 告警数: {"high": 2, "medium ": 3, "low": 1}
+	Baseline map[string]int32 `protobuf:"bytes,3,rep,name=baseline,proto3" json:"baseline,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"varint,2,opt,name=value,proto3"` // 基线数: {"high": 2, "medium ": 3, "low": 1}
+	Leak     map[string]int32 `protobuf:"bytes,4,rep,name=leak,proto3" json:"leak,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"varint,2,opt,name=value,proto3"`         // 漏洞数: {"high": 2, "medium ": 3, "low": 1}
+	Weakpwd  map[string]int32 `protobuf:"bytes,5,rep,name=weakpwd,proto3" json:"weakpwd,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"varint,2,opt,name=value,proto3"`   // 弱口令数: {"high": 2, "medium ": 3, "low": 1}
 }
 
 func (x *DashboardStatsReply) Reset() {

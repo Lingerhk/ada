@@ -17,7 +17,79 @@ import (
 )
 
 func (s *ADAServiceV2) DashboardStats(ctx context.Context, in *v2.DashboardStatsReq) (*v2.DashboardStatsReply, error) {
-	return nil, nil
+	var domains []string
+	if in.Domain == "all" {
+		domainList, err := server.GetDomainList(s.env)
+		if err != nil {
+			logger.Errorf("get domain list err:%v", err)
+			return nil, status.Error(codes.Internal, s.I18n("InternalError"))
+		}
+		for _, dm := range domainList {
+			if dm.Status == baseCommon.DomainStatusInit {
+				continue
+			}
+			domains = append(domains, dm.Name)
+		}
+	} else {
+		domains = []string{in.Domain}
+	}
+
+	reply := &v2.DashboardStatsReply{
+		Asset:    make(map[string]int32),
+		Alert:    make(map[string]int32),
+		Baseline: make(map[string]int32),
+		Leak:     make(map[string]int32),
+		Weakpwd:  make(map[string]int32),
+	}
+
+	// Get alert counts by level (from AlertEventESDB collection)
+	alertCounts, err := server.GetAlertCountsByLevel(s.env, domains)
+	if err != nil {
+		logger.Errorf("get alert counts err:%v", err)
+	} else {
+		for level, count := range alertCounts {
+			reply.Alert[level] = count
+		}
+	}
+
+	// Get baseline counts by level (from latest scan task)
+	baselineCounts, err := server.GetBaselineCountsByLevel(s.env, domains)
+	if err != nil {
+		logger.Errorf("get baseline counts err:%v", err)
+	} else {
+		for level, count := range baselineCounts {
+			reply.Baseline[level] = count
+		}
+	}
+
+	// Get leak/vulnerability counts by level (from latest scan task)
+	leakCounts, err := server.GetLeakCountsByLevel(s.env, domains)
+	if err != nil {
+		logger.Errorf("get leak counts err:%v", err)
+	} else {
+		for level, count := range leakCounts {
+			reply.Leak[level] = count
+		}
+	}
+
+	// Get weak password counts
+	weakpwdCount, err := server.GetWeakPwdCount(s.env, domains)
+	if err != nil {
+		logger.Errorf("get weakpwd count err:%v", err)
+	} else {
+		reply.Weakpwd["total"] = weakpwdCount
+	}
+
+	// Get asset counts (total and today's new assets)
+	assetTotal, assetToday, err := server.GetAssetCounts(s.env, domains)
+	if err != nil {
+		logger.Errorf("get asset counts err:%v", err)
+	} else {
+		reply.Asset["total"] = assetTotal
+		reply.Asset["today"] = assetToday
+	}
+
+	return reply, nil
 }
 
 func (s *ADAServiceV2) DashboardTrends(ctx context.Context, in *v2.DashboardTrendsReq) (*v2.DashboardTrendsReply, error) {
