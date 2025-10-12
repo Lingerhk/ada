@@ -5,7 +5,7 @@ ENV TASKER_CONF_PATH=/home/adadmin/conf/tasker.yaml
 ENV APISERVER_CONF_PATH=/home/adadmin/conf/apiserver.yaml
 
 LABEL maintainer="dev@ada"
-LABEL version="2.9.1"
+LABEL version=2.9.1
 LABEL description="Docker image for ada system backend service"
 
 RUN set -x \
