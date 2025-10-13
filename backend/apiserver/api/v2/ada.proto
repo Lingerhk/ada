@@ -967,7 +967,7 @@ message GetThreatReply {
   AttackFlowReply attackFlow = 19; // 攻击流图
   repeated ActivityDetails activities = 20; // activity list
   string suggestion = 21; // 修复建议
-  string reference = 22; // 误报排查
+  repeated string references = 22; // 误报排查
   string remark = 23; // 添加备注说明
 }
 
@@ -1665,13 +1665,14 @@ message AlertRuleInfo {
   string status = 6; // 规则状态
   repeated string tags = 7; // 标签
   string logsource = 8; // 日志来源
-  string type = 9; // 规则分类
-  string author = 10; // 作者
-  string reference = 11; // 参考信息
-  string suggestion = 12; // 处置建议
-  bool autoBlock = 13; // 自动阻断
-  string createTm = 14;
-  string updateTm = 15;
+  string detection = 9; // Yaml string
+  string type = 10; // 规则分类
+  string author = 11; // 作者
+  repeated string references = 12; // 参考信息
+  string suggestion = 13; // 处置建议
+  bool autoBlock = 14; // 自动阻断
+  string createTm = 15;
+  string updateTm = 16;
 }
 
 message ListAlertRuleReply {
@@ -1687,9 +1688,9 @@ message AddAlertRuleReq {
   string status = 5;
   repeated string tags = 6;
   string logsource = 7;
-  string detection = 8 [(validator.field) = {string_not_empty: true}]; // JSON string
+  string detection = 8 [(validator.field) = {string_not_empty: true}]; // Yaml string
   string type = 9;
-  string reference = 10;
+  repeated string references = 10;
   string suggestion = 11;
   string author = 12;
   bool autoBlock = 13;
@@ -1709,9 +1710,9 @@ message UpdateAlertRuleReq {
   string status = 6;
   repeated string tags = 7;
   string logsource = 8;
-  string detection = 9; // JSON string
+  string detection = 9; // Yaml string
   string type = 10;
-  string reference = 11;
+  repeated string references = 11;
   string suggestion = 12;
   string author = 13;
   bool autoBlock = 14;
@@ -1775,13 +1776,14 @@ message ActivityRuleInfo {
   string status = 5; // 规则状态
   repeated string tags = 6; // 标签
   string logsource = 7; // 日志来源
-  string reference = 8; // 参考链接
-  string rdxKey = 9; // Redis缓存key
-  repeated string fields = 10; // 提取字段
-  repeated string uniqueFields = 11; // 唯一字段
-  string author = 12; // 作者
-  string createTm = 13;
-  string updateTm = 14;
+  repeated string references = 8; // 参考链接
+  string detection = 9; // JSON string of dynamic detection
+  string rdxKey = 10; // Redis缓存key
+  repeated string fields = 11; // 提取字段
+  repeated string uniqueFields = 12; // 唯一字段
+  string author = 13; // 作者
+  string createTm = 14;
+  string updateTm = 15;
 }
 
 message ListActivityRuleReply {
@@ -1801,7 +1803,7 @@ message GetActivityRuleReply {
   string status = 5;
   repeated string tags = 6;
   string logsource = 7;
-  string reference = 8;
+  repeated string references = 8;
   string detection = 9; // JSON string of dynamic detection
   string rdxKey = 10;
   repeated string fields = 11;
@@ -1819,7 +1821,7 @@ message AddActivityRuleReq {
   string status = 5;
   repeated string tags = 6;
   string logsource = 7;
-  string reference = 8;
+  repeated string references = 8;
   string detection = 9 [(validator.field) = {string_not_empty: true}]; // JSON string
   string rdxKey = 10;
   repeated string fields = 11;
@@ -1840,7 +1842,7 @@ message UpdateActivityRuleReq {
   string status = 5;
   repeated string tags = 6;
   string logsource = 7;
-  string reference = 8;
+  repeated string references = 8;
   string detection = 9; // JSON string
   string rdxKey = 10;
   repeated string fields = 11;

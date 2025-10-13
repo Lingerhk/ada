@@ -26,7 +26,7 @@ type AlertRuleYAML struct {
 	Logsource   string                 `yaml:"logsource,omitempty"`
 	Detection   map[string]interface{} `yaml:"detection"`
 	Type        string                 `yaml:"type,omitempty"`
-	Reference   string                 `yaml:"reference,omitempty"`
+	References  []string               `yaml:"references,omitempty"`
 	Suggestion  string                 `yaml:"suggestion,omitempty"`
 	Author      string                 `yaml:"author,omitempty"`
 	AutoBlock   bool                   `yaml:"auto_block,omitempty"`
@@ -42,7 +42,7 @@ type ActivityRuleYAML struct {
 	Tags        []string               `yaml:"tags,omitempty"`
 	Logsource   string                 `yaml:"logsource,omitempty"`
 	Detection   map[string]interface{} `yaml:"detection"`
-	Reference   string                 `yaml:"reference,omitempty"`
+	References  []string               `yaml:"references,omitempty"`
 	Author      string                 `yaml:"author,omitempty"`
 	RdxKey      string                 `yaml:"rdx_key,omitempty"`
 	Fields      []string               `yaml:"fields,omitempty"`
@@ -72,7 +72,7 @@ func WriteAlertRuleToFile(rule *model.AlertRule) error {
 			"sorted":     rule.Detection.Sorted,
 		},
 		Type:       rule.Type,
-		Reference:  rule.Reference,
+		References: rule.References,
 		Suggestion: rule.Suggestion,
 		Author:     rule.Author,
 		AutoBlock:  rule.AutoBlock,
@@ -125,7 +125,7 @@ func WriteActivityRuleToFile(rule *model.AlertActivityRule) error {
 		Tags:        rule.Tags,
 		Logsource:   rule.Logsource,
 		Detection:   rule.Detection,
-		Reference:   rule.Reference,
+		References:  rule.References,
 		Author:      rule.Author,
 		RdxKey:      rule.RdxKey,
 		Fields:      rule.Fields,

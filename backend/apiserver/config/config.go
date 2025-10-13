@@ -12,7 +12,7 @@ import (
 	"github.com/natefinch/lumberjack"
 	"github.com/redis/go-redis/v9"
 	"github.com/sirupsen/logrus"
-	"gopkg.in/yaml.v2"
+	"gopkg.in/yaml.v3"
 )
 
 type LogCfg struct {
@@ -28,10 +28,10 @@ type BindSrvCfg struct {
 }
 
 type RedisCfg struct {
-	URI         string        `yaml:"URI"`
-	Active      int           `yaml:"Active"`
-	Idle        int           `yaml:"Idle"`
-	IdleTimeout time.Duration `yaml:"IdleTimeout"`
+	URI         string `yaml:"URI"`
+	Active      int    `yaml:"Active"`
+	Idle        int    `yaml:"Idle"`
+	IdleTimeout int    `yaml:"IdleTimeout"`
 }
 
 type MongodbCfg struct {
@@ -73,16 +73,14 @@ func InitLog(setting *Config, redisCli *redis.Client) error {
 		logrus.SetFormatter(&logrus.TextFormatter{})
 	} else if setting.Log.LogPath != "" {
 		logFile := path.Join(setting.Log.LogPath, setting.ProjectName+".log")
-		if err == nil {
-			logout := &lumberjack.Logger{
-				Filename:   logFile,
-				MaxSize:    30,    // 日志文件最大size, 单位是MB
-				MaxBackups: 2,     // 最大过期日志保留的个数
-				MaxAge:     60,    // 保留过期文件的最大时间间隔，单位是天
-				Compress:   false, // 是否需要压缩滚动日志，使用的gzip压缩
-			}
-			logrus.SetOutput(logout)
+		logout := &lumberjack.Logger{
+			Filename:   logFile,
+			MaxSize:    30,    // 日志文件最大size, 单位是MB
+			MaxBackups: 2,     // 最大过期日志保留的个数
+			MaxAge:     60,    // 保留过期文件的最大时间间隔，单位是天
+			Compress:   false, // 是否需要压缩滚动日志，使用的gzip压缩
 		}
+		logrus.SetOutput(logout)
 	}
 
 	logrus.SetReportCaller(true)

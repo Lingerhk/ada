@@ -186,7 +186,7 @@ func (s *ADAServiceV2) GetThreat(ctx context.Context, in *v2.GetThreatReq) (*v2.
 		FieldData:  ae.FieldData,
 		AttackFlow: getAttackFlow(s.env, ae.FlowId, ae.FieldData),
 		Suggestion: ad.Suggestion,
-		Reference:  ad.Reference,
+		References: ad.References,
 		Remark:     ae.Remark,
 	}
 

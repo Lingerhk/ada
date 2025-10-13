@@ -4,7 +4,7 @@ import (
 	"testing"
 
 	"github.com/gobwas/glob"
-	"gopkg.in/yaml.v2"
+	"gopkg.in/yaml.v3"
 )
 
 var detection1 = `

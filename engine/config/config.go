@@ -13,7 +13,7 @@ import (
 	"github.com/natefinch/lumberjack"
 	"github.com/redis/go-redis/v9"
 	"github.com/sirupsen/logrus"
-	"gopkg.in/yaml.v2"
+	"gopkg.in/yaml.v3"
 )
 
 type LogCfg struct {
@@ -23,10 +23,10 @@ type LogCfg struct {
 }
 
 type RedisCfg struct {
-	URI         string        `yaml:"URI"`
-	Active      int           `yaml:"Active"`
-	Idle        int           `yaml:"Idle"`
-	IdleTimeout time.Duration `yaml:"IdleTimeout"`
+	URI         string `yaml:"URI"`
+	Active      int    `yaml:"Active"`
+	Idle        int    `yaml:"Idle"`
+	IdleTimeout int    `yaml:"IdleTimeout"`
 }
 
 type MongodbCfg struct {

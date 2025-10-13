@@ -9,7 +9,7 @@ import (
 
 	logger "github.com/sirupsen/logrus"
 
-	"gopkg.in/yaml.v2"
+	"gopkg.in/yaml.v3"
 )
 
 // RuleHandle is a meta object containing all fields from raw yaml, but is enhanced to also

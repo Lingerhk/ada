@@ -19,7 +19,7 @@ import (
 	"github.com/natefinch/lumberjack"
 	"github.com/redis/go-redis/v9"
 	logger "github.com/sirupsen/logrus"
-	"gopkg.in/yaml.v2"
+	"gopkg.in/yaml.v3"
 )
 
 const (

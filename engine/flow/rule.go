@@ -13,7 +13,7 @@ import (
 	"strings"
 
 	logger "github.com/sirupsen/logrus"
-	"gopkg.in/yaml.v2"
+	"gopkg.in/yaml.v3"
 )
 
 var eventTypes = []string{common.EventTypeCount, common.EventTypeMultiEve, common.EventTypeMultiPkt, common.EventTypeMultiEvePkt}
