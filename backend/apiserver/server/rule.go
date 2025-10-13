@@ -3,7 +3,6 @@ package server
 import (
 	"ada/backend/apiserver/config"
 	"ada/backend/model"
-	"encoding/json"
 	"fmt"
 	"strings"
 	"time"
@@ -254,27 +253,6 @@ func LevelIntToString(level int32) string {
 		return val
 	}
 	return "medium"
-}
-
-// Helper: Parse JSON detection string to ActivityDetection
-func ParseDetectionJSON(detectionJSON string) (model.ActivityDetection, error) {
-	var detection model.ActivityDetection
-	err := json.Unmarshal([]byte(detectionJSON), &detection)
-	if err != nil {
-		logger.Errorf("Failed to parse detection JSON: %v", err)
-		return nil, err
-	}
-	return detection, nil
-}
-
-// Helper: Convert ActivityDetection to JSON string
-func DetectionToJSON(detection model.ActivityDetection) (string, error) {
-	data, err := json.Marshal(detection)
-	if err != nil {
-		logger.Errorf("Failed to marshal detection: %v", err)
-		return "", err
-	}
-	return string(data), nil
 }
 
 // GetAllRuleTags returns all unique tags from AlertRule and AlertActivityRule collections

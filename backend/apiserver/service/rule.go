@@ -1,6 +1,7 @@
 package service
 
 import (
+	"bytes"
 	"context"
 
 	v2 "ada/backend/apiserver/api/v2"
@@ -12,7 +13,44 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
+	"gopkg.in/yaml.v3"
 )
+
+// Helper: Parse YAML string to AlertDetection
+func parseAlertDetectionYAML(detectionStr string) (model.AlertDetection, error) {
+	var detection model.AlertDetection
+	err := yaml.Unmarshal([]byte(detectionStr), &detection)
+	if err != nil {
+		logger.Errorf("Failed to parse detection YAML: %v", err)
+		return model.AlertDetection{}, err
+	}
+	return detection, nil
+}
+
+// Helper: Parse YAML string to ActivityDetection
+func parseActivityDetectionYAML(detectionStr string) (model.ActivityDetection, error) {
+	var detection model.ActivityDetection
+	err := yaml.Unmarshal([]byte(detectionStr), &detection)
+	if err != nil {
+		logger.Errorf("Failed to parse detection YAML: %v", err)
+		return model.ActivityDetection{}, err
+	}
+	return detection, nil
+}
+
+// Helper: Convert AlertDetection/ActivityDetection to YAML string
+func detectionToYAML(detection any) (string, error) {
+	buf := new(bytes.Buffer)
+	encoder := yaml.NewEncoder(buf)
+	encoder.SetIndent(4) // 设置为 4 个空格缩进
+	defer encoder.Close()
+	if err := encoder.Encode(detection); err != nil {
+		logger.Errorf("Failed to marshal detection to YAML: %v", err)
+		return "", err
+	}
+
+	return buf.String(), nil
+}
 
 // Alert Rule methods
 
@@ -53,6 +91,11 @@ func (s *ADAServiceV2) ListAlertRule(ctx context.Context, in *v2.ListAlertRuleRe
 			tags = []string{}
 		}
 
+		detectionStr, err := detectionToYAML(rule.Detection)
+		if err != nil {
+			logger.Errorf("Failed to marshal detection to YAML: %v", err)
+		}
+
 		ruleInfo := &v2.AlertRuleInfo{
 			ID:          rule.ID,
 			Title:       rule.Title,
@@ -62,9 +105,10 @@ func (s *ADAServiceV2) ListAlertRule(ctx context.Context, in *v2.ListAlertRuleRe
 			Status:      rule.Status,
 			Tags:        tags,
 			Logsource:   rule.Logsource,
+			Detection:   detectionStr,
 			Type:        rule.Type,
 			Author:      rule.Author,
-			Reference:   rule.Reference,
+			References:  rule.References,
 			Suggestion:  rule.Suggestion,
 			AutoBlock:   rule.AutoBlock,
 			CreateTm:    rule.CreateTm.Format("2006-01-02 15:04:05"),
@@ -83,8 +127,8 @@ func (s *ADAServiceV2) ListAlertRule(ctx context.Context, in *v2.ListAlertRuleRe
 }
 
 func (s *ADAServiceV2) AddAlertRule(ctx context.Context, in *v2.AddAlertRuleReq) (*v2.AddAlertRuleReply, error) {
-	// Parse detection JSON
-	detection, err := server.ParseDetectionJSON(in.Detection)
+	// Parse detection YAML
+	detection, err := parseAlertDetectionYAML(in.Detection)
 	if err != nil {
 		return nil, status.Error(codes.InvalidArgument, s.I18n("Threat.AlertRule.InvalidDetectionFormat"))
 	}
@@ -97,30 +141,12 @@ func (s *ADAServiceV2) AddAlertRule(ctx context.Context, in *v2.AddAlertRuleReq)
 		Status:      in.Status,
 		Tags:        in.Tags,
 		Logsource:   in.Logsource,
-		Detection: model.AlertDetection{
-			EventType: detection["event_type"].(string),
-			MatchBy:   detection["match_by"].(string),
-		},
-		Type:       in.Type,
-		Reference:  in.Reference,
-		Suggestion: in.Suggestion,
-		Author:     in.Author,
-		AutoBlock:  in.AutoBlock,
-	}
-
-	// Handle optional fields in detection
-	if winSize, ok := detection["win_size"].(float64); ok {
-		rule.Detection.WinSize = int64(winSize)
-	}
-	if sorted, ok := detection["sorted"].(bool); ok {
-		rule.Detection.Sorted = sorted
-	}
-	if sigmaRules, ok := detection["sigma_rules"].([]interface{}); ok {
-		for _, sr := range sigmaRules {
-			if s, ok := sr.(string); ok {
-				rule.Detection.SigmaRules = append(rule.Detection.SigmaRules, s)
-			}
-		}
+		Detection:   detection,
+		Type:        in.Type,
+		References:  in.References,
+		Suggestion:  in.Suggestion,
+		Author:      in.Author,
+		AutoBlock:   in.AutoBlock,
 	}
 
 	err = server.AddAlertRule(s.env, rule)
@@ -171,7 +197,7 @@ func (s *ADAServiceV2) UpdateAlertRule(ctx context.Context, in *v2.UpdateAlertRu
 		updates["logsource"] = in.Logsource
 	}
 	if in.Detection != "" {
-		detection, err := server.ParseDetectionJSON(in.Detection)
+		detection, err := parseAlertDetectionYAML(in.Detection)
 		if err != nil {
 			return nil, status.Error(codes.InvalidArgument, s.I18n("Threat.AlertRule.InvalidDetectionFormat"))
 		}
@@ -180,8 +206,8 @@ func (s *ADAServiceV2) UpdateAlertRule(ctx context.Context, in *v2.UpdateAlertRu
 	if in.Type != "" {
 		updates["type"] = in.Type
 	}
-	if in.Reference != "" {
-		updates["reference"] = in.Reference
+	if len(in.References) > 0 {
+		updates["references"] = in.References
 	}
 	if in.Suggestion != "" {
 		updates["suggestion"] = in.Suggestion
@@ -328,6 +354,14 @@ func (s *ADAServiceV2) ListActivityRule(ctx context.Context, in *v2.ListActivity
 			uniqueFields = []string{}
 		}
 
+		// Serialize detection to YAML string
+		detectionStr := ""
+		if rule.Detection != nil {
+			if data, err := detectionToYAML(rule.Detection); err == nil {
+				detectionStr = string(data)
+			}
+		}
+
 		ruleInfo := &v2.ActivityRuleInfo{
 			ID:           rule.ID,
 			Title:        rule.Title,
@@ -336,7 +370,8 @@ func (s *ADAServiceV2) ListActivityRule(ctx context.Context, in *v2.ListActivity
 			Status:       rule.Status,
 			Tags:         tags,
 			Logsource:    rule.Logsource,
-			Reference:    rule.Reference,
+			References:   rule.References,
+			Detection:    detectionStr,
 			RdxKey:       rule.RdxKey,
 			Fields:       fields,
 			UniqueFields: uniqueFields,
@@ -363,11 +398,11 @@ func (s *ADAServiceV2) GetActivityRule(ctx context.Context, in *v2.GetActivityRu
 		return nil, status.Error(codes.NotFound, s.I18n("Threat.ActivityRule.NotFound"))
 	}
 
-	// Convert detection to JSON
-	detectionJSON, err := server.DetectionToJSON(rule.Detection)
-	if err != nil {
-		logger.Errorf("Failed to convert detection to JSON: %v", err)
-		return nil, status.Error(codes.Internal, s.I18n("Threat.ActivityRule.GetDetailFailed"))
+	detectionStr := ""
+	if rule.Detection != nil {
+		if data, err := detectionToYAML(rule.Detection); err == nil {
+			detectionStr = string(data)
+		}
 	}
 
 	return &v2.GetActivityRuleReply{
@@ -378,8 +413,8 @@ func (s *ADAServiceV2) GetActivityRule(ctx context.Context, in *v2.GetActivityRu
 		Status:       rule.Status,
 		Tags:         rule.Tags,
 		Logsource:    rule.Logsource,
-		Reference:    rule.Reference,
-		Detection:    detectionJSON,
+		References:   rule.References,
+		Detection:    detectionStr,
 		RdxKey:       rule.RdxKey,
 		Fields:       rule.Fields,
 		UniqueFields: rule.UniqueFields,
@@ -390,8 +425,8 @@ func (s *ADAServiceV2) GetActivityRule(ctx context.Context, in *v2.GetActivityRu
 }
 
 func (s *ADAServiceV2) AddActivityRule(ctx context.Context, in *v2.AddActivityRuleReq) (*v2.AddActivityRuleReply, error) {
-	// Parse detection JSON
-	detection, err := server.ParseDetectionJSON(in.Detection)
+	// Parse detection YAML
+	detection, err := parseActivityDetectionYAML(in.Detection)
 	if err != nil {
 		return nil, status.Error(codes.InvalidArgument, s.I18n("Threat.ActivityRule.InvalidDetectionFormat"))
 	}
@@ -404,7 +439,7 @@ func (s *ADAServiceV2) AddActivityRule(ctx context.Context, in *v2.AddActivityRu
 		Status:       in.Status,
 		Tags:         in.Tags,
 		Logsource:    in.Logsource,
-		Reference:    in.Reference,
+		References:   in.References,
 		Detection:    detection,
 		RdxKey:       in.RdxKey,
 		Fields:       in.Fields,
@@ -455,11 +490,11 @@ func (s *ADAServiceV2) UpdateActivityRule(ctx context.Context, in *v2.UpdateActi
 	if in.Logsource != "" {
 		updates["logsource"] = in.Logsource
 	}
-	if in.Reference != "" {
-		updates["reference"] = in.Reference
+	if len(in.References) > 0 {
+		updates["references"] = in.References
 	}
 	if in.Detection != "" {
-		detection, err := server.ParseDetectionJSON(in.Detection)
+		detection, err := parseActivityDetectionYAML(in.Detection)
 		if err != nil {
 			return nil, status.Error(codes.InvalidArgument, s.I18n("Threat.ActivityRule.InvalidDetectionFormat"))
 		}
