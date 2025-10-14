@@ -30,6 +30,14 @@ var URLEventMap = map[string]string{
 	"/" + serviceName + "/" + "UpdateThreatBlock":     "更新威胁阻断",
 	"/" + serviceName + "/" + "DeleteThreatBlock":     "删除威胁阻断",
 
+	// 规则管理
+	"/" + serviceName + "/" + "AddAlertRule":     "添加告警规则",
+	"/" + serviceName + "/" + "UpdateAlertRule":  "更新告警规则",
+	"/" + serviceName + "/" + "DeleteAlertRule":  "删除告警规则",
+	"/" + serviceName + "/" + "AddActivityRule":  "添加活动规则",
+	"/" + serviceName + "/" + "UpdateActivityRule": "更新活动规则",
+	"/" + serviceName + "/" + "DeleteActivityRule": "删除活动规则",
+
 	// scanrisk主动检测
 	"/" + serviceName + "/" + "AddScanTask":     "添加扫描任务",
 	"/" + serviceName + "/" + "RecheckScanTask": "执行立即检测任务",
@@ -147,6 +155,9 @@ var moduleMap = map[string][]string{
 		"DeleteSensitiveEntry", "ListThreatWhitelist", "GetThreatWhitelistField",
 		"AddThreatWhitelist", "UpdateThreatWhitelist", "DeleteThreatWhitelist",
 		"ListThreatBlock", "AddThreatBlock", "UpdateThreatBlock", "DeleteThreatBlock",
+		"ListAlertRule", "AddAlertRule", "UpdateAlertRule", "DeleteAlertRule", "GetAlertTypes", "GetAlertRuleTags",
+		"ListActivityRule", "GetActivityRule", "AddActivityRule", "UpdateActivityRule", "DeleteActivityRule",
+		"GetActivityRuleFields", "GetActivityRuleUniqueFields",
 	},
 	// Threat Detection Dashboard
 	"ThreatDashboard": {

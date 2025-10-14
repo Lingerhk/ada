@@ -65,7 +65,7 @@ func main() {
 		Logsource:   "flow",
 		Detection:   string(detectionJSON),
 		Type:        "test_reload",
-		Reference:   "https://github.com/test",
+		References:  []string{"https://github.com/test"},
 		Suggestion:  "This is a test rule",
 		Author:      "reload_test",
 		AutoBlock:   false,
