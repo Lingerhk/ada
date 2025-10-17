@@ -34,12 +34,14 @@ func (s *ADAServiceV2) ListNotify(ctx context.Context, in *v2.ListNotifyReq) (*v
 
 	for _, n := range notifyList {
 		ret.List = append(ret.List, &v2.ListNotifyReply_Details{
-			ID:       n.ID.Hex(),
-			Title:    n.Title,
-			MsgType:  n.MsgType,
-			Status:   n.Status,
-			Params:   n.Params,
-			CreateTm: n.CreateTm.String(),
+			ID:        n.ID.Hex(),
+			Title:     n.Title,
+			MsgType:   n.MsgType,
+			EventType: n.EventType,
+			Desc:      n.Desc,
+			Status:    n.Status,
+			Params:    n.Params,
+			CreateTm:  n.CreateTm.String(),
 		})
 	}
 
