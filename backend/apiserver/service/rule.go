@@ -161,6 +161,11 @@ func (s *ADAServiceV2) AddAlertRule(ctx context.Context, in *v2.AddAlertRuleReq)
 		// Don't fail the request, just log the error
 	}
 
+	// Generate version.txt file after rule is written
+	if err := server.GenerateVersionFile(); err != nil {
+		logger.Errorf("Failed to generate version file: %v", err)
+	}
+
 	// Send reload signal to engine via Redis
 	if err := server.SendReloadSignalToEngine(s.env); err != nil {
 		logger.Errorf("Failed to send reload signal to engine: %v", err)
@@ -232,6 +237,11 @@ func (s *ADAServiceV2) UpdateAlertRule(ctx context.Context, in *v2.UpdateAlertRu
 	} else {
 		if err := server.WriteAlertRuleToFile(updatedRule); err != nil {
 			logger.Errorf("Failed to write updated alert rule to file: %v", err)
+		}
+
+		// Generate version.txt file after rule is updated
+		if err := server.GenerateVersionFile(); err != nil {
+			logger.Errorf("Failed to generate version file: %v", err)
 		}
 
 		// Send SIGHUP to engine to reload rules
@@ -458,6 +468,11 @@ func (s *ADAServiceV2) AddActivityRule(ctx context.Context, in *v2.AddActivityRu
 		logger.Errorf("Failed to write activity rule to file: %v", err)
 	}
 
+	// Generate version.txt file after rule is written
+	if err := server.GenerateVersionFile(); err != nil {
+		logger.Errorf("Failed to generate version file: %v", err)
+	}
+
 	// Send SIGHUP to engine to reload rules
 	if err := server.SendReloadSignalToEngine(s.env); err != nil {
 		logger.Errorf("Failed to send SIGHUP to engine: %v", err)
@@ -526,6 +541,11 @@ func (s *ADAServiceV2) UpdateActivityRule(ctx context.Context, in *v2.UpdateActi
 	} else {
 		if err := server.WriteActivityRuleToFile(updatedRule); err != nil {
 			logger.Errorf("Failed to write updated activity rule to file: %v", err)
+		}
+
+		// Generate version.txt file after rule is updated
+		if err := server.GenerateVersionFile(); err != nil {
+			logger.Errorf("Failed to generate version file: %v", err)
 		}
 
 		// Send SIGHUP to engine to reload rules

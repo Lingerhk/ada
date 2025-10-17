@@ -371,6 +371,8 @@ func NewSelectionBranch(expr any, noCollapseWS bool) (Branch, error) {
 			selections = append(selections, b)
 		}
 		return NodeSimpleOr(selections).Reduce(), nil
+	case map[string]any:
+		return newSelectionFromMap(v, noCollapseWS)
 	case map[any]any:
 		return newSelectionFromMap(cleanUpInterfaceMap(v), noCollapseWS)
 	default:
