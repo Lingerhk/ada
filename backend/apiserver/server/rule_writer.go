@@ -228,5 +228,39 @@ func SyncAllRulesToDisk(e *config.Env) error {
 	}
 
 	logger.Infof("Synced %d alert rules and %d activity rules to disk", len(alertRules), len(activityRules))
+
+	// Generate version.txt file after all rules are written
+	if err := GenerateVersionFile(); err != nil {
+		logger.Errorf("Failed to generate version file: %v", err)
+	} else {
+		logger.Info("Generated version.txt file")
+	}
+
+	return nil
+}
+
+// GenerateVersionFile creates a version.txt file with current timestamp and build time
+func GenerateVersionFile() error {
+	// Create rules directory if it doesn't exist
+	rulesDir := filepath.Join(common.ROOT_PATH, "rules")
+	if err := os.MkdirAll(rulesDir, 0755); err != nil {
+		return fmt.Errorf("failed to create rules directory: %v", err)
+	}
+
+	// Get current time
+	now := time.Now()
+	timestamp := now.Unix()
+	buildTime := now.Format("2006-01-02 15:04:05")
+
+	// Create version file content
+	versionContent := fmt.Sprintf("version: %d\nbuild_time: %s\n", timestamp, buildTime)
+
+	// Write version.txt file
+	versionFilePath := filepath.Join(rulesDir, "version.txt")
+	if err := os.WriteFile(versionFilePath, []byte(versionContent), 0644); err != nil {
+		return fmt.Errorf("failed to write version file: %v", err)
+	}
+
+	logger.Infof("Generated version.txt with timestamp: %d, build_time: %s", timestamp, buildTime)
 	return nil
 }
