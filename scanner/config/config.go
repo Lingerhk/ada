@@ -1,7 +1,7 @@
 package config
 
 import (
-	logrusredis "ada/infra/loghook"
+	"ada/infra/loghook"
 	"ada/infra/mongo"
 	"context"
 	"fmt"
@@ -49,7 +49,7 @@ type Env struct {
 	MongoCli mongo.DBAdaptor
 }
 
-func InitLog(setting *Config, redisCli *redis.Client) error {
+func InitLog(setting *Config, mongoCli mongo.DBAdaptor) error {
 	logrus.SetFormatter(&logrus.JSONFormatter{})
 	if setting.Log.LogLevel == "" {
 		return nil
@@ -66,20 +66,19 @@ func InitLog(setting *Config, redisCli *redis.Client) error {
 		logrus.SetFormatter(&logrus.TextFormatter{})
 	} else if setting.Log.LogPath != "" {
 		logFile := path.Join(setting.Log.LogPath, setting.ProjectName+".log")
-		if err == nil {
-			logout := &lumberjack.Logger{
-				Filename:   logFile,
-				MaxSize:    30,    // 日志文件最大size, 单位是MB
-				MaxBackups: 2,     // 最大过期日志保留的个数
-				MaxAge:     60,    // 保留过期文件的最大时间间隔，单位是天
-				Compress:   false, // 是否需要压缩滚动日志，使用的gzip压缩
-			}
-			logrus.SetOutput(logout)
+		logout := &lumberjack.Logger{
+			Filename:   logFile,
+			MaxSize:    30,    // 日志文件最大size, 单位是MB
+			MaxBackups: 2,     // 最大过期日志保留的个数
+			MaxAge:     60,    // 保留过期文件的最大时间间隔，单位是天
+			Compress:   false, // 是否需要压缩滚动日志，使用的gzip压缩
 		}
+		logrus.SetOutput(logout)
 	}
 
 	logrus.SetReportCaller(true)
-	hook := logrusredis.NewLogrusRedis(redisCli, "ada:logs_queue:scanner")
+	// Use MongoDB hook instead of Redis
+	hook := loghook.NewLogrusMongoHook(mongoCli, "scanner")
 	logrus.AddHook(hook)
 	return nil
 }
@@ -122,13 +121,13 @@ func InitMongoClient(setting *Config) (mongo.DBAdaptor, error) {
 func Init(confPath string) (*Env, error) {
 	content, err := os.ReadFile(confPath)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 
 	var setting Config
 	err = yaml.Unmarshal(content, &setting)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 
 	redisCli, err := InitRedisClient(&setting)
@@ -136,12 +135,12 @@ func Init(confPath string) (*Env, error) {
 		return nil, err
 	}
 
-	err = InitLog(&setting, redisCli)
+	mongoCli, err := InitMongoClient(&setting)
 	if err != nil {
 		return nil, err
 	}
 
-	mongoCli, err := InitMongoClient(&setting)
+	err = InitLog(&setting, mongoCli)
 	if err != nil {
 		return nil, err
 	}

@@ -577,3 +577,18 @@ type ExportTask struct {
 func (c *ExportTask) CollectName() string {
 	return "tb_export_task"
 }
+
+// SystemLogs represents system log for API responses
+// Note: Time is stored as string (RFC3339 format) for JSON serialization
+type SystemLogs struct {
+	Time   string `bson:"time" json:"time"`
+	Level  string `bson:"level" json:"level"`
+	Module string `bson:"module" json:"module"`
+	Msg    string `bson:"msg" json:"msg"`
+	Func   string `bson:"func" json:"func"`
+	File   string `bson:"file" json:"file"`
+}
+
+func (s *SystemLogs) CollectName() string {
+	return "tb_system_logs"
+}

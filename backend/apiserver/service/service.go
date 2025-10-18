@@ -10,6 +10,7 @@ import (
 	"os/signal"
 	"regexp"
 	"runtime"
+	"slices"
 	"strconv"
 	"strings"
 	"syscall"
@@ -179,15 +180,7 @@ func (s *GrpcService) handle() grpc.UnaryServerInterceptor {
 	return func(ctx context.Context, req any, args *grpc.UnaryServerInfo,
 		handler grpc.UnaryHandler) (resp any, err error) {
 		// Check if grpc FullMethod is in the whitelist first
-		isWhitelisted := false
-		for _, path := range _whitelist {
-			if path == args.FullMethod {
-				isWhitelisted = true
-				break
-			}
-		}
-
-		if isWhitelisted {
+		if slices.Contains(_whitelist, args.FullMethod) {
 			return handler(ctx, req) // Pass original context for whitelisted methods
 		}
 

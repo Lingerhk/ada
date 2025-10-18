@@ -1,7 +1,7 @@
 package config
 
 import (
-	logrusredis "ada/infra/loghook"
+	"ada/infra/loghook"
 	"ada/infra/mongo"
 	"context"
 	"fmt"
@@ -67,7 +67,7 @@ type Env struct {
 	EsCli    *elasticsearch.Client
 }
 
-func InitLog(setting *Config, redisCli *redis.Client, moduleName string) error {
+func InitLog(setting *Config, mongoCli mongo.DBAdaptor, moduleName string) error {
 	logrus.SetFormatter(&logrus.JSONFormatter{})
 	if setting.Log.LogLevel == "" {
 		return nil
@@ -96,7 +96,8 @@ func InitLog(setting *Config, redisCli *redis.Client, moduleName string) error {
 	}
 
 	logrus.SetReportCaller(true)
-	hook := logrusredis.NewLogrusRedis(redisCli, "ada:logs_queue:task_"+moduleName)
+	// Use MongoDB hook instead of Redis
+	hook := loghook.NewLogrusMongoHook(mongoCli, "task_"+moduleName)
 	logrus.AddHook(hook)
 	return nil
 }
@@ -158,13 +159,13 @@ func InitElasticsearch(setting *Config) (*elasticsearch.Client, error) {
 func Init(confPath, moduleName string) (*Env, error) {
 	content, err := os.ReadFile(confPath)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 
 	var setting Config
 	err = yaml.Unmarshal(content, &setting)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 
 	redisCli, err := InitRedisClient(&setting)
@@ -172,12 +173,12 @@ func Init(confPath, moduleName string) (*Env, error) {
 		return nil, err
 	}
 
-	err = InitLog(&setting, redisCli, moduleName)
+	mongoCli, err := InitMongoClient(&setting)
 	if err != nil {
 		return nil, err
 	}
 
-	mongoCli, err := InitMongoClient(&setting)
+	err = InitLog(&setting, mongoCli, moduleName)
 	if err != nil {
 		return nil, err
 	}

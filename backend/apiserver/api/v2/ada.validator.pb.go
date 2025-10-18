@@ -435,6 +435,44 @@ func (this *ListAuditLogReply) Validate() error {
 func (this *ListAuditLogReply_Details) Validate() error {
 	return nil
 }
+
+var _regex_ListSystemLogsReq_Level = regexp.MustCompile(`error|warn`)
+var _regex_ListSystemLogsReq_Module = regexp.MustCompile(`apiserver|task_worker|task_server|scanner|engine`)
+
+func (this *ListSystemLogsReq) Validate() error {
+	if !(this.PageIdx > 0) {
+		return github_com_mwitkow_go_proto_validators.FieldError("PageIdx", fmt.Errorf(`value '%v' must be greater than '0'`, this.PageIdx))
+	}
+	for _, item := range this.Level {
+		if !_regex_ListSystemLogsReq_Level.MatchString(item) {
+			return github_com_mwitkow_go_proto_validators.FieldError("Level", fmt.Errorf(`value '%v' must be a string conforming to regex "error|warn"`, item))
+		}
+	}
+	for _, item := range this.Module {
+		if !_regex_ListSystemLogsReq_Module.MatchString(item) {
+			return github_com_mwitkow_go_proto_validators.FieldError("Module", fmt.Errorf(`value '%v' must be a string conforming to regex "apiserver|task_worker|task_server|scanner|engine"`, item))
+		}
+	}
+	return nil
+}
+func (this *ListSystemLogsReply) Validate() error {
+	if this.Page != nil {
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Page); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Page", err)
+		}
+	}
+	for _, item := range this.List {
+		if item != nil {
+			if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(item); err != nil {
+				return github_com_mwitkow_go_proto_validators.FieldError("List", err)
+			}
+		}
+	}
+	return nil
+}
+func (this *ListSystemLogsReply_Details) Validate() error {
+	return nil
+}
 func (this *GetLicenseReq) Validate() error {
 	return nil
 }
