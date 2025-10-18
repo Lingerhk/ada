@@ -84,6 +84,9 @@ service ADA {
   // 日志审计
   rpc ListAuditLog(ListAuditLogReq) returns (ListAuditLogReply) {} //获取审计日志
 
+  // 系统日志
+  rpc ListSystemLogs(ListSystemLogsReq) returns (ListSystemLogsReply) {} //获取系统错误日志
+
   ////////////////////////////////
   // threat威胁检测dashboard
   rpc ThreatTops(ThreatTopsReq) returns (ThreatTopsReply) {} // 威胁事件/行为top10
@@ -654,6 +657,31 @@ message ListAuditLogReply {
     string CreateTm = 7;
   }
   repeated Details List = 2;
+  bool exhausted = 3; // if this is last page
+}
+
+message ListSystemLogsReq {
+  int32 pageIdx = 1 [(validator.field) = {int_gt: 0}];
+  int32 pageSize = 2;
+  repeated string level = 3 [(validator.field) = {regex: "error|warn"}]; // error, warn
+  repeated string module = 4 [(validator.field) = {regex: "apiserver|task_worker|task_server|scanner|engine"}]; // module filter
+  string search = 5; // search in msg field
+  string startTm = 6; // optional, start time
+  string endTm = 7; // optional, end time
+  int32 sortTime = 8; // 1: ascending, -1: descending, default -1
+}
+
+message ListSystemLogsReply {
+  ModelPage page = 1;
+  message Details {
+    string time = 1; // log timestamp
+    string level = 2; // error|warn
+    string module = 3; // apiserver|task_worker|task_server|scanner|engine
+    string msg = 4; // log message
+    string func = 5; // function name
+    string file = 6; // file and line number
+  }
+  repeated Details list = 2;
   bool exhausted = 3; // if this is last page
 }
 

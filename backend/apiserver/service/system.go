@@ -17,6 +17,7 @@ import (
 	"os/exec"
 	"path"
 	"regexp"
+	"slices"
 	"strconv"
 	"strings"
 	"time"
@@ -119,14 +120,7 @@ func (s *ADAServiceV2) UpdateSystemIcon(ctx context.Context, in *v2.UpdateSystem
 	contentType := http.DetectContentType(iconByte)
 	fileExt := strings.Split(contentType, "/")[1]
 
-	allowExt := false
-	for _, iconExt := range iconTypes {
-		if strings.ToLower(fileExt) == iconExt {
-			allowExt = true
-			break
-		}
-	}
-	if !allowExt {
+	if !slices.Contains(iconTypes, strings.ToLower(fileExt)) {
 		logger.Warnf("invalid icon type %s", fileExt)
 		return ret, status.Error(codes.Internal, s.I18n("System.UpdateIconInvalidType"))
 	}
@@ -334,10 +328,11 @@ func (s *ADAServiceV2) ListAuditLog(ctx context.Context, in *v2.ListAuditLogReq)
 func (s *ADAServiceV2) NetworkDebug(ctx context.Context, in *v2.NetworkDebugReq) (*v2.NetworkDebugReply, error) {
 	//校验提交参数非法
 	// 如果存在特殊字符，抛出异常，防止系统命令执行
-	for _, ch := range []string{" ", "|", "&", ">", ">>", ";", ",", "^", "*", "$", "%", "/", ".."} {
-		if strings.Contains(in.Target, ch) {
-			return nil, status.Error(codes.InvalidArgument, s.I18n("System.NetworkDebug.InvalidTarget"))
-		}
+	prohibitedChars := []string{" ", "|", "&", ">", ">>", ";", ",", "^", "*", "$", "%", "/", ".."}
+	if slices.ContainsFunc(prohibitedChars, func(ch string) bool {
+		return strings.Contains(in.Target, ch)
+	}) {
+		return nil, status.Error(codes.InvalidArgument, s.I18n("System.NetworkDebug.InvalidTarget"))
 	}
 	if len(in.Target) > 25 {
 		return nil, status.Error(codes.InvalidArgument, s.I18n("System.NetworkDebug.TargetTooLong"))
@@ -468,4 +463,35 @@ func (s *ADAServiceV2) SetSystemStatsCfg(ctx context.Context, in *v2.SetSystemSt
 	ret.Result = RESP_SUCCESS
 
 	return &ret, nil
+}
+
+func (s *ADAServiceV2) ListSystemLogs(ctx context.Context, in *v2.ListSystemLogsReq) (*v2.ListSystemLogsReply, error) {
+	ret := &v2.ListSystemLogsReply{
+		Page:      &v2.ModelPage{PageSize: in.PageSize, PageIdx: in.PageIdx, Total: 0},
+		Exhausted: true,
+	}
+
+	var limit, offset = in.PageSize, in.PageSize * (in.PageIdx - 1)
+	logList, total, err := server.FindAllSystemLogs(s.env, in.Level, in.Module, in.Search, in.StartTm, in.EndTm, in.SortTime, limit, offset)
+	if err != nil {
+		logger.Errorf("find system logs failed,err:%v", err)
+		return ret, status.Error(codes.Internal, s.I18n("QueryFailed"))
+	}
+
+	for _, log := range logList {
+		ret.List = append(ret.List, &v2.ListSystemLogsReply_Details{
+			Time:   log.Time,
+			Level:  log.Level,
+			Module: log.Module,
+			Msg:    log.Msg,
+			Func:   log.Func,
+			File:   log.File,
+		})
+	}
+
+	ret.Page.Total = int32(total)
+	if (limit + offset) < int32(total) {
+		ret.Exhausted = false
+	}
+	return ret, nil
 }

@@ -1,7 +1,7 @@
 package config
 
 import (
-	logrusredis "ada/infra/loghook"
+	"ada/infra/loghook"
 	"ada/infra/mongo"
 	"context"
 	"fmt"
@@ -56,7 +56,7 @@ type Env struct {
 	MongoCli mongo.DBAdaptor
 }
 
-func InitLog(setting *Config, redisCli *redis.Client) error {
+func InitLog(setting *Config, mongoCli mongo.DBAdaptor) error {
 	logrus.SetFormatter(&logrus.JSONFormatter{})
 	if setting.Log.LogLevel == "" {
 		return nil
@@ -84,7 +84,8 @@ func InitLog(setting *Config, redisCli *redis.Client) error {
 	}
 
 	logrus.SetReportCaller(true)
-	hook := logrusredis.NewLogrusRedis(redisCli, "ada:logs_queue:apiserver")
+	// Use MongoDB hook instead of Redis
+	hook := loghook.NewLogrusMongoHook(mongoCli, "apiserver")
 	logrus.AddHook(hook)
 	return nil
 }
@@ -127,13 +128,13 @@ func InitMongoClient(setting *Config) (mongo.DBAdaptor, error) {
 func Init(confPath string) (*Env, error) {
 	content, err := os.ReadFile(confPath)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 
 	var setting Config
 	err = yaml.Unmarshal(content, &setting)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 
 	redisCli, err := InitRedisClient(&setting)
@@ -141,12 +142,12 @@ func Init(confPath string) (*Env, error) {
 		return nil, err
 	}
 
-	err = InitLog(&setting, redisCli)
+	mongoCli, err := InitMongoClient(&setting)
 	if err != nil {
 		return nil, err
 	}
 
-	mongoCli, err := InitMongoClient(&setting)
+	err = InitLog(&setting, mongoCli)
 	if err != nil {
 		return nil, err
 	}

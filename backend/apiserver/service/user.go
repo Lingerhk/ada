@@ -21,7 +21,7 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-const tokenExpired = 60 * 5
+const tokenExpired = 60 * 12 // jwt token expire time in minutes
 const fileMaxSize = 512 * 1024
 const loginErrorExpire = 60 * 5 // 5 minutes for login error tracking
 
