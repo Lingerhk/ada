@@ -26,7 +26,7 @@
 
 static int zpot_set_socket_buffer_size(int socket_fd);
 static int zpot_get_bind_ip_and_port(const std::string & path, std::string &bind_ip, int * port);
-static int zpot_bind_local_udp_socket(int socket_fd, std::string local_ip, int port_number); // add by s0nnet.
+static int zpot_bind_local_udp_socket(int socket_fd, std::string local_ip, int port_number); // add by lingerhk.
 static int zpot_get_packet_body(int socket_fd, char * buffer, int bufsize);
 static int zpot_http_request(const std::string& url, std::string& response);
 
