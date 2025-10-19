@@ -1,0 +1,14 @@
+#/etc/systemd/system/adaegis.service
+
+[Unit]
+Description=ADAegis Monitor Service
+
+[Service]
+Type=simple
+Restart=always
+ExecStart=/home/adadmin/bin/monitor.sh
+User=root
+Group=root
+
+[Install]
+WantedBy=multi-user.target
