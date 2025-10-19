@@ -1,7 +1,3 @@
-// author: s0nnet
-// time: 2021-01-05
-// desc:
-
 package ldap
 
 import (

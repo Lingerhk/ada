@@ -1,6 +1,3 @@
-// author: s0nnet
-// time: 202-12-01
-
 package mongo
 
 import (

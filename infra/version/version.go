@@ -1,6 +1,3 @@
-// author: s0nnet
-// time: 2023-12-01
-
 package version
 
 import (
