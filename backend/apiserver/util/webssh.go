@@ -146,7 +146,7 @@ func (wss *WebSshStreamer) Stream(c *gin.Context) {
 
 		// 判断当前已打开的终端数，最多2个
 		if len(deviceInfoList) > 2 {
-			logger.Warnf("too many session opened, exit!", err)
+			logger.Warnf("too many session(%d) opened, exit!", len(deviceInfoList))
 			conn.Close()
 			return
 		}
