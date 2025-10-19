@@ -21,8 +21,8 @@ import (
 )
 
 const (
-	sshUser          = "adaegis"
-	sshPrivKey       = "/home/adaegis/.ssh/id_rsa"
+	sshUser          = "adadmin"
+	sshPrivKey       = "/home/adadmin/.ssh/id_rsa"
 	websshLockKey    = "ada:webssh:lock"
 	websshCounterKey = "ada:webssh:counter"
 )

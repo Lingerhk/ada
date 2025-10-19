@@ -1,7 +1,3 @@
-// author: adaegis
-// time: 2020-09-06
-// desc:
-
 package crypto
 
 import (

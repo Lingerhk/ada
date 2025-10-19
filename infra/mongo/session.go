@@ -1,6 +1,3 @@
-// author: adaegis
-// time: 2023-12-01
-
 package mongo
 
 import (

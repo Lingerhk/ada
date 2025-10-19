@@ -1,7 +1,3 @@
-// author: adaegis
-// time: 2020-09-01
-// desc:
-
 package file
 
 import (
