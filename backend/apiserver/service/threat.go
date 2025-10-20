@@ -46,9 +46,16 @@ func getAttackFlow(env *config.Env, flowId string, fieldData map[string]string) 
 		return &v2.AttackFlowReply{}
 	}
 
-	ret := v2.AttackFlowReply{Relates: attackFlow.Relates}
+	ret := v2.AttackFlowReply{
+		Desc:    attackFlow.Desc,
+		Relates: attackFlow.Relates,
+	}
 	for _, item := range attackFlow.Fields {
-		ret.Fields = append(ret.Fields, &v2.AttackFlowReply_Field{Item: item})
+		ret.Fields = append(ret.Fields, &v2.AttackFlowReply_Field{
+			Obj:   item.Obj,
+			Key:   item.Key,
+			Value: item.Value,
+		})
 	}
 
 	return &ret

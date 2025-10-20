@@ -712,20 +712,6 @@ func (this *ThreatTrendsReply) Validate() error {
 func (this *ThreatTrendsReply_Item) Validate() error {
 	return nil
 }
-func (this *AttackFlowReply) Validate() error {
-	for _, item := range this.Fields {
-		if item != nil {
-			if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(item); err != nil {
-				return github_com_mwitkow_go_proto_validators.FieldError("Fields", err)
-			}
-		}
-	}
-	return nil
-}
-func (this *AttackFlowReply_Field) Validate() error {
-	// Validation of proto3 map<> fields is unsupported.
-	return nil
-}
 func (this *ListThreatReq) Validate() error {
 	if !(this.PageIdx > 0) {
 		return github_com_mwitkow_go_proto_validators.FieldError("PageIdx", fmt.Errorf(`value '%v' must be greater than '0'`, this.PageIdx))
@@ -1503,7 +1489,25 @@ func (this *ListAlertRuleReq) Validate() error {
 	}
 	return nil
 }
+func (this *AttackFlowReply) Validate() error {
+	for _, item := range this.Fields {
+		if item != nil {
+			if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(item); err != nil {
+				return github_com_mwitkow_go_proto_validators.FieldError("Fields", err)
+			}
+		}
+	}
+	return nil
+}
+func (this *AttackFlowReply_Field) Validate() error {
+	return nil
+}
 func (this *AlertRuleInfo) Validate() error {
+	if this.AttackFlow != nil {
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.AttackFlow); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("AttackFlow", err)
+		}
+	}
 	return nil
 }
 func (this *ListAlertRuleReply) Validate() error {
@@ -1534,6 +1538,11 @@ func (this *AddAlertRuleReq) Validate() error {
 	if this.Detection == "" {
 		return github_com_mwitkow_go_proto_validators.FieldError("Detection", fmt.Errorf(`value '%v' must not be an empty string`, this.Detection))
 	}
+	if this.AttackFlow != nil {
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.AttackFlow); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("AttackFlow", err)
+		}
+	}
 	return nil
 }
 func (this *AddAlertRuleReply) Validate() error {
@@ -1542,6 +1551,11 @@ func (this *AddAlertRuleReply) Validate() error {
 func (this *UpdateAlertRuleReq) Validate() error {
 	if this.ID == "" {
 		return github_com_mwitkow_go_proto_validators.FieldError("ID", fmt.Errorf(`value '%v' must not be an empty string`, this.ID))
+	}
+	if this.AttackFlow != nil {
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.AttackFlow); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("AttackFlow", err)
+		}
 	}
 	return nil
 }

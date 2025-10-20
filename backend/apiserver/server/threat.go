@@ -272,55 +272,52 @@ func UpdateThreatDesc(e *config.Env, Id, typ string, switchVal bool) error {
 	return e.MongoCli.UpdateRaw(ad.CollectName(), query, &update, false)
 }
 
-// GetThreatDescByID 需要优化该处，修改为通用方法
+// GetThreatFlowByID 需要优化该处，修改为通用方法
 func GetThreatFlowByID(e *config.Env, flowId string, fieldData map[string]string) (*model.AttackFlow, error) {
 	ad := model.AlertRule{}
 	err, _ := e.MongoCli.FindOne(ad.CollectName(), bson.M{"_id": flowId}, &ad)
 	if err != nil {
-		logger.Errorf("get threat desc err:%v", err)
+		logger.Errorf("get threat attack_flow err:%v", err)
 		return nil, err
 	}
 
 	// 获取攻击流图: 根据tb_alert_desc表中AttackFlow的定义，从fieldData中获取对应的字段值
 	var attackInfo = model.AttackFlow{
-		Fields:  []map[string]string{},
+		Fields:  []model.FieldObj{},
 		Relates: ad.AttackFlow.Relates,
+		Desc:    ad.AttackFlow.Desc,
 	}
 
 	for _, item := range ad.AttackFlow.Fields {
-		f := make(map[string]string)
-		obj, ok := item["obj"]
-		if !ok {
+		// item is now a FieldObj struct with Obj, Key, Value fields
+		if item.Obj == "" || item.Key == "" {
 			continue
 		}
-		f["obj"] = obj
 
-		keys, ok := item["keys"]
-		if !ok {
-			continue
+		// Create a new FieldObj to store the extracted data
+		fieldObj := model.FieldObj{
+			Obj:   item.Obj,
+			Key:   item.Key,
+			Value: item.Value,
 		}
-		for _, key := range strings.Split(keys, ",") {
-			extracted := false
-			for fieldKey, fieldVal := range fieldData {
-				if strings.HasSuffix(fieldKey, key) {
-					// fieldKey格式: $s1.field_TargetUserName, 这里按field_截取
-					parts := strings.Split(fieldKey, ".field_")
-					if len(parts) != 2 {
-						continue
-					}
 
-					extracted = true
-					f["key"] = parts[1]
-					f["value"] = fieldVal
-					break
+		// Try to extract value from fieldData using the Key
+		for fieldKey, fieldVal := range fieldData {
+			if strings.HasSuffix(fieldKey, item.Key) {
+				// fieldKey格式: $s1.field_TargetUserName, 这里按field_截取
+				parts := strings.Split(fieldKey, ".field_")
+				if len(parts) != 2 {
+					continue
 				}
-			}
-			if extracted {
-				continue
+
+				// Update the key and value with extracted data
+				fieldObj.Key = parts[1]
+				fieldObj.Value = fieldVal
+				break
 			}
 		}
 
-		attackInfo.Fields = append(attackInfo.Fields, f)
+		attackInfo.Fields = append(attackInfo.Fields, fieldObj)
 	}
 
 	return &attackInfo, nil

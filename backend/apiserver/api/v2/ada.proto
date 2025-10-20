@@ -450,7 +450,7 @@ message UpdateDomainDataReply {
 
 message DeploySensorReq {
   string domainID = 1; // 域的ID
-  string dcHostname = 2; // DC Hostname 
+  string dcHostname = 2; // DC Hostname
 }
 
 message DeploySensorReply {
@@ -880,15 +880,6 @@ message ThreatTrendsReply{
     int32 total = 2; // 数量
   }
   repeated Item List = 1; // 条目列表
-}
-
-message AttackFlowReply{ // 攻击流图定义
-  message Field {
-    map<string, string> item = 1; // obj(支持ip/user/computer/dc), key, value. eg: {"obj":"ip","key":"$1.TargetUsername","value":"192.168.2.3"}
-  }
-  repeated Field fields = 1;
-  repeated string relates = 2;
-  string desc = 3;
 }
 
 message ListThreatReq{
@@ -1684,6 +1675,18 @@ message ListAlertRuleReq {
   int32 sortTm = 8; // 时间排序: 1升序, -1降序
 }
 
+// define AttackFlow
+message AttackFlowReply{ // 攻击流图定义
+  message Field {
+    string obj = 1; // 支持:ip/user/computer/dc
+    string key = 2; // 如: $1.TargetUsername
+    string value = 3; // only used at threat api
+  }
+  string desc = 1;
+  repeated Field fields = 2;
+  repeated string relates = 3;
+}
+
 message AlertRuleInfo {
   string ID = 1;
   string title = 2; // 规则标题
@@ -1699,8 +1702,9 @@ message AlertRuleInfo {
   repeated string references = 12; // 参考信息
   string suggestion = 13; // 处置建议
   bool autoBlock = 14; // 自动阻断
-  string createTm = 15;
-  string updateTm = 16;
+  AttackFlowReply attackFlow = 15;
+  string createTm = 16;
+  string updateTm = 17;
 }
 
 message ListAlertRuleReply {
@@ -1722,6 +1726,7 @@ message AddAlertRuleReq {
   string suggestion = 11;
   string author = 12;
   bool autoBlock = 13;
+  AttackFlowReply attackFlow = 14;
 }
 
 message AddAlertRuleReply {
@@ -1744,6 +1749,7 @@ message UpdateAlertRuleReq {
   string suggestion = 12;
   string author = 13;
   bool autoBlock = 14;
+  AttackFlowReply attackFlow= 15;
 }
 
 message UpdateAlertRuleReply {
