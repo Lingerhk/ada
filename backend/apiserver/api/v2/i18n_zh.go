@@ -240,6 +240,7 @@ var I18nLangZhMap = map[string]any{
 			"AddFailed":              "添加告警规则失败",
 			"UpdateFailed":           "更新告警规则失败",
 			"DeleteFailed":           "删除告警规则失败",
+			"IDAlreadyExists":        "告警规则ID '%s' 已存在",
 		},
 		"ActivityRule": map[string]any{
 			"QueryFailed":            "查询Sigma规则失败",

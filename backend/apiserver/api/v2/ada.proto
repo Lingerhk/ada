@@ -1713,20 +1713,21 @@ message ListAlertRuleReply {
 }
 
 message AddAlertRuleReq {
-  string title = 1 [(validator.field) = {string_not_empty: true}];
-  string description = 2;
-  bool enable = 3;
-  int32 level = 4 [(validator.field) = {int_gt: 0, int_lt: 6}]; // 1-5
-  string status = 5;
-  repeated string tags = 6;
-  string logsource = 7;
-  string detection = 8 [(validator.field) = {string_not_empty: true}]; // Yaml string
-  string type = 9;
-  repeated string references = 10;
-  string suggestion = 11;
-  string author = 12;
-  bool autoBlock = 13;
-  AttackFlowReply attackFlow = 14;
+  string iD = 1; // Alert rule ID, optional. If empty, will be auto-generated
+  string title = 2 [(validator.field) = {string_not_empty: true}];
+  string description = 3;
+  bool enable = 4;
+  int32 level = 5 [(validator.field) = {int_gt: 0, int_lt: 6}]; // 1-5
+  string status = 6;
+  repeated string tags = 7;
+  string logsource = 8;
+  string detection = 9 [(validator.field) = {string_not_empty: true}]; // Yaml string
+  string type = 10;
+  repeated string references = 11;
+  string suggestion = 12;
+  string author = 13;
+  bool autoBlock = 14;
+  AttackFlowReply attackFlow = 15;
 }
 
 message AddAlertRuleReply {

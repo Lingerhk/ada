@@ -240,6 +240,7 @@ var I18nLangEnMap = map[string]any{
 			"AddFailed":              "Add alert rule failed",
 			"UpdateFailed":           "Update alert rule failed",
 			"DeleteFailed":           "Delete alert rule failed",
+			"IDAlreadyExists":        "Alert rule with ID '%s' already exists",
 		},
 		"ActivityRule": map[string]any{
 			"QueryFailed":            "Query activity rules failed",

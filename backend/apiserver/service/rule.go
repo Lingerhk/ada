@@ -3,6 +3,7 @@ package service
 import (
 	"bytes"
 	"context"
+	"fmt"
 
 	v2 "ada/backend/apiserver/api/v2"
 	"ada/backend/apiserver/server"
@@ -142,6 +143,15 @@ func (s *ADAServiceV2) ListAlertRule(ctx context.Context, in *v2.ListAlertRuleRe
 }
 
 func (s *ADAServiceV2) AddAlertRule(ctx context.Context, in *v2.AddAlertRuleReq) (*v2.AddAlertRuleReply, error) {
+	// If ID is provided, check if rule with this ID already exists
+	if in.ID != "" {
+		existingRule, err := server.GetAlertRuleByID(s.env, in.ID)
+		if err == nil && existingRule != nil {
+			errMsg := fmt.Sprintf(s.I18n("Threat.AlertRule.IDAlreadyExists"), in.ID)
+			return nil, status.Error(codes.AlreadyExists, errMsg)
+		}
+	}
+
 	// Parse detection YAML
 	detection, err := parseAlertDetectionYAML(in.Detection)
 	if err != nil {
@@ -153,8 +163,8 @@ func (s *ADAServiceV2) AddAlertRule(ctx context.Context, in *v2.AddAlertRuleReq)
 	if in.AttackFlow != nil {
 		for _, field := range in.AttackFlow.Fields {
 			fieldsModel = append(fieldsModel, model.FieldObj{
-				Obj:   field.Obj,
-				Key:   field.Key,
+				Obj: field.Obj,
+				Key: field.Key,
 			})
 		}
 	}
@@ -165,6 +175,7 @@ func (s *ADAServiceV2) AddAlertRule(ctx context.Context, in *v2.AddAlertRuleReq)
 	}
 
 	rule := &model.AlertRule{
+		ID:          in.ID,
 		Title:       in.Title,
 		Description: in.Description,
 		Enable:      in.Enable,
@@ -218,9 +229,10 @@ func (s *ADAServiceV2) UpdateAlertRule(ctx context.Context, in *v2.UpdateAlertRu
 	if in.Description != "" {
 		updates["description"] = in.Description
 	}
-	if in.Enable {
-		updates["enable"] = in.Enable
-	}
+	// Always update boolean fields (enable and autoBlock) to allow setting them to false
+	updates["enable"] = in.Enable
+	updates["auto_block"] = in.AutoBlock
+
 	if in.Level > 0 {
 		updates["level"] = in.Level
 	}
@@ -252,16 +264,13 @@ func (s *ADAServiceV2) UpdateAlertRule(ctx context.Context, in *v2.UpdateAlertRu
 	if in.Author != "" {
 		updates["author"] = in.Author
 	}
-	if in.AutoBlock {
-		updates["auto_block"] = in.AutoBlock
-	}
 	if in.AttackFlow != nil {
 		// Convert AttackFlow from proto to model
 		var fieldsModel []model.FieldObj
 		for _, field := range in.AttackFlow.Fields {
 			fieldsModel = append(fieldsModel, model.FieldObj{
-				Obj:   field.Obj,
-				Key:   field.Key,
+				Obj: field.Obj,
+				Key: field.Key,
 			})
 		}
 		attackFlowModel := model.AttackFlow{
