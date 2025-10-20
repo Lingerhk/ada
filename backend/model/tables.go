@@ -310,10 +310,15 @@ func (a *ScanConf) CollectName() string {
 }
 
 // Sigma规则 描述表
+type FieldObj struct {
+	Obj string `bson:"obj"`
+	Key string `bson:"key"`
+	Value string // will storeage in db, just return to proto.
+}
 type AttackFlow struct {
-	Desc    string              `bson:"desc"`   // 描述
-	Fields  []map[string]string `bson:"fields"` // obj(支持ip/user/computer/dc), key, value. eg: {"obj":"ip","key":"$1.TargetUsername","value":"192.168.2.3"}
-	Relates []string            `bson:"relates"`
+	Desc    string     `bson:"desc"`   // 描述
+	Fields  []FieldObj `bson:"fields"` // obj(支持ip/user/computer/dc), key. eg: {"obj":"ip","key":"$1.TargetUsername"}
+	Relates []string   `bson:"relates"`
 }
 
 type AlertDetection struct {

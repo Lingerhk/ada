@@ -96,6 +96,20 @@ func (s *ADAServiceV2) ListAlertRule(ctx context.Context, in *v2.ListAlertRuleRe
 			logger.Errorf("Failed to marshal detection to YAML: %v", err)
 		}
 
+		// Convert AttackFlow from model to proto
+		var fieldsProto []*v2.AttackFlowReply_Field
+		for _, field := range rule.AttackFlow.Fields {
+			fieldsProto = append(fieldsProto, &v2.AttackFlowReply_Field{
+				Obj: field.Obj,
+				Key: field.Key,
+			})
+		}
+		attackFlowProto := &v2.AttackFlowReply{
+			Desc:    rule.AttackFlow.Desc,
+			Fields:  fieldsProto,
+			Relates: rule.AttackFlow.Relates,
+		}
+
 		ruleInfo := &v2.AlertRuleInfo{
 			ID:          rule.ID,
 			Title:       rule.Title,
@@ -111,6 +125,7 @@ func (s *ADAServiceV2) ListAlertRule(ctx context.Context, in *v2.ListAlertRuleRe
 			References:  rule.References,
 			Suggestion:  rule.Suggestion,
 			AutoBlock:   rule.AutoBlock,
+			AttackFlow:  attackFlowProto,
 			CreateTm:    rule.CreateTm.Format("2006-01-02 15:04:05"),
 			UpdateTm:    rule.UpdateTm.Format("2006-01-02 15:04:05"),
 		}
@@ -133,6 +148,22 @@ func (s *ADAServiceV2) AddAlertRule(ctx context.Context, in *v2.AddAlertRuleReq)
 		return nil, status.Error(codes.InvalidArgument, s.I18n("Threat.AlertRule.InvalidDetectionFormat"))
 	}
 
+	// Convert AttackFlow from proto to model
+	var fieldsModel []model.FieldObj
+	if in.AttackFlow != nil {
+		for _, field := range in.AttackFlow.Fields {
+			fieldsModel = append(fieldsModel, model.FieldObj{
+				Obj:   field.Obj,
+				Key:   field.Key,
+			})
+		}
+	}
+	attackFlow := model.AttackFlow{
+		Desc:    in.AttackFlow.GetDesc(),
+		Fields:  fieldsModel,
+		Relates: in.AttackFlow.GetRelates(),
+	}
+
 	rule := &model.AlertRule{
 		Title:       in.Title,
 		Description: in.Description,
@@ -147,6 +178,7 @@ func (s *ADAServiceV2) AddAlertRule(ctx context.Context, in *v2.AddAlertRuleReq)
 		Suggestion:  in.Suggestion,
 		Author:      in.Author,
 		AutoBlock:   in.AutoBlock,
+		AttackFlow:  attackFlow,
 	}
 
 	err = server.AddAlertRule(s.env, rule)
@@ -222,6 +254,22 @@ func (s *ADAServiceV2) UpdateAlertRule(ctx context.Context, in *v2.UpdateAlertRu
 	}
 	if in.AutoBlock {
 		updates["auto_block"] = in.AutoBlock
+	}
+	if in.AttackFlow != nil {
+		// Convert AttackFlow from proto to model
+		var fieldsModel []model.FieldObj
+		for _, field := range in.AttackFlow.Fields {
+			fieldsModel = append(fieldsModel, model.FieldObj{
+				Obj:   field.Obj,
+				Key:   field.Key,
+			})
+		}
+		attackFlowModel := model.AttackFlow{
+			Desc:    in.AttackFlow.Desc,
+			Fields:  fieldsModel,
+			Relates: in.AttackFlow.Relates,
+		}
+		updates["attack_flow"] = attackFlowModel
 	}
 
 	err := server.UpdateAlertRule(s.env, in.ID, updates)
