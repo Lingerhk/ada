@@ -167,6 +167,216 @@ func TestUpdateAlertRule(t *testing.T) {
 	})
 }
 
+// TestUpdateAlertRuleAutoBlock tests the autoBlock parameter update functionality
+func TestUpdateAlertRuleAutoBlock(t *testing.T) {
+	Convey("Test UpdateAlertRule AutoBlock functionality", t, func() {
+		// Step 1: Create a new alert rule with autoBlock = false
+		detection := map[string]interface{}{
+			"event_type":  "multi_eve",
+			"win_size":    60,
+			"sorted":      false,
+			"sigma_rules": []string{"winlog-0000-0001", "winlog-0102-0001"},
+			"match_by":    "$s1.TargetUserName == $s2.SubjectUserName",
+		}
+		detectionJSON, _ := json.Marshal(detection)
+
+		createReq := &v2.AddAlertRuleReq{
+			Title:       "Test AutoBlock Rule - Initial",
+			Description: "Testing autoBlock parameter functionality",
+			Enable:      true,
+			Level:       3,
+			Status:      "test",
+			Tags:        []string{"test", "autoblock"},
+			Logsource:   "flow",
+			Detection:   string(detectionJSON),
+			Type:        "suspicious_activity",
+			Author:      "unit_test",
+			AutoBlock:   false, // Initially set to false
+		}
+
+		createResp, err := ADACli.cli.AddAlertRule(ADACli.ctx, createReq)
+		So(err, ShouldBeNil)
+		So(createResp, ShouldNotBeNil)
+		So(createResp.Result, ShouldEqual, "SUCCESS")
+		So(createResp.ID, ShouldNotBeEmpty)
+
+		ruleID := createResp.ID
+		t.Logf("Created test rule with ID: %s, autoBlock: false", ruleID)
+
+		// Step 2: Verify initial autoBlock value is false
+		listReq := &v2.ListAlertRuleReq{
+			PageIdx:  1,
+			PageSize: 100,
+		}
+		listResp, err := ADACli.cli.ListAlertRule(ADACli.ctx, listReq)
+		So(err, ShouldBeNil)
+
+		var foundRule *v2.AlertRuleInfo
+		for _, rule := range listResp.Rules {
+			if rule.ID == ruleID {
+				foundRule = rule
+				break
+			}
+		}
+		So(foundRule, ShouldNotBeNil)
+		So(foundRule.AutoBlock, ShouldBeFalse)
+		t.Logf("Verified initial autoBlock: false")
+
+		// Step 3: Update autoBlock to true
+		updateReq1 := &v2.UpdateAlertRuleReq{
+			ID:        ruleID,
+			AutoBlock: true, // Change to true
+		}
+		updateResp1, err := ADACli.cli.UpdateAlertRule(ADACli.ctx, updateReq1)
+		So(err, ShouldBeNil)
+		So(updateResp1, ShouldNotBeNil)
+		So(updateResp1.Result, ShouldEqual, "SUCCESS")
+		t.Logf("Updated autoBlock to true")
+
+		// Step 4: Verify autoBlock is now true
+		listResp2, err := ADACli.cli.ListAlertRule(ADACli.ctx, listReq)
+		So(err, ShouldBeNil)
+
+		foundRule = nil
+		for _, rule := range listResp2.Rules {
+			if rule.ID == ruleID {
+				foundRule = rule
+				break
+			}
+		}
+		So(foundRule, ShouldNotBeNil)
+		So(foundRule.AutoBlock, ShouldBeTrue)
+		t.Logf("Verified autoBlock changed to: true")
+
+		// Step 5: Update autoBlock back to false
+		updateReq2 := &v2.UpdateAlertRuleReq{
+			ID:        ruleID,
+			AutoBlock: false, // Change back to false
+		}
+		updateResp2, err := ADACli.cli.UpdateAlertRule(ADACli.ctx, updateReq2)
+		So(err, ShouldBeNil)
+		So(updateResp2, ShouldNotBeNil)
+		So(updateResp2.Result, ShouldEqual, "SUCCESS")
+		t.Logf("Updated autoBlock back to false")
+
+		// Step 6: Verify autoBlock is false again
+		listResp3, err := ADACli.cli.ListAlertRule(ADACli.ctx, listReq)
+		So(err, ShouldBeNil)
+
+		foundRule = nil
+		for _, rule := range listResp3.Rules {
+			if rule.ID == ruleID {
+				foundRule = rule
+				break
+			}
+		}
+		So(foundRule, ShouldNotBeNil)
+		So(foundRule.AutoBlock, ShouldBeFalse)
+		t.Logf("Verified autoBlock changed back to: false")
+
+		// Step 7: Update other fields while keeping autoBlock false
+		updateReq3 := &v2.UpdateAlertRuleReq{
+			ID:          ruleID,
+			Title:       "Test AutoBlock Rule - Updated Title",
+			Description: "Updated description while testing autoBlock persistence",
+			Level:       4,
+			AutoBlock:   false, // Explicitly keep false
+		}
+		updateResp3, err := ADACli.cli.UpdateAlertRule(ADACli.ctx, updateReq3)
+		So(err, ShouldBeNil)
+		So(updateResp3, ShouldNotBeNil)
+		t.Logf("Updated other fields with autoBlock: false")
+
+		// Step 8: Verify autoBlock remains false after updating other fields
+		listResp4, err := ADACli.cli.ListAlertRule(ADACli.ctx, listReq)
+		So(err, ShouldBeNil)
+
+		foundRule = nil
+		for _, rule := range listResp4.Rules {
+			if rule.ID == ruleID {
+				foundRule = rule
+				break
+			}
+		}
+		So(foundRule, ShouldNotBeNil)
+		So(foundRule.AutoBlock, ShouldBeFalse)
+		So(foundRule.Title, ShouldEqual, "Test AutoBlock Rule - Updated Title")
+		So(foundRule.Level, ShouldEqual, 4)
+		t.Logf("Verified autoBlock stayed false after updating other fields")
+
+		// Cleanup: Delete the test rule
+		deleteReq := &v2.DeleteAlertRuleReq{
+			ID: ruleID,
+		}
+		deleteResp, err := ADACli.cli.DeleteAlertRule(ADACli.ctx, deleteReq)
+		So(err, ShouldBeNil)
+		So(deleteResp, ShouldNotBeNil)
+		t.Logf("Cleaned up test rule: %s", ruleID)
+	})
+}
+
+// TestUpdateAlertRuleAutoBlockWithEnable tests autoBlock and enable together
+func TestUpdateAlertRuleAutoBlockWithEnable(t *testing.T) {
+	Convey("Test autoBlock and enable boolean fields together", t, func() {
+		// Create a rule with enable=true, autoBlock=true
+		detection := map[string]interface{}{
+			"event_type":  "multi_eve",
+			"win_size":    60,
+			"sigma_rules": []string{"winlog-0000-0001"},
+		}
+		detectionJSON, _ := json.Marshal(detection)
+
+		createReq := &v2.AddAlertRuleReq{
+			Title:       "Test Boolean Fields",
+			Description: "Testing enable and autoBlock together",
+			Enable:      true,
+			Level:       3,
+			Status:      "test",
+			Tags:        []string{"test"},
+			Logsource:   "flow",
+			Detection:   string(detectionJSON),
+			Author:      "unit_test",
+			AutoBlock:   true,
+		}
+
+		createResp, err := ADACli.cli.AddAlertRule(ADACli.ctx, createReq)
+		So(err, ShouldBeNil)
+		So(createResp.ID, ShouldNotBeEmpty)
+		ruleID := createResp.ID
+
+		// Update: Set enable=false, autoBlock=false
+		updateReq := &v2.UpdateAlertRuleReq{
+			ID:        ruleID,
+			Enable:    false,
+			AutoBlock: false,
+		}
+		updateResp, err := ADACli.cli.UpdateAlertRule(ADACli.ctx, updateReq)
+		So(err, ShouldBeNil)
+		So(updateResp.Result, ShouldEqual, "SUCCESS")
+
+		// Verify both are false
+		listReq := &v2.ListAlertRuleReq{PageIdx: 1, PageSize: 100}
+		listResp, err := ADACli.cli.ListAlertRule(ADACli.ctx, listReq)
+		So(err, ShouldBeNil)
+
+		var foundRule *v2.AlertRuleInfo
+		for _, rule := range listResp.Rules {
+			if rule.ID == ruleID {
+				foundRule = rule
+				break
+			}
+		}
+		So(foundRule, ShouldNotBeNil)
+		So(foundRule.Enable, ShouldBeFalse)
+		So(foundRule.AutoBlock, ShouldBeFalse)
+		t.Logf("Successfully updated enable=false, autoBlock=false")
+
+		// Cleanup
+		deleteReq := &v2.DeleteAlertRuleReq{ID: ruleID}
+		ADACli.cli.DeleteAlertRule(ADACli.ctx, deleteReq)
+	})
+}
+
 // TestDeleteAlertRule tests deleting an alert rule
 func TestDeleteAlertRule(t *testing.T) {
 	if testAlertRuleID == "" {
