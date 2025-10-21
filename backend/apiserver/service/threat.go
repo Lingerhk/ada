@@ -341,51 +341,6 @@ func (s *ADAServiceV2) GetActivity(ctx context.Context, in *v2.GetActivityReq) (
 	return &ret, nil
 }
 
-func (s *ADAServiceV2) ListThreatRule(ctx context.Context, in *v2.ListThreatRuleReq) (*v2.ListThreatRuleReply, error) {
-	descList, err := server.FindThreatDescSelect(s.env, in.Level, in.Enable)
-	if err != nil {
-		logger.Errorf("get all threat desc err:%v", err)
-		return nil, status.Error(codes.Internal, s.I18n("Threat.ThreatRule.GetThreatRuleNamesFailed"))
-	}
-
-	var ret v2.ListThreatRuleReply
-	for _, desc := range descList {
-		ret.List = append(ret.List, &v2.ListThreatRuleReply_Details{
-			ID:        desc.ID,
-			Name:      desc.Title,
-			Type:      desc.Type,
-			Enable:    desc.Enable,
-			AutoBlock: desc.AutoBlock,
-			Level:     desc.Level,
-			UpdateTm:  desc.UpdateTm.String(),
-		})
-	}
-
-	return &ret, nil
-}
-
-func (s *ADAServiceV2) ActionThreatRule(ctx context.Context, in *v2.ActionThreatRuleReq) (*v2.ActionThreatRuleReply, error) {
-	if !s.IsSuper(ctx) {
-		return nil, status.Error(codes.PermissionDenied, s.I18n("NoPermission"))
-	}
-	if in.ID == "" {
-		return nil, status.Error(codes.InvalidArgument, s.I18n("Threat.InvalidID"))
-	}
-
-	ret := v2.ActionThreatRuleReply{
-		Result: common.RESP_FAILED,
-	}
-
-	err := server.UpdateThreatDesc(s.env, in.ID, in.Type, in.Switch)
-	if err != nil {
-		logger.Errorf("update threat desc err:%v", err)
-		return nil, status.Error(codes.Internal, s.I18n("Threat.UpdateFailed"))
-	}
-
-	ret.Result = common.RESP_SUCCESS
-	return &ret, nil
-}
-
 // GetThreatNames 返回威胁名称与ruleId的map列表
 func (s *ADAServiceV2) GetThreatNames(ctx context.Context, in *v2.GetThreatNamesReq) (*v2.GetThreatNamesReply, error) {
 	var mameMap = make(map[string]string)
