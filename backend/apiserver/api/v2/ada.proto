@@ -95,8 +95,6 @@ service ADA {
   // threat威胁检测
   rpc ListThreat(ListThreatReq) returns (ListThreatReply) {} // 威胁事件列表
   rpc GetThreatNames(GetThreatNamesReq) returns (GetThreatNamesReply) {} // 规则名称/ruleId映射列表
-  rpc ListThreatRule(ListThreatRuleReq) returns (ListThreatRuleReply) {} // 规则详情列表
-  rpc ActionThreatRule(ActionThreatRuleReq) returns (ActionThreatRuleReply) {} // 规则操作: 开启状态，AutoBlock状态开关
   rpc GetThreat(GetThreatReq) returns (GetThreatReply) {} // 威胁事件详情
   rpc ActionThreat(ActionThreatReq) returns (ActionThreatReply) {} // 威胁事件操作
   rpc ListActivity(ListActivityReq) returns (ListActivityReply) {} // 威胁行为列表
@@ -930,34 +928,6 @@ message GetThreatNamesReq{
 
 message GetThreatNamesReply{
   map<string, string> names = 1;
-}
-
-message ListThreatRuleReq{
-  repeated int32 level = 2; // 可选，风险等级, 为空返回所有, 5:严重,4:高危,3:中危,2:低危
-  repeated bool enable = 3; // 可选，启用状态, 为空返回所有, true, false
-}
-
-message ListThreatRuleReply{
-  message Details {
-    string ID = 1;  // 规则ID
-    string name = 2; // 告警标题
-    bool enable = 3; // 启用状态:  true, false
-    int32 level = 4;  // 风险等级, 5:严重,4:高危,3:中危,2:低危
-    bool autoBlock = 5; // 是否自动阻断： true, false
-    string type = 6; // 规则类型
-    string updateTm = 7; // 更新时间
-  }
-  repeated Details List = 1; // list
-}
-
-message ActionThreatRuleReq{
-  string ID = 1; // 规则ID
-  string type = 2 [(validator.field) = {regex: "is_enable|auto_block"}]; // 开关类型: is_enable auto_block
-  bool switch = 3; // 启用状态: true, false
-}
-
-message ActionThreatRuleReply{
-  string result = 1;  // SUCCESS||FAILED
 }
 
 message GetThreatReq{
