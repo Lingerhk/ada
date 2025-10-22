@@ -6,7 +6,6 @@ import (
 	utime "ada/infra/time"
 	"fmt"
 	"strconv"
-	"strings"
 	"time"
 
 	logger "github.com/sirupsen/logrus"
@@ -214,113 +213,51 @@ func GetThreatEventByID(e *config.Env, id string) (*model.AlertEventESDB, error)
 	return &ae, nil
 }
 
-func GetThreatDescByID(e *config.Env, flowId string) (*model.AlertRule, error) {
-	ad := model.AlertRule{}
-
-	err, _ := e.MongoCli.FindOne(ad.CollectName(), bson.M{"_id": flowId}, &ad)
-	if err != nil {
-		logger.Errorf("get threat desc err:%v", err)
+func GetThreatEventByFlowID(e *config.Env, flowId string) (*model.AlertEventESDB, error) {
+	ae := model.AlertEventESDB{}
+	query := bson.M{"flow_id": flowId}
+	err, exist := e.MongoCli.FindOne(ae.CollectName(), query, &ae)
+	if err != nil || !exist {
+		logger.Errorf("get threat event err:%v", err)
 		return nil, err
 	}
 
-	return &ad, nil
+	return &ae, nil
 }
 
-func GetAllThreatDesc(e *config.Env) ([]model.AlertRule, error) {
-	var adList []model.AlertRule
-	tb := (&model.AlertRule{}).CollectName()
+// GetThreatEventNames 返回所有event(AlertEventESDB)中的title 列表(不重复)
+func GetThreatEventNames(e *config.Env) (map[string]string, error) {
+	tb := (&model.AlertEventESDB{}).CollectName()
 
-	query := bson.M{}
-	err := e.MongoCli.FindAll(tb, query, &adList)
+	// Use aggregation to get unique titles with their flow_ids
+	pipeline := mongo.Pipeline{
+		{{Key: "$group", Value: bson.D{
+			{Key: "_id", Value: "$flow_id"},
+			{Key: "title", Value: bson.D{{Key: "$first", Value: "$title"}}},
+		}}},
+	}
+
+	var results []bson.M
+	err := e.MongoCli.FindWithAggregation(tb, pipeline, &results)
 	if err != nil {
-		return nil, err
-	}
-	return adList, nil
-}
-
-func FindThreatDescSelect(e *config.Env, levels []int32, enable []bool) ([]model.AlertRule, error) {
-	var adList []model.AlertRule
-	tb := (&model.AlertRule{}).CollectName()
-
-	query := bson.M{}
-	if len(levels) > 0 {
-		query = bson.M{"level": bson.M{"$in": levels}}
-	}
-	if len(enable) > 0 {
-		query = bson.M{"enable": bson.M{"$in": enable}}
-	}
-
-	err := e.MongoCli.FindAll(tb, query, &adList)
-	if err != nil {
-		return nil, err
-	}
-	return adList, nil
-}
-
-func UpdateThreatDesc(e *config.Env, Id, typ string, switchVal bool) error {
-	var ad model.AlertRule
-
-	query := bson.M{"_id": Id}
-
-	update := bson.M{}
-	if typ == "is_enable" {
-		update = bson.M{"$set": bson.M{"enable": switchVal, "update_tm": utime.CurTime()}}
-	} else if typ == "auto_block" {
-		update = bson.M{"$set": bson.M{"auto_block": switchVal, "update_tm": utime.CurTime()}}
-	}
-
-	return e.MongoCli.UpdateRaw(ad.CollectName(), query, &update, false)
-}
-
-// GetThreatFlowByID 需要优化该处，修改为通用方法
-func GetThreatFlowByID(e *config.Env, flowId string, fieldData map[string]string) (*model.AttackFlow, error) {
-	ad := model.AlertRule{}
-	err, _ := e.MongoCli.FindOne(ad.CollectName(), bson.M{"_id": flowId}, &ad)
-	if err != nil {
-		logger.Errorf("get threat attack_flow err:%v", err)
+		logger.Errorf("get threat event names err:%v", err)
 		return nil, err
 	}
 
-	// 获取攻击流图: 根据tb_alert_desc表中AttackFlow的定义，从fieldData中获取对应的字段值
-	var attackInfo = model.AttackFlow{
-		Fields:  []model.FieldObj{},
-		Relates: ad.AttackFlow.Relates,
-		Desc:    ad.AttackFlow.Desc,
-	}
-
-	for _, item := range ad.AttackFlow.Fields {
-		// item is now a FieldObj struct with Obj, Key, Value fields
-		if item.Obj == "" || item.Key == "" {
+	nameMap := make(map[string]string)
+	for _, item := range results {
+		flowId, ok := item["_id"].(string)
+		if !ok {
 			continue
 		}
-
-		// Create a new FieldObj to store the extracted data
-		fieldObj := model.FieldObj{
-			Obj:   item.Obj,
-			Key:   item.Key,
-			Value: item.Value,
+		title, ok := item["title"].(string)
+		if !ok {
+			continue
 		}
-
-		// Try to extract value from fieldData using the Key
-		for fieldKey, fieldVal := range fieldData {
-			if strings.HasSuffix(fieldKey, item.Key) {
-				// fieldKey格式: $s1.field_TargetUserName, 这里按field_截取
-				parts := strings.Split(fieldKey, ".field_")
-				if len(parts) != 2 {
-					continue
-				}
-
-				// Update the key and value with extracted data
-				fieldObj.Key = parts[1]
-				fieldObj.Value = fieldVal
-				break
-			}
-		}
-
-		attackInfo.Fields = append(attackInfo.Fields, fieldObj)
+		nameMap[flowId] = title
 	}
 
-	return &attackInfo, nil
+	return nameMap, nil
 }
 
 func UpdateThreatEventStatus(e *config.Env, id string, eventStatus int32, remark string) error {

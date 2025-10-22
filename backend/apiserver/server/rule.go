@@ -361,3 +361,97 @@ func GetAllActivityRuleUniqueFields(e *config.Env) ([]string, error) {
 
 	return uniqueFields, nil
 }
+
+func GetThreatRuleByID(e *config.Env, flowId string) (*model.AlertRule, error) {
+	ad := model.AlertRule{}
+
+	err, _ := e.MongoCli.FindOne(ad.CollectName(), bson.M{"_id": flowId}, &ad)
+	if err != nil {
+		logger.Errorf("get threat desc err:%v", err)
+		return nil, err
+	}
+
+	return &ad, nil
+}
+
+func GetAllThreatRules(e *config.Env) ([]model.AlertRule, error) {
+	var adList []model.AlertRule
+	tb := (&model.AlertRule{}).CollectName()
+
+	query := bson.M{}
+	err := e.MongoCli.FindAll(tb, query, &adList)
+	if err != nil {
+		return nil, err
+	}
+	return adList, nil
+}
+
+func FindThreatDescSelect(e *config.Env, levels []int32, enable []bool) ([]model.AlertRule, error) {
+	var adList []model.AlertRule
+	tb := (&model.AlertRule{}).CollectName()
+
+	query := bson.M{}
+	if len(levels) > 0 {
+		query = bson.M{"level": bson.M{"$in": levels}}
+	}
+	if len(enable) > 0 {
+		query = bson.M{"enable": bson.M{"$in": enable}}
+	}
+
+	err := e.MongoCli.FindAll(tb, query, &adList)
+	if err != nil {
+		return nil, err
+	}
+	return adList, nil
+}
+
+// GetThreatAttackFlowByID 需要优化该处，修改为通用方法
+func GetThreatAttackFlowByID(e *config.Env, flowId string, fieldData map[string]string) (*model.AttackFlow, error) {
+	ad := model.AlertRule{}
+	err, _ := e.MongoCli.FindOne(ad.CollectName(), bson.M{"_id": flowId}, &ad)
+	if err != nil {
+		logger.Errorf("get threat attack_flow err:%v", err)
+		return nil, err
+	}
+
+	// 获取攻击流图: 根据tb_alert_desc表中AttackFlow的定义，从fieldData中获取对应的字段值
+	var attackInfo = model.AttackFlow{
+		Fields:  []model.FieldObj{},
+		Relates: ad.AttackFlow.Relates,
+		Desc:    ad.AttackFlow.Desc,
+	}
+
+	for _, item := range ad.AttackFlow.Fields {
+		// item is now a FieldObj struct with Obj, Key, Value fields
+		if item.Obj == "" || item.Key == "" {
+			continue
+		}
+
+		// Create a new FieldObj to store the extracted data
+		fieldObj := model.FieldObj{
+			Obj:   item.Obj,
+			Key:   item.Key,
+			Value: item.Value,
+		}
+
+		// Try to extract value from fieldData using the Key
+		for fieldKey, fieldVal := range fieldData {
+			if strings.HasSuffix(fieldKey, item.Key) {
+				// fieldKey格式: $s1.field_TargetUserName, 这里按field_截取
+				parts := strings.Split(fieldKey, ".field_")
+				if len(parts) != 2 {
+					continue
+				}
+
+				// Update the key and value with extracted data
+				fieldObj.Key = parts[1]
+				fieldObj.Value = fieldVal
+				break
+			}
+		}
+
+		attackInfo.Fields = append(attackInfo.Fields, fieldObj)
+	}
+
+	return &attackInfo, nil
+}

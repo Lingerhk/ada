@@ -758,34 +758,6 @@ func (this *GetThreatNamesReply) Validate() error {
 	// Validation of proto3 map<> fields is unsupported.
 	return nil
 }
-func (this *ListThreatRuleReq) Validate() error {
-	return nil
-}
-func (this *ListThreatRuleReply) Validate() error {
-	for _, item := range this.List {
-		if item != nil {
-			if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(item); err != nil {
-				return github_com_mwitkow_go_proto_validators.FieldError("List", err)
-			}
-		}
-	}
-	return nil
-}
-func (this *ListThreatRuleReply_Details) Validate() error {
-	return nil
-}
-
-var _regex_ActionThreatRuleReq_Type = regexp.MustCompile(`is_enable|auto_block`)
-
-func (this *ActionThreatRuleReq) Validate() error {
-	if !_regex_ActionThreatRuleReq_Type.MatchString(this.Type) {
-		return github_com_mwitkow_go_proto_validators.FieldError("Type", fmt.Errorf(`value '%v' must be a string conforming to regex "is_enable|auto_block"`, this.Type))
-	}
-	return nil
-}
-func (this *ActionThreatRuleReply) Validate() error {
-	return nil
-}
 func (this *GetThreatReq) Validate() error {
 	return nil
 }
@@ -858,18 +830,6 @@ func (this *GetActivityReply) Validate() error {
 			return github_com_mwitkow_go_proto_validators.FieldError("Details", err)
 		}
 	}
-	return nil
-}
-func (this *ListThreatConfReq) Validate() error {
-	return nil
-}
-func (this *ListThreatConfReply) Validate() error {
-	return nil
-}
-func (this *UpdateThreatConfReq) Validate() error {
-	return nil
-}
-func (this *UpdateThreatConfReply) Validate() error {
 	return nil
 }
 func (this *ListSensitiveEntryReq) Validate() error {
@@ -1575,6 +1535,13 @@ func (this *GetAlertTypesReq) Validate() error {
 	return nil
 }
 func (this *GetAlertTypesReply) Validate() error {
+	// Validation of proto3 map<> fields is unsupported.
+	return nil
+}
+func (this *GetAlertRuleNamesReq) Validate() error {
+	return nil
+}
+func (this *GetAlertRuleNamesReply) Validate() error {
 	// Validation of proto3 map<> fields is unsupported.
 	return nil
 }

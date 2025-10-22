@@ -40,7 +40,7 @@ func snakeString(s string) string {
 }
 
 func getAttackFlow(env *config.Env, flowId string, fieldData map[string]string) *v2.AttackFlowReply {
-	attackFlow, err := server.GetThreatFlowByID(env, flowId, fieldData)
+	attackFlow, err := server.GetThreatAttackFlowByID(env, flowId, fieldData)
 	if err != nil {
 		logger.Warnf("GetThreatFlowByID(%s) failed, err:%v", flowId, err)
 		return &v2.AttackFlowReply{}
@@ -143,7 +143,7 @@ func (s *ADAServiceV2) GetThreat(ctx context.Context, in *v2.GetThreatReq) (*v2.
 		return nil, status.Error(codes.Internal, s.I18n("Threat.QueryFailed"))
 	}
 
-	ad, err := server.GetThreatDescByID(s.env, ae.FlowId)
+	ad, err := server.GetThreatRuleByID(s.env, ae.FlowId)
 	if err != nil {
 		logger.Errorf("GetThreatDescByID(%s) err:%v", in.ID, err)
 		return nil, status.Error(codes.Internal, s.I18n("Threat.QueryFailed"))
@@ -343,42 +343,28 @@ func (s *ADAServiceV2) GetActivity(ctx context.Context, in *v2.GetActivityReq) (
 
 // GetThreatNames 返回威胁名称与ruleId的map列表
 func (s *ADAServiceV2) GetThreatNames(ctx context.Context, in *v2.GetThreatNamesReq) (*v2.GetThreatNamesReply, error) {
-	var mameMap = make(map[string]string)
+	var nameMap = make(map[string]string)
 
-	if in.RuleId != "" {
-		desc, err := server.GetThreatDescByID(s.env, in.RuleId)
+	if in.FlowId != "" {
+		// Get specific threat event by flow_id (rule_id)
+		rule, err := server.GetThreatEventByFlowID(s.env, in.FlowId)
 		if err != nil {
-			logger.Errorf("get threat desc by id(%s) err:%v", in.RuleId, err)
+			logger.Errorf("get threat event by flow_id(%s) err:%v", in.FlowId, err)
 			return nil, status.Error(codes.Internal, s.I18n("Threat.GetThreatNamesFailed"))
 		}
-		mameMap[desc.ID] = desc.Title
+		nameMap[rule.ID.Hex()] = rule.Title
 
-		return &v2.GetThreatNamesReply{Names: mameMap}, nil
+		return &v2.GetThreatNamesReply{Names: nameMap}, nil
 	}
 
-	descList, err := server.GetAllThreatDesc(s.env)
+	// Get all unique threat event names from AlertEventESDB
+	nameMap, err := server.GetThreatEventNames(s.env)
 	if err != nil {
-		logger.Errorf("get all threat desc err:%v", err)
+		logger.Errorf("get all threat event names err:%v", err)
 		return nil, status.Error(codes.Internal, s.I18n("Threat.GetThreatNamesFailed"))
 	}
 
-	for _, desc := range descList {
-		mameMap[desc.ID] = desc.Title
-	}
-
-	return &v2.GetThreatNamesReply{Names: mameMap}, nil
-}
-
-// ListThreatConf 威胁配置列表
-func (s *ADAServiceV2) ListThreatConf(ctx context.Context, in *v2.ListThreatConfReq) (*v2.ListThreatConfReply, error) {
-	// TODO:
-	return nil, nil
-}
-
-// UpdateThreatConf 更新威胁配置
-func (s *ADAServiceV2) UpdateThreatConf(ctx context.Context, in *v2.UpdateThreatConfReq) (*v2.UpdateThreatConfReply, error) {
-	// TODO:
-	return nil, nil
+	return &v2.GetThreatNamesReply{Names: nameMap}, nil
 }
 
 // ListSensitiveEntry 敏感条目列表
@@ -599,7 +585,7 @@ func (s *ADAServiceV2) ListThreatWhitelist(ctx context.Context, in *v2.ListThrea
 }
 
 func (s *ADAServiceV2) GetThreatWhitelistField(ctx context.Context, in *v2.GetThreatWhitelistFieldReq) (*v2.GetThreatWhitelistFieldReply, error) {
-	_, err := server.GetThreatDescByID(s.env, in.RuleId)
+	_, err := server.GetThreatRuleByID(s.env, in.RuleId)
 	if err != nil {
 		logger.Errorf("get threat desc by id(%s) err:%v", in.RuleId, err)
 		return nil, status.Error(codes.InvalidArgument, s.I18n("InvalidArgument"))
@@ -623,7 +609,7 @@ func (s *ADAServiceV2) AddThreatWhitelist(ctx context.Context, in *v2.AddThreatW
 		Result: common.RESP_FAILED,
 	}
 
-	rule, err := server.GetThreatDescByID(s.env, in.RuleId)
+	rule, err := server.GetThreatRuleByID(s.env, in.RuleId)
 	if err != nil {
 		logger.Errorf("get threat desc by id(%s) err:%v", in.RuleId, err)
 		return &ret, status.Error(codes.Internal, s.I18n("QueryFailed"))
