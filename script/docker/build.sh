@@ -30,6 +30,8 @@ build_frontend() {
 
 # build backend
 build_backend() {
+    build_frontend || exit;
+
     cd ${ada_path} || exit;
     make apiserver task_server task_worker
     cd ${ada_path}/script/docker/backend || exit;
@@ -255,8 +257,13 @@ main() {
         deploy)
             deploy_service $2
             ;;
+        release)
+            build_images $2
+            package_images $2
+            deploy_service $2
+            ;;
         *)
-            echo "Usage: $0 {build [component]|package [component]|deploy [component]}"
+            echo "Usage: $0 {build [component]|package [component]|deploy [component]| release [component]}"
             exit 1
             ;;
     esac

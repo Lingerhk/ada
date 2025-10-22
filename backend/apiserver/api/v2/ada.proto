@@ -94,14 +94,12 @@ service ADA {
 
   // threat威胁检测
   rpc ListThreat(ListThreatReq) returns (ListThreatReply) {} // 威胁事件列表
-  rpc GetThreatNames(GetThreatNamesReq) returns (GetThreatNamesReply) {} // 规则名称/ruleId映射列表
+  rpc GetThreatNames(GetThreatNamesReq) returns (GetThreatNamesReply) {} // Event中的ruleTitle/ruleId映射列表
   rpc GetThreat(GetThreatReq) returns (GetThreatReply) {} // 威胁事件详情
   rpc ActionThreat(ActionThreatReq) returns (ActionThreatReply) {} // 威胁事件操作
   rpc ListActivity(ListActivityReq) returns (ListActivityReply) {} // 威胁行为列表
   rpc GetActivityNames(GetActivityNamesReq) returns (GetActivityNamesReply) {} // 威胁行为名称/actId映射列表
   rpc GetActivity(GetActivityReq) returns (GetActivityReply) {} // 威胁行为详情
-  rpc ListThreatConf(ListThreatConfReq) returns (ListThreatConfReply) {} // 威胁配置列表
-  rpc UpdateThreatConf(UpdateThreatConfReq) returns (UpdateThreatConfReply) {} // 更新威胁配置
   rpc ListSensitiveEntry(ListSensitiveEntryReq) returns (ListSensitiveEntryReply) {} // 敏感条目列表
   rpc AddSensitiveEntry(AddSensitiveEntryReq) returns (AddSensitiveEntryReply) {} // 增加敏感条目
   rpc ListDomainEntry(ListDomainEntryReq) returns (ListDomainEntryReply) {} // Domain Users列表（增加敏感条目，选择)
@@ -121,6 +119,7 @@ service ADA {
   rpc AddAlertRule(AddAlertRuleReq) returns (AddAlertRuleReply) {} // 添加告警规则
   rpc UpdateAlertRule(UpdateAlertRuleReq) returns (UpdateAlertRuleReply) {} // 更新告警规则
   rpc DeleteAlertRule(DeleteAlertRuleReq) returns (DeleteAlertRuleReply) {} // 删除告警规则
+  rpc GetAlertRuleNames(GetAlertRuleNamesReq) returns (GetAlertRuleNamesReply) {} // 返回所有规则名称与 id 对应列表
   rpc GetAlertTypes(GetAlertTypesReq) returns (GetAlertTypesReply) {} // 删除告警规则
   rpc GetAlertRuleTags(GetAlertRuleTagsReq) returns (GetAlertRuleTagsReply) {} // 获取所有规则标签
   rpc ListActivityRule(ListActivityRuleReq) returns (ListActivityRuleReply) {} // Sigma规则列表
@@ -923,7 +922,7 @@ message ListThreatReply{
 }
 
 message GetThreatNamesReq{
-  string ruleId = 1; // 可选，为空则返回所有的rule_id与title的map
+  string flowId = 1; // 可选，为空则返回所有的flow_id与title的map
 }
 
 message GetThreatNamesReply{
@@ -1019,23 +1018,6 @@ message GetActivityReq{
 
 message GetActivityReply{
   ActivityDetails details = 1;
-}
-
-message ListThreatConfReq{
-
-
-}
-
-message ListThreatConfReply{
-
-}
-
-message UpdateThreatConfReq{
-
-}
-
-message UpdateThreatConfReply{
-
 }
 
 message ListSensitiveEntryReq{
@@ -1739,6 +1721,14 @@ message GetAlertTypesReq{}
 
 message GetAlertTypesReply{
   map <string, string> alertTypes = 1;
+}
+
+message GetAlertRuleNamesReq{
+  string ruleId = 1; // 可选，为空则返回所有的rule_id与name的map
+}
+
+message GetAlertRuleNamesReply{
+  map<string, string> names = 1; // rule_id -> rule_name mapping
 }
 
 message GetAlertRuleTagsReq{}

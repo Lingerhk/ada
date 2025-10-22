@@ -341,6 +341,35 @@ func (s *ADAServiceV2) GetAlertTypes(ctx context.Context, in *v2.GetAlertTypesRe
 	}, nil
 }
 
+// GetAlertRuleNames returns alert rule names mapping (rule_id -> rule_name)
+func (s *ADAServiceV2) GetAlertRuleNames(ctx context.Context, in *v2.GetAlertRuleNamesReq) (*v2.GetAlertRuleNamesReply, error) {
+	var nameMap = make(map[string]string)
+
+	if in.RuleId != "" {
+		// Get specific rule by ID
+		rule, err := server.GetAlertRuleByID(s.env, in.RuleId)
+		if err != nil {
+			logger.Errorf("get alert rule by id(%s) err:%v", in.RuleId, err)
+			return nil, status.Error(codes.Internal, s.I18n("QueryFailed"))
+		}
+		nameMap[rule.ID] = rule.Title
+		return &v2.GetAlertRuleNamesReply{Names: nameMap}, nil
+	}
+
+	// Get all alert rules
+	rules, _, err := server.ListAlertRule(s.env, []int32{}, []string{}, nil, "", []string{}, -1, -1, -1)
+	if err != nil {
+		logger.Errorf("list all alert rules err:%v", err)
+		return nil, status.Error(codes.Internal, s.I18n("QueryFailed"))
+	}
+
+	for _, rule := range rules {
+		nameMap[rule.ID] = rule.Title
+	}
+
+	return &v2.GetAlertRuleNamesReply{Names: nameMap}, nil
+}
+
 // GetAlertRuleTags
 func (s *ADAServiceV2) GetAlertRuleTags(ctx context.Context, in *v2.GetAlertRuleTagsReq) (*v2.GetAlertRuleTagsReply, error) {
 	tags, err := server.GetAllRuleTags(s.env)
