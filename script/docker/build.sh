@@ -141,8 +141,10 @@ build_images() {
 }
 
 package_images() {
+    cd ${ada_path}/script/docker
     case $1 in
         backend)
+            [ -f ada_backend_${version}.tar ] && rm ada_backend_${version}.tar
             docker save -o ada_backend_${version}.tar ada_backend:${version}
             ls -l ada_backend_${version}.tar
             ;;

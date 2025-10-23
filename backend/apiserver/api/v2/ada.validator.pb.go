@@ -778,8 +778,8 @@ func (this *GetThreatReply) Validate() error {
 	return nil
 }
 func (this *ActionThreatReq) Validate() error {
-	if !(this.EventStatus > 0) {
-		return github_com_mwitkow_go_proto_validators.FieldError("EventStatus", fmt.Errorf(`value '%v' must be greater than '0'`, this.EventStatus))
+	if !(this.EventStatus > -1) {
+		return github_com_mwitkow_go_proto_validators.FieldError("EventStatus", fmt.Errorf(`value '%v' must be greater than '-1'`, this.EventStatus))
 	}
 	if !(this.EventStatus < 4) {
 		return github_com_mwitkow_go_proto_validators.FieldError("EventStatus", fmt.Errorf(`value '%v' must be less than '4'`, this.EventStatus))
