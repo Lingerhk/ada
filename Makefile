@@ -1,7 +1,7 @@
 BUILD_VERSION=3.1.0
 BUILD_TIME=$(shell date "+%F %T")
 COMMIT_VERSION=$(shell git log -1 --format="%h")
-COMMIT_TIME=$(shell git log -1 --format="%ai")
+COMMIT_TIME=$(shell git log -1 --format="%ci" | cut -d' ' -f1,2)
 
 BUILD_BASE_PATH=$(shell pwd)
 BUILD_PATH_APISERVER=backend/apiserver/cmd
