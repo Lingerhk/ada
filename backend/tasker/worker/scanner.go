@@ -11,6 +11,7 @@ import (
 	logger "github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
+	"slices"
 )
 
 func (w *Worker) ScannerBaselineTask(domainTmplMap string) error {
@@ -317,14 +318,7 @@ func (w *Worker) getAssetUserNameList(domain string) ([]string, error) {
 
 	var userNames []string
 	for _, u := range userList {
-		ignored := false
-		for _, iu := range ignoreUser {
-			if u.SAMAccountName == iu {
-				ignored = true
-				break
-			}
-		}
-		if ignored {
+		if slices.Contains(ignoreUser, u.SAMAccountName) {
 			continue
 		}
 

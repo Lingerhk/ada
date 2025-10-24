@@ -348,18 +348,6 @@ func (this *GetSystemIconReq) Validate() error {
 func (this *GetSystemIconReply) Validate() error {
 	return nil
 }
-func (this *UpdateSystemIconReq) Validate() error {
-	return nil
-}
-func (this *UpdateSystemIconReply) Validate() error {
-	return nil
-}
-func (this *UpdateNtpAddressReq) Validate() error {
-	return nil
-}
-func (this *UpdateNtpAddressReply) Validate() error {
-	return nil
-}
 
 var _regex_UpdateSystemLanguageReq_Language = regexp.MustCompile(`EN|ZH`)
 
@@ -372,10 +360,10 @@ func (this *UpdateSystemLanguageReq) Validate() error {
 func (this *UpdateSystemLanguageReply) Validate() error {
 	return nil
 }
-func (this *UpdateSystemIPReq) Validate() error {
+func (this *UpdateSystemCfgReq) Validate() error {
 	return nil
 }
-func (this *UpdateSystemIPReply) Validate() error {
+func (this *UpdateSystemCfgReply) Validate() error {
 	return nil
 }
 

@@ -85,7 +85,8 @@ type SystemInfo struct {
 	SystemName     string             `bson:"system_name"`     // 系统名称
 	SystemIcon     string             `bson:"system_icon"`     // 系统Logo
 	SystemVersion  string             `bson:"system_version"`  // 系统版本
-	UpgradeUrl     string             `bson:"upgrade_url"`     // 新版本检测
+	UpgradeSrv     string             `bson:"upgrade_srv"`     // 更新srv地址
+	UpgradeRule    bool               `bson:"upgrade_rule"`    // 是否联网更新规则
 	NtpAddress     string             `bson:"ntp_address"`     // NTP服务器地址
 	SystemLanguage string             `bson:"system_language"` // 系统语言(EN/ZH)
 	StatsCfg       map[string]string  `bson:"stats_cfg"`       // 系统状态监控配置
@@ -311,8 +312,8 @@ func (a *ScanConf) CollectName() string {
 
 // Sigma规则 描述表
 type FieldObj struct {
-	Obj string `bson:"obj"`
-	Key string `bson:"key"`
+	Obj   string `bson:"obj"`
+	Key   string `bson:"key"`
 	Value string // will storeage in db, just return to proto.
 }
 type AttackFlow struct {
