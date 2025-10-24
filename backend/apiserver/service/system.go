@@ -50,6 +50,11 @@ func (s *ADAServiceV2) GetSystemInfo(ctx context.Context, in *v2.GetSystemInfoRe
 		upTime = strconv.FormatUint(hostStat.Uptime, 10)
 	}
 
+	upgradeRule := "false"
+	if sys.UpgradeRule {
+		upgradeRule = "true"
+	}
+
 	ret := v2.GetSystemInfoReply{
 		SystemIP:          sys.SystemIP,
 		SystemName:        sys.SystemName,
@@ -67,6 +72,8 @@ func (s *ADAServiceV2) GetSystemInfo(ctx context.Context, in *v2.GetSystemInfoRe
 		SystemNtpAddress:  sys.NtpAddress,
 		SystemLanguage:    sys.SystemLanguage,
 		StatsCfg:          sys.StatsCfg,
+		UpgradeSrv:        sys.UpgradeSrv,
+		UpgradeRule:       upgradeRule,
 	}
 
 	return &ret, nil
@@ -87,90 +94,15 @@ func (s *ADAServiceV2) GetSystemIcon(ctx context.Context, in *v2.GetSystemIconRe
 			return nil, status.Error(codes.Internal, s.I18n("System.GetSystemIconFailed"))
 		}
 		iconB64 := base64.StdEncoding.EncodeToString(fCnt)
-		err = server.UpdateSystemIcon(s.env, si.ID, iconB64)
+		err = server.UpdateSystemCfg(s.env, si.ID, "", "", iconB64, "", "")
 		if err != nil {
 			logger.Warnf("update system info err:%v", err)
 			return nil, status.Error(codes.Internal, s.I18n("System.UpdateSystemIconFailed"))
 		}
-		return &v2.GetSystemIconReply{Icon: si.SystemIcon}, nil
+		return &v2.GetSystemIconReply{Icon: iconB64}, nil
 	}
 
 	return &v2.GetSystemIconReply{Icon: si.SystemIcon}, nil
-}
-
-func (s *ADAServiceV2) UpdateSystemIcon(ctx context.Context, in *v2.UpdateSystemIconReq) (*v2.UpdateSystemIconReply, error) {
-	var iconTypes = []string{"jpg", "jpeg", "png"}
-
-	ret := &v2.UpdateSystemIconReply{
-		Result: RESP_FAILED,
-	}
-
-	iconByte, err := base64.StdEncoding.DecodeString(in.File)
-	if err != nil {
-		logger.Warnf("decode string err: %s", err)
-		return ret, status.Error(codes.Internal, s.I18n("System.UpdateSystemIconFailed"))
-	}
-
-	// 限制大小
-	if len(iconByte)/8 > fileMaxSize {
-		return ret, status.Error(codes.Internal, s.I18n("System.UpdateIconTooLarge"))
-	}
-
-	// Icon类型判断
-	contentType := http.DetectContentType(iconByte)
-	fileExt := strings.Split(contentType, "/")[1]
-
-	if !slices.Contains(iconTypes, strings.ToLower(fileExt)) {
-		logger.Warnf("invalid icon type %s", fileExt)
-		return ret, status.Error(codes.Internal, s.I18n("System.UpdateIconInvalidType"))
-	}
-
-	si, err := server.GetSystemInfo(s.env)
-	if err != nil {
-		logger.Warnf("get system info err:%v", err)
-		return ret, status.Error(codes.Internal, s.I18n("System.GetSystemInfoFailed"))
-	}
-
-	err = server.UpdateSystemIcon(s.env, si.ID, in.File)
-	if err != nil {
-		logger.Warnf("get system info err:%v", err)
-		return ret, status.Error(codes.Internal, s.I18n("System.UpdateSystemIconFailed"))
-	}
-
-	ret.Result = RESP_SUCCESS
-
-	return ret, nil
-}
-
-func (s *ADAServiceV2) UpdateNtpAddress(ctx context.Context, in *v2.UpdateNtpAddressReq) (*v2.UpdateNtpAddressReply, error) {
-	ret := &v2.UpdateNtpAddressReply{
-		Result: RESP_FAILED,
-	}
-
-	domainReg := `^(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z]{2,}$`
-	domainRegex := regexp.MustCompile(domainReg)
-	if net.ParseIP(in.Ntp) == nil && !domainRegex.MatchString(in.Ntp) {
-		logger.Infof("invalid ntp address %s", in.Ntp)
-		return ret, status.Error(codes.InvalidArgument, s.I18n("System.UpdateNtpAddressFailed"))
-	}
-
-	// call system command to update ntp address
-	out, err := exec.Command("sudo", "ntpdate", in.Ntp).Output()
-	if err != nil {
-		logger.Warnf("update ntp(%s) err:%v, stdout:%s", in.Ntp, err, out)
-		return ret, status.Error(codes.Internal, s.I18n("System.UpdateNtpAddressFailed"))
-	}
-
-	// update ntp address in db
-	err = server.UpdateNtpAddress(s.env, in.Ntp)
-	if err != nil {
-		logger.Warnf("update ntp address(%s) err:%v", in.Ntp, err)
-		return ret, status.Error(codes.Internal, s.I18n("System.UpdateNtpAddressFailed"))
-	}
-
-	ret.Result = RESP_SUCCESS
-
-	return ret, nil
 }
 
 func (s *ADAServiceV2) UpdateSystemLanguage(ctx context.Context, in *v2.UpdateSystemLanguageReq) (*v2.UpdateSystemLanguageReply, error) {
@@ -191,16 +123,64 @@ func (s *ADAServiceV2) UpdateSystemLanguage(ctx context.Context, in *v2.UpdateSy
 	return ret, nil
 }
 
-func (s *ADAServiceV2) UpdateSystemIP(ctx context.Context, in *v2.UpdateSystemIPReq) (*v2.UpdateSystemIPReply, error) {
-	ret := &v2.UpdateSystemIPReply{
+func (s *ADAServiceV2) UpdateSystemCfg(ctx context.Context, in *v2.UpdateSystemCfgReq) (*v2.UpdateSystemCfgReply, error) {
+	ret := &v2.UpdateSystemCfgReply{
 		Result: RESP_FAILED,
 	}
 
-	// update language in db
-	err := server.UpdateSystemIP(s.env, in.SystemIP)
+	si, err := server.GetSystemInfo(s.env)
 	if err != nil {
-		logger.Warnf("update system language err:%v", err)
-		return ret, status.Error(codes.Internal, s.I18n("System.UpdateSystemIPFailed"))
+		logger.Errorf("get system info err: %s", err)
+		return ret, status.Error(codes.Internal, s.I18n("System.GetSystemInfoFailed"))
+	}
+
+	// Validate and process NTP if provided
+	if in.Ntp != "" {
+		domainReg := `^(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z]{2,}$`
+		domainRegex := regexp.MustCompile(domainReg)
+		if net.ParseIP(in.Ntp) == nil && !domainRegex.MatchString(in.Ntp) {
+			logger.Infof("invalid ntp address %s", in.Ntp)
+			return ret, status.Error(codes.InvalidArgument, s.I18n("System.UpdateNtpAddressFailed"))
+		}
+
+		// call system command to update ntp address
+		out, err := exec.Command("sudo", "ntpdate", in.Ntp).Output()
+		if err != nil {
+			logger.Warnf("update ntp(%s) err:%v, stdout:%s", in.Ntp, err, out)
+			return ret, status.Error(codes.Internal, s.I18n("System.UpdateNtpAddressFailed"))
+		}
+	}
+
+	// Validate and process icon file if provided
+	if in.File != "" {
+		var iconTypes = []string{"jpg", "jpeg", "png"}
+
+		iconByte, err := base64.StdEncoding.DecodeString(in.File)
+		if err != nil {
+			logger.Warnf("decode string err: %s", err)
+			return ret, status.Error(codes.Internal, s.I18n("System.UpdateSystemIconFailed"))
+		}
+
+		// 限制大小
+		if len(iconByte)/8 > fileMaxSize {
+			return ret, status.Error(codes.Internal, s.I18n("System.UpdateIconTooLarge"))
+		}
+
+		// Icon类型判断
+		contentType := http.DetectContentType(iconByte)
+		fileExt := strings.Split(contentType, "/")[1]
+
+		if !slices.Contains(iconTypes, strings.ToLower(fileExt)) {
+			logger.Warnf("invalid icon type %s", fileExt)
+			return ret, status.Error(codes.Internal, s.I18n("System.UpdateIconInvalidType"))
+		}
+	}
+
+	// Update system configuration in database
+	err = server.UpdateSystemCfg(s.env, si.ID, in.Ntp, in.SystemIP, in.File, in.UpgradeSrv, in.UpgradeRule)
+	if err != nil {
+		logger.Warnf("update system cfg err:%v", err)
+		return ret, status.Error(codes.Internal, s.I18n("System.UpdateSystemCfgFailed"))
 	}
 
 	ret.Result = RESP_SUCCESS

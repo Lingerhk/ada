@@ -245,35 +245,6 @@ func TestGetThreatNames(t *testing.T) {
 	t.Logf("%#v", resp)
 }
 
-func TestListThreatDesc(t *testing.T) {
-	req := v2.ListThreatRuleReq{
-		Level:  []int32{5, 4, 3, 2},
-		Enable: []bool{true, false},
-	}
-	resp, err := ADACli.cli.ListThreatRule(ADACli.ctx, &req)
-	if err != nil {
-		t.Error(err.Error())
-	}
-
-	for _, item := range resp.List {
-		t.Logf("threat desc info:%#v", item)
-	}
-}
-
-func TestActionThreatRule(t *testing.T) {
-	req := v2.ActionThreatRuleReq{
-		ID:     "flow-0005",
-		Type:   "auto_block",
-		Switch: true,
-	}
-	resp, err := ADACli.cli.ActionThreatRule(ADACli.ctx, &req)
-	if err != nil {
-		t.Error(err.Error())
-	}
-
-	t.Logf("%#v", resp)
-}
-
 func TestListDomainEntry(t *testing.T) {
 	req := v2.ListDomainEntryReq{
 		Type:   "user",

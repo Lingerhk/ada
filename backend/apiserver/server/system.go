@@ -51,29 +51,6 @@ func GetSystemInfo(e *config.Env) (*model.SystemInfo, error) {
 	return &s, nil
 }
 
-func UpdateSystemIcon(e *config.Env, id primitive.ObjectID, iconB64 string) error {
-	var sc model.SystemInfo
-	query := bson.M{"_id": id}
-	update := bson.M{"$set": bson.M{"system_icon": iconB64}}
-	err := e.MongoCli.UpdateRaw(sc.CollectName(), query, &update, false)
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
-func UpdateNtpAddress(e *config.Env, ntpAddress string) error {
-	var sc model.SystemInfo
-
-	update := bson.M{"$set": bson.M{"ntp_address": ntpAddress}}
-	err := e.MongoCli.UpdateRaw(sc.CollectName(), bson.M{}, &update, false)
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
-
 func UpdateLanguage(e *config.Env, lang string) error {
 	var sc model.SystemInfo
 
@@ -86,10 +63,34 @@ func UpdateLanguage(e *config.Env, lang string) error {
 	return nil
 }
 
-func UpdateSystemIP(e *config.Env, ip string) error {
+// UpdateSystemCfg updates system configuration including ntp, systemIP, icon, upgradeSrv, and upgradeRule
+func UpdateSystemCfg(e *config.Env, id primitive.ObjectID, ntp, systemIP, file, upgradeSrv, upgradeRule string) error {
 	var sc model.SystemInfo
 
-	update := bson.M{"$set": bson.M{"system_ip": ip}}
+	// Build update document with non-empty fields
+	updateFields := bson.M{}
+	if ntp != "" {
+		updateFields["ntp_address"] = ntp
+	}
+	if systemIP != "" {
+		updateFields["system_ip"] = systemIP
+	}
+	if file != "" {
+		updateFields["system_icon"] = file
+	}
+	if upgradeSrv != "" {
+		updateFields["upgrade_srv"] = upgradeSrv
+	}
+	if upgradeRule != "" {
+		updateFields["upgrade_rule"] = (upgradeRule == "true")
+	}
+
+	// Only update if there are fields to update
+	if len(updateFields) == 0 {
+		return nil
+	}
+
+	update := bson.M{"$set": updateFields}
 	err := e.MongoCli.UpdateRaw(sc.CollectName(), bson.M{}, &update, false)
 	if err != nil {
 		return err

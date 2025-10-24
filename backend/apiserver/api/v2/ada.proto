@@ -49,10 +49,8 @@ service ADA {
   // 1.基本信息
   rpc GetSystemInfo(GetSystemInfoReq) returns (GetSystemInfoReply) {} //获取系统信息
   rpc GetSystemIcon(GetSystemIconReq)returns(GetSystemIconReply) {}
-  rpc UpdateSystemIcon(UpdateSystemIconReq)returns(UpdateSystemIconReply) {}
-  rpc UpdateNtpAddress(UpdateNtpAddressReq)returns(UpdateNtpAddressReply) {}
   rpc UpdateSystemLanguage(UpdateSystemLanguageReq)returns(UpdateSystemLanguageReply) {}
-  rpc UpdateSystemIP(UpdateSystemIPReq)returns(UpdateSystemIPReply) {} // 更新系统IP
+  rpc UpdateSystemCfg(UpdateSystemCfgReq) returns (UpdateSystemCfgReply) {} // 更新系统配置
 
   // 2.系统监控: load|cpu|mem|net_rx|net_tx
   rpc GetSystemStats(GetSystemStatsReq) returns (GetSystemStatsReply) {} //获取系统监控信息
@@ -575,25 +573,13 @@ message GetSystemInfoReply {
   string systemNtpAddress = 14; // NTP服务器地址
   string systemLanguage = 15; // 系统语言(EN/ZH)
   map<string, string> statsCfg = 16; // 系统监控参数
+  string upgradeSrv = 17; // 升级服务器地址
+  string upgradeRule = 18; // 升级规则开关 "true|false"
 }
 
 message GetSystemIconReq {}
 message GetSystemIconReply {
   string icon = 1;
-}
-
-message UpdateSystemIconReq {
-  string file = 1; // 将文件转为base64字符串传过来
-}
-message UpdateSystemIconReply {
-  string result = 1; //  success failed
-}
-
-message UpdateNtpAddressReq {
-  string ntp = 1;
-}
-message UpdateNtpAddressReply {
-  string result = 1; //  success failed
 }
 
 message UpdateSystemLanguageReq{
@@ -603,11 +589,17 @@ message UpdateSystemLanguageReply{
   string result = 1; //  success failed
 }
 
-message UpdateSystemIPReq{
-  string systemIP = 1;
+//
+message UpdateSystemCfgReq{
+  string ntp = 1; // ntp server
+  string systemIP = 2; // system ip
+  string file = 3; // 将文件转为base64字符串传过来
+  string upgradeSrv = 4; // 更新srv地址
+  string upgradeRule = 5; // "true|false"
 }
-message UpdateSystemIPReply{
-  string result = 1; //  success failed
+
+message UpdateSystemCfgReply {
+  string result = 1;
 }
 
 message GetSystemStatsReq {
