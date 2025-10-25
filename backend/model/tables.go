@@ -371,7 +371,7 @@ func (r *AlertRule) CollectName() string {
 type ActivityDetection map[string]any
 
 type AlertActivityRule struct {
-	ID           string            `bson:"_id,omitempty"`
+	ID           string            `bson:"_id,omitempty"` // 与sigma rule中的id格式一致
 	Title        string            `bson:"title"`         // 规则标题
 	Description  string            `bson:"description"`   // 规则描述
 	Level        int32             `bson:"level"`         // 风险等级,5:critical, 4:high, 3:medium, 2:low, 1:info

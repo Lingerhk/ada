@@ -75,8 +75,8 @@ func TestUpdateNtpAddress(t *testing.T) {
 	// cn.pool.ntp.org
 	// ntp.tencent.com
 
-	req := v2.UpdateNtpAddressReq{Ntp: "ntp.tencent.com"}
-	resp, err := ADACli.cli.UpdateNtpAddress(ADACli.ctx, &req)
+	req := v2.UpdateSystemCfgReq{Ntp: "ntp.tencent.com"}
+	resp, err := ADACli.cli.UpdateSystemCfg(ADACli.ctx, &req)
 	if err != nil {
 		t.Error(err.Error())
 	}
