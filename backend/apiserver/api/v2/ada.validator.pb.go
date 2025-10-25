@@ -24,6 +24,12 @@ func (this *ModelPage) Validate() error {
 var _regex_LoginReq_TotpCode = regexp.MustCompile(`d{6}|^(\s&&[^\f\n\r\t\v])*`)
 
 func (this *LoginReq) Validate() error {
+	if this.Username == "" {
+		return github_com_mwitkow_go_proto_validators.FieldError("Username", fmt.Errorf(`value '%v' must not be an empty string`, this.Username))
+	}
+	if this.Password == "" {
+		return github_com_mwitkow_go_proto_validators.FieldError("Password", fmt.Errorf(`value '%v' must not be an empty string`, this.Password))
+	}
 	if !_regex_LoginReq_TotpCode.MatchString(this.TotpCode) {
 		return github_com_mwitkow_go_proto_validators.FieldError("TotpCode", fmt.Errorf(`value '%v' must be a string conforming to regex "d{6}|^(\\s&&[^\\f\\n\\r\\t\\v])*"`, this.TotpCode))
 	}
