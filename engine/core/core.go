@@ -57,11 +57,23 @@ func New(env *config.Env) (*EngineWorker, error) {
 	pktLogRulePath := filepath.Join(common.RuleDir, common.RulePktLog)
 
 	// init sigma flow ruleset（必须在sigma rule初始化执行）
-	flowset, err := flow.NewRuleset(env.RedisCli, env.MongoCli, flowRulePath)
-	if err != nil {
-		logger.Errorf("init flow ruleset err %v", err)
-		cancel()
-		return nil, err
+	var err error
+	var flowset *flow.Ruleset
+	for {
+		time.Sleep(3 * time.Second)
+		flowset, err = flow.NewRuleset(env.RedisCli, env.MongoCli, flowRulePath)
+		if err == flow.ErrMissingRuleList {
+			logger.Warnf("empty rules %v, wait 60s...", err)
+			time.Sleep(60 * time.Second)
+			continue
+		}
+
+		if err != nil {
+			logger.Errorf("init flow ruleset err %v", err)
+			cancel()
+			return nil, err
+		}
+		break
 	}
 
 	logger.Infof("loaded flow ruleset form %s", flowRulePath)
