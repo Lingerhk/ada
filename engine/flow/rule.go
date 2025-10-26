@@ -138,7 +138,7 @@ func NewRuleList(files []string) ([]FlowRule, error) {
 		}
 
 		// check level
-		if !slices.Contains([]string{"info", "low", "medium", "high", "critical"}, r.Level) {
+		if !slices.Contains([]string{"info", "low", "medium", "high", "critical", "1", "2", "3", "4", "5"}, r.Level) {
 			logger.Warnf("ignore invalid level:%s", r.Level)
 			continue
 		}

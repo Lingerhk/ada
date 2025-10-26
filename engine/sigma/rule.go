@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"slices"
 	"strings"
 
 	logger "github.com/sirupsen/logrus"
@@ -76,15 +77,7 @@ func (r *Rule) margeFields(extFields map[string][]string) {
 			continue
 		}
 
-		exist := false
-		for _, dField := range destFields {
-			if sField == dField {
-				exist = true
-				break
-			}
-		}
-
-		if !exist {
+		if !slices.Contains(destFields, sField) {
 			destFields = append(destFields, sField)
 		}
 	}
@@ -96,13 +89,8 @@ func (r *Rule) margeFields(extFields map[string][]string) {
 
 func (r *Rule) checkLevel() bool {
 	// levels defines in engine/common/ruletype.go
-	for _, l := range []string{"info", "low", "medium", "high", "critical"} {
-		if r.Level == l {
-			return true
-		}
-	}
-
-	return false
+	validLevels := []string{"info", "low", "medium", "high", "critical", "1", "2", "3", "4", "5"}
+	return slices.Contains(validLevels, r.Level)
 }
 
 // RuleFromYAML parses yaml data into Rule object
