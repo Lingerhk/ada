@@ -325,24 +325,24 @@ type AttackFlow struct {
 
 type AlertDetection struct {
 	EventType  string   `bson:"event_type" yaml:"event_type"`   // 事件类型
-	WinSize    int64    `bson:"win_size" yaml:"win_size"`       // 窗口大小
+	WinSize    string   `bson:"win_size" yaml:"win_size"`       // 窗口大小
 	Sorted     bool     `bson:"sorted" yaml:"sorted"`           // 是否排序
 	SigmaRules []string `bson:"sigma_rules" yaml:"sigma_rules"` // 关联sigma规则
 	MatchBy    string   `bson:"match_by" yaml:"match_by"`       // 匹配条件
 }
 
 type AlertRule struct {
-	ID          string         `bson:"_id,omitempty" yaml:"id"`                  // id
-	Title       string         `bson:"title" yaml:"title"`                       // 事件标题
-	Description string         `bson:"description" yaml:"description"`           // 事件描述
-	Enable      bool           `bson:"enable" yaml:"enable,omitempty"`           // 启动状态
-	Level       int32          `bson:"level" yaml:"level,omitempty"`             // 威胁等级 5:critical, 4:high, 3:medium, 2:low, 1:info
-	Status      string         `bson:"status" yaml:"status"`                     // 规则状态: test|experimental|stable|deprecated
-	Tags        []string       `bson:"tags" yaml:"tags,omitempty"`               // 规则标签
-	Logsource   string         `bson:"logsource" yaml:"logsource"`               // 日志来源
-	Detection   AlertDetection `bson:"detection" yaml:"detection"`               // 检测配置
-	Type        string         `bson:"type" yaml:"type"`                         // 规则分类
-	References  []string       `bson:"references" yaml:"references,omitempty"`   // 规则参考
+	ID           string         `bson:"_id,omitempty" yaml:"id"`                  // id
+	Title        string         `bson:"title" yaml:"title"`                       // 事件标题
+	Description  string         `bson:"description" yaml:"description"`           // 事件描述
+	Enable       bool           `bson:"enable" yaml:"enable,omitempty"`           // 启动状态
+	Level        int32          `bson:"level" yaml:"level,omitempty"`             // 威胁等级 5:critical, 4:high, 3:medium, 2:low, 1:info
+	Status       string         `bson:"status" yaml:"status"`                     // 规则状态: test|experimental|stable|deprecated
+	Tags         []string       `bson:"tags" yaml:"tags,omitempty"`               // 规则标签
+	Logsource    string         `bson:"logsource" yaml:"logsource"`               // 日志来源
+	Detection    AlertDetection `bson:"detection" yaml:"detection"`               // 检测配置
+	Type         string         `bson:"type" yaml:"type"`                         // 规则分类
+	References   []string       `bson:"references" yaml:"references,omitempty"`   // 规则参考
 	Suggestion   string         `bson:"suggestion" yaml:"suggestion,omitempty"`   // 修复建议
 	Author       string         `bson:"author" yaml:"author,omitempty"`           // 作者
 	AutoBlock    bool           `bson:"auto_block" yaml:"auto_block,omitempty"`   // 是否自动阻断
