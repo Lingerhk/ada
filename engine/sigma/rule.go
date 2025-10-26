@@ -119,7 +119,7 @@ func IsMultipart(data []byte) bool {
 // NewRuleList 	reads a list of sigma rule paths and parses them to rule objects
 func NewRuleList(files []string, skip, noCollapseWS bool, tags []string, extFields map[string][]string) ([]RuleHandle, error) {
 	if len(files) == 0 {
-		return nil, fmt.Errorf("missing rule file list")
+		return nil, ErrMissingRuleList
 	}
 
 	var err error

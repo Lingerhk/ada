@@ -9,14 +9,22 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"slices"
 	"strconv"
 	"strings"
+
+	"errors"
 
 	logger "github.com/sirupsen/logrus"
 	"gopkg.in/yaml.v3"
 )
 
 var eventTypes = []string{common.EventTypeCount, common.EventTypeMultiEve, common.EventTypeMultiPkt, common.EventTypeMultiEvePkt}
+
+var (
+	ErrNoRuleDirectory = errors.New("no rule directories provided")
+	ErrMissingRuleList = errors.New("missing flow rule file list")
+)
 
 // 样例: $s1.SourceProcessId == $s3.ProcessId
 type Condition struct {
@@ -62,7 +70,7 @@ func NewRuleFileList(dirs []string) ([]string, error) {
 	out := make([]string, 0)
 
 	if len(dirs) == 0 {
-		return nil, fmt.Errorf("no rule directories provided")
+		return nil, ErrNoRuleDirectory
 	}
 
 	for _, dir := range dirs {
@@ -89,7 +97,7 @@ func NewRuleFileList(dirs []string) ([]string, error) {
 // NewRuleList 	reads a list of sigma rule paths and parses them to rule objects
 func NewRuleList(files []string) ([]FlowRule, error) {
 	if len(files) == 0 {
-		return nil, fmt.Errorf("missing rule file list")
+		return nil, ErrMissingRuleList
 	}
 
 	var err error
@@ -124,27 +132,13 @@ func NewRuleList(files []string) ([]FlowRule, error) {
 		}
 
 		// ignore which event_type is 'multi_eve_pkt'
-		validEventType := false
-		for _, et := range eventTypes {
-			if r.Detection.EventType == et {
-				validEventType = true
-				break
-			}
-		}
-		if !validEventType {
+		if !slices.Contains(eventTypes, r.Detection.EventType) {
 			logger.Warnf("ignore invalid event_type:%s", r.Detection.EventType)
 			continue
 		}
 
 		// check level
-		validEventLevel := false
-		for _, lvl := range []string{"info", "low", "medium", "high", "critical"} {
-			if r.Level == lvl {
-				validEventLevel = true
-				break
-			}
-		}
-		if !validEventLevel {
+		if !slices.Contains([]string{"info", "low", "medium", "high", "critical"}, r.Level) {
 			logger.Warnf("ignore invalid level:%s", r.Level)
 			continue
 		}
@@ -298,7 +292,7 @@ func parseMatchByExpression(matchBy string) []Condition {
 	// matchBy 多条件的，目前仅支持`AND`， 后续实现`OR`和'()'
 	// matchBy: `$s1.SubjectUserName == $s2.SubjectUserName AND $s1.SourceProcessId == $s2.ProcessId AND $s1.LoginType in $v.slice.["ss", "sd", "sc"]`
 	// 将表达式分割成条件, 解析每个条件
-	for _, condition := range strings.Split(matchBy, "AND") {
+	for condition := range strings.SplitSeq(matchBy, "AND") {
 		conditions = append(conditions, parseCondition(condition))
 	}
 
@@ -374,16 +368,15 @@ func parseCondition(condition string) Condition {
 		// TODO: 后续实现
 	} else {
 		// 其他表达式: `$s1.SubjectUserName == $s2.SubjectUserName` 或 `$s1.SourceProcessId !=$s2.ProcessId` 或 `$s1.SubjectUserName == admin`
-		valid := false
 		var opType string
-		for _, op := range []string{"==", "!=", ">", "<", ">=", "<="} {
+		operators := []string{"==", "!=", ">", "<", ">=", "<="}
+		for _, op := range operators {
 			if strings.Contains(expression, op) {
-				valid = true
 				opType = op
 				break
 			}
 		}
-		if !valid {
+		if opType == "" {
 			logger.Warn("4-invalid condition has no op, will ignore")
 			return c
 		}

@@ -197,3 +197,5 @@ func (e ErrUnsupportedExpression) Error() string {
 // typeOf returned a nil value
 // likely a missing pattern
 var ErrUnableToReflect = errors.New("unable to reflect on pattern kind")
+
+var ErrMissingRuleList = errors.New("missing sigma rule file list")
