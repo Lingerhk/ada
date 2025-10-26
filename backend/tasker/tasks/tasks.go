@@ -10,6 +10,7 @@ const (
 	DomainSyncName      = "domain_sync_task"
 	ADLdapSyncName      = "ad_ldap_sync_task"
 	SystemSyncName      = "system_sync_task"
+	RuleSyncName        = "rule_sync_task"
 	ScannerBaselineName = "scanner_baseline_task"
 	ScannerLeakName     = "scanner_leak_task"
 	ScannerWeakPwdName  = "scanner_weakpwd_task"
@@ -26,6 +27,7 @@ func GetTaskMap(w *worker.Worker) map[string]any {
 		DomainSyncName:      w.DomainSyncTask,
 		ADLdapSyncName:      w.ADLdapSyncTask,
 		SystemSyncName:      w.SystemSyncTask,
+		RuleSyncName:        w.RuleSyncTask,
 		ScannerBaselineName: w.ScannerBaselineTask,
 		ScannerLeakName:     w.ScannerLeakTask,
 		ScannerWeakPwdName:  w.ScannerWeakPwdTask,
@@ -58,6 +60,15 @@ func TaskADLdapSync() *tasks.Signature {
 func TaskSystemSync() *tasks.Signature {
 	taskInstance := &tasks.Signature{
 		Name:       SystemSyncName,
+		RetryCount: 1, // If the task fails, retry it up to 1 times
+	}
+	return taskInstance
+}
+
+// TaskRuleSync synchronize rules from remote server(cron task)
+func TaskRuleSync() *tasks.Signature {
+	taskInstance := &tasks.Signature{
+		Name:       RuleSyncName,
 		RetryCount: 1, // If the task fails, retry it up to 1 times
 	}
 	return taskInstance

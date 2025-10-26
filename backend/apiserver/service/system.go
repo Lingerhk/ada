@@ -10,12 +10,15 @@ import (
 	"ada/infra/license"
 	"context"
 	"encoding/base64"
+	"encoding/json"
 	"fmt"
+	"io"
 	"net"
 	"net/http"
 	"os"
 	"os/exec"
 	"path"
+	"path/filepath"
 	"regexp"
 	"slices"
 	"strconv"
@@ -29,6 +32,69 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
+
+// readCurrentRuleVersion reads the current rule version from current_version.txt
+func readCurrentRuleVersion() string {
+	versionFilePath := filepath.Join(common.ROOT_PATH, "download", "rules", "current_version.txt")
+
+	data, err := os.ReadFile(versionFilePath)
+	if err != nil {
+		if !os.IsNotExist(err) {
+			logger.Warnf("Failed to read current rule version: %v", err)
+		}
+		return "0"
+	}
+
+	return strings.TrimSpace(string(data))
+}
+
+// fetchCloudRuleVersion fetches the cloud rule version from remote server
+func fetchCloudRuleVersion(upgradeSrv string) string {
+	if upgradeSrv == "" {
+		return ""
+	}
+
+	// Build URL
+	baseURL := strings.TrimSuffix(upgradeSrv, "/")
+	url := fmt.Sprintf("%s/rule/version/latest.json", baseURL)
+
+	// Create HTTP client with timeout
+	client := &http.Client{
+		Timeout: 5 * time.Second,
+	}
+
+	resp, err := client.Get(url)
+	if err != nil {
+		logger.Warnf("Failed to fetch cloud rule version from %s: %v", url, err)
+		return ""
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		logger.Warnf("Failed to fetch cloud rule version: status %d", resp.StatusCode)
+		return ""
+	}
+
+	// Read response body
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		logger.Warnf("Failed to read cloud version response: %v", err)
+		return ""
+	}
+
+	// Parse JSON
+	var versionInfo struct {
+		Version string `json:"version"`
+		MD5     string `json:"md5"`
+	}
+
+	if err := json.Unmarshal(body, &versionInfo); err != nil {
+		logger.Warnf("Failed to parse cloud version JSON: %v", err)
+		return ""
+	}
+
+	return versionInfo.Version
+}
 
 func (s *ADAServiceV2) GetSystemInfo(ctx context.Context, in *v2.GetSystemInfoReq) (*v2.GetSystemInfoReply, error) {
 	sys, err := server.GetSystemInfo(s.env)
@@ -55,6 +121,15 @@ func (s *ADAServiceV2) GetSystemInfo(ctx context.Context, in *v2.GetSystemInfoRe
 		upgradeRule = "true"
 	}
 
+	// Read current rule version from file
+	currentRuleVer := readCurrentRuleVersion()
+
+	// Fetch cloud rule version if upgradeRule is enabled and upgradeSrv is set
+	cloudRuleVer := ""
+	if sys.UpgradeRule && sys.UpgradeSrv != "" {
+		cloudRuleVer = fetchCloudRuleVersion(sys.UpgradeSrv)
+	}
+
 	ret := v2.GetSystemInfoReply{
 		SystemIP:          sys.SystemIP,
 		SystemName:        sys.SystemName,
@@ -74,6 +149,8 @@ func (s *ADAServiceV2) GetSystemInfo(ctx context.Context, in *v2.GetSystemInfoRe
 		StatsCfg:          sys.StatsCfg,
 		UpgradeSrv:        sys.UpgradeSrv,
 		UpgradeRule:       upgradeRule,
+		CurrentRuleVer:    currentRuleVer,
+		CloudRuleVer:      cloudRuleVer,
 	}
 
 	return &ret, nil

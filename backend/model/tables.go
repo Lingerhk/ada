@@ -1,6 +1,7 @@
 package model
 
 import (
+	"strings"
 	"time"
 
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -312,14 +313,14 @@ func (a *ScanConf) CollectName() string {
 
 // Sigma规则 描述表
 type FieldObj struct {
-	Obj   string `bson:"obj"`
-	Key   string `bson:"key"`
-	Value string // will storeage in db, just return to proto.
+	Obj   string `bson:"obj" yaml:"obj"`
+	Key   string `bson:"key" yaml:"key"`
+	Value string `yaml:"value,omitempty"` // will storeage in db, just return to proto.
 }
 type AttackFlow struct {
-	Desc    string     `bson:"desc"`   // 描述
-	Fields  []FieldObj `bson:"fields"` // obj(支持ip/user/computer/dc), key. eg: {"obj":"ip","key":"$1.TargetUsername"}
-	Relates []string   `bson:"relates"`
+	Desc    string     `bson:"desc" yaml:"desc"`       // 描述
+	Fields  []FieldObj `bson:"fields" yaml:"fields"`   // obj(支持ip/user/computer/dc), key. eg: {"obj":"ip","key":"$1.TargetUsername"}
+	Relates []string   `bson:"relates" yaml:"relates"` // 关联规则
 }
 
 type AlertDetection struct {
@@ -331,27 +332,88 @@ type AlertDetection struct {
 }
 
 type AlertRule struct {
-	ID          string         `bson:"_id,omitempty"` // id
-	Title       string         `bson:"title"`         // 事件标题
-	Description string         `bson:"description"`   // 事件描述
-	Enable      bool           `bson:"enable"`        // 启动状态
-	Level       int32          `bson:"level"`         // 威胁等级 5:critical, 4:high, 3:medium, 2:low, 1:info
-	Status      string         `bson:"status"`        // 规则状态: test|experimental|stable|deprecated
-	Tags        []string       `bson:"tags"`          // 规则标签
-	Logsource   string         `bson:"logsource"`     // 日志来源
-	Detection   AlertDetection `bson:"detection"`     // 检测配置
-	Type        string         `bson:"type"`          // 规则分类
-	References  []string       `bson:"references"`    // 规则参考
-	Suggestion  string         `bson:"suggestion"`    // 修复建议
-	Author      string         `bson:"author"`        // 作者
-	AutoBlock   bool           `bson:"auto_block"`    // 是否自动阻断
-	AttackFlow  AttackFlow     `bson:"attack_flow"`   // 攻击描述图谱
-	CreateTm    time.Time      `bson:"create_tm"`     // 创建时间
-	UpdateTm    time.Time      `bson:"update_tm"`     // 修改时间
+	ID          string         `bson:"_id,omitempty" yaml:"id"`                  // id
+	Title       string         `bson:"title" yaml:"title"`                       // 事件标题
+	Description string         `bson:"description" yaml:"description"`           // 事件描述
+	Enable      bool           `bson:"enable" yaml:"enable,omitempty"`           // 启动状态
+	Level       int32          `bson:"level" yaml:"level,omitempty"`             // 威胁等级 5:critical, 4:high, 3:medium, 2:low, 1:info
+	Status      string         `bson:"status" yaml:"status"`                     // 规则状态: test|experimental|stable|deprecated
+	Tags        []string       `bson:"tags" yaml:"tags,omitempty"`               // 规则标签
+	Logsource   string         `bson:"logsource" yaml:"logsource"`               // 日志来源
+	Detection   AlertDetection `bson:"detection" yaml:"detection"`               // 检测配置
+	Type        string         `bson:"type" yaml:"type"`                         // 规则分类
+	References  []string       `bson:"references" yaml:"references,omitempty"`   // 规则参考
+	Suggestion   string         `bson:"suggestion" yaml:"suggestion,omitempty"`   // 修复建议
+	Author       string         `bson:"author" yaml:"author,omitempty"`           // 作者
+	AutoBlock    bool           `bson:"auto_block" yaml:"auto_block,omitempty"`   // 是否自动阻断
+	AttackFlow   AttackFlow     `bson:"attack_flow" yaml:"attack_flow,omitempty"` // 攻击描述图谱
+	RuleDate     string         `bson:"-" yaml:"date,omitempty"`                  // 规则创建日期(YAML only)
+	RuleModified string         `bson:"-" yaml:"modified,omitempty"`              // 规则修改日期(YAML only)
+	CreateTm     time.Time      `bson:"create_tm" yaml:"-"`                       // 创建时间
+	UpdateTm     time.Time      `bson:"update_tm" yaml:"-"`                       // 修改时间
 }
 
 func (r *AlertRule) CollectName() string {
 	return "tb_alert_rule"
+}
+
+// UnmarshalYAML implements custom YAML unmarshaling for AlertRule
+func (r *AlertRule) UnmarshalYAML(unmarshal func(interface{}) error) error {
+	// Define a temporary struct with string/map fields for YAML parsing
+	type yamlAlertRule struct {
+		ID           string         `yaml:"id"`
+		Title        string         `yaml:"title"`
+		Description  string         `yaml:"description"`
+		Enable       bool           `yaml:"enable,omitempty"`
+		Level        string         `yaml:"level"` // string in YAML
+		Status       string         `yaml:"status"`
+		Tags         []string       `yaml:"tags,omitempty"`
+		Logsource    map[string]any `yaml:"logsource"` // map in YAML
+		Detection    map[string]any `yaml:"detection"` // will be processed separately
+		Type         string         `yaml:"type"`
+		References   []string       `yaml:"references,omitempty"`
+		Suggestion   string         `yaml:"suggestion,omitempty"`
+		Author       string         `yaml:"author,omitempty"`
+		AutoBlock    bool           `yaml:"auto_block,omitempty"`
+		AttackFlow   map[string]any `yaml:"attack_flow,omitempty"` // will be processed separately
+		RuleDate     string         `yaml:"date,omitempty"`
+		RuleModified string         `yaml:"modified,omitempty"`
+	}
+
+	var temp yamlAlertRule
+	if err := unmarshal(&temp); err != nil {
+		return err
+	}
+
+	// Copy fields
+	r.ID = temp.ID
+	r.Title = temp.Title
+	r.Description = temp.Description
+	r.Enable = temp.Enable
+	r.Status = temp.Status
+	r.Tags = temp.Tags
+	r.References = temp.References
+	r.Suggestion = temp.Suggestion
+	r.Author = temp.Author
+	r.AutoBlock = temp.AutoBlock
+	r.Type = temp.Type
+	r.RuleDate = temp.RuleDate
+	r.RuleModified = temp.RuleModified
+
+	// Convert level string to int32
+	r.Level = convertLevelToInt(temp.Level)
+
+	// Extract logsource product from map
+	if temp.Logsource != nil {
+		if product, ok := temp.Logsource["product"].(string); ok {
+			r.Logsource = product
+		}
+	}
+
+	// Note: Detection and AttackFlow need special handling in rule_sync.go
+	// because they have complex structures that vary by rule type
+
+	return nil
 }
 
 // ActivityDetection stores the dynamic detection field from Sigma rules.
@@ -371,25 +433,81 @@ func (r *AlertRule) CollectName() string {
 type ActivityDetection map[string]any
 
 type AlertActivityRule struct {
-	ID           string            `bson:"_id,omitempty"` // 与sigma rule中的id格式一致
-	Title        string            `bson:"title"`         // 规则标题
-	Description  string            `bson:"description"`   // 规则描述
-	Level        int32             `bson:"level"`         // 风险等级,5:critical, 4:high, 3:medium, 2:low, 1:info
-	Status       string            `bson:"status"`        // 状态, test|experimental|stable|deprecated
-	Tags         []string          `bson:"tags"`          // 标签(MITRE ATT&CK等)
-	Logsource    string            `bson:"logsource"`     // 日志来源
-	References   []string          `bson:"references"`    // 规则参考
-	Detection    ActivityDetection `bson:"detection"`     // 检测配置(动态结构)
-	RdxKey       string            `bson:"rdx_key"`       // 规则缓存key
-	Fields       []string          `bson:"fields"`        // 提取字段
-	UniqueFields []string          `bson:"unique_fields"` // 唯一字段hash
-	Author       string            `bson:"author"`        // 作者
-	CreateTm     time.Time         `bson:"create_tm"`     // 生成时间
-	UpdateTm     time.Time         `bson:"update_tm"`     // 修改时间
+	ID           string            `bson:"_id,omitempty" yaml:"id"`            // 与sigma rule中的id格式一致
+	Title        string            `bson:"title" yaml:"title"`                 // 规则标题
+	Description  string            `bson:"description" yaml:"description"`     // 规则描述
+	Level        int32             `bson:"level" yaml:"level"`                 // 风险等级,5:critical, 4:high, 3:medium, 2:low, 1:info
+	Status       string            `bson:"status" yaml:"status"`               // 状态, test|experimental|stable|deprecated
+	Tags         []string          `bson:"tags" yaml:"tags"`                   // 标签(MITRE ATT&CK等)
+	Logsource    string            `bson:"logsource" yaml:"logsource"`         // 日志来源
+	References   []string          `bson:"references" yaml:"references"`       // 规则参考
+	Detection    ActivityDetection `bson:"detection" yaml:"detection"`         // 检测配置(动态结构)
+	RdxKey       string            `bson:"rdx_key" yaml:"rdx_key,omitempty"`   // 规则缓存key
+	Fields       []string          `bson:"fields" yaml:"fields"`               // 提取字段
+	UniqueFields []string          `bson:"unique_fields" yaml:"unique_fields"` // 唯一字段hash
+	Author       string            `bson:"author" yaml:"author,omitempty"`     // 作者
+	RuleDate     string            `bson:"-" yaml:"date,omitempty"`            // 规则创建日期(YAML only)
+	RuleModified string            `bson:"-" yaml:"modified,omitempty"`        // 规则修改日期(YAML only)
+	CreateTm     time.Time         `bson:"create_tm" yaml:"-"`                 // 生成时间
+	UpdateTm     time.Time         `bson:"update_tm" yaml:"-"`                 // 修改时间
 }
 
 func (a *AlertActivityRule) CollectName() string {
 	return "tb_activity_rule"
+}
+
+// UnmarshalYAML implements custom YAML unmarshaling for AlertActivityRule
+func (a *AlertActivityRule) UnmarshalYAML(unmarshal func(interface{}) error) error {
+	// Define a temporary struct with string/map fields for YAML parsing
+	type yamlActivityRule struct {
+		ID           string            `yaml:"id"`
+		Title        string            `yaml:"title"`
+		Description  string            `yaml:"description"`
+		Level        string            `yaml:"level"` // string in YAML
+		Status       string            `yaml:"status"`
+		Tags         []string          `yaml:"tags"`
+		Logsource    map[string]any    `yaml:"logsource"` // map in YAML
+		References   []string          `yaml:"references"`
+		Detection    ActivityDetection `yaml:"detection"`
+		RdxKey       string            `yaml:"rdx_key,omitempty"`
+		Fields       []string          `yaml:"fields"`
+		UniqueFields []string          `yaml:"unique_fields"`
+		Author       string            `yaml:"author,omitempty"`
+		RuleDate     string            `yaml:"date,omitempty"`
+		RuleModified string            `yaml:"modified,omitempty"`
+	}
+
+	var temp yamlActivityRule
+	if err := unmarshal(&temp); err != nil {
+		return err
+	}
+
+	// Copy fields
+	a.ID = temp.ID
+	a.Title = temp.Title
+	a.Description = temp.Description
+	a.Status = temp.Status
+	a.Tags = temp.Tags
+	a.References = temp.References
+	a.Detection = temp.Detection
+	a.RdxKey = temp.RdxKey
+	a.Fields = temp.Fields
+	a.UniqueFields = temp.UniqueFields
+	a.Author = temp.Author
+	a.RuleDate = temp.RuleDate
+	a.RuleModified = temp.RuleModified
+
+	// Convert level string to int32
+	a.Level = convertLevelToInt(temp.Level)
+
+	// Extract logsource product from map
+	if temp.Logsource != nil {
+		if product, ok := temp.Logsource["product"].(string); ok {
+			a.Logsource = product
+		}
+	}
+
+	return nil
 }
 
 // AlertActivityESDB 告警行为表(该表必须保持和engine/core/types.go:AlertActivityESDB一致)
@@ -597,4 +715,22 @@ type SystemLogs struct {
 
 func (s *SystemLogs) CollectName() string {
 	return "tb_system_logs"
+}
+
+// convertLevelToInt converts level string to integer
+func convertLevelToInt(level string) int32 {
+	switch strings.ToLower(level) {
+	case "critical":
+		return 5
+	case "high":
+		return 4
+	case "medium":
+		return 3
+	case "low":
+		return 2
+	case "info", "informational":
+		return 1
+	default:
+		return 3 // default to medium
+	}
 }

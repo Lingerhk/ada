@@ -31,6 +31,12 @@ RUN set -x \
     && chown -R adadmin:root /home/adadmin/download/report \
     && chown -R adadmin:root /home/adadmin/download/sensor
 
+RUN set -x \
+    && mkdir -p /home/adadmin/rules/flow \
+    && mkdir -p /home/adadmin/rules/winlog \
+    && mkdir -p /home/adadmin/rules/pktlog \
+    && chown -R adadmin:root /home/adadmin/rules
+
 COPY adaegis.zip /home/adadmin/download/sensor/adaegis.zip
 COPY install-adaegis.ps1 /home/adadmin/download/sensor/install-adaegis.ps1
 COPY uninstall-adaegis.ps1 /home/adadmin/download/sensor/uninstall-adaegis.ps1

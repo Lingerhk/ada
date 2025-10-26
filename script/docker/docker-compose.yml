@@ -75,6 +75,7 @@ services:
       - "9092:9092/udp"
     volumes:
       - backend_data:/home/adadmin/logs:rw
+      - report_data:/home/adadmin/download/report:rw
       - rules_data:/home/adadmin/rules:rw
     environment:
       - GIN_MODE=release
@@ -144,6 +145,8 @@ volumes:
   mongodb_data:
     driver: local
   backend_data:
+    driver: local
+  report_data:
     driver: local
   engine_data:
     driver: local
