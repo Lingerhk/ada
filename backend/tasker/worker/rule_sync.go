@@ -72,22 +72,6 @@ type AlertRuleYAML struct {
 	AutoBlock   bool           `yaml:"auto_block,omitempty"`
 }
 
-// ActivityRuleYAML represents the YAML structure for sigma/activity rules
-type ActivityRuleYAML struct {
-	ID          string         `yaml:"id"`
-	Title       string         `yaml:"title"`
-	Description string         `yaml:"description,omitempty"`
-	Level       string         `yaml:"level"`
-	Status      string         `yaml:"status"`
-	Tags        []string       `yaml:"tags,omitempty"`
-	Logsource   string         `yaml:"logsource,omitempty"`
-	Detection   map[string]any `yaml:"detection"`
-	References  []string       `yaml:"references,omitempty"`
-	Author      string         `yaml:"author,omitempty"`
-	RdxKey      string         `yaml:"rdx_key,omitempty"`
-	Fields      []string       `yaml:"fields,omitempty"`
-}
-
 // RuleSyncTask executes rule synchronization from remote server
 func (w *Worker) RuleSyncTask() error {
 	time.Sleep(10 * time.Second) // wait 10s for case: first run at the process started(wait for other service ready)
@@ -737,17 +721,14 @@ func (w *Worker) updateActivityRule(ctx context.Context, meta RuleMetadata, rule
 	}
 
 	// Parse detection separately (dynamic structure)
-	var detectionFields yamlDetection
-	if err := yaml.Unmarshal(data, &detectionFields); err != nil {
-		return fmt.Errorf("failed to parse detection: %w", err)
-	}
-	rule.Detection = detectionFields.Detection
+	// var detectionFields yamlDetection
+	// if err := yaml.Unmarshal(data, &detectionFields); err != nil {
+	// 	return fmt.Errorf("failed to parse detection: %w", err)
+	// }
+	//rule.Detection = detectionFields.Detection
 
 	// Generate rdx_key for caching
-	rule.RdxKey = fmt.Sprintf("ada:rule:%s:%s", ruleType, rule.ID)
-
-	// Extract unique fields (this is a simplified version)
-	rule.UniqueFields = extractUniqueFields(rule.Detection)
+	//rule.RdxKey = fmt.Sprintf("ada:rule:%s:%s", ruleType, rule.ID)
 
 	// Parse date/modified fields from YAML
 	createTm := parseRuleDate(rule.RuleDate)
@@ -814,52 +795,51 @@ func (w *Worker) updateFlowRule(ctx context.Context, meta RuleMetadata, rulesDir
 		return fmt.Errorf("failed to parse YAML rule: %w", err)
 	}
 
-	// Parse detection and attack_flow separately (dynamic structures)
-	var detectionFields yamlDetection
-	if err := yaml.Unmarshal(data, &detectionFields); err != nil {
-		return fmt.Errorf("failed to parse detection fields: %w", err)
-	}
+	// // Parse detection and attack_flow separately (dynamic structures)
+	// var detectionFields yamlDetection
+	// if err := yaml.Unmarshal(data, &detectionFields); err != nil {
+	// 	return fmt.Errorf("failed to parse detection fields: %w", err)
+	// }
 
 	// Convert detection to AlertDetection structure
-	alertDetection := model.AlertDetection{}
-	if eventType, ok := detectionFields.Detection["event_type"].(string); ok {
-		alertDetection.EventType = eventType
-	}
-	if winSize, ok := detectionFields.Detection["win_size"].(string); ok {
-		// Convert string like "30s" to seconds
-		alertDetection.WinSize = parseWinSize(winSize)
-	}
-	if sorted, ok := detectionFields.Detection["sorted"].(bool); ok {
-		alertDetection.Sorted = sorted
-	}
-	if selection, ok := detectionFields.Detection["selection"].(map[string]any); ok {
-		if sigmaRules, ok := selection["sigma_id"].([]any); ok {
-			for _, sr := range sigmaRules {
-				if id, ok := sr.(string); ok {
-					alertDetection.SigmaRules = append(alertDetection.SigmaRules, id)
-				}
-			}
-		}
-		if matchBy, ok := selection["match_by"].(string); ok {
-			alertDetection.MatchBy = matchBy
-		}
-	}
+	// alertDetection := model.AlertDetection{}
+	// if eventType, ok := detectionFields.Detection["event_type"].(string); ok {
+	// 	alertDetection.EventType = eventType
+	// }
+	// if winSize, ok := detectionFields.Detection["win_size"].(string); ok {
+	// 	alertDetection.WinSize = winSize
+	// }
+	// if sorted, ok := detectionFields.Detection["sorted"].(bool); ok {
+	// 	alertDetection.Sorted = sorted
+	// }
+	// if selection, ok := detectionFields.Detection["selection"].(map[string]any); ok {
+	// 	if sigmaRules, ok := selection["sigma_id"].([]any); ok {
+	// 		for _, sr := range sigmaRules {
+	// 			if id, ok := sr.(string); ok {
+	// 				alertDetection.SigmaRules = append(alertDetection.SigmaRules, id)
+	// 			}
+	// 		}
+	// 	}
+	// 	if matchBy, ok := selection["match_by"].(string); ok {
+	// 		alertDetection.MatchBy = matchBy
+	// 	}
+	// }
 
 	// Assign detection to rule
-	rule.Detection = alertDetection
+	//rule.Detection = alertDetection
 
-	// Parse attack_flow
-	attackFlow := model.AttackFlow{}
-	if detectionFields.AttackFlow != nil {
-		if desc, ok := detectionFields.AttackFlow["desc"].(string); ok {
-			attackFlow.Desc = desc
-		}
-		// Parse fields and relates if needed
-		// This is a simplified version
-	}
+	// // Parse attack_flow
+	// attackFlow := model.AttackFlow{}
+	// if detectionFields.AttackFlow != nil {
+	// 	if desc, ok := detectionFields.AttackFlow["desc"].(string); ok {
+	// 		attackFlow.Desc = desc
+	// 	}
+	// 	// Parse fields and relates if needed
+	// 	// This is a simplified version
+	// }
 
 	// Assign attack_flow to rule
-	rule.AttackFlow = attackFlow
+	//rule.AttackFlow = attackFlow
 
 	// Parse date/modified fields from YAML
 	createTm := parseRuleDate(rule.RuleDate)
@@ -957,40 +937,6 @@ func parseRuleDate(dateStr string) time.Time {
 	// If parsing fails, log warning and return current time
 	logger.Warnf("Failed to parse rule date '%s', using current time", dateStr)
 	return time.Now()
-}
-
-// parseWinSize converts window size string to seconds
-func parseWinSize(winSize string) int64 {
-	// Parse strings like "30s", "5m", "1h"
-	if len(winSize) < 2 {
-		return 0
-	}
-
-	value := int64(0)
-	unit := winSize[len(winSize)-1:]
-	numStr := winSize[:len(winSize)-1]
-
-	fmt.Sscanf(numStr, "%d", &value)
-
-	switch unit {
-	case "s":
-		return value
-	case "m":
-		return value * 60
-	case "h":
-		return value * 3600
-	case "d":
-		return value * 86400
-	default:
-		return 0
-	}
-}
-
-// extractUniqueFields extracts unique fields from detection for caching
-func extractUniqueFields(detection map[string]any) []string {
-	// This is a simplified version - implement based on actual logic needed
-	// For now, return empty array
-	return []string{}
 }
 
 // createUploadPackage creates a ZIP package with rules and desc.json
@@ -1095,70 +1041,13 @@ func (w *Worker) exportFlowRuleToYAML(ctx context.Context, ruleID, outputDir str
 		return fmt.Errorf("rule not found: %s", ruleID)
 	}
 
-	// Create YAML export structure with string level and map detection
-	yamlExport := struct {
-		ID          string         `yaml:"id"`
-		Title       string         `yaml:"title"`
-		Description string         `yaml:"description"`
-		Level       string         `yaml:"level"`
-		Status      string         `yaml:"status"`
-		Tags        []string       `yaml:"tags,omitempty"`
-		Logsource   string         `yaml:"logsource"`
-		Type        string         `yaml:"type"`
-		References  []string       `yaml:"references,omitempty"`
-		Suggestion  string         `yaml:"suggestion,omitempty"`
-		Author      string         `yaml:"author,omitempty"`
-		AutoBlock   bool           `yaml:"auto_block,omitempty"`
-		Detection   map[string]any `yaml:"detection"`
-		AttackFlow  map[string]any `yaml:"attack_flow,omitempty"`
-	}{
-		ID:          rule.ID,
-		Title:       rule.Title,
-		Description: rule.Description,
-		Level:       convertLevelToString(rule.Level),
-		Status:      rule.Status,
-		Tags:        rule.Tags,
-		Logsource:   rule.Logsource,
-		Type:        rule.Type,
-		References:  rule.References,
-		Suggestion:  rule.Suggestion,
-		Author:      rule.Author,
-		AutoBlock:   rule.AutoBlock,
-	}
-
-	// Convert detection
-	yamlExport.Detection = make(map[string]any)
-	yamlExport.Detection["event_type"] = rule.Detection.EventType
-	if rule.Detection.WinSize > 0 {
-		yamlExport.Detection["win_size"] = fmt.Sprintf("%ds", rule.Detection.WinSize)
-	}
-	yamlExport.Detection["sorted"] = rule.Detection.Sorted
-	if len(rule.Detection.SigmaRules) > 0 || rule.Detection.MatchBy != "" {
-		selection := make(map[string]any)
-		if len(rule.Detection.SigmaRules) > 0 {
-			selection["sigma_id"] = rule.Detection.SigmaRules
-		}
-		if rule.Detection.MatchBy != "" {
-			selection["match_by"] = rule.Detection.MatchBy
-		}
-		yamlExport.Detection["selection"] = selection
-	}
-
-	// Convert attack_flow (simplified)
-	if rule.AttackFlow.Desc != "" {
-		yamlExport.AttackFlow = make(map[string]any)
-		yamlExport.AttackFlow["desc"] = rule.AttackFlow.Desc
-	}
-
-	// Marshal to YAML
-	yamlData, err := yaml.Marshal(yamlExport)
+	yamlData, err := yaml.Marshal(rule)
 	if err != nil {
 		return fmt.Errorf("failed to marshal YAML: %w", err)
 	}
 
-	// Generate filename (format: XXXX-XXXX-<id>.yml)
-	filename := fmt.Sprintf("0000-0000-%s.yml", rule.ID)
-	filePath := filepath.Join(outputDir, filename)
+	// Generate filename (format: XXXX-XXXX.yml)
+	filePath := filepath.Join(outputDir, fmt.Sprintf("%s.yml", rule.ID))
 
 	return os.WriteFile(filePath, yamlData, 0644)
 }
@@ -1171,68 +1060,24 @@ func (w *Worker) exportActivityRuleToYAML(ctx context.Context, ruleID, outputDir
 		return fmt.Errorf("rule not found: %s", ruleID)
 	}
 
-	// Create YAML export structure with string level and map logsource/detection
-	yamlExport := struct {
-		ID          string         `yaml:"id"`
-		Title       string         `yaml:"title"`
-		Description string         `yaml:"description"`
-		Level       string         `yaml:"level"`
-		Status      string         `yaml:"status"`
-		Tags        []string       `yaml:"tags,omitempty"`
-		Logsource   map[string]any `yaml:"logsource,omitempty"`
-		Detection   map[string]any `yaml:"detection"`
-		References  []string       `yaml:"references,omitempty"`
-		Fields      []string       `yaml:"fields,omitempty"`
-		Author      string         `yaml:"author,omitempty"`
-	}{
-		ID:          rule.ID,
-		Title:       rule.Title,
-		Description: rule.Description,
-		Level:       convertLevelToString(rule.Level),
-		Status:      rule.Status,
-		Tags:        rule.Tags,
-		Detection:   rule.Detection,
-		References:  rule.References,
-		Fields:      rule.Fields,
-		Author:      rule.Author,
-	}
-
-	// Convert logsource string to map
-	if rule.Logsource != "" {
-		yamlExport.Logsource = map[string]any{
-			"product": rule.Logsource,
-		}
-	}
-
 	// Marshal to YAML
-	yamlData, err := yaml.Marshal(yamlExport)
+	yamlData, err := yaml.Marshal(rule)
 	if err != nil {
 		return fmt.Errorf("failed to marshal YAML: %w", err)
 	}
 
-	// Generate filename (format: XXXX-XXXX-<id>.yml)
-	filename := fmt.Sprintf("0000-0000-%s.yml", rule.ID)
-	filePath := filepath.Join(outputDir, filename)
+	// Generate filename (format: XXXX-XXXX.yml)
+	filePath := filepath.Join(outputDir, fmt.Sprintf("%s.yml", rule.ID))
 
 	return os.WriteFile(filePath, yamlData, 0644)
 }
 
-// convertLevelToString converts level integer to string
-func convertLevelToString(level int32) string {
-	switch level {
-	case 5:
-		return "critical"
-	case 4:
-		return "high"
-	case 3:
-		return "medium"
-	case 2:
-		return "low"
-	case 1:
-		return "info"
-	default:
-		return "medium"
+// riskLevelToString converts level integer to string
+func riskLevelToString(level int32) string {
+	if val, ok := common.RiskLeveStrlMap[int(level)]; ok {
+		return val
 	}
+	return common.RiskLeveStrlMap[common.RiskLevelInfo]
 }
 
 // uploadPackageToRemote uploads the ZIP package to remote server
@@ -1287,21 +1132,6 @@ func (w *Worker) uploadPackageToRemote(upgradeSrv, zipPath string) error {
 	return nil
 }
 
-// levelIntToString converts level int32 to string
-func levelIntToString(level int32) string {
-	levelMap := map[int32]string{
-		1: "info",
-		2: "low",
-		3: "medium",
-		4: "high",
-		5: "critical",
-	}
-	if val, ok := levelMap[level]; ok {
-		return val
-	}
-	return "medium"
-}
-
 // writeAlertRuleToFile writes an AlertRule to a YAML file
 func (w *Worker) writeAlertRuleToFile(rule *model.AlertRule) error {
 	// Ensure directory exists
@@ -1310,40 +1140,14 @@ func (w *Worker) writeAlertRuleToFile(rule *model.AlertRule) error {
 		return fmt.Errorf("failed to create rule directory: %v", err)
 	}
 
-	// Convert to YAML structure
-	yamlRule := AlertRuleYAML{
-		ID:          rule.ID,
-		Title:       rule.Title,
-		Description: rule.Description,
-		Level:       levelIntToString(rule.Level),
-		Status:      rule.Status,
-		Tags:        rule.Tags,
-		Logsource:   rule.Logsource,
-		Detection: map[string]any{
-			"event_type": rule.Detection.EventType,
-			"match_by":   rule.Detection.MatchBy,
-			"win_size":   rule.Detection.WinSize,
-			"sorted":     rule.Detection.Sorted,
-		},
-		Type:       rule.Type,
-		References: rule.References,
-		Suggestion: rule.Suggestion,
-		Author:     rule.Author,
-		AutoBlock:  rule.AutoBlock,
-	}
-
-	if len(rule.Detection.SigmaRules) > 0 {
-		yamlRule.Detection["sigma_rules"] = rule.Detection.SigmaRules
-	}
-
 	// Marshal to YAML
-	data, err := yaml.Marshal(yamlRule)
+	data, err := yaml.Marshal(rule)
 	if err != nil {
 		return fmt.Errorf("failed to marshal rule to YAML: %v", err)
 	}
 
 	// Write to file
-	filename := filepath.Join(ruleDir, fmt.Sprintf("%s.yaml", rule.ID))
+	filename := filepath.Join(ruleDir, fmt.Sprintf("%s.yml", rule.ID))
 	if err := os.WriteFile(filename, data, 0644); err != nil {
 		return fmt.Errorf("failed to write rule file: %v", err)
 	}
@@ -1369,30 +1173,14 @@ func (w *Worker) writeActivityRuleToFile(rule *model.AlertActivityRule) error {
 		return fmt.Errorf("failed to create rule directory: %v", err)
 	}
 
-	// Convert to YAML structure
-	yamlRule := ActivityRuleYAML{
-		ID:          rule.ID,
-		Title:       rule.Title,
-		Description: rule.Description,
-		Level:       levelIntToString(rule.Level),
-		Status:      rule.Status,
-		Tags:        rule.Tags,
-		Logsource:   rule.Logsource,
-		Detection:   rule.Detection,
-		References:  rule.References,
-		Author:      rule.Author,
-		RdxKey:      rule.RdxKey,
-		Fields:      rule.Fields,
-	}
-
 	// Marshal to YAML
-	data, err := yaml.Marshal(yamlRule)
+	data, err := yaml.Marshal(rule)
 	if err != nil {
 		return fmt.Errorf("failed to marshal rule to YAML: %v", err)
 	}
 
 	// Write to file
-	filename := filepath.Join(ruleDir, fmt.Sprintf("%s.yaml", rule.ID))
+	filename := filepath.Join(ruleDir, fmt.Sprintf("%s.yml", rule.ID))
 	if err := os.WriteFile(filename, data, 0644); err != nil {
 		return fmt.Errorf("failed to write rule file: %v", err)
 	}
@@ -1443,7 +1231,7 @@ func (w *Worker) writeAllRulesToDisk() error {
 	return nil
 }
 
-// cleanupRuleDirectory removes all .yaml and .yml files from a rule directory
+// cleanupRuleDirectory removes all .yml and .yml files from a rule directory
 func (w *Worker) cleanupRuleDirectory(ruleDir string) error {
 	// Check if directory exists
 	if _, err := os.Stat(ruleDir); os.IsNotExist(err) {
@@ -1457,7 +1245,7 @@ func (w *Worker) cleanupRuleDirectory(ruleDir string) error {
 		return fmt.Errorf("failed to read directory: %w", err)
 	}
 
-	// Delete all .yaml and .yml files
+	// Delete all .yml and .yml files
 	deletedCount := 0
 	for _, entry := range entries {
 		if entry.IsDir() {

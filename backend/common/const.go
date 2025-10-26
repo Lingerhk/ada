@@ -55,6 +55,15 @@ var RiskLevelMap = map[int]string{
 	RiskLevelInfo:     "信息",
 }
 
+// RiskLevelMap notify level desc
+var RiskLeveStrlMap = map[int]string{
+	RiskLevelCritical: "critical",
+	RiskLevelHigh:     "high",
+	RiskLevelMedium:   "medium",
+	RiskLevelLow:      "low",
+	RiskLevelInfo:     "info",
+}
+
 // 规则类型定义, ATT&CK
 const (
 	RT_InitialAccess       = "TA0001" // 初始访问
