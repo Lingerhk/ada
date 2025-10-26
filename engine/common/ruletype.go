@@ -49,6 +49,12 @@ var RiskLevelMap = map[string]int32{
 	"medium":   RiskLevelMedium,
 	"high":     RiskLevelHigh,
 	"critical": RiskLevelCritical, // 暂时没有该level
+
+	"1": RiskLevelInfo,
+	"2": RiskLevelLow,
+	"3": RiskLevelMedium,
+	"4": RiskLevelHigh,
+	"5": RiskLevelCritical,
 }
 
 func GetRiskLevel(l string) int32 {
