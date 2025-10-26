@@ -17,35 +17,35 @@ import (
 
 // AlertRuleYAML represents the YAML structure for flow/alert rules
 type AlertRuleYAML struct {
-	ID          string                 `yaml:"id"`
-	Title       string                 `yaml:"title"`
-	Description string                 `yaml:"description,omitempty"`
-	Level       string                 `yaml:"level"`
-	Status      string                 `yaml:"status"`
-	Tags        []string               `yaml:"tags,omitempty"`
-	Logsource   string                 `yaml:"logsource,omitempty"`
-	Detection   map[string]interface{} `yaml:"detection"`
-	Type        string                 `yaml:"type,omitempty"`
-	References  []string               `yaml:"references,omitempty"`
-	Suggestion  string                 `yaml:"suggestion,omitempty"`
-	Author      string                 `yaml:"author,omitempty"`
-	AutoBlock   bool                   `yaml:"auto_block,omitempty"`
+	ID          string         `yaml:"id"`
+	Title       string         `yaml:"title"`
+	Description string         `yaml:"description,omitempty"`
+	Level       string         `yaml:"level"`
+	Status      string         `yaml:"status"`
+	Tags        []string       `yaml:"tags,omitempty"`
+	Logsource   string         `yaml:"logsource,omitempty"`
+	Detection   map[string]any `yaml:"detection"`
+	Type        string         `yaml:"type,omitempty"`
+	References  []string       `yaml:"references,omitempty"`
+	Suggestion  string         `yaml:"suggestion,omitempty"`
+	Author      string         `yaml:"author,omitempty"`
+	AutoBlock   bool           `yaml:"auto_block,omitempty"`
 }
 
 // ActivityRuleYAML represents the YAML structure for sigma/activity rules
 type ActivityRuleYAML struct {
-	ID          string                 `yaml:"id"`
-	Title       string                 `yaml:"title"`
-	Description string                 `yaml:"description,omitempty"`
-	Level       string                 `yaml:"level"`
-	Status      string                 `yaml:"status"`
-	Tags        []string               `yaml:"tags,omitempty"`
-	Logsource   string                 `yaml:"logsource,omitempty"`
-	Detection   map[string]interface{} `yaml:"detection"`
-	References  []string               `yaml:"references,omitempty"`
-	Author      string                 `yaml:"author,omitempty"`
-	RdxKey      string                 `yaml:"rdx_key,omitempty"`
-	Fields      []string               `yaml:"fields,omitempty"`
+	ID          string         `yaml:"id"`
+	Title       string         `yaml:"title"`
+	Description string         `yaml:"description,omitempty"`
+	Level       string         `yaml:"level"`
+	Status      string         `yaml:"status"`
+	Tags        []string       `yaml:"tags,omitempty"`
+	Logsource   string         `yaml:"logsource,omitempty"`
+	Detection   map[string]any `yaml:"detection"`
+	References  []string       `yaml:"references,omitempty"`
+	Author      string         `yaml:"author,omitempty"`
+	RdxKey      string         `yaml:"rdx_key,omitempty"`
+	Fields      []string       `yaml:"fields,omitempty"`
 }
 
 // WriteAlertRuleToFile writes an AlertRule to a YAML file
@@ -65,7 +65,7 @@ func WriteAlertRuleToFile(rule *model.AlertRule) error {
 		Status:      rule.Status,
 		Tags:        rule.Tags,
 		Logsource:   rule.Logsource,
-		Detection: map[string]interface{}{
+		Detection: map[string]any{
 			"event_type": rule.Detection.EventType,
 			"match_by":   rule.Detection.MatchBy,
 			"win_size":   rule.Detection.WinSize,

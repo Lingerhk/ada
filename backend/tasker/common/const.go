@@ -6,4 +6,5 @@ const (
 	CronADLdapSyncPeriod   = 3600    // AD敏感用户&组&计算机同步
 	CronThreatNotifyPeriod = 12      // 威胁告警/扫描告警通知，12s同步
 	CronSystemNotifyPeriod = 180     // 系统状态检查的通知，180s同步
+	CronRuleSyncPeriod     = 3600    // 规则同步，1小时同步
 )

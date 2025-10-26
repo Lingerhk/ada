@@ -575,6 +575,8 @@ message GetSystemInfoReply {
   map<string, string> statsCfg = 16; // 系统监控参数
   string upgradeSrv = 17; // 升级服务器地址
   string upgradeRule = 18; // 升级规则开关 "true|false"
+  string currentRuleVer = 19; // 当前规则版本
+  string cloudRuleVer = 20; // 云端规则版本
 }
 
 message GetSystemIconReq {}
@@ -596,6 +598,8 @@ message UpdateSystemCfgReq{
   string file = 3; // 将文件转为base64字符串传过来
   string upgradeSrv = 4; // 更新srv地址
   string upgradeRule = 5; // "true|false"
+  string currentRuleVer = 6; // 当前规则版本
+  string cloudRuleVer = 7; // 云端规则版本
 }
 
 message UpdateSystemCfgReply {

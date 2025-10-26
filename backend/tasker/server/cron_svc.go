@@ -95,6 +95,16 @@ func (cs *CronScheduler) CronTaskServe() {
 		logger.Errorf("Failed to create SystemNotify job: %v", err)
 	}
 
+	_, err = cs.Server.NewJob(
+		gocron.DurationJob(time.Duration(common.CronRuleSyncPeriod)*time.Second),
+		gocron.NewTask(cs.Tasker.taskSrv.SendTask, tasks.TaskRuleSync()),
+		gocron.WithSingletonMode(gocron.LimitModeReschedule),
+		gocron.WithStartAt(gocron.WithStartImmediately()), // run immediately then started.
+	)
+	if err != nil {
+		logger.Errorf("Failed to create RuleSync job: %v", err)
+	}
+
 	go cs.CronJobUpdate() // Start dynamic job updater
 	cs.Server.Start()
 }
