@@ -42,6 +42,9 @@ services:
         aliases:
           - elasticsearch
           - ada_elasticsearch
+    environment:
+      - ES_JAVA_OPTS=-Xms2g -Xmx2g
+    mem_limit: 4g
     volumes:
       - es_data:/bitnami/elasticsearch/data:rw
     ports:
