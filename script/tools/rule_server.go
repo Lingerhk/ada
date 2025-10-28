@@ -1,6 +1,8 @@
 package main
 
 import (
+	"ada/backend/model"
+	"ada/infra/mongo"
 	"archive/zip"
 	"context"
 	"crypto/md5"
@@ -17,6 +19,7 @@ import (
 	"time"
 
 	logger "github.com/sirupsen/logrus"
+	"go.mongodb.org/mongo-driver/bson"
 	"gopkg.in/yaml.v3"
 )
 
@@ -32,6 +35,12 @@ const (
 	DefaultIdleTimeout   = 120       // 空闲超时（秒）
 	DefaultMaxUploadSize = 64        // 最大上传大小（MB）
 	MaxLogQueueSize      = 1000      // 日志队列最大大小
+
+	// MongoDB defaults
+	DefaultMongoHost   = "192.168.7.2:27017"
+	DefaultMongoUser   = "user_ada"
+	DefaultMongoPasswd = "XEl44B4p3hFurztFMo38"
+	DefaultMongoDbName = "db_ada"
 )
 
 // RuleVersionInfo represents the version information in latest.json
@@ -86,6 +95,11 @@ type Server struct {
 	shutdownCtx    context.Context
 	shutdownCancel context.CancelFunc
 	logFileMutex   sync.Mutex // 日志文件写入锁
+	mongoCli       mongo.DBAdaptor // MongoDB client
+	mongoHost      string
+	mongoUser      string
+	mongoPasswd    string
+	mongoDbName    string
 }
 
 func main() {
@@ -96,14 +110,22 @@ func main() {
 		genPackage    bool
 		maxConcurrent int
 		logLevel      string
+		mongoHost     string
+		mongoUser     string
+		mongoPasswd   string
+		mongoDbName   string
 	)
 
 	flag.IntVar(&port, "port", DefaultPort, "Server port")
 	flag.StringVar(&rulesDir, "rules", DefaultRulesDir, "Rules directory path")
 	flag.StringVar(&packageDir, "packages", DefaultPackageDir, "Package storage directory")
-	flag.BoolVar(&genPackage, "gen", false, "Generate rule package from rules directory and exit")
+	flag.BoolVar(&genPackage, "gen", false, "Generate rule package from MongoDB and exit")
 	flag.IntVar(&maxConcurrent, "max-concurrent", DefaultMaxConcurrent, "Maximum concurrent connections")
 	flag.StringVar(&logLevel, "log-level", "debug", "Log level (trace, debug, info, warn, error, fatal, panic)")
+	flag.StringVar(&mongoHost, "mongo-host", DefaultMongoHost, "MongoDB host")
+	flag.StringVar(&mongoUser, "mongo-user", DefaultMongoUser, "MongoDB user")
+	flag.StringVar(&mongoPasswd, "mongo-passwd", DefaultMongoPasswd, "MongoDB password")
+	flag.StringVar(&mongoDbName, "mongo-db", DefaultMongoDbName, "MongoDB database name")
 
 	flag.Parse()
 
@@ -136,7 +158,21 @@ func main() {
 		semaphore:      make(chan struct{}, maxConcurrent),
 		shutdownCtx:    ctx,
 		shutdownCancel: cancel,
+		mongoHost:      mongoHost,
+		mongoUser:      mongoUser,
+		mongoPasswd:    mongoPasswd,
+		mongoDbName:    mongoDbName,
 	}
+
+	// Initialize MongoDB connection
+	if err := server.initMongoDB(); err != nil {
+		logger.Fatalf("Failed to initialize MongoDB: %v", err)
+	}
+	defer func() {
+		if server.mongoCli != nil {
+			server.mongoCli.Disconnect()
+		}
+	}()
 
 	// Ensure directories exist
 	for _, dir := range []string{packageDir, uploadDir, logDir} {
@@ -203,6 +239,22 @@ func main() {
 	if err := httpServer.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 		logger.Fatalf("Server failed: %v", err)
 	}
+}
+
+// initMongoDB initializes the MongoDB connection
+func (s *Server) initMongoDB() error {
+	mongoCli := mongo.NewMongoSession()
+	MongoURL := fmt.Sprintf("mongodb://%s:%s@%s/%s?authSource=%s",
+		s.mongoUser, s.mongoPasswd, s.mongoHost, s.mongoDbName, s.mongoDbName)
+
+	err := mongoCli.Connect(MongoURL, s.mongoDbName)
+	if err != nil {
+		return fmt.Errorf("failed to connect to MongoDB: %w", err)
+	}
+
+	s.mongoCli = mongoCli
+	logger.Infof("Connected to MongoDB at %s, database: %s", s.mongoHost, s.mongoDbName)
+	return nil
 }
 
 // rateLimitMiddleware implements rate limiting using semaphore
@@ -477,7 +529,7 @@ func (s *Server) processUploadedPackage(zipPath, remoteAddr string) error {
 	return fmt.Errorf("desc.json not found in uploaded package")
 }
 
-// generateRulePackage generates a rule package from the rules directory
+// generateRulePackage generates a rule package from MongoDB
 func (s *Server) generateRulePackage() error {
 	version := fmt.Sprintf("%d", time.Now().Unix())
 	packageName := fmt.Sprintf("ada_rule_%s", version)
@@ -506,22 +558,14 @@ func (s *Server) generateRulePackage() error {
 		WinLog:  make([]RuleMetadata, 0),
 	}
 
-	// Process flow rules
-	flowSrcDir := filepath.Join(s.rulesDir, "flow")
-	if err := s.processRulesDirectory(flowSrcDir, flowDir, &descriptor.Flow); err != nil {
-		logger.Errorf("Failed to process flow rules: %v", err)
+	// Process flow rules from MongoDB (AlertActivityRule)
+	if err := s.processActivityRulesFromMongoDB(flowDir, &descriptor.Flow); err != nil {
+		logger.Errorf("Failed to process activity rules from MongoDB: %v", err)
 	}
 
-	// Process pkglog rules
-	pkglogSrcDir := filepath.Join(s.rulesDir, "pktlog")
-	if err := s.processRulesDirectory(pkglogSrcDir, pkglogDir, &descriptor.PkgLog); err != nil {
-		logger.Errorf("Failed to process pkglog rules: %v", err)
-	}
-
-	// Process winlog rules
-	winlogSrcDir := filepath.Join(s.rulesDir, "winlog")
-	if err := s.processRulesDirectory(winlogSrcDir, winlogDir, &descriptor.WinLog); err != nil {
-		logger.Errorf("Failed to process winlog rules: %v", err)
+	// Process alert rules from MongoDB (AlertRule) - split by logsource
+	if err := s.processAlertRulesFromMongoDB(pkglogDir, winlogDir, &descriptor.PkgLog, &descriptor.WinLog); err != nil {
+		logger.Errorf("Failed to process alert rules from MongoDB: %v", err)
 	}
 
 	// Generate desc.json
@@ -591,71 +635,48 @@ func (s *Server) generateRulePackage() error {
 	return nil
 }
 
-// processRulesDirectory processes all rule files in a directory
-func (s *Server) processRulesDirectory(srcDir, dstDir string, metaList *[]RuleMetadata) error {
-	if _, err := os.Stat(srcDir); os.IsNotExist(err) {
-		logger.Warnf("Source directory does not exist: %s", srcDir)
-		return nil
+// processActivityRulesFromMongoDB processes AlertActivityRule documents from MongoDB
+func (s *Server) processActivityRulesFromMongoDB(dstDir string, metaList *[]RuleMetadata) error {
+	var activityRules []model.AlertActivityRule
+
+	// Query all enabled activity rules from MongoDB
+	query := bson.M{}
+	if err := s.mongoCli.FindAll("tb_activity_rule", query, &activityRules); err != nil {
+		return fmt.Errorf("failed to query activity rules: %w", err)
 	}
 
-	files, err := os.ReadDir(srcDir)
-	if err != nil {
-		return fmt.Errorf("failed to read directory: %w", err)
-	}
+	logger.Infof("Found %d activity rules in MongoDB", len(activityRules))
 
-	// Determine rule type from directory name
-	for _, file := range files {
-		if file.IsDir() || !strings.HasSuffix(file.Name(), ".yml") {
-			continue
-		}
-
-		srcPath := filepath.Join(srcDir, file.Name())
-		dstPath := filepath.Join(dstDir, file.Name())
-
-		// Parse YAML to extract metadata
-		data, err := os.ReadFile(srcPath)
+	for _, rule := range activityRules {
+		// Convert rule to YAML
+		ruleBytes, err := yaml.Marshal(&rule)
 		if err != nil {
-			logger.Errorf("Failed to read file %s: %v", file.Name(), err)
+			logger.Errorf("Failed to marshal activity rule %s: %v", rule.ID, err)
 			continue
 		}
 
-		// Parse YAML to extract ID and detection
-		var ruleData map[string]any
-		if err := yaml.Unmarshal(data, &ruleData); err != nil {
-			logger.Errorf("Failed to parse YAML %s: %v", file.Name(), err)
-			continue
-		}
+		// Generate filename from rule ID
+		filename := fmt.Sprintf("%s.yml", sanitizeFilename(rule.ID))
+		dstPath := filepath.Join(dstDir, filename)
 
-		ruleID, ok := ruleData["id"].(string)
-		if !ok {
-			logger.Warnf("No ID found in rule %s", file.Name())
-			continue
-		}
-
-		ruleBytes, err := yaml.Marshal(ruleData)
-		if err != nil {
-			logger.Warnf("yaml.Marshal rule %s err:%v", ruleID, err)
-			continue
-		}
-
-		// Write to destination
+		// Write YAML file
 		if err := os.WriteFile(dstPath, ruleBytes, 0644); err != nil {
-			logger.Errorf("Failed to write file %s: %v", file.Name(), err)
+			logger.Errorf("Failed to write activity rule file %s: %v", filename, err)
 			continue
 		}
 
 		// Calculate MD5s
 		fileMD5 := calculateStringMD5(string(ruleBytes))
 		detectionMD5 := ""
-		if detection, ok := ruleData["detection"]; ok {
-			detectionBytes, _ := json.Marshal(detection)
+		if len(rule.Detection) > 0 {
+			detectionBytes, _ := json.Marshal(rule.Detection)
 			detectionMD5 = calculateStringMD5(string(detectionBytes))
 		}
 
 		metadata := RuleMetadata{
-			ID:           ruleID,
-			UpdateTm:     time.Now().Unix(),
-			Filename:     file.Name(),
+			ID:           rule.ID,
+			UpdateTm:     rule.UpdateTm.Unix(),
+			Filename:     filename,
 			MD5:          fileMD5,
 			DetectionMD5: detectionMD5,
 		}
@@ -663,7 +684,92 @@ func (s *Server) processRulesDirectory(srcDir, dstDir string, metaList *[]RuleMe
 		*metaList = append(*metaList, metadata)
 	}
 
+	logger.Infof("Processed %d activity rules to %s", len(*metaList), dstDir)
 	return nil
+}
+
+// processAlertRulesFromMongoDB processes AlertRule documents from MongoDB
+func (s *Server) processAlertRulesFromMongoDB(pkglogDir, winlogDir string, pkglogMeta, winlogMeta *[]RuleMetadata) error {
+	var alertRules []model.AlertRule
+
+	// Query all alert rules from MongoDB
+	query := bson.M{}
+	if err := s.mongoCli.FindAll("tb_alert_rule", query, &alertRules); err != nil {
+		return fmt.Errorf("failed to query alert rules: %w", err)
+	}
+
+	logger.Infof("Found %d alert rules in MongoDB", len(alertRules))
+
+	for _, rule := range alertRules {
+		// Convert rule to YAML
+		ruleBytes, err := yaml.Marshal(&rule)
+		if err != nil {
+			logger.Errorf("Failed to marshal alert rule %s: %v", rule.ID, err)
+			continue
+		}
+
+		// Generate filename from rule ID
+		filename := fmt.Sprintf("%s.yml", sanitizeFilename(rule.ID))
+
+		// Determine destination directory based on logsource
+		var dstDir string
+		var metaList *[]RuleMetadata
+
+		if rule.Logsource == "windows" {
+			dstDir = winlogDir
+			metaList = winlogMeta
+		} else {
+			// Default to pkglog for other sources
+			dstDir = pkglogDir
+			metaList = pkglogMeta
+		}
+
+		dstPath := filepath.Join(dstDir, filename)
+
+		// Write YAML file
+		if err := os.WriteFile(dstPath, ruleBytes, 0644); err != nil {
+			logger.Errorf("Failed to write alert rule file %s: %v", filename, err)
+			continue
+		}
+
+		// Calculate MD5s
+		fileMD5 := calculateStringMD5(string(ruleBytes))
+		detectionMD5 := ""
+		// AlertDetection is a struct, always marshal it
+		detectionBytes, _ := json.Marshal(rule.Detection)
+		detectionMD5 = calculateStringMD5(string(detectionBytes))
+
+		metadata := RuleMetadata{
+			ID:           rule.ID,
+			UpdateTm:     rule.UpdateTm.Unix(),
+			Filename:     filename,
+			MD5:          fileMD5,
+			DetectionMD5: detectionMD5,
+		}
+
+		*metaList = append(*metaList, metadata)
+	}
+
+	logger.Infof("Processed %d alert rules (%d pkglog, %d winlog)",
+		len(alertRules), len(*pkglogMeta), len(*winlogMeta))
+	return nil
+}
+
+// sanitizeFilename sanitizes a string to be used as a filename
+func sanitizeFilename(s string) string {
+	// Replace invalid filename characters
+	replacer := strings.NewReplacer(
+		"/", "_",
+		"\\", "_",
+		":", "_",
+		"*", "_",
+		"?", "_",
+		"\"", "_",
+		"<", "_",
+		">", "_",
+		"|", "_",
+	)
+	return replacer.Replace(s)
 }
 
 // createZipArchive creates a ZIP archive from a directory with a parent directory in the zip

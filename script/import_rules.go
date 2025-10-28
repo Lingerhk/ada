@@ -16,21 +16,21 @@ import (
 
 // Sigma rule YAML structure
 type SigmaRule struct {
-	Title       string                 `yaml:"title"`
-	ID          string                 `yaml:"id"`
-	Status      string                 `yaml:"status"`
-	Description string                 `yaml:"description"`
-	References  []string               `yaml:"references"`
-	Author      string                 `yaml:"author"`
-	Date        string                 `yaml:"date"`
-	Modified    string                 `yaml:"modified"`
-	Tags        []string               `yaml:"tags"`
-	Logsource   map[string]interface{} `yaml:"logsource"`
-	Detection   map[string]interface{} `yaml:"detection"`
-	Fields      []string               `yaml:"fields"`
-	UniqueFields []string              `yaml:"unique_fields"`
-	RdxKey      string                 `yaml:"rdx_key"`
-	Level       string                 `yaml:"level"`
+	Title        string                 `yaml:"title"`
+	ID           string                 `yaml:"id"`
+	Status       string                 `yaml:"status"`
+	Description  string                 `yaml:"description"`
+	References   []string               `yaml:"references"`
+	Author       string                 `yaml:"author"`
+	Date         string                 `yaml:"date"`
+	Modified     string                 `yaml:"modified"`
+	Tags         []string               `yaml:"tags"`
+	Logsource    map[string]interface{} `yaml:"logsource"`
+	Detection    map[string]interface{} `yaml:"detection"`
+	Fields       []string               `yaml:"fields"`
+	UniqueFields []string               `yaml:"unique_fields"`
+	RdxKey       string                 `yaml:"rdx_key"`
+	Level        string                 `yaml:"level"`
 }
 
 func levelToInt(level string) int32 {
@@ -89,6 +89,12 @@ func importFlowRules(env *config.Env, rulesDir string) error {
 			continue
 		}
 
+		winSize, ok := rule.Detection["win_size"]
+		if !ok {
+			fmt.Print("invalid win_size in detection")
+			continue
+		}
+
 		// Create AlertRule for flow rules
 		alertRule := &model.AlertRule{
 			ID:          rule.ID,
@@ -101,7 +107,7 @@ func importFlowRules(env *config.Env, rulesDir string) error {
 			Logsource:   "flow",
 			Detection: model.AlertDetection{
 				EventType:  getEventType(rule.Detection),
-				WinSize:    getWinSize(rule.Detection),
+				WinSize:    winSize.(string),
 				SigmaRules: getSigmaIDs(rule.Detection),
 				MatchBy:    getMatchBy(rule.Detection),
 			},
@@ -126,7 +132,7 @@ func importFlowRules(env *config.Env, rulesDir string) error {
 }
 
 func importActivityRules(env *config.Env, rulesDir string, ruleType string) error {
-	files, err := ioutil.ReadDir(rulesDir)
+	files, err := os.ReadDir(rulesDir)
 	if err != nil {
 		return fmt.Errorf("failed to read %s rules directory: %v", ruleType, err)
 	}
@@ -138,7 +144,7 @@ func importActivityRules(env *config.Env, rulesDir string, ruleType string) erro
 		}
 
 		filePath := filepath.Join(rulesDir, file.Name())
-		data, err := ioutil.ReadFile(filePath)
+		data, err := os.ReadFile(filePath)
 		if err != nil {
 			fmt.Printf("Error reading %s: %v\n", file.Name(), err)
 			continue
@@ -182,40 +188,19 @@ func importActivityRules(env *config.Env, rulesDir string, ruleType string) erro
 }
 
 // Helper functions to extract detection fields for flow rules
-func getEventType(detection map[string]interface{}) string {
+func getEventType(detection map[string]any) string {
 	if et, ok := detection["event_type"].(string); ok {
 		return et
 	}
 	return ""
 }
 
-func getWinSize(detection map[string]interface{}) int64 {
-	if ws, ok := detection["win_size"].(string); ok {
-		// Convert duration string like "30s", "5m", "1h" to seconds
-		duration := ws
-		if strings.HasSuffix(duration, "s") {
-			var seconds int64
-			fmt.Sscanf(duration, "%d", &seconds)
-			return seconds
-		} else if strings.HasSuffix(duration, "m") {
-			var minutes int64
-			fmt.Sscanf(duration, "%d", &minutes)
-			return minutes * 60
-		} else if strings.HasSuffix(duration, "h") {
-			var hours int64
-			fmt.Sscanf(duration, "%d", &hours)
-			return hours * 3600
-		}
-	}
-	return 0
-}
-
-func getSigmaIDs(detection map[string]interface{}) []string {
+func getSigmaIDs(detection map[string]any) []string {
 	var sigmaIDs []string
 
 	// Check selection.sigma_id
-	if selection, ok := detection["selection"].(map[string]interface{}); ok {
-		if ids, ok := selection["sigma_id"].([]interface{}); ok {
+	if selection, ok := detection["selection"].(map[string]any); ok {
+		if ids, ok := selection["sigma_id"].([]any); ok {
 			for _, id := range ids {
 				if idStr, ok := id.(string); ok {
 					sigmaIDs = append(sigmaIDs, idStr)
@@ -227,9 +212,9 @@ func getSigmaIDs(detection map[string]interface{}) []string {
 	return sigmaIDs
 }
 
-func getMatchBy(detection map[string]interface{}) string {
+func getMatchBy(detection map[string]any) string {
 	// Check selection.match_by
-	if selection, ok := detection["selection"].(map[string]interface{}); ok {
+	if selection, ok := detection["selection"].(map[string]any); ok {
 		if matchBy, ok := selection["match_by"].(string); ok {
 			return matchBy
 		}
