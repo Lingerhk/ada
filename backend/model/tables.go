@@ -358,7 +358,7 @@ func (r *AlertRule) CollectName() string {
 }
 
 // UnmarshalYAML implements custom YAML unmarshaling for AlertRule
-func (r *AlertRule) UnmarshalYAML(unmarshal func(interface{}) error) error {
+func (r *AlertRule) UnmarshalYAML(unmarshal func(any) error) error {
 	// Define a temporary struct with string/map fields for YAML parsing
 	type yamlAlertRule struct {
 		ID           string         `yaml:"id"`
@@ -457,7 +457,7 @@ func (a *AlertActivityRule) CollectName() string {
 }
 
 // UnmarshalYAML implements custom YAML unmarshaling for AlertActivityRule
-func (a *AlertActivityRule) UnmarshalYAML(unmarshal func(interface{}) error) error {
+func (a *AlertActivityRule) UnmarshalYAML(unmarshal func(any) error) error {
 	// Define a temporary struct with string/map fields for YAML parsing
 	type yamlActivityRule struct {
 		ID           string            `yaml:"id"`
