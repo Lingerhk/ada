@@ -124,9 +124,8 @@ service ADA {
   rpc AddActivityRule(AddActivityRuleReq) returns (AddActivityRuleReply) {} // 添加Sigma规则
   rpc UpdateActivityRule(UpdateActivityRuleReq) returns (UpdateActivityRuleReply) {} // 更新Sigma规则
   rpc DeleteActivityRule(DeleteActivityRuleReq) returns (DeleteActivityRuleReply) {} // 删除Sigma规则
-  rpc GetActivityRuleFields(GetActivityRuleFieldsReq) returns (GetActivityRuleFieldsReply) {} // 获取所有行为规则Fields
+  rpc GetActivityRuleNames(GetActivityRuleNamesReq) returns (GetActivityRuleNamesReply) {} // 返回所有规则名称与 id 对应列表
   rpc GetActivityRuleUniqueFields(GetActivityRuleUniqueFieldsReq) returns (GetActivityRuleUniqueFieldsReply) {} // 获取所有行为规则UniqueFields
-
   ////////////////////////////////
   // scanrisk主动检测dashboard
   rpc ScanRiskStats(ScanRiskStatsReq) returns (ScanRiskStatsReply) {} // 主动检测事件概览
@@ -1651,6 +1650,14 @@ message ListAlertRuleReply {
   repeated AlertRuleInfo rules = 2;
 }
 
+message AlertDetection {
+  string eventType = 1 [(validator.field) = {regex: "count|multi_eve|multi_pkt|multi_eve_pkt"}]; // 事件类型
+  string winSize = 2; // 窗口大小
+  bool sorted = 3; // 是否排序
+  repeated string sigmaRules = 4; // 关联sigma规则
+  string matchBy = 5; // 匹配条件
+}
+
 message AddAlertRuleReq {
   string iD = 1; // Alert rule ID, optional. If empty, will be auto-generated
   string title = 2 [(validator.field) = {string_not_empty: true}];
@@ -1660,7 +1667,7 @@ message AddAlertRuleReq {
   string status = 6;
   repeated string tags = 7;
   string logsource = 8;
-  string detection = 9 [(validator.field) = {string_not_empty: true}]; // Yaml string
+  AlertDetection detection = 9;
   string type = 10;
   repeated string references = 11;
   string suggestion = 12;
@@ -1683,7 +1690,7 @@ message UpdateAlertRuleReq {
   string status = 6;
   repeated string tags = 7;
   string logsource = 8;
-  string detection = 9; // Yaml string
+  AlertDetection detection = 9;
   string type = 10;
   repeated string references = 11;
   string suggestion = 12;
@@ -1728,6 +1735,17 @@ message GetActivityRuleFieldsReq{}
 
 message GetActivityRuleFieldsReply{
   repeated string fields = 1; // 所有行为规则Fields列表
+}
+
+message RuleNameItem {
+  string ruleId = 1; // 规则ID，如 'winlog-0000-1101'
+  string title = 2; // 规则名称
+}
+
+message GetActivityRuleNamesReq{}
+
+message GetActivityRuleNamesReply{
+  repeated RuleNameItem rules = 1; // 所有行为规则ID和名称列表
 }
 
 message GetActivityRuleUniqueFieldsReq{}

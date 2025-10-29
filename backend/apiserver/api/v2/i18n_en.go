@@ -247,6 +247,7 @@ var I18nLangEnMap = map[string]any{
 			"AddFailed":              "Add activity rule failed",
 			"UpdateFailed":           "Update activity rule failed",
 			"DeleteFailed":           "Delete activity rule failed",
+			"ReferencedByAlertRules": "%d alert rule(s) reference this activity rule, please delete them first",
 		},
 		"SensitiveEntry": map[string]any{
 			"GetSensitiveEntryListFailed": "Get sensitive entry list failed",

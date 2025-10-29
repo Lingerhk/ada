@@ -247,6 +247,7 @@ var I18nLangZhMap = map[string]any{
 			"AddFailed":              "添加Sigma规则失败",
 			"UpdateFailed":           "更新Sigma规则失败",
 			"DeleteFailed":           "删除Sigma规则失败",
+			"ReferencedByAlertRules": "存在%d条告警规则使用该行为规则，请先删除对应的规则",
 		},
 		"SensitiveEntry": map[string]any{
 			"GetSensitiveEntryListFailed": "获取敏感配置失败",

@@ -17,17 +17,6 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
-// Helper: Parse YAML string to AlertDetection
-func parseAlertDetectionYAML(detectionStr string) (model.AlertDetection, error) {
-	var detection model.AlertDetection
-	err := yaml.Unmarshal([]byte(detectionStr), &detection)
-	if err != nil {
-		logger.Errorf("Failed to parse detection YAML: %v", err)
-		return model.AlertDetection{}, err
-	}
-	return detection, nil
-}
-
 // Helper: Parse YAML string to ActivityDetection
 func parseActivityDetectionYAML(detectionStr string) (model.ActivityDetection, error) {
 	var detection model.ActivityDetection
@@ -92,23 +81,36 @@ func (s *ADAServiceV2) ListAlertRule(ctx context.Context, in *v2.ListAlertRuleRe
 			tags = []string{}
 		}
 
-		detectionStr, err := detectionToYAML(rule.Detection)
-		if err != nil {
-			logger.Errorf("Failed to marshal detection to YAML: %v", err)
+		detectionStr := ""
+		// Check if detection has any content
+		if rule.Detection.EventType != "" || len(rule.Detection.SigmaRules) > 0 {
+			var err error
+			detectionStr, err = detectionToYAML(rule.Detection)
+			if err != nil {
+				logger.Errorf("Failed to marshal detection to YAML for rule %s: %v", rule.ID, err)
+				// Set empty string and continue with other fields
+				detectionStr = ""
+			}
 		}
 
 		// Convert AttackFlow from model to proto
 		var fieldsProto []*v2.AttackFlowReply_Field
-		for _, field := range rule.AttackFlow.Fields {
-			fieldsProto = append(fieldsProto, &v2.AttackFlowReply_Field{
-				Obj: field.Obj,
-				Key: field.Key,
-			})
+		if rule.AttackFlow.Fields != nil {
+			for _, field := range rule.AttackFlow.Fields {
+				fieldsProto = append(fieldsProto, &v2.AttackFlowReply_Field{
+					Obj: field.Obj,
+					Key: field.Key,
+				})
+			}
+		}
+		relates := rule.AttackFlow.Relates
+		if relates == nil {
+			relates = []string{}
 		}
 		attackFlowProto := &v2.AttackFlowReply{
 			Desc:    rule.AttackFlow.Desc,
 			Fields:  fieldsProto,
-			Relates: rule.AttackFlow.Relates,
+			Relates: relates,
 		}
 
 		ruleInfo := &v2.AlertRuleInfo{
@@ -152,10 +154,13 @@ func (s *ADAServiceV2) AddAlertRule(ctx context.Context, in *v2.AddAlertRuleReq)
 		}
 	}
 
-	// Parse detection YAML
-	detection, err := parseAlertDetectionYAML(in.Detection)
-	if err != nil {
-		return nil, status.Error(codes.InvalidArgument, s.I18n("Threat.AlertRule.InvalidDetectionFormat"))
+	// Convert detection from proto to model
+	detection := model.AlertDetection{
+		EventType:  in.Detection.GetEventType(),
+		WinSize:    in.Detection.GetWinSize(),
+		Sorted:     in.Detection.GetSorted(),
+		SigmaRules: in.Detection.GetSigmaRules(),
+		MatchBy:    in.Detection.GetMatchBy(),
 	}
 
 	// Convert AttackFlow from proto to model
@@ -192,7 +197,7 @@ func (s *ADAServiceV2) AddAlertRule(ctx context.Context, in *v2.AddAlertRuleReq)
 		AttackFlow:  attackFlow,
 	}
 
-	err = server.AddAlertRule(s.env, rule)
+	err := server.AddAlertRule(s.env, rule)
 	if err != nil {
 		logger.Errorf("AddAlertRule failed: %v", err)
 		return nil, status.Error(codes.Internal, s.I18n("Threat.AlertRule.AddFailed"))
@@ -245,10 +250,13 @@ func (s *ADAServiceV2) UpdateAlertRule(ctx context.Context, in *v2.UpdateAlertRu
 	if in.Logsource != "" {
 		updates["logsource"] = in.Logsource
 	}
-	if in.Detection != "" {
-		detection, err := parseAlertDetectionYAML(in.Detection)
-		if err != nil {
-			return nil, status.Error(codes.InvalidArgument, s.I18n("Threat.AlertRule.InvalidDetectionFormat"))
+	if in.Detection != nil {
+		detection := model.AlertDetection{
+			EventType:  in.Detection.GetEventType(),
+			WinSize:    in.Detection.GetWinSize(),
+			Sorted:     in.Detection.GetSorted(),
+			SigmaRules: in.Detection.GetSigmaRules(),
+			MatchBy:    in.Detection.GetMatchBy(),
 		}
 		updates["detection"] = detection
 	}
@@ -397,6 +405,27 @@ func (s *ADAServiceV2) GetActivityRuleFields(ctx context.Context, in *v2.GetActi
 }
 
 // GetActivityRuleUniqueFields
+func (s *ADAServiceV2) GetActivityRuleNames(ctx context.Context, in *v2.GetActivityRuleNamesReq) (*v2.GetActivityRuleNamesReply, error) {
+	// Get all activity rules without filters
+	rules, _, err := server.ListActivityRule(s.env, []string{}, []int32{}, []string{}, "", []string{}, "", "", -1, 10000, 0)
+	if err != nil {
+		logger.Errorf("get all activity rules err:%v", err)
+		return nil, status.Error(codes.Internal, s.I18n("InternalError"))
+	}
+
+	ruleItems := make([]*v2.RuleNameItem, 0, len(rules))
+	for _, rule := range rules {
+		ruleItems = append(ruleItems, &v2.RuleNameItem{
+			RuleId: rule.ID,
+			Title:  rule.Title,
+		})
+	}
+
+	return &v2.GetActivityRuleNamesReply{
+		Rules: ruleItems,
+	}, nil
+}
+
 func (s *ADAServiceV2) GetActivityRuleUniqueFields(ctx context.Context, in *v2.GetActivityRuleUniqueFieldsReq) (*v2.GetActivityRuleUniqueFieldsReply, error) {
 	uniqueFields, err := server.GetAllActivityRuleUniqueFields(s.env)
 	if err != nil {
@@ -646,7 +675,20 @@ func (s *ADAServiceV2) UpdateActivityRule(ctx context.Context, in *v2.UpdateActi
 }
 
 func (s *ADAServiceV2) DeleteActivityRule(ctx context.Context, in *v2.DeleteActivityRuleReq) (*v2.DeleteActivityRuleReply, error) {
-	err := server.DeleteActivityRule(s.env, in.ID)
+	// Check if any alert rules reference this activity rule
+	count, err := server.CountAlertRulesReferencingActivityRule(s.env, in.ID)
+	if err != nil {
+		logger.Errorf("Failed to check alert rules referencing activity rule: %v", err)
+		return nil, status.Error(codes.Internal, s.I18n("InternalError"))
+	}
+
+	if count > 0 {
+		// Return error message with count
+		errorMsg := fmt.Sprintf(s.I18n("Threat.ActivityRule.ReferencedByAlertRules"), count)
+		return nil, status.Error(codes.FailedPrecondition, errorMsg)
+	}
+
+	err = server.DeleteActivityRule(s.env, in.ID)
 	if err != nil {
 		logger.Errorf("DeleteActivityRule failed: %v", err)
 		return nil, status.Error(codes.Internal, s.I18n("Threat.ActivityRule.DeleteFailed"))

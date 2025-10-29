@@ -225,6 +225,20 @@ func DeleteActivityRule(e *config.Env, id string) error {
 	return e.MongoCli.Remove(tb, filter, false)
 }
 
+// CountAlertRulesReferencingActivityRule counts how many alert rules reference the given activity rule ID
+func CountAlertRulesReferencingActivityRule(e *config.Env, activityRuleID string) (int64, error) {
+	tb := (&model.AlertRule{}).CollectName()
+	// Query alert rules where detection.sigma_rules contains the activity rule ID
+	filter := bson.M{
+		"detection.sigma_rules": activityRuleID,
+	}
+	count, err := e.MongoCli.FindCount(tb, filter)
+	if err != nil {
+		return 0, err
+	}
+	return count, nil
+}
+
 // Helper: Convert level string to int32
 func LevelStringToInt(level string) int32 {
 	levelMap := map[string]int32{

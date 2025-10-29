@@ -1473,6 +1473,15 @@ func (this *ListAlertRuleReply) Validate() error {
 	}
 	return nil
 }
+
+var _regex_AlertDetection_EventType = regexp.MustCompile(`count|multi_eve|multi_pkt|multi_eve_pkt`)
+
+func (this *AlertDetection) Validate() error {
+	if !_regex_AlertDetection_EventType.MatchString(this.EventType) {
+		return github_com_mwitkow_go_proto_validators.FieldError("EventType", fmt.Errorf(`value '%v' must be a string conforming to regex "count|multi_eve|multi_pkt|multi_eve_pkt"`, this.EventType))
+	}
+	return nil
+}
 func (this *AddAlertRuleReq) Validate() error {
 	if this.Title == "" {
 		return github_com_mwitkow_go_proto_validators.FieldError("Title", fmt.Errorf(`value '%v' must not be an empty string`, this.Title))
@@ -1483,8 +1492,10 @@ func (this *AddAlertRuleReq) Validate() error {
 	if !(this.Level < 6) {
 		return github_com_mwitkow_go_proto_validators.FieldError("Level", fmt.Errorf(`value '%v' must be less than '6'`, this.Level))
 	}
-	if this.Detection == "" {
-		return github_com_mwitkow_go_proto_validators.FieldError("Detection", fmt.Errorf(`value '%v' must not be an empty string`, this.Detection))
+	if this.Detection != nil {
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Detection); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Detection", err)
+		}
 	}
 	if this.AttackFlow != nil {
 		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.AttackFlow); err != nil {
@@ -1499,6 +1510,11 @@ func (this *AddAlertRuleReply) Validate() error {
 func (this *UpdateAlertRuleReq) Validate() error {
 	if this.ID == "" {
 		return github_com_mwitkow_go_proto_validators.FieldError("ID", fmt.Errorf(`value '%v' must not be an empty string`, this.ID))
+	}
+	if this.Detection != nil {
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Detection); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Detection", err)
+		}
 	}
 	if this.AttackFlow != nil {
 		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.AttackFlow); err != nil {
@@ -1543,6 +1559,22 @@ func (this *GetActivityRuleFieldsReq) Validate() error {
 	return nil
 }
 func (this *GetActivityRuleFieldsReply) Validate() error {
+	return nil
+}
+func (this *RuleNameItem) Validate() error {
+	return nil
+}
+func (this *GetActivityRuleNamesReq) Validate() error {
+	return nil
+}
+func (this *GetActivityRuleNamesReply) Validate() error {
+	for _, item := range this.Rules {
+		if item != nil {
+			if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(item); err != nil {
+				return github_com_mwitkow_go_proto_validators.FieldError("Rules", err)
+			}
+		}
+	}
 	return nil
 }
 func (this *GetActivityRuleUniqueFieldsReq) Validate() error {
