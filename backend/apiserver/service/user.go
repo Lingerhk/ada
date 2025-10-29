@@ -476,25 +476,6 @@ func (s *ADAServiceV2) ResetPassword(ctx context.Context, in *v2.ResetPasswordRe
 	return &v2.ResetPasswordReply{Result: common.RESP_SUCCESS}, nil
 }
 
-func (s *ADAServiceV2) GetPwdUpdateTm(ctx context.Context, in *v2.GetPwdUpdateTmReq) (*v2.GetPwdUpdateTmReply, error) {
-	user, err := server.GetUser(s.env, in.GetUserName())
-	if err != nil {
-		logger.Errorf("get user info by name fail. error: %s", err)
-		return nil, status.Error(codes.Internal, s.I18n("User.GetPwdUpdateTm.UserNotFound"))
-	}
-	var b bool
-	if user.PwdUpdateTm.IsZero() {
-		user.PwdUpdateTm = user.CreateTm
-	}
-	if time.Since(user.PwdUpdateTm) > needChangePwdTm {
-		b = true
-	}
-	return &v2.GetPwdUpdateTmReply{
-		NeedChangePwd: b,
-		PwdUpdateTm:   user.PwdUpdateTm.String(),
-	}, nil
-}
-
 func (s *ADAServiceV2) UserExists(ctx context.Context, in *v2.UserExistsReq) (*v2.UserExistsReply, error) {
 	_, err := server.GetUser(s.env, in.Username)
 	if err == nil {

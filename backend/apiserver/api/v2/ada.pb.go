@@ -1719,108 +1719,6 @@ func (x *ResetPasswordReply) GetResult() string {
 	return ""
 }
 
-type GetPwdUpdateTmReq struct {
-	state         protoimpl.MessageState
-	sizeCache     protoimpl.SizeCache
-	unknownFields protoimpl.UnknownFields
-
-	UserName string `protobuf:"bytes,1,opt,name=userName,proto3" json:"userName,omitempty"`
-}
-
-func (x *GetPwdUpdateTmReq) Reset() {
-	*x = GetPwdUpdateTmReq{}
-	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[27]
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		ms.StoreMessageInfo(mi)
-	}
-}
-
-func (x *GetPwdUpdateTmReq) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*GetPwdUpdateTmReq) ProtoMessage() {}
-
-func (x *GetPwdUpdateTmReq) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[27]
-	if protoimpl.UnsafeEnabled && x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use GetPwdUpdateTmReq.ProtoReflect.Descriptor instead.
-func (*GetPwdUpdateTmReq) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{27}
-}
-
-func (x *GetPwdUpdateTmReq) GetUserName() string {
-	if x != nil {
-		return x.UserName
-	}
-	return ""
-}
-
-type GetPwdUpdateTmReply struct {
-	state         protoimpl.MessageState
-	sizeCache     protoimpl.SizeCache
-	unknownFields protoimpl.UnknownFields
-
-	NeedChangePwd bool   `protobuf:"varint,1,opt,name=needChangePwd,proto3" json:"needChangePwd,omitempty"`
-	PwdUpdateTm   string `protobuf:"bytes,2,opt,name=pwdUpdateTm,proto3" json:"pwdUpdateTm,omitempty"`
-}
-
-func (x *GetPwdUpdateTmReply) Reset() {
-	*x = GetPwdUpdateTmReply{}
-	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[28]
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		ms.StoreMessageInfo(mi)
-	}
-}
-
-func (x *GetPwdUpdateTmReply) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*GetPwdUpdateTmReply) ProtoMessage() {}
-
-func (x *GetPwdUpdateTmReply) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[28]
-	if protoimpl.UnsafeEnabled && x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use GetPwdUpdateTmReply.ProtoReflect.Descriptor instead.
-func (*GetPwdUpdateTmReply) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{28}
-}
-
-func (x *GetPwdUpdateTmReply) GetNeedChangePwd() bool {
-	if x != nil {
-		return x.NeedChangePwd
-	}
-	return false
-}
-
-func (x *GetPwdUpdateTmReply) GetPwdUpdateTm() string {
-	if x != nil {
-		return x.PwdUpdateTm
-	}
-	return ""
-}
-
 // Domain
 type ListDomainReq struct {
 	state         protoimpl.MessageState
@@ -1838,7 +1736,7 @@ type ListDomainReq struct {
 func (x *ListDomainReq) Reset() {
 	*x = ListDomainReq{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[29]
+		mi := &file_ada_proto_msgTypes[27]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1851,7 +1749,7 @@ func (x *ListDomainReq) String() string {
 func (*ListDomainReq) ProtoMessage() {}
 
 func (x *ListDomainReq) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[29]
+	mi := &file_ada_proto_msgTypes[27]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1864,7 +1762,7 @@ func (x *ListDomainReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListDomainReq.ProtoReflect.Descriptor instead.
 func (*ListDomainReq) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{29}
+	return file_ada_proto_rawDescGZIP(), []int{27}
 }
 
 func (x *ListDomainReq) GetPageIdx() int32 {
@@ -1915,7 +1813,7 @@ type ListDomainReply struct {
 func (x *ListDomainReply) Reset() {
 	*x = ListDomainReply{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[30]
+		mi := &file_ada_proto_msgTypes[28]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1928,7 +1826,7 @@ func (x *ListDomainReply) String() string {
 func (*ListDomainReply) ProtoMessage() {}
 
 func (x *ListDomainReply) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[30]
+	mi := &file_ada_proto_msgTypes[28]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1941,7 +1839,7 @@ func (x *ListDomainReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListDomainReply.ProtoReflect.Descriptor instead.
 func (*ListDomainReply) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{30}
+	return file_ada_proto_rawDescGZIP(), []int{28}
 }
 
 func (x *ListDomainReply) GetPage() *ModelPage {
@@ -1979,7 +1877,7 @@ type AddDomainReq struct {
 func (x *AddDomainReq) Reset() {
 	*x = AddDomainReq{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[31]
+		mi := &file_ada_proto_msgTypes[29]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1992,7 +1890,7 @@ func (x *AddDomainReq) String() string {
 func (*AddDomainReq) ProtoMessage() {}
 
 func (x *AddDomainReq) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[31]
+	mi := &file_ada_proto_msgTypes[29]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2005,7 +1903,7 @@ func (x *AddDomainReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AddDomainReq.ProtoReflect.Descriptor instead.
 func (*AddDomainReq) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{31}
+	return file_ada_proto_rawDescGZIP(), []int{29}
 }
 
 func (x *AddDomainReq) GetLdapAddr() string {
@@ -2047,7 +1945,7 @@ type AddDomainReply struct {
 func (x *AddDomainReply) Reset() {
 	*x = AddDomainReply{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[32]
+		mi := &file_ada_proto_msgTypes[30]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -2060,7 +1958,7 @@ func (x *AddDomainReply) String() string {
 func (*AddDomainReply) ProtoMessage() {}
 
 func (x *AddDomainReply) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[32]
+	mi := &file_ada_proto_msgTypes[30]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2073,7 +1971,7 @@ func (x *AddDomainReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AddDomainReply.ProtoReflect.Descriptor instead.
 func (*AddDomainReply) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{32}
+	return file_ada_proto_rawDescGZIP(), []int{30}
 }
 
 func (x *AddDomainReply) GetResult() string {
@@ -2097,7 +1995,7 @@ type TestDomainReq struct {
 func (x *TestDomainReq) Reset() {
 	*x = TestDomainReq{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[33]
+		mi := &file_ada_proto_msgTypes[31]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -2110,7 +2008,7 @@ func (x *TestDomainReq) String() string {
 func (*TestDomainReq) ProtoMessage() {}
 
 func (x *TestDomainReq) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[33]
+	mi := &file_ada_proto_msgTypes[31]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2123,7 +2021,7 @@ func (x *TestDomainReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use TestDomainReq.ProtoReflect.Descriptor instead.
 func (*TestDomainReq) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{33}
+	return file_ada_proto_rawDescGZIP(), []int{31}
 }
 
 func (x *TestDomainReq) GetLdapAddr() string {
@@ -2166,7 +2064,7 @@ type TestDomainReply struct {
 func (x *TestDomainReply) Reset() {
 	*x = TestDomainReply{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[34]
+		mi := &file_ada_proto_msgTypes[32]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -2179,7 +2077,7 @@ func (x *TestDomainReply) String() string {
 func (*TestDomainReply) ProtoMessage() {}
 
 func (x *TestDomainReply) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[34]
+	mi := &file_ada_proto_msgTypes[32]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2192,7 +2090,7 @@ func (x *TestDomainReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use TestDomainReply.ProtoReflect.Descriptor instead.
 func (*TestDomainReply) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{34}
+	return file_ada_proto_rawDescGZIP(), []int{32}
 }
 
 func (x *TestDomainReply) GetStatus() int32 {
@@ -2224,7 +2122,7 @@ type UpdateDomainReq struct {
 func (x *UpdateDomainReq) Reset() {
 	*x = UpdateDomainReq{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[35]
+		mi := &file_ada_proto_msgTypes[33]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -2237,7 +2135,7 @@ func (x *UpdateDomainReq) String() string {
 func (*UpdateDomainReq) ProtoMessage() {}
 
 func (x *UpdateDomainReq) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[35]
+	mi := &file_ada_proto_msgTypes[33]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2250,7 +2148,7 @@ func (x *UpdateDomainReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateDomainReq.ProtoReflect.Descriptor instead.
 func (*UpdateDomainReq) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{35}
+	return file_ada_proto_rawDescGZIP(), []int{33}
 }
 
 func (x *UpdateDomainReq) GetID() string {
@@ -2299,7 +2197,7 @@ type UpdateDomainReply struct {
 func (x *UpdateDomainReply) Reset() {
 	*x = UpdateDomainReply{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[36]
+		mi := &file_ada_proto_msgTypes[34]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -2312,7 +2210,7 @@ func (x *UpdateDomainReply) String() string {
 func (*UpdateDomainReply) ProtoMessage() {}
 
 func (x *UpdateDomainReply) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[36]
+	mi := &file_ada_proto_msgTypes[34]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2325,7 +2223,7 @@ func (x *UpdateDomainReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateDomainReply.ProtoReflect.Descriptor instead.
 func (*UpdateDomainReply) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{36}
+	return file_ada_proto_rawDescGZIP(), []int{34}
 }
 
 func (x *UpdateDomainReply) GetResult() string {
@@ -2347,7 +2245,7 @@ type DeleteDomainReq struct {
 func (x *DeleteDomainReq) Reset() {
 	*x = DeleteDomainReq{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[37]
+		mi := &file_ada_proto_msgTypes[35]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -2360,7 +2258,7 @@ func (x *DeleteDomainReq) String() string {
 func (*DeleteDomainReq) ProtoMessage() {}
 
 func (x *DeleteDomainReq) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[37]
+	mi := &file_ada_proto_msgTypes[35]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2373,7 +2271,7 @@ func (x *DeleteDomainReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteDomainReq.ProtoReflect.Descriptor instead.
 func (*DeleteDomainReq) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{37}
+	return file_ada_proto_rawDescGZIP(), []int{35}
 }
 
 func (x *DeleteDomainReq) GetID() string {
@@ -2401,7 +2299,7 @@ type DeleteDomainReply struct {
 func (x *DeleteDomainReply) Reset() {
 	*x = DeleteDomainReply{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[38]
+		mi := &file_ada_proto_msgTypes[36]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -2414,7 +2312,7 @@ func (x *DeleteDomainReply) String() string {
 func (*DeleteDomainReply) ProtoMessage() {}
 
 func (x *DeleteDomainReply) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[38]
+	mi := &file_ada_proto_msgTypes[36]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2427,7 +2325,7 @@ func (x *DeleteDomainReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteDomainReply.ProtoReflect.Descriptor instead.
 func (*DeleteDomainReply) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{38}
+	return file_ada_proto_rawDescGZIP(), []int{36}
 }
 
 func (x *DeleteDomainReply) GetResult() string {
@@ -2448,7 +2346,7 @@ type UpdateDomainDataReq struct {
 func (x *UpdateDomainDataReq) Reset() {
 	*x = UpdateDomainDataReq{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[39]
+		mi := &file_ada_proto_msgTypes[37]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -2461,7 +2359,7 @@ func (x *UpdateDomainDataReq) String() string {
 func (*UpdateDomainDataReq) ProtoMessage() {}
 
 func (x *UpdateDomainDataReq) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[39]
+	mi := &file_ada_proto_msgTypes[37]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2474,7 +2372,7 @@ func (x *UpdateDomainDataReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateDomainDataReq.ProtoReflect.Descriptor instead.
 func (*UpdateDomainDataReq) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{39}
+	return file_ada_proto_rawDescGZIP(), []int{37}
 }
 
 func (x *UpdateDomainDataReq) GetDomainID() string {
@@ -2495,7 +2393,7 @@ type UpdateDomainDataReply struct {
 func (x *UpdateDomainDataReply) Reset() {
 	*x = UpdateDomainDataReply{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[40]
+		mi := &file_ada_proto_msgTypes[38]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -2508,7 +2406,7 @@ func (x *UpdateDomainDataReply) String() string {
 func (*UpdateDomainDataReply) ProtoMessage() {}
 
 func (x *UpdateDomainDataReply) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[40]
+	mi := &file_ada_proto_msgTypes[38]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2521,7 +2419,7 @@ func (x *UpdateDomainDataReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateDomainDataReply.ProtoReflect.Descriptor instead.
 func (*UpdateDomainDataReply) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{40}
+	return file_ada_proto_rawDescGZIP(), []int{38}
 }
 
 func (x *UpdateDomainDataReply) GetResult() string {
@@ -2543,7 +2441,7 @@ type DeploySensorReq struct {
 func (x *DeploySensorReq) Reset() {
 	*x = DeploySensorReq{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[41]
+		mi := &file_ada_proto_msgTypes[39]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -2556,7 +2454,7 @@ func (x *DeploySensorReq) String() string {
 func (*DeploySensorReq) ProtoMessage() {}
 
 func (x *DeploySensorReq) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[41]
+	mi := &file_ada_proto_msgTypes[39]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2569,7 +2467,7 @@ func (x *DeploySensorReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeploySensorReq.ProtoReflect.Descriptor instead.
 func (*DeploySensorReq) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{41}
+	return file_ada_proto_rawDescGZIP(), []int{39}
 }
 
 func (x *DeploySensorReq) GetDomainID() string {
@@ -2597,7 +2495,7 @@ type DeploySensorReply struct {
 func (x *DeploySensorReply) Reset() {
 	*x = DeploySensorReply{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[42]
+		mi := &file_ada_proto_msgTypes[40]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -2610,7 +2508,7 @@ func (x *DeploySensorReply) String() string {
 func (*DeploySensorReply) ProtoMessage() {}
 
 func (x *DeploySensorReply) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[42]
+	mi := &file_ada_proto_msgTypes[40]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2623,7 +2521,7 @@ func (x *DeploySensorReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeploySensorReply.ProtoReflect.Descriptor instead.
 func (*DeploySensorReply) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{42}
+	return file_ada_proto_rawDescGZIP(), []int{40}
 }
 
 func (x *DeploySensorReply) GetResult() string {
@@ -2649,7 +2547,7 @@ type ListSensorReq struct {
 func (x *ListSensorReq) Reset() {
 	*x = ListSensorReq{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[43]
+		mi := &file_ada_proto_msgTypes[41]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -2662,7 +2560,7 @@ func (x *ListSensorReq) String() string {
 func (*ListSensorReq) ProtoMessage() {}
 
 func (x *ListSensorReq) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[43]
+	mi := &file_ada_proto_msgTypes[41]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2675,7 +2573,7 @@ func (x *ListSensorReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListSensorReq.ProtoReflect.Descriptor instead.
 func (*ListSensorReq) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{43}
+	return file_ada_proto_rawDescGZIP(), []int{41}
 }
 
 func (x *ListSensorReq) GetPageIdx() int32 {
@@ -2733,7 +2631,7 @@ type ListSensorReply struct {
 func (x *ListSensorReply) Reset() {
 	*x = ListSensorReply{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[44]
+		mi := &file_ada_proto_msgTypes[42]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -2746,7 +2644,7 @@ func (x *ListSensorReply) String() string {
 func (*ListSensorReply) ProtoMessage() {}
 
 func (x *ListSensorReply) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[44]
+	mi := &file_ada_proto_msgTypes[42]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2759,7 +2657,7 @@ func (x *ListSensorReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListSensorReply.ProtoReflect.Descriptor instead.
 func (*ListSensorReply) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{44}
+	return file_ada_proto_rawDescGZIP(), []int{42}
 }
 
 func (x *ListSensorReply) GetPage() *ModelPage {
@@ -2801,7 +2699,7 @@ type UpdateSensorReq struct {
 func (x *UpdateSensorReq) Reset() {
 	*x = UpdateSensorReq{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[45]
+		mi := &file_ada_proto_msgTypes[43]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -2814,7 +2712,7 @@ func (x *UpdateSensorReq) String() string {
 func (*UpdateSensorReq) ProtoMessage() {}
 
 func (x *UpdateSensorReq) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[45]
+	mi := &file_ada_proto_msgTypes[43]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2827,7 +2725,7 @@ func (x *UpdateSensorReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateSensorReq.ProtoReflect.Descriptor instead.
 func (*UpdateSensorReq) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{45}
+	return file_ada_proto_rawDescGZIP(), []int{43}
 }
 
 func (x *UpdateSensorReq) GetID() string {
@@ -2897,7 +2795,7 @@ type UpdateSensorReply struct {
 func (x *UpdateSensorReply) Reset() {
 	*x = UpdateSensorReply{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[46]
+		mi := &file_ada_proto_msgTypes[44]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -2910,7 +2808,7 @@ func (x *UpdateSensorReply) String() string {
 func (*UpdateSensorReply) ProtoMessage() {}
 
 func (x *UpdateSensorReply) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[46]
+	mi := &file_ada_proto_msgTypes[44]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2923,7 +2821,7 @@ func (x *UpdateSensorReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateSensorReply.ProtoReflect.Descriptor instead.
 func (*UpdateSensorReply) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{46}
+	return file_ada_proto_rawDescGZIP(), []int{44}
 }
 
 func (x *UpdateSensorReply) GetResult() string {
@@ -2944,7 +2842,7 @@ type DownloadSensorReq struct {
 func (x *DownloadSensorReq) Reset() {
 	*x = DownloadSensorReq{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[47]
+		mi := &file_ada_proto_msgTypes[45]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -2957,7 +2855,7 @@ func (x *DownloadSensorReq) String() string {
 func (*DownloadSensorReq) ProtoMessage() {}
 
 func (x *DownloadSensorReq) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[47]
+	mi := &file_ada_proto_msgTypes[45]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2970,7 +2868,7 @@ func (x *DownloadSensorReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DownloadSensorReq.ProtoReflect.Descriptor instead.
 func (*DownloadSensorReq) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{47}
+	return file_ada_proto_rawDescGZIP(), []int{45}
 }
 
 func (x *DownloadSensorReq) GetType() string {
@@ -2991,7 +2889,7 @@ type DownloadSensorReply struct {
 func (x *DownloadSensorReply) Reset() {
 	*x = DownloadSensorReply{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[48]
+		mi := &file_ada_proto_msgTypes[46]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -3004,7 +2902,7 @@ func (x *DownloadSensorReply) String() string {
 func (*DownloadSensorReply) ProtoMessage() {}
 
 func (x *DownloadSensorReply) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[48]
+	mi := &file_ada_proto_msgTypes[46]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3017,7 +2915,7 @@ func (x *DownloadSensorReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DownloadSensorReply.ProtoReflect.Descriptor instead.
 func (*DownloadSensorReply) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{48}
+	return file_ada_proto_rawDescGZIP(), []int{46}
 }
 
 func (x *DownloadSensorReply) GetPath() string {
@@ -3039,7 +2937,7 @@ type CmdSensorReq struct {
 func (x *CmdSensorReq) Reset() {
 	*x = CmdSensorReq{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[49]
+		mi := &file_ada_proto_msgTypes[47]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -3052,7 +2950,7 @@ func (x *CmdSensorReq) String() string {
 func (*CmdSensorReq) ProtoMessage() {}
 
 func (x *CmdSensorReq) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[49]
+	mi := &file_ada_proto_msgTypes[47]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3065,7 +2963,7 @@ func (x *CmdSensorReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CmdSensorReq.ProtoReflect.Descriptor instead.
 func (*CmdSensorReq) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{49}
+	return file_ada_proto_rawDescGZIP(), []int{47}
 }
 
 func (x *CmdSensorReq) GetID() string {
@@ -3093,7 +2991,7 @@ type CmdSensorReply struct {
 func (x *CmdSensorReply) Reset() {
 	*x = CmdSensorReply{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[50]
+		mi := &file_ada_proto_msgTypes[48]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -3106,7 +3004,7 @@ func (x *CmdSensorReply) String() string {
 func (*CmdSensorReply) ProtoMessage() {}
 
 func (x *CmdSensorReply) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[50]
+	mi := &file_ada_proto_msgTypes[48]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3119,7 +3017,7 @@ func (x *CmdSensorReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CmdSensorReply.ProtoReflect.Descriptor instead.
 func (*CmdSensorReply) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{50}
+	return file_ada_proto_rawDescGZIP(), []int{48}
 }
 
 func (x *CmdSensorReply) GetResult() string {
@@ -3141,7 +3039,7 @@ type UpdateSensorVersionReq struct {
 func (x *UpdateSensorVersionReq) Reset() {
 	*x = UpdateSensorVersionReq{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[51]
+		mi := &file_ada_proto_msgTypes[49]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -3154,7 +3052,7 @@ func (x *UpdateSensorVersionReq) String() string {
 func (*UpdateSensorVersionReq) ProtoMessage() {}
 
 func (x *UpdateSensorVersionReq) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[51]
+	mi := &file_ada_proto_msgTypes[49]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3167,7 +3065,7 @@ func (x *UpdateSensorVersionReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateSensorVersionReq.ProtoReflect.Descriptor instead.
 func (*UpdateSensorVersionReq) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{51}
+	return file_ada_proto_rawDescGZIP(), []int{49}
 }
 
 func (x *UpdateSensorVersionReq) GetSensorId() string {
@@ -3195,7 +3093,7 @@ type UpdateSensorVersionReply struct {
 func (x *UpdateSensorVersionReply) Reset() {
 	*x = UpdateSensorVersionReply{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[52]
+		mi := &file_ada_proto_msgTypes[50]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -3208,7 +3106,7 @@ func (x *UpdateSensorVersionReply) String() string {
 func (*UpdateSensorVersionReply) ProtoMessage() {}
 
 func (x *UpdateSensorVersionReply) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[52]
+	mi := &file_ada_proto_msgTypes[50]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3221,7 +3119,7 @@ func (x *UpdateSensorVersionReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateSensorVersionReply.ProtoReflect.Descriptor instead.
 func (*UpdateSensorVersionReply) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{52}
+	return file_ada_proto_rawDescGZIP(), []int{50}
 }
 
 func (x *UpdateSensorVersionReply) GetResult() string {
@@ -3240,7 +3138,7 @@ type GetSystemInfoReq struct {
 func (x *GetSystemInfoReq) Reset() {
 	*x = GetSystemInfoReq{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[53]
+		mi := &file_ada_proto_msgTypes[51]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -3253,7 +3151,7 @@ func (x *GetSystemInfoReq) String() string {
 func (*GetSystemInfoReq) ProtoMessage() {}
 
 func (x *GetSystemInfoReq) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[53]
+	mi := &file_ada_proto_msgTypes[51]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3266,7 +3164,7 @@ func (x *GetSystemInfoReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetSystemInfoReq.ProtoReflect.Descriptor instead.
 func (*GetSystemInfoReq) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{53}
+	return file_ada_proto_rawDescGZIP(), []int{51}
 }
 
 type GetSystemInfoReply struct {
@@ -3299,7 +3197,7 @@ type GetSystemInfoReply struct {
 func (x *GetSystemInfoReply) Reset() {
 	*x = GetSystemInfoReply{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[54]
+		mi := &file_ada_proto_msgTypes[52]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -3312,7 +3210,7 @@ func (x *GetSystemInfoReply) String() string {
 func (*GetSystemInfoReply) ProtoMessage() {}
 
 func (x *GetSystemInfoReply) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[54]
+	mi := &file_ada_proto_msgTypes[52]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3325,7 +3223,7 @@ func (x *GetSystemInfoReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetSystemInfoReply.ProtoReflect.Descriptor instead.
 func (*GetSystemInfoReply) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{54}
+	return file_ada_proto_rawDescGZIP(), []int{52}
 }
 
 func (x *GetSystemInfoReply) GetSystemIP() string {
@@ -3477,7 +3375,7 @@ type GetSystemIconReq struct {
 func (x *GetSystemIconReq) Reset() {
 	*x = GetSystemIconReq{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[55]
+		mi := &file_ada_proto_msgTypes[53]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -3490,7 +3388,7 @@ func (x *GetSystemIconReq) String() string {
 func (*GetSystemIconReq) ProtoMessage() {}
 
 func (x *GetSystemIconReq) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[55]
+	mi := &file_ada_proto_msgTypes[53]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3503,7 +3401,7 @@ func (x *GetSystemIconReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetSystemIconReq.ProtoReflect.Descriptor instead.
 func (*GetSystemIconReq) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{55}
+	return file_ada_proto_rawDescGZIP(), []int{53}
 }
 
 type GetSystemIconReply struct {
@@ -3517,7 +3415,7 @@ type GetSystemIconReply struct {
 func (x *GetSystemIconReply) Reset() {
 	*x = GetSystemIconReply{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[56]
+		mi := &file_ada_proto_msgTypes[54]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -3530,7 +3428,7 @@ func (x *GetSystemIconReply) String() string {
 func (*GetSystemIconReply) ProtoMessage() {}
 
 func (x *GetSystemIconReply) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[56]
+	mi := &file_ada_proto_msgTypes[54]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3543,7 +3441,7 @@ func (x *GetSystemIconReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetSystemIconReply.ProtoReflect.Descriptor instead.
 func (*GetSystemIconReply) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{56}
+	return file_ada_proto_rawDescGZIP(), []int{54}
 }
 
 func (x *GetSystemIconReply) GetIcon() string {
@@ -3564,7 +3462,7 @@ type UpdateSystemLanguageReq struct {
 func (x *UpdateSystemLanguageReq) Reset() {
 	*x = UpdateSystemLanguageReq{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[57]
+		mi := &file_ada_proto_msgTypes[55]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -3577,7 +3475,7 @@ func (x *UpdateSystemLanguageReq) String() string {
 func (*UpdateSystemLanguageReq) ProtoMessage() {}
 
 func (x *UpdateSystemLanguageReq) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[57]
+	mi := &file_ada_proto_msgTypes[55]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3590,7 +3488,7 @@ func (x *UpdateSystemLanguageReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateSystemLanguageReq.ProtoReflect.Descriptor instead.
 func (*UpdateSystemLanguageReq) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{57}
+	return file_ada_proto_rawDescGZIP(), []int{55}
 }
 
 func (x *UpdateSystemLanguageReq) GetLanguage() string {
@@ -3611,7 +3509,7 @@ type UpdateSystemLanguageReply struct {
 func (x *UpdateSystemLanguageReply) Reset() {
 	*x = UpdateSystemLanguageReply{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[58]
+		mi := &file_ada_proto_msgTypes[56]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -3624,7 +3522,7 @@ func (x *UpdateSystemLanguageReply) String() string {
 func (*UpdateSystemLanguageReply) ProtoMessage() {}
 
 func (x *UpdateSystemLanguageReply) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[58]
+	mi := &file_ada_proto_msgTypes[56]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3637,7 +3535,7 @@ func (x *UpdateSystemLanguageReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateSystemLanguageReply.ProtoReflect.Descriptor instead.
 func (*UpdateSystemLanguageReply) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{58}
+	return file_ada_proto_rawDescGZIP(), []int{56}
 }
 
 func (x *UpdateSystemLanguageReply) GetResult() string {
@@ -3664,7 +3562,7 @@ type UpdateSystemCfgReq struct {
 func (x *UpdateSystemCfgReq) Reset() {
 	*x = UpdateSystemCfgReq{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[59]
+		mi := &file_ada_proto_msgTypes[57]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -3677,7 +3575,7 @@ func (x *UpdateSystemCfgReq) String() string {
 func (*UpdateSystemCfgReq) ProtoMessage() {}
 
 func (x *UpdateSystemCfgReq) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[59]
+	mi := &file_ada_proto_msgTypes[57]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3690,7 +3588,7 @@ func (x *UpdateSystemCfgReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateSystemCfgReq.ProtoReflect.Descriptor instead.
 func (*UpdateSystemCfgReq) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{59}
+	return file_ada_proto_rawDescGZIP(), []int{57}
 }
 
 func (x *UpdateSystemCfgReq) GetNtp() string {
@@ -3753,7 +3651,7 @@ type UpdateSystemCfgReply struct {
 func (x *UpdateSystemCfgReply) Reset() {
 	*x = UpdateSystemCfgReply{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[60]
+		mi := &file_ada_proto_msgTypes[58]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -3766,7 +3664,7 @@ func (x *UpdateSystemCfgReply) String() string {
 func (*UpdateSystemCfgReply) ProtoMessage() {}
 
 func (x *UpdateSystemCfgReply) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[60]
+	mi := &file_ada_proto_msgTypes[58]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3779,7 +3677,7 @@ func (x *UpdateSystemCfgReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateSystemCfgReply.ProtoReflect.Descriptor instead.
 func (*UpdateSystemCfgReply) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{60}
+	return file_ada_proto_rawDescGZIP(), []int{58}
 }
 
 func (x *UpdateSystemCfgReply) GetResult() string {
@@ -3801,7 +3699,7 @@ type GetSystemStatsReq struct {
 func (x *GetSystemStatsReq) Reset() {
 	*x = GetSystemStatsReq{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[61]
+		mi := &file_ada_proto_msgTypes[59]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -3814,7 +3712,7 @@ func (x *GetSystemStatsReq) String() string {
 func (*GetSystemStatsReq) ProtoMessage() {}
 
 func (x *GetSystemStatsReq) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[61]
+	mi := &file_ada_proto_msgTypes[59]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3827,7 +3725,7 @@ func (x *GetSystemStatsReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetSystemStatsReq.ProtoReflect.Descriptor instead.
 func (*GetSystemStatsReq) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{61}
+	return file_ada_proto_rawDescGZIP(), []int{59}
 }
 
 func (x *GetSystemStatsReq) GetType() string {
@@ -3856,7 +3754,7 @@ type StatsInfo struct {
 func (x *StatsInfo) Reset() {
 	*x = StatsInfo{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[62]
+		mi := &file_ada_proto_msgTypes[60]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -3869,7 +3767,7 @@ func (x *StatsInfo) String() string {
 func (*StatsInfo) ProtoMessage() {}
 
 func (x *StatsInfo) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[62]
+	mi := &file_ada_proto_msgTypes[60]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3882,7 +3780,7 @@ func (x *StatsInfo) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use StatsInfo.ProtoReflect.Descriptor instead.
 func (*StatsInfo) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{62}
+	return file_ada_proto_rawDescGZIP(), []int{60}
 }
 
 func (x *StatsInfo) GetValue() string {
@@ -3910,7 +3808,7 @@ type GetSystemStatsReply struct {
 func (x *GetSystemStatsReply) Reset() {
 	*x = GetSystemStatsReply{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[63]
+		mi := &file_ada_proto_msgTypes[61]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -3923,7 +3821,7 @@ func (x *GetSystemStatsReply) String() string {
 func (*GetSystemStatsReply) ProtoMessage() {}
 
 func (x *GetSystemStatsReply) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[63]
+	mi := &file_ada_proto_msgTypes[61]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3936,7 +3834,7 @@ func (x *GetSystemStatsReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetSystemStatsReply.ProtoReflect.Descriptor instead.
 func (*GetSystemStatsReply) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{63}
+	return file_ada_proto_rawDescGZIP(), []int{61}
 }
 
 func (x *GetSystemStatsReply) GetStats() []*StatsInfo {
@@ -3957,7 +3855,7 @@ type SetSystemStatsCfgReq struct {
 func (x *SetSystemStatsCfgReq) Reset() {
 	*x = SetSystemStatsCfgReq{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[64]
+		mi := &file_ada_proto_msgTypes[62]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -3970,7 +3868,7 @@ func (x *SetSystemStatsCfgReq) String() string {
 func (*SetSystemStatsCfgReq) ProtoMessage() {}
 
 func (x *SetSystemStatsCfgReq) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[64]
+	mi := &file_ada_proto_msgTypes[62]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3983,7 +3881,7 @@ func (x *SetSystemStatsCfgReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SetSystemStatsCfgReq.ProtoReflect.Descriptor instead.
 func (*SetSystemStatsCfgReq) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{64}
+	return file_ada_proto_rawDescGZIP(), []int{62}
 }
 
 func (x *SetSystemStatsCfgReq) GetStats() map[string]string {
@@ -4004,7 +3902,7 @@ type SetSystemStatsCfgReply struct {
 func (x *SetSystemStatsCfgReply) Reset() {
 	*x = SetSystemStatsCfgReply{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[65]
+		mi := &file_ada_proto_msgTypes[63]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -4017,7 +3915,7 @@ func (x *SetSystemStatsCfgReply) String() string {
 func (*SetSystemStatsCfgReply) ProtoMessage() {}
 
 func (x *SetSystemStatsCfgReply) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[65]
+	mi := &file_ada_proto_msgTypes[63]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4030,7 +3928,7 @@ func (x *SetSystemStatsCfgReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SetSystemStatsCfgReply.ProtoReflect.Descriptor instead.
 func (*SetSystemStatsCfgReply) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{65}
+	return file_ada_proto_rawDescGZIP(), []int{63}
 }
 
 func (x *SetSystemStatsCfgReply) GetResult() string {
@@ -4059,7 +3957,7 @@ type ListAuditLogReq struct {
 func (x *ListAuditLogReq) Reset() {
 	*x = ListAuditLogReq{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[66]
+		mi := &file_ada_proto_msgTypes[64]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -4072,7 +3970,7 @@ func (x *ListAuditLogReq) String() string {
 func (*ListAuditLogReq) ProtoMessage() {}
 
 func (x *ListAuditLogReq) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[66]
+	mi := &file_ada_proto_msgTypes[64]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4085,7 +3983,7 @@ func (x *ListAuditLogReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListAuditLogReq.ProtoReflect.Descriptor instead.
 func (*ListAuditLogReq) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{66}
+	return file_ada_proto_rawDescGZIP(), []int{64}
 }
 
 func (x *ListAuditLogReq) GetPageIdx() int32 {
@@ -4150,7 +4048,7 @@ type ListAuditLogReply struct {
 func (x *ListAuditLogReply) Reset() {
 	*x = ListAuditLogReply{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[67]
+		mi := &file_ada_proto_msgTypes[65]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -4163,7 +4061,7 @@ func (x *ListAuditLogReply) String() string {
 func (*ListAuditLogReply) ProtoMessage() {}
 
 func (x *ListAuditLogReply) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[67]
+	mi := &file_ada_proto_msgTypes[65]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4176,7 +4074,7 @@ func (x *ListAuditLogReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListAuditLogReply.ProtoReflect.Descriptor instead.
 func (*ListAuditLogReply) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{67}
+	return file_ada_proto_rawDescGZIP(), []int{65}
 }
 
 func (x *ListAuditLogReply) GetPage() *ModelPage {
@@ -4218,7 +4116,7 @@ type ListSystemLogsReq struct {
 func (x *ListSystemLogsReq) Reset() {
 	*x = ListSystemLogsReq{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[68]
+		mi := &file_ada_proto_msgTypes[66]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -4231,7 +4129,7 @@ func (x *ListSystemLogsReq) String() string {
 func (*ListSystemLogsReq) ProtoMessage() {}
 
 func (x *ListSystemLogsReq) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[68]
+	mi := &file_ada_proto_msgTypes[66]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4244,7 +4142,7 @@ func (x *ListSystemLogsReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListSystemLogsReq.ProtoReflect.Descriptor instead.
 func (*ListSystemLogsReq) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{68}
+	return file_ada_proto_rawDescGZIP(), []int{66}
 }
 
 func (x *ListSystemLogsReq) GetPageIdx() int32 {
@@ -4316,7 +4214,7 @@ type ListSystemLogsReply struct {
 func (x *ListSystemLogsReply) Reset() {
 	*x = ListSystemLogsReply{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[69]
+		mi := &file_ada_proto_msgTypes[67]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -4329,7 +4227,7 @@ func (x *ListSystemLogsReply) String() string {
 func (*ListSystemLogsReply) ProtoMessage() {}
 
 func (x *ListSystemLogsReply) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[69]
+	mi := &file_ada_proto_msgTypes[67]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4342,7 +4240,7 @@ func (x *ListSystemLogsReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListSystemLogsReply.ProtoReflect.Descriptor instead.
 func (*ListSystemLogsReply) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{69}
+	return file_ada_proto_rawDescGZIP(), []int{67}
 }
 
 func (x *ListSystemLogsReply) GetPage() *ModelPage {
@@ -4375,7 +4273,7 @@ type GetLicenseReq struct {
 func (x *GetLicenseReq) Reset() {
 	*x = GetLicenseReq{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[70]
+		mi := &file_ada_proto_msgTypes[68]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -4388,7 +4286,7 @@ func (x *GetLicenseReq) String() string {
 func (*GetLicenseReq) ProtoMessage() {}
 
 func (x *GetLicenseReq) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[70]
+	mi := &file_ada_proto_msgTypes[68]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4401,7 +4299,7 @@ func (x *GetLicenseReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetLicenseReq.ProtoReflect.Descriptor instead.
 func (*GetLicenseReq) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{70}
+	return file_ada_proto_rawDescGZIP(), []int{68}
 }
 
 type GetLicenseReply struct {
@@ -4419,7 +4317,7 @@ type GetLicenseReply struct {
 func (x *GetLicenseReply) Reset() {
 	*x = GetLicenseReply{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[71]
+		mi := &file_ada_proto_msgTypes[69]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -4432,7 +4330,7 @@ func (x *GetLicenseReply) String() string {
 func (*GetLicenseReply) ProtoMessage() {}
 
 func (x *GetLicenseReply) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[71]
+	mi := &file_ada_proto_msgTypes[69]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4445,7 +4343,7 @@ func (x *GetLicenseReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetLicenseReply.ProtoReflect.Descriptor instead.
 func (*GetLicenseReply) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{71}
+	return file_ada_proto_rawDescGZIP(), []int{69}
 }
 
 func (x *GetLicenseReply) GetTrait() string {
@@ -4494,7 +4392,7 @@ type UpdateLicenseReq struct {
 func (x *UpdateLicenseReq) Reset() {
 	*x = UpdateLicenseReq{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[72]
+		mi := &file_ada_proto_msgTypes[70]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -4507,7 +4405,7 @@ func (x *UpdateLicenseReq) String() string {
 func (*UpdateLicenseReq) ProtoMessage() {}
 
 func (x *UpdateLicenseReq) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[72]
+	mi := &file_ada_proto_msgTypes[70]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4520,7 +4418,7 @@ func (x *UpdateLicenseReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateLicenseReq.ProtoReflect.Descriptor instead.
 func (*UpdateLicenseReq) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{72}
+	return file_ada_proto_rawDescGZIP(), []int{70}
 }
 
 func (x *UpdateLicenseReq) GetLicenseKey() string {
@@ -4541,7 +4439,7 @@ type UpdateLicenseReply struct {
 func (x *UpdateLicenseReply) Reset() {
 	*x = UpdateLicenseReply{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[73]
+		mi := &file_ada_proto_msgTypes[71]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -4554,7 +4452,7 @@ func (x *UpdateLicenseReply) String() string {
 func (*UpdateLicenseReply) ProtoMessage() {}
 
 func (x *UpdateLicenseReply) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[73]
+	mi := &file_ada_proto_msgTypes[71]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4567,7 +4465,7 @@ func (x *UpdateLicenseReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateLicenseReply.ProtoReflect.Descriptor instead.
 func (*UpdateLicenseReply) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{73}
+	return file_ada_proto_rawDescGZIP(), []int{71}
 }
 
 func (x *UpdateLicenseReply) GetResult() string {
@@ -4589,7 +4487,7 @@ type NetworkDebugReq struct {
 func (x *NetworkDebugReq) Reset() {
 	*x = NetworkDebugReq{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[74]
+		mi := &file_ada_proto_msgTypes[72]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -4602,7 +4500,7 @@ func (x *NetworkDebugReq) String() string {
 func (*NetworkDebugReq) ProtoMessage() {}
 
 func (x *NetworkDebugReq) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[74]
+	mi := &file_ada_proto_msgTypes[72]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4615,7 +4513,7 @@ func (x *NetworkDebugReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use NetworkDebugReq.ProtoReflect.Descriptor instead.
 func (*NetworkDebugReq) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{74}
+	return file_ada_proto_rawDescGZIP(), []int{72}
 }
 
 func (x *NetworkDebugReq) GetType() string {
@@ -4643,7 +4541,7 @@ type NetworkDebugReply struct {
 func (x *NetworkDebugReply) Reset() {
 	*x = NetworkDebugReply{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[75]
+		mi := &file_ada_proto_msgTypes[73]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -4656,7 +4554,7 @@ func (x *NetworkDebugReply) String() string {
 func (*NetworkDebugReply) ProtoMessage() {}
 
 func (x *NetworkDebugReply) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[75]
+	mi := &file_ada_proto_msgTypes[73]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4669,7 +4567,7 @@ func (x *NetworkDebugReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use NetworkDebugReply.ProtoReflect.Descriptor instead.
 func (*NetworkDebugReply) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{75}
+	return file_ada_proto_rawDescGZIP(), []int{73}
 }
 
 func (x *NetworkDebugReply) GetResult() string {
@@ -4696,7 +4594,7 @@ type ListNotifyConfReq struct {
 func (x *ListNotifyConfReq) Reset() {
 	*x = ListNotifyConfReq{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[76]
+		mi := &file_ada_proto_msgTypes[74]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -4709,7 +4607,7 @@ func (x *ListNotifyConfReq) String() string {
 func (*ListNotifyConfReq) ProtoMessage() {}
 
 func (x *ListNotifyConfReq) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[76]
+	mi := &file_ada_proto_msgTypes[74]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4722,7 +4620,7 @@ func (x *ListNotifyConfReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListNotifyConfReq.ProtoReflect.Descriptor instead.
 func (*ListNotifyConfReq) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{76}
+	return file_ada_proto_rawDescGZIP(), []int{74}
 }
 
 func (x *ListNotifyConfReq) GetPageIdx() int32 {
@@ -4786,7 +4684,7 @@ type ListNotifyConfReply struct {
 func (x *ListNotifyConfReply) Reset() {
 	*x = ListNotifyConfReply{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[77]
+		mi := &file_ada_proto_msgTypes[75]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -4799,7 +4697,7 @@ func (x *ListNotifyConfReply) String() string {
 func (*ListNotifyConfReply) ProtoMessage() {}
 
 func (x *ListNotifyConfReply) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[77]
+	mi := &file_ada_proto_msgTypes[75]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4812,7 +4710,7 @@ func (x *ListNotifyConfReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListNotifyConfReply.ProtoReflect.Descriptor instead.
 func (*ListNotifyConfReply) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{77}
+	return file_ada_proto_rawDescGZIP(), []int{75}
 }
 
 func (x *ListNotifyConfReply) GetList() []*ListNotifyConfReply_Details {
@@ -4844,7 +4742,7 @@ type UpdateNotifyConfReq struct {
 func (x *UpdateNotifyConfReq) Reset() {
 	*x = UpdateNotifyConfReq{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[78]
+		mi := &file_ada_proto_msgTypes[76]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -4857,7 +4755,7 @@ func (x *UpdateNotifyConfReq) String() string {
 func (*UpdateNotifyConfReq) ProtoMessage() {}
 
 func (x *UpdateNotifyConfReq) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[78]
+	mi := &file_ada_proto_msgTypes[76]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4870,7 +4768,7 @@ func (x *UpdateNotifyConfReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateNotifyConfReq.ProtoReflect.Descriptor instead.
 func (*UpdateNotifyConfReq) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{78}
+	return file_ada_proto_rawDescGZIP(), []int{76}
 }
 
 func (x *UpdateNotifyConfReq) GetId() string {
@@ -4919,7 +4817,7 @@ type UpdateNotifyConfReply struct {
 func (x *UpdateNotifyConfReply) Reset() {
 	*x = UpdateNotifyConfReply{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[79]
+		mi := &file_ada_proto_msgTypes[77]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -4932,7 +4830,7 @@ func (x *UpdateNotifyConfReply) String() string {
 func (*UpdateNotifyConfReply) ProtoMessage() {}
 
 func (x *UpdateNotifyConfReply) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[79]
+	mi := &file_ada_proto_msgTypes[77]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4945,7 +4843,7 @@ func (x *UpdateNotifyConfReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateNotifyConfReply.ProtoReflect.Descriptor instead.
 func (*UpdateNotifyConfReply) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{79}
+	return file_ada_proto_rawDescGZIP(), []int{77}
 }
 
 func (x *UpdateNotifyConfReply) GetResult() string {
@@ -4967,7 +4865,7 @@ type EnableNotifyConfReq struct {
 func (x *EnableNotifyConfReq) Reset() {
 	*x = EnableNotifyConfReq{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[80]
+		mi := &file_ada_proto_msgTypes[78]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -4980,7 +4878,7 @@ func (x *EnableNotifyConfReq) String() string {
 func (*EnableNotifyConfReq) ProtoMessage() {}
 
 func (x *EnableNotifyConfReq) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[80]
+	mi := &file_ada_proto_msgTypes[78]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4993,7 +4891,7 @@ func (x *EnableNotifyConfReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use EnableNotifyConfReq.ProtoReflect.Descriptor instead.
 func (*EnableNotifyConfReq) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{80}
+	return file_ada_proto_rawDescGZIP(), []int{78}
 }
 
 func (x *EnableNotifyConfReq) GetId() string {
@@ -5021,7 +4919,7 @@ type EnableNotifyConfReply struct {
 func (x *EnableNotifyConfReply) Reset() {
 	*x = EnableNotifyConfReply{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[81]
+		mi := &file_ada_proto_msgTypes[79]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -5034,7 +4932,7 @@ func (x *EnableNotifyConfReply) String() string {
 func (*EnableNotifyConfReply) ProtoMessage() {}
 
 func (x *EnableNotifyConfReply) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[81]
+	mi := &file_ada_proto_msgTypes[79]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5047,7 +4945,7 @@ func (x *EnableNotifyConfReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use EnableNotifyConfReply.ProtoReflect.Descriptor instead.
 func (*EnableNotifyConfReply) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{81}
+	return file_ada_proto_rawDescGZIP(), []int{79}
 }
 
 func (x *EnableNotifyConfReply) GetResult() string {
@@ -5071,7 +4969,7 @@ type TestNotifyConfReq struct {
 func (x *TestNotifyConfReq) Reset() {
 	*x = TestNotifyConfReq{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[82]
+		mi := &file_ada_proto_msgTypes[80]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -5084,7 +4982,7 @@ func (x *TestNotifyConfReq) String() string {
 func (*TestNotifyConfReq) ProtoMessage() {}
 
 func (x *TestNotifyConfReq) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[82]
+	mi := &file_ada_proto_msgTypes[80]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5097,7 +4995,7 @@ func (x *TestNotifyConfReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use TestNotifyConfReq.ProtoReflect.Descriptor instead.
 func (*TestNotifyConfReq) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{82}
+	return file_ada_proto_rawDescGZIP(), []int{80}
 }
 
 func (x *TestNotifyConfReq) GetModuleName() string {
@@ -5140,7 +5038,7 @@ type TestNotifyConfReply struct {
 func (x *TestNotifyConfReply) Reset() {
 	*x = TestNotifyConfReply{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[83]
+		mi := &file_ada_proto_msgTypes[81]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -5153,7 +5051,7 @@ func (x *TestNotifyConfReply) String() string {
 func (*TestNotifyConfReply) ProtoMessage() {}
 
 func (x *TestNotifyConfReply) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[83]
+	mi := &file_ada_proto_msgTypes[81]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5166,7 +5064,7 @@ func (x *TestNotifyConfReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use TestNotifyConfReply.ProtoReflect.Descriptor instead.
 func (*TestNotifyConfReply) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{83}
+	return file_ada_proto_rawDescGZIP(), []int{81}
 }
 
 func (x *TestNotifyConfReply) GetResult() string {
@@ -5200,7 +5098,7 @@ type ListExportTaskReq struct {
 func (x *ListExportTaskReq) Reset() {
 	*x = ListExportTaskReq{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[84]
+		mi := &file_ada_proto_msgTypes[82]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -5213,7 +5111,7 @@ func (x *ListExportTaskReq) String() string {
 func (*ListExportTaskReq) ProtoMessage() {}
 
 func (x *ListExportTaskReq) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[84]
+	mi := &file_ada_proto_msgTypes[82]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5226,7 +5124,7 @@ func (x *ListExportTaskReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListExportTaskReq.ProtoReflect.Descriptor instead.
 func (*ListExportTaskReq) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{84}
+	return file_ada_proto_rawDescGZIP(), []int{82}
 }
 
 func (x *ListExportTaskReq) GetPageIdx() int32 {
@@ -5291,7 +5189,7 @@ type ListExportTaskReply struct {
 func (x *ListExportTaskReply) Reset() {
 	*x = ListExportTaskReply{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[85]
+		mi := &file_ada_proto_msgTypes[83]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -5304,7 +5202,7 @@ func (x *ListExportTaskReply) String() string {
 func (*ListExportTaskReply) ProtoMessage() {}
 
 func (x *ListExportTaskReply) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[85]
+	mi := &file_ada_proto_msgTypes[83]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5317,7 +5215,7 @@ func (x *ListExportTaskReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListExportTaskReply.ProtoReflect.Descriptor instead.
 func (*ListExportTaskReply) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{85}
+	return file_ada_proto_rawDescGZIP(), []int{83}
 }
 
 func (x *ListExportTaskReply) GetPage() *ModelPage {
@@ -5354,7 +5252,7 @@ type AddExportTaskReq struct {
 func (x *AddExportTaskReq) Reset() {
 	*x = AddExportTaskReq{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[86]
+		mi := &file_ada_proto_msgTypes[84]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -5367,7 +5265,7 @@ func (x *AddExportTaskReq) String() string {
 func (*AddExportTaskReq) ProtoMessage() {}
 
 func (x *AddExportTaskReq) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[86]
+	mi := &file_ada_proto_msgTypes[84]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5380,7 +5278,7 @@ func (x *AddExportTaskReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AddExportTaskReq.ProtoReflect.Descriptor instead.
 func (*AddExportTaskReq) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{86}
+	return file_ada_proto_rawDescGZIP(), []int{84}
 }
 
 func (x *AddExportTaskReq) GetName() string {
@@ -5415,7 +5313,7 @@ type AddExportTaskReply struct {
 func (x *AddExportTaskReply) Reset() {
 	*x = AddExportTaskReply{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[87]
+		mi := &file_ada_proto_msgTypes[85]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -5428,7 +5326,7 @@ func (x *AddExportTaskReply) String() string {
 func (*AddExportTaskReply) ProtoMessage() {}
 
 func (x *AddExportTaskReply) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[87]
+	mi := &file_ada_proto_msgTypes[85]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5441,7 +5339,7 @@ func (x *AddExportTaskReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AddExportTaskReply.ProtoReflect.Descriptor instead.
 func (*AddExportTaskReply) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{87}
+	return file_ada_proto_rawDescGZIP(), []int{85}
 }
 
 func (x *AddExportTaskReply) GetResult() string {
@@ -5462,7 +5360,7 @@ type DeleteExportTaskReq struct {
 func (x *DeleteExportTaskReq) Reset() {
 	*x = DeleteExportTaskReq{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[88]
+		mi := &file_ada_proto_msgTypes[86]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -5475,7 +5373,7 @@ func (x *DeleteExportTaskReq) String() string {
 func (*DeleteExportTaskReq) ProtoMessage() {}
 
 func (x *DeleteExportTaskReq) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[88]
+	mi := &file_ada_proto_msgTypes[86]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5488,7 +5386,7 @@ func (x *DeleteExportTaskReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteExportTaskReq.ProtoReflect.Descriptor instead.
 func (*DeleteExportTaskReq) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{88}
+	return file_ada_proto_rawDescGZIP(), []int{86}
 }
 
 func (x *DeleteExportTaskReq) GetID() string {
@@ -5509,7 +5407,7 @@ type DeleteExportTaskReply struct {
 func (x *DeleteExportTaskReply) Reset() {
 	*x = DeleteExportTaskReply{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[89]
+		mi := &file_ada_proto_msgTypes[87]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -5522,7 +5420,7 @@ func (x *DeleteExportTaskReply) String() string {
 func (*DeleteExportTaskReply) ProtoMessage() {}
 
 func (x *DeleteExportTaskReply) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[89]
+	mi := &file_ada_proto_msgTypes[87]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5535,7 +5433,7 @@ func (x *DeleteExportTaskReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteExportTaskReply.ProtoReflect.Descriptor instead.
 func (*DeleteExportTaskReply) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{89}
+	return file_ada_proto_rawDescGZIP(), []int{87}
 }
 
 func (x *DeleteExportTaskReply) GetResult() string {
@@ -5562,7 +5460,7 @@ type ListNotifyReq struct {
 func (x *ListNotifyReq) Reset() {
 	*x = ListNotifyReq{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[90]
+		mi := &file_ada_proto_msgTypes[88]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -5575,7 +5473,7 @@ func (x *ListNotifyReq) String() string {
 func (*ListNotifyReq) ProtoMessage() {}
 
 func (x *ListNotifyReq) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[90]
+	mi := &file_ada_proto_msgTypes[88]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5588,7 +5486,7 @@ func (x *ListNotifyReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListNotifyReq.ProtoReflect.Descriptor instead.
 func (*ListNotifyReq) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{90}
+	return file_ada_proto_rawDescGZIP(), []int{88}
 }
 
 func (x *ListNotifyReq) GetPageIdx() int32 {
@@ -5653,7 +5551,7 @@ type ListNotifyReply struct {
 func (x *ListNotifyReply) Reset() {
 	*x = ListNotifyReply{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[91]
+		mi := &file_ada_proto_msgTypes[89]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -5666,7 +5564,7 @@ func (x *ListNotifyReply) String() string {
 func (*ListNotifyReply) ProtoMessage() {}
 
 func (x *ListNotifyReply) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[91]
+	mi := &file_ada_proto_msgTypes[89]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5679,7 +5577,7 @@ func (x *ListNotifyReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListNotifyReply.ProtoReflect.Descriptor instead.
 func (*ListNotifyReply) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{91}
+	return file_ada_proto_rawDescGZIP(), []int{89}
 }
 
 func (x *ListNotifyReply) GetPage() *ModelPage {
@@ -5714,7 +5612,7 @@ type UpdateNotifyReq struct {
 func (x *UpdateNotifyReq) Reset() {
 	*x = UpdateNotifyReq{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[92]
+		mi := &file_ada_proto_msgTypes[90]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -5727,7 +5625,7 @@ func (x *UpdateNotifyReq) String() string {
 func (*UpdateNotifyReq) ProtoMessage() {}
 
 func (x *UpdateNotifyReq) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[92]
+	mi := &file_ada_proto_msgTypes[90]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5740,7 +5638,7 @@ func (x *UpdateNotifyReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateNotifyReq.ProtoReflect.Descriptor instead.
 func (*UpdateNotifyReq) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{92}
+	return file_ada_proto_rawDescGZIP(), []int{90}
 }
 
 func (x *UpdateNotifyReq) GetIDs() []string {
@@ -5761,7 +5659,7 @@ type UpdateNotifyReply struct {
 func (x *UpdateNotifyReply) Reset() {
 	*x = UpdateNotifyReply{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[93]
+		mi := &file_ada_proto_msgTypes[91]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -5774,7 +5672,7 @@ func (x *UpdateNotifyReply) String() string {
 func (*UpdateNotifyReply) ProtoMessage() {}
 
 func (x *UpdateNotifyReply) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[93]
+	mi := &file_ada_proto_msgTypes[91]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5787,7 +5685,7 @@ func (x *UpdateNotifyReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateNotifyReply.ProtoReflect.Descriptor instead.
 func (*UpdateNotifyReply) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{93}
+	return file_ada_proto_rawDescGZIP(), []int{91}
 }
 
 func (x *UpdateNotifyReply) GetResult() string {
@@ -5806,7 +5704,7 @@ type StatsNotifyReq struct {
 func (x *StatsNotifyReq) Reset() {
 	*x = StatsNotifyReq{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[94]
+		mi := &file_ada_proto_msgTypes[92]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -5819,7 +5717,7 @@ func (x *StatsNotifyReq) String() string {
 func (*StatsNotifyReq) ProtoMessage() {}
 
 func (x *StatsNotifyReq) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[94]
+	mi := &file_ada_proto_msgTypes[92]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5832,7 +5730,7 @@ func (x *StatsNotifyReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use StatsNotifyReq.ProtoReflect.Descriptor instead.
 func (*StatsNotifyReq) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{94}
+	return file_ada_proto_rawDescGZIP(), []int{92}
 }
 
 type StatsNotifyReply struct {
@@ -5844,7 +5742,7 @@ type StatsNotifyReply struct {
 func (x *StatsNotifyReply) Reset() {
 	*x = StatsNotifyReply{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[95]
+		mi := &file_ada_proto_msgTypes[93]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -5857,7 +5755,7 @@ func (x *StatsNotifyReply) String() string {
 func (*StatsNotifyReply) ProtoMessage() {}
 
 func (x *StatsNotifyReply) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[95]
+	mi := &file_ada_proto_msgTypes[93]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5870,7 +5768,7 @@ func (x *StatsNotifyReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use StatsNotifyReply.ProtoReflect.Descriptor instead.
 func (*StatsNotifyReply) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{95}
+	return file_ada_proto_rawDescGZIP(), []int{93}
 }
 
 type ThreatTopsReq struct {
@@ -5886,7 +5784,7 @@ type ThreatTopsReq struct {
 func (x *ThreatTopsReq) Reset() {
 	*x = ThreatTopsReq{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[96]
+		mi := &file_ada_proto_msgTypes[94]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -5899,7 +5797,7 @@ func (x *ThreatTopsReq) String() string {
 func (*ThreatTopsReq) ProtoMessage() {}
 
 func (x *ThreatTopsReq) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[96]
+	mi := &file_ada_proto_msgTypes[94]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5912,7 +5810,7 @@ func (x *ThreatTopsReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ThreatTopsReq.ProtoReflect.Descriptor instead.
 func (*ThreatTopsReq) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{96}
+	return file_ada_proto_rawDescGZIP(), []int{94}
 }
 
 func (x *ThreatTopsReq) GetDomain() string {
@@ -5947,7 +5845,7 @@ type ThreatTopsReply struct {
 func (x *ThreatTopsReply) Reset() {
 	*x = ThreatTopsReply{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[97]
+		mi := &file_ada_proto_msgTypes[95]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -5960,7 +5858,7 @@ func (x *ThreatTopsReply) String() string {
 func (*ThreatTopsReply) ProtoMessage() {}
 
 func (x *ThreatTopsReply) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[97]
+	mi := &file_ada_proto_msgTypes[95]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5973,7 +5871,7 @@ func (x *ThreatTopsReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ThreatTopsReply.ProtoReflect.Descriptor instead.
 func (*ThreatTopsReply) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{97}
+	return file_ada_proto_rawDescGZIP(), []int{95}
 }
 
 func (x *ThreatTopsReply) GetList() []*ThreatTopsReply_Details {
@@ -5996,7 +5894,7 @@ type ThreatTrendsReq struct {
 func (x *ThreatTrendsReq) Reset() {
 	*x = ThreatTrendsReq{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[98]
+		mi := &file_ada_proto_msgTypes[96]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -6009,7 +5907,7 @@ func (x *ThreatTrendsReq) String() string {
 func (*ThreatTrendsReq) ProtoMessage() {}
 
 func (x *ThreatTrendsReq) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[98]
+	mi := &file_ada_proto_msgTypes[96]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -6022,7 +5920,7 @@ func (x *ThreatTrendsReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ThreatTrendsReq.ProtoReflect.Descriptor instead.
 func (*ThreatTrendsReq) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{98}
+	return file_ada_proto_rawDescGZIP(), []int{96}
 }
 
 func (x *ThreatTrendsReq) GetDomain() string {
@@ -6057,7 +5955,7 @@ type ThreatTrendsReply struct {
 func (x *ThreatTrendsReply) Reset() {
 	*x = ThreatTrendsReply{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[99]
+		mi := &file_ada_proto_msgTypes[97]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -6070,7 +5968,7 @@ func (x *ThreatTrendsReply) String() string {
 func (*ThreatTrendsReply) ProtoMessage() {}
 
 func (x *ThreatTrendsReply) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[99]
+	mi := &file_ada_proto_msgTypes[97]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -6083,7 +5981,7 @@ func (x *ThreatTrendsReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ThreatTrendsReply.ProtoReflect.Descriptor instead.
 func (*ThreatTrendsReply) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{99}
+	return file_ada_proto_rawDescGZIP(), []int{97}
 }
 
 func (x *ThreatTrendsReply) GetList() []*ThreatTrendsReply_Item {
@@ -6113,7 +6011,7 @@ type ListThreatReq struct {
 func (x *ListThreatReq) Reset() {
 	*x = ListThreatReq{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[100]
+		mi := &file_ada_proto_msgTypes[98]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -6126,7 +6024,7 @@ func (x *ListThreatReq) String() string {
 func (*ListThreatReq) ProtoMessage() {}
 
 func (x *ListThreatReq) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[100]
+	mi := &file_ada_proto_msgTypes[98]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -6139,7 +6037,7 @@ func (x *ListThreatReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListThreatReq.ProtoReflect.Descriptor instead.
 func (*ListThreatReq) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{100}
+	return file_ada_proto_rawDescGZIP(), []int{98}
 }
 
 func (x *ListThreatReq) GetPageIdx() int32 {
@@ -6225,7 +6123,7 @@ type ListThreatReply struct {
 func (x *ListThreatReply) Reset() {
 	*x = ListThreatReply{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[101]
+		mi := &file_ada_proto_msgTypes[99]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -6238,7 +6136,7 @@ func (x *ListThreatReply) String() string {
 func (*ListThreatReply) ProtoMessage() {}
 
 func (x *ListThreatReply) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[101]
+	mi := &file_ada_proto_msgTypes[99]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -6251,7 +6149,7 @@ func (x *ListThreatReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListThreatReply.ProtoReflect.Descriptor instead.
 func (*ListThreatReply) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{101}
+	return file_ada_proto_rawDescGZIP(), []int{99}
 }
 
 func (x *ListThreatReply) GetPage() *ModelPage {
@@ -6286,7 +6184,7 @@ type GetThreatNamesReq struct {
 func (x *GetThreatNamesReq) Reset() {
 	*x = GetThreatNamesReq{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[102]
+		mi := &file_ada_proto_msgTypes[100]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -6299,7 +6197,7 @@ func (x *GetThreatNamesReq) String() string {
 func (*GetThreatNamesReq) ProtoMessage() {}
 
 func (x *GetThreatNamesReq) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[102]
+	mi := &file_ada_proto_msgTypes[100]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -6312,7 +6210,7 @@ func (x *GetThreatNamesReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetThreatNamesReq.ProtoReflect.Descriptor instead.
 func (*GetThreatNamesReq) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{102}
+	return file_ada_proto_rawDescGZIP(), []int{100}
 }
 
 func (x *GetThreatNamesReq) GetFlowId() string {
@@ -6333,7 +6231,7 @@ type GetThreatNamesReply struct {
 func (x *GetThreatNamesReply) Reset() {
 	*x = GetThreatNamesReply{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[103]
+		mi := &file_ada_proto_msgTypes[101]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -6346,7 +6244,7 @@ func (x *GetThreatNamesReply) String() string {
 func (*GetThreatNamesReply) ProtoMessage() {}
 
 func (x *GetThreatNamesReply) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[103]
+	mi := &file_ada_proto_msgTypes[101]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -6359,7 +6257,7 @@ func (x *GetThreatNamesReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetThreatNamesReply.ProtoReflect.Descriptor instead.
 func (*GetThreatNamesReply) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{103}
+	return file_ada_proto_rawDescGZIP(), []int{101}
 }
 
 func (x *GetThreatNamesReply) GetNames() map[string]string {
@@ -6380,7 +6278,7 @@ type GetThreatReq struct {
 func (x *GetThreatReq) Reset() {
 	*x = GetThreatReq{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[104]
+		mi := &file_ada_proto_msgTypes[102]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -6393,7 +6291,7 @@ func (x *GetThreatReq) String() string {
 func (*GetThreatReq) ProtoMessage() {}
 
 func (x *GetThreatReq) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[104]
+	mi := &file_ada_proto_msgTypes[102]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -6406,7 +6304,7 @@ func (x *GetThreatReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetThreatReq.ProtoReflect.Descriptor instead.
 func (*GetThreatReq) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{104}
+	return file_ada_proto_rawDescGZIP(), []int{102}
 }
 
 func (x *GetThreatReq) GetID() string {
@@ -6449,7 +6347,7 @@ type GetThreatReply struct {
 func (x *GetThreatReply) Reset() {
 	*x = GetThreatReply{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[105]
+		mi := &file_ada_proto_msgTypes[103]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -6462,7 +6360,7 @@ func (x *GetThreatReply) String() string {
 func (*GetThreatReply) ProtoMessage() {}
 
 func (x *GetThreatReply) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[105]
+	mi := &file_ada_proto_msgTypes[103]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -6475,7 +6373,7 @@ func (x *GetThreatReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetThreatReply.ProtoReflect.Descriptor instead.
 func (*GetThreatReply) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{105}
+	return file_ada_proto_rawDescGZIP(), []int{103}
 }
 
 func (x *GetThreatReply) GetID() string {
@@ -6652,7 +6550,7 @@ type ActionThreatReq struct {
 func (x *ActionThreatReq) Reset() {
 	*x = ActionThreatReq{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[106]
+		mi := &file_ada_proto_msgTypes[104]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -6665,7 +6563,7 @@ func (x *ActionThreatReq) String() string {
 func (*ActionThreatReq) ProtoMessage() {}
 
 func (x *ActionThreatReq) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[106]
+	mi := &file_ada_proto_msgTypes[104]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -6678,7 +6576,7 @@ func (x *ActionThreatReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ActionThreatReq.ProtoReflect.Descriptor instead.
 func (*ActionThreatReq) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{106}
+	return file_ada_proto_rawDescGZIP(), []int{104}
 }
 
 func (x *ActionThreatReq) GetID() string {
@@ -6713,7 +6611,7 @@ type ActionThreatReply struct {
 func (x *ActionThreatReply) Reset() {
 	*x = ActionThreatReply{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[107]
+		mi := &file_ada_proto_msgTypes[105]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -6726,7 +6624,7 @@ func (x *ActionThreatReply) String() string {
 func (*ActionThreatReply) ProtoMessage() {}
 
 func (x *ActionThreatReply) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[107]
+	mi := &file_ada_proto_msgTypes[105]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -6739,7 +6637,7 @@ func (x *ActionThreatReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ActionThreatReply.ProtoReflect.Descriptor instead.
 func (*ActionThreatReply) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{107}
+	return file_ada_proto_rawDescGZIP(), []int{105}
 }
 
 func (x *ActionThreatReply) GetResult() string {
@@ -6768,7 +6666,7 @@ type ListActivityReq struct {
 func (x *ListActivityReq) Reset() {
 	*x = ListActivityReq{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[108]
+		mi := &file_ada_proto_msgTypes[106]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -6781,7 +6679,7 @@ func (x *ListActivityReq) String() string {
 func (*ListActivityReq) ProtoMessage() {}
 
 func (x *ListActivityReq) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[108]
+	mi := &file_ada_proto_msgTypes[106]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -6794,7 +6692,7 @@ func (x *ListActivityReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListActivityReq.ProtoReflect.Descriptor instead.
 func (*ListActivityReq) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{108}
+	return file_ada_proto_rawDescGZIP(), []int{106}
 }
 
 func (x *ListActivityReq) GetPageIdx() int32 {
@@ -6883,7 +6781,7 @@ type ActivityDetails struct {
 func (x *ActivityDetails) Reset() {
 	*x = ActivityDetails{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[109]
+		mi := &file_ada_proto_msgTypes[107]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -6896,7 +6794,7 @@ func (x *ActivityDetails) String() string {
 func (*ActivityDetails) ProtoMessage() {}
 
 func (x *ActivityDetails) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[109]
+	mi := &file_ada_proto_msgTypes[107]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -6909,7 +6807,7 @@ func (x *ActivityDetails) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ActivityDetails.ProtoReflect.Descriptor instead.
 func (*ActivityDetails) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{109}
+	return file_ada_proto_rawDescGZIP(), []int{107}
 }
 
 func (x *ActivityDetails) GetID() string {
@@ -7016,7 +6914,7 @@ type ListActivityReply struct {
 func (x *ListActivityReply) Reset() {
 	*x = ListActivityReply{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[110]
+		mi := &file_ada_proto_msgTypes[108]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -7029,7 +6927,7 @@ func (x *ListActivityReply) String() string {
 func (*ListActivityReply) ProtoMessage() {}
 
 func (x *ListActivityReply) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[110]
+	mi := &file_ada_proto_msgTypes[108]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -7042,7 +6940,7 @@ func (x *ListActivityReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListActivityReply.ProtoReflect.Descriptor instead.
 func (*ListActivityReply) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{110}
+	return file_ada_proto_rawDescGZIP(), []int{108}
 }
 
 func (x *ListActivityReply) GetPage() *ModelPage {
@@ -7079,7 +6977,7 @@ type GetActivityNamesReq struct {
 func (x *GetActivityNamesReq) Reset() {
 	*x = GetActivityNamesReq{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[111]
+		mi := &file_ada_proto_msgTypes[109]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -7092,7 +6990,7 @@ func (x *GetActivityNamesReq) String() string {
 func (*GetActivityNamesReq) ProtoMessage() {}
 
 func (x *GetActivityNamesReq) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[111]
+	mi := &file_ada_proto_msgTypes[109]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -7105,7 +7003,7 @@ func (x *GetActivityNamesReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetActivityNamesReq.ProtoReflect.Descriptor instead.
 func (*GetActivityNamesReq) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{111}
+	return file_ada_proto_rawDescGZIP(), []int{109}
 }
 
 func (x *GetActivityNamesReq) GetDcHostname() []string {
@@ -7140,7 +7038,7 @@ type GetActivityNamesReply struct {
 func (x *GetActivityNamesReply) Reset() {
 	*x = GetActivityNamesReply{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[112]
+		mi := &file_ada_proto_msgTypes[110]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -7153,7 +7051,7 @@ func (x *GetActivityNamesReply) String() string {
 func (*GetActivityNamesReply) ProtoMessage() {}
 
 func (x *GetActivityNamesReply) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[112]
+	mi := &file_ada_proto_msgTypes[110]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -7166,7 +7064,7 @@ func (x *GetActivityNamesReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetActivityNamesReply.ProtoReflect.Descriptor instead.
 func (*GetActivityNamesReply) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{112}
+	return file_ada_proto_rawDescGZIP(), []int{110}
 }
 
 func (x *GetActivityNamesReply) GetNames() map[string]int32 {
@@ -7187,7 +7085,7 @@ type GetActivityReq struct {
 func (x *GetActivityReq) Reset() {
 	*x = GetActivityReq{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[113]
+		mi := &file_ada_proto_msgTypes[111]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -7200,7 +7098,7 @@ func (x *GetActivityReq) String() string {
 func (*GetActivityReq) ProtoMessage() {}
 
 func (x *GetActivityReq) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[113]
+	mi := &file_ada_proto_msgTypes[111]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -7213,7 +7111,7 @@ func (x *GetActivityReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetActivityReq.ProtoReflect.Descriptor instead.
 func (*GetActivityReq) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{113}
+	return file_ada_proto_rawDescGZIP(), []int{111}
 }
 
 func (x *GetActivityReq) GetID() string {
@@ -7234,7 +7132,7 @@ type GetActivityReply struct {
 func (x *GetActivityReply) Reset() {
 	*x = GetActivityReply{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[114]
+		mi := &file_ada_proto_msgTypes[112]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -7247,7 +7145,7 @@ func (x *GetActivityReply) String() string {
 func (*GetActivityReply) ProtoMessage() {}
 
 func (x *GetActivityReply) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[114]
+	mi := &file_ada_proto_msgTypes[112]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -7260,7 +7158,7 @@ func (x *GetActivityReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetActivityReply.ProtoReflect.Descriptor instead.
 func (*GetActivityReply) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{114}
+	return file_ada_proto_rawDescGZIP(), []int{112}
 }
 
 func (x *GetActivityReply) GetDetails() *ActivityDetails {
@@ -7289,7 +7187,7 @@ type ListSensitiveEntryReq struct {
 func (x *ListSensitiveEntryReq) Reset() {
 	*x = ListSensitiveEntryReq{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[115]
+		mi := &file_ada_proto_msgTypes[113]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -7302,7 +7200,7 @@ func (x *ListSensitiveEntryReq) String() string {
 func (*ListSensitiveEntryReq) ProtoMessage() {}
 
 func (x *ListSensitiveEntryReq) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[115]
+	mi := &file_ada_proto_msgTypes[113]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -7315,7 +7213,7 @@ func (x *ListSensitiveEntryReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListSensitiveEntryReq.ProtoReflect.Descriptor instead.
 func (*ListSensitiveEntryReq) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{115}
+	return file_ada_proto_rawDescGZIP(), []int{113}
 }
 
 func (x *ListSensitiveEntryReq) GetPageIdx() int32 {
@@ -7394,7 +7292,7 @@ type ListSensitiveEntryReply struct {
 func (x *ListSensitiveEntryReply) Reset() {
 	*x = ListSensitiveEntryReply{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[116]
+		mi := &file_ada_proto_msgTypes[114]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -7407,7 +7305,7 @@ func (x *ListSensitiveEntryReply) String() string {
 func (*ListSensitiveEntryReply) ProtoMessage() {}
 
 func (x *ListSensitiveEntryReply) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[116]
+	mi := &file_ada_proto_msgTypes[114]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -7420,7 +7318,7 @@ func (x *ListSensitiveEntryReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListSensitiveEntryReply.ProtoReflect.Descriptor instead.
 func (*ListSensitiveEntryReply) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{116}
+	return file_ada_proto_rawDescGZIP(), []int{114}
 }
 
 func (x *ListSensitiveEntryReply) GetPage() *ModelPage {
@@ -7457,7 +7355,7 @@ type AddSensitiveEntryReq struct {
 func (x *AddSensitiveEntryReq) Reset() {
 	*x = AddSensitiveEntryReq{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[117]
+		mi := &file_ada_proto_msgTypes[115]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -7470,7 +7368,7 @@ func (x *AddSensitiveEntryReq) String() string {
 func (*AddSensitiveEntryReq) ProtoMessage() {}
 
 func (x *AddSensitiveEntryReq) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[117]
+	mi := &file_ada_proto_msgTypes[115]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -7483,7 +7381,7 @@ func (x *AddSensitiveEntryReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AddSensitiveEntryReq.ProtoReflect.Descriptor instead.
 func (*AddSensitiveEntryReq) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{117}
+	return file_ada_proto_rawDescGZIP(), []int{115}
 }
 
 func (x *AddSensitiveEntryReq) GetType() string {
@@ -7518,7 +7416,7 @@ type AddSensitiveEntryReply struct {
 func (x *AddSensitiveEntryReply) Reset() {
 	*x = AddSensitiveEntryReply{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[118]
+		mi := &file_ada_proto_msgTypes[116]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -7531,7 +7429,7 @@ func (x *AddSensitiveEntryReply) String() string {
 func (*AddSensitiveEntryReply) ProtoMessage() {}
 
 func (x *AddSensitiveEntryReply) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[118]
+	mi := &file_ada_proto_msgTypes[116]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -7544,7 +7442,7 @@ func (x *AddSensitiveEntryReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AddSensitiveEntryReply.ProtoReflect.Descriptor instead.
 func (*AddSensitiveEntryReply) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{118}
+	return file_ada_proto_rawDescGZIP(), []int{116}
 }
 
 func (x *AddSensitiveEntryReply) GetResult() string {
@@ -7567,7 +7465,7 @@ type ListDomainEntryReq struct {
 func (x *ListDomainEntryReq) Reset() {
 	*x = ListDomainEntryReq{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[119]
+		mi := &file_ada_proto_msgTypes[117]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -7580,7 +7478,7 @@ func (x *ListDomainEntryReq) String() string {
 func (*ListDomainEntryReq) ProtoMessage() {}
 
 func (x *ListDomainEntryReq) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[119]
+	mi := &file_ada_proto_msgTypes[117]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -7593,7 +7491,7 @@ func (x *ListDomainEntryReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListDomainEntryReq.ProtoReflect.Descriptor instead.
 func (*ListDomainEntryReq) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{119}
+	return file_ada_proto_rawDescGZIP(), []int{117}
 }
 
 func (x *ListDomainEntryReq) GetType() string {
@@ -7628,7 +7526,7 @@ type ListDomainEntryReply struct {
 func (x *ListDomainEntryReply) Reset() {
 	*x = ListDomainEntryReply{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[120]
+		mi := &file_ada_proto_msgTypes[118]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -7641,7 +7539,7 @@ func (x *ListDomainEntryReply) String() string {
 func (*ListDomainEntryReply) ProtoMessage() {}
 
 func (x *ListDomainEntryReply) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[120]
+	mi := &file_ada_proto_msgTypes[118]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -7654,7 +7552,7 @@ func (x *ListDomainEntryReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListDomainEntryReply.ProtoReflect.Descriptor instead.
 func (*ListDomainEntryReply) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{120}
+	return file_ada_proto_rawDescGZIP(), []int{118}
 }
 
 func (x *ListDomainEntryReply) GetEntries() []string {
@@ -7675,7 +7573,7 @@ type DeleteSensitiveEntryReq struct {
 func (x *DeleteSensitiveEntryReq) Reset() {
 	*x = DeleteSensitiveEntryReq{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[121]
+		mi := &file_ada_proto_msgTypes[119]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -7688,7 +7586,7 @@ func (x *DeleteSensitiveEntryReq) String() string {
 func (*DeleteSensitiveEntryReq) ProtoMessage() {}
 
 func (x *DeleteSensitiveEntryReq) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[121]
+	mi := &file_ada_proto_msgTypes[119]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -7701,7 +7599,7 @@ func (x *DeleteSensitiveEntryReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteSensitiveEntryReq.ProtoReflect.Descriptor instead.
 func (*DeleteSensitiveEntryReq) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{121}
+	return file_ada_proto_rawDescGZIP(), []int{119}
 }
 
 func (x *DeleteSensitiveEntryReq) GetID() string {
@@ -7722,7 +7620,7 @@ type DeleteSensitiveEntryReply struct {
 func (x *DeleteSensitiveEntryReply) Reset() {
 	*x = DeleteSensitiveEntryReply{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[122]
+		mi := &file_ada_proto_msgTypes[120]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -7735,7 +7633,7 @@ func (x *DeleteSensitiveEntryReply) String() string {
 func (*DeleteSensitiveEntryReply) ProtoMessage() {}
 
 func (x *DeleteSensitiveEntryReply) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[122]
+	mi := &file_ada_proto_msgTypes[120]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -7748,7 +7646,7 @@ func (x *DeleteSensitiveEntryReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteSensitiveEntryReply.ProtoReflect.Descriptor instead.
 func (*DeleteSensitiveEntryReply) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{122}
+	return file_ada_proto_rawDescGZIP(), []int{120}
 }
 
 func (x *DeleteSensitiveEntryReply) GetResult() string {
@@ -7778,7 +7676,7 @@ type ListThreatWhitelistReq struct {
 func (x *ListThreatWhitelistReq) Reset() {
 	*x = ListThreatWhitelistReq{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[123]
+		mi := &file_ada_proto_msgTypes[121]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -7791,7 +7689,7 @@ func (x *ListThreatWhitelistReq) String() string {
 func (*ListThreatWhitelistReq) ProtoMessage() {}
 
 func (x *ListThreatWhitelistReq) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[123]
+	mi := &file_ada_proto_msgTypes[121]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -7804,7 +7702,7 @@ func (x *ListThreatWhitelistReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListThreatWhitelistReq.ProtoReflect.Descriptor instead.
 func (*ListThreatWhitelistReq) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{123}
+	return file_ada_proto_rawDescGZIP(), []int{121}
 }
 
 func (x *ListThreatWhitelistReq) GetPageIdx() int32 {
@@ -7883,7 +7781,7 @@ type ListThreatWhitelistReply struct {
 func (x *ListThreatWhitelistReply) Reset() {
 	*x = ListThreatWhitelistReply{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[124]
+		mi := &file_ada_proto_msgTypes[122]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -7896,7 +7794,7 @@ func (x *ListThreatWhitelistReply) String() string {
 func (*ListThreatWhitelistReply) ProtoMessage() {}
 
 func (x *ListThreatWhitelistReply) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[124]
+	mi := &file_ada_proto_msgTypes[122]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -7909,7 +7807,7 @@ func (x *ListThreatWhitelistReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListThreatWhitelistReply.ProtoReflect.Descriptor instead.
 func (*ListThreatWhitelistReply) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{124}
+	return file_ada_proto_rawDescGZIP(), []int{122}
 }
 
 func (x *ListThreatWhitelistReply) GetPage() *ModelPage {
@@ -7945,7 +7843,7 @@ type GetThreatWhitelistFieldReq struct {
 func (x *GetThreatWhitelistFieldReq) Reset() {
 	*x = GetThreatWhitelistFieldReq{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[125]
+		mi := &file_ada_proto_msgTypes[123]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -7958,7 +7856,7 @@ func (x *GetThreatWhitelistFieldReq) String() string {
 func (*GetThreatWhitelistFieldReq) ProtoMessage() {}
 
 func (x *GetThreatWhitelistFieldReq) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[125]
+	mi := &file_ada_proto_msgTypes[123]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -7971,7 +7869,7 @@ func (x *GetThreatWhitelistFieldReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetThreatWhitelistFieldReq.ProtoReflect.Descriptor instead.
 func (*GetThreatWhitelistFieldReq) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{125}
+	return file_ada_proto_rawDescGZIP(), []int{123}
 }
 
 func (x *GetThreatWhitelistFieldReq) GetRuleId() string {
@@ -7992,7 +7890,7 @@ type GetThreatWhitelistFieldReply struct {
 func (x *GetThreatWhitelistFieldReply) Reset() {
 	*x = GetThreatWhitelistFieldReply{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[126]
+		mi := &file_ada_proto_msgTypes[124]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -8005,7 +7903,7 @@ func (x *GetThreatWhitelistFieldReply) String() string {
 func (*GetThreatWhitelistFieldReply) ProtoMessage() {}
 
 func (x *GetThreatWhitelistFieldReply) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[126]
+	mi := &file_ada_proto_msgTypes[124]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -8018,7 +7916,7 @@ func (x *GetThreatWhitelistFieldReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetThreatWhitelistFieldReply.ProtoReflect.Descriptor instead.
 func (*GetThreatWhitelistFieldReply) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{126}
+	return file_ada_proto_rawDescGZIP(), []int{124}
 }
 
 func (x *GetThreatWhitelistFieldReply) GetFields() []string {
@@ -8045,7 +7943,7 @@ type AddThreatWhitelistReq struct {
 func (x *AddThreatWhitelistReq) Reset() {
 	*x = AddThreatWhitelistReq{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[127]
+		mi := &file_ada_proto_msgTypes[125]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -8058,7 +7956,7 @@ func (x *AddThreatWhitelistReq) String() string {
 func (*AddThreatWhitelistReq) ProtoMessage() {}
 
 func (x *AddThreatWhitelistReq) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[127]
+	mi := &file_ada_proto_msgTypes[125]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -8071,7 +7969,7 @@ func (x *AddThreatWhitelistReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AddThreatWhitelistReq.ProtoReflect.Descriptor instead.
 func (*AddThreatWhitelistReq) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{127}
+	return file_ada_proto_rawDescGZIP(), []int{125}
 }
 
 func (x *AddThreatWhitelistReq) GetRuleId() string {
@@ -8120,7 +8018,7 @@ type AddThreatWhitelistReply struct {
 func (x *AddThreatWhitelistReply) Reset() {
 	*x = AddThreatWhitelistReply{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[128]
+		mi := &file_ada_proto_msgTypes[126]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -8133,7 +8031,7 @@ func (x *AddThreatWhitelistReply) String() string {
 func (*AddThreatWhitelistReply) ProtoMessage() {}
 
 func (x *AddThreatWhitelistReply) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[128]
+	mi := &file_ada_proto_msgTypes[126]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -8146,7 +8044,7 @@ func (x *AddThreatWhitelistReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AddThreatWhitelistReply.ProtoReflect.Descriptor instead.
 func (*AddThreatWhitelistReply) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{128}
+	return file_ada_proto_rawDescGZIP(), []int{126}
 }
 
 func (x *AddThreatWhitelistReply) GetResult() string {
@@ -8170,7 +8068,7 @@ type UpdateThreatWhitelistReq struct {
 func (x *UpdateThreatWhitelistReq) Reset() {
 	*x = UpdateThreatWhitelistReq{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[129]
+		mi := &file_ada_proto_msgTypes[127]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -8183,7 +8081,7 @@ func (x *UpdateThreatWhitelistReq) String() string {
 func (*UpdateThreatWhitelistReq) ProtoMessage() {}
 
 func (x *UpdateThreatWhitelistReq) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[129]
+	mi := &file_ada_proto_msgTypes[127]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -8196,7 +8094,7 @@ func (x *UpdateThreatWhitelistReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateThreatWhitelistReq.ProtoReflect.Descriptor instead.
 func (*UpdateThreatWhitelistReq) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{129}
+	return file_ada_proto_rawDescGZIP(), []int{127}
 }
 
 func (x *UpdateThreatWhitelistReq) GetID() string {
@@ -8231,7 +8129,7 @@ type UpdateThreatWhitelistReply struct {
 func (x *UpdateThreatWhitelistReply) Reset() {
 	*x = UpdateThreatWhitelistReply{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[130]
+		mi := &file_ada_proto_msgTypes[128]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -8244,7 +8142,7 @@ func (x *UpdateThreatWhitelistReply) String() string {
 func (*UpdateThreatWhitelistReply) ProtoMessage() {}
 
 func (x *UpdateThreatWhitelistReply) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[130]
+	mi := &file_ada_proto_msgTypes[128]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -8257,7 +8155,7 @@ func (x *UpdateThreatWhitelistReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateThreatWhitelistReply.ProtoReflect.Descriptor instead.
 func (*UpdateThreatWhitelistReply) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{130}
+	return file_ada_proto_rawDescGZIP(), []int{128}
 }
 
 func (x *UpdateThreatWhitelistReply) GetResult() string {
@@ -8279,7 +8177,7 @@ type DeleteThreatWhitelistReq struct {
 func (x *DeleteThreatWhitelistReq) Reset() {
 	*x = DeleteThreatWhitelistReq{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[131]
+		mi := &file_ada_proto_msgTypes[129]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -8292,7 +8190,7 @@ func (x *DeleteThreatWhitelistReq) String() string {
 func (*DeleteThreatWhitelistReq) ProtoMessage() {}
 
 func (x *DeleteThreatWhitelistReq) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[131]
+	mi := &file_ada_proto_msgTypes[129]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -8305,7 +8203,7 @@ func (x *DeleteThreatWhitelistReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteThreatWhitelistReq.ProtoReflect.Descriptor instead.
 func (*DeleteThreatWhitelistReq) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{131}
+	return file_ada_proto_rawDescGZIP(), []int{129}
 }
 
 func (x *DeleteThreatWhitelistReq) GetID() string {
@@ -8326,7 +8224,7 @@ type DeleteThreatWhitelistReply struct {
 func (x *DeleteThreatWhitelistReply) Reset() {
 	*x = DeleteThreatWhitelistReply{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[132]
+		mi := &file_ada_proto_msgTypes[130]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -8339,7 +8237,7 @@ func (x *DeleteThreatWhitelistReply) String() string {
 func (*DeleteThreatWhitelistReply) ProtoMessage() {}
 
 func (x *DeleteThreatWhitelistReply) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[132]
+	mi := &file_ada_proto_msgTypes[130]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -8352,7 +8250,7 @@ func (x *DeleteThreatWhitelistReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteThreatWhitelistReply.ProtoReflect.Descriptor instead.
 func (*DeleteThreatWhitelistReply) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{132}
+	return file_ada_proto_rawDescGZIP(), []int{130}
 }
 
 func (x *DeleteThreatWhitelistReply) GetResult() string {
@@ -8380,7 +8278,7 @@ type ListThreatBlockReq struct {
 func (x *ListThreatBlockReq) Reset() {
 	*x = ListThreatBlockReq{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[133]
+		mi := &file_ada_proto_msgTypes[131]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -8393,7 +8291,7 @@ func (x *ListThreatBlockReq) String() string {
 func (*ListThreatBlockReq) ProtoMessage() {}
 
 func (x *ListThreatBlockReq) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[133]
+	mi := &file_ada_proto_msgTypes[131]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -8406,7 +8304,7 @@ func (x *ListThreatBlockReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListThreatBlockReq.ProtoReflect.Descriptor instead.
 func (*ListThreatBlockReq) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{133}
+	return file_ada_proto_rawDescGZIP(), []int{131}
 }
 
 func (x *ListThreatBlockReq) GetPageIdx() int32 {
@@ -8471,7 +8369,7 @@ type ListThreatBlockReply struct {
 func (x *ListThreatBlockReply) Reset() {
 	*x = ListThreatBlockReply{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[134]
+		mi := &file_ada_proto_msgTypes[132]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -8484,7 +8382,7 @@ func (x *ListThreatBlockReply) String() string {
 func (*ListThreatBlockReply) ProtoMessage() {}
 
 func (x *ListThreatBlockReply) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[134]
+	mi := &file_ada_proto_msgTypes[132]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -8497,7 +8395,7 @@ func (x *ListThreatBlockReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListThreatBlockReply.ProtoReflect.Descriptor instead.
 func (*ListThreatBlockReply) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{134}
+	return file_ada_proto_rawDescGZIP(), []int{132}
 }
 
 func (x *ListThreatBlockReply) GetPage() *ModelPage {
@@ -8538,7 +8436,7 @@ type AddThreatBlockReq struct {
 func (x *AddThreatBlockReq) Reset() {
 	*x = AddThreatBlockReq{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[135]
+		mi := &file_ada_proto_msgTypes[133]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -8551,7 +8449,7 @@ func (x *AddThreatBlockReq) String() string {
 func (*AddThreatBlockReq) ProtoMessage() {}
 
 func (x *AddThreatBlockReq) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[135]
+	mi := &file_ada_proto_msgTypes[133]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -8564,7 +8462,7 @@ func (x *AddThreatBlockReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AddThreatBlockReq.ProtoReflect.Descriptor instead.
 func (*AddThreatBlockReq) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{135}
+	return file_ada_proto_rawDescGZIP(), []int{133}
 }
 
 func (x *AddThreatBlockReq) GetName() string {
@@ -8627,7 +8525,7 @@ type AddThreatBlockReply struct {
 func (x *AddThreatBlockReply) Reset() {
 	*x = AddThreatBlockReply{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[136]
+		mi := &file_ada_proto_msgTypes[134]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -8640,7 +8538,7 @@ func (x *AddThreatBlockReply) String() string {
 func (*AddThreatBlockReply) ProtoMessage() {}
 
 func (x *AddThreatBlockReply) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[136]
+	mi := &file_ada_proto_msgTypes[134]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -8653,7 +8551,7 @@ func (x *AddThreatBlockReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AddThreatBlockReply.ProtoReflect.Descriptor instead.
 func (*AddThreatBlockReply) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{136}
+	return file_ada_proto_rawDescGZIP(), []int{134}
 }
 
 func (x *AddThreatBlockReply) GetResult() string {
@@ -8680,7 +8578,7 @@ type UpdateThreatBlockReq struct {
 func (x *UpdateThreatBlockReq) Reset() {
 	*x = UpdateThreatBlockReq{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[137]
+		mi := &file_ada_proto_msgTypes[135]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -8693,7 +8591,7 @@ func (x *UpdateThreatBlockReq) String() string {
 func (*UpdateThreatBlockReq) ProtoMessage() {}
 
 func (x *UpdateThreatBlockReq) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[137]
+	mi := &file_ada_proto_msgTypes[135]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -8706,7 +8604,7 @@ func (x *UpdateThreatBlockReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateThreatBlockReq.ProtoReflect.Descriptor instead.
 func (*UpdateThreatBlockReq) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{137}
+	return file_ada_proto_rawDescGZIP(), []int{135}
 }
 
 func (x *UpdateThreatBlockReq) GetID() string {
@@ -8769,7 +8667,7 @@ type UpdateThreatBlockReply struct {
 func (x *UpdateThreatBlockReply) Reset() {
 	*x = UpdateThreatBlockReply{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[138]
+		mi := &file_ada_proto_msgTypes[136]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -8782,7 +8680,7 @@ func (x *UpdateThreatBlockReply) String() string {
 func (*UpdateThreatBlockReply) ProtoMessage() {}
 
 func (x *UpdateThreatBlockReply) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[138]
+	mi := &file_ada_proto_msgTypes[136]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -8795,7 +8693,7 @@ func (x *UpdateThreatBlockReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateThreatBlockReply.ProtoReflect.Descriptor instead.
 func (*UpdateThreatBlockReply) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{138}
+	return file_ada_proto_rawDescGZIP(), []int{136}
 }
 
 func (x *UpdateThreatBlockReply) GetResult() string {
@@ -8816,7 +8714,7 @@ type DeleteThreatBlockReq struct {
 func (x *DeleteThreatBlockReq) Reset() {
 	*x = DeleteThreatBlockReq{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[139]
+		mi := &file_ada_proto_msgTypes[137]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -8829,7 +8727,7 @@ func (x *DeleteThreatBlockReq) String() string {
 func (*DeleteThreatBlockReq) ProtoMessage() {}
 
 func (x *DeleteThreatBlockReq) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[139]
+	mi := &file_ada_proto_msgTypes[137]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -8842,7 +8740,7 @@ func (x *DeleteThreatBlockReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteThreatBlockReq.ProtoReflect.Descriptor instead.
 func (*DeleteThreatBlockReq) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{139}
+	return file_ada_proto_rawDescGZIP(), []int{137}
 }
 
 func (x *DeleteThreatBlockReq) GetID() string {
@@ -8863,7 +8761,7 @@ type DeleteThreatBlockReply struct {
 func (x *DeleteThreatBlockReply) Reset() {
 	*x = DeleteThreatBlockReply{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[140]
+		mi := &file_ada_proto_msgTypes[138]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -8876,7 +8774,7 @@ func (x *DeleteThreatBlockReply) String() string {
 func (*DeleteThreatBlockReply) ProtoMessage() {}
 
 func (x *DeleteThreatBlockReply) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[140]
+	mi := &file_ada_proto_msgTypes[138]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -8889,7 +8787,7 @@ func (x *DeleteThreatBlockReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteThreatBlockReply.ProtoReflect.Descriptor instead.
 func (*DeleteThreatBlockReply) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{140}
+	return file_ada_proto_rawDescGZIP(), []int{138}
 }
 
 func (x *DeleteThreatBlockReply) GetResult() string {
@@ -8912,7 +8810,7 @@ type ScanRiskStatsReq struct {
 func (x *ScanRiskStatsReq) Reset() {
 	*x = ScanRiskStatsReq{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[141]
+		mi := &file_ada_proto_msgTypes[139]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -8925,7 +8823,7 @@ func (x *ScanRiskStatsReq) String() string {
 func (*ScanRiskStatsReq) ProtoMessage() {}
 
 func (x *ScanRiskStatsReq) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[141]
+	mi := &file_ada_proto_msgTypes[139]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -8938,7 +8836,7 @@ func (x *ScanRiskStatsReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ScanRiskStatsReq.ProtoReflect.Descriptor instead.
 func (*ScanRiskStatsReq) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{141}
+	return file_ada_proto_rawDescGZIP(), []int{139}
 }
 
 func (x *ScanRiskStatsReq) GetDomain() string {
@@ -8966,7 +8864,7 @@ type ScanRiskStatsReply struct {
 func (x *ScanRiskStatsReply) Reset() {
 	*x = ScanRiskStatsReply{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[142]
+		mi := &file_ada_proto_msgTypes[140]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -8979,7 +8877,7 @@ func (x *ScanRiskStatsReply) String() string {
 func (*ScanRiskStatsReply) ProtoMessage() {}
 
 func (x *ScanRiskStatsReply) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[142]
+	mi := &file_ada_proto_msgTypes[140]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -8992,7 +8890,7 @@ func (x *ScanRiskStatsReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ScanRiskStatsReply.ProtoReflect.Descriptor instead.
 func (*ScanRiskStatsReply) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{142}
+	return file_ada_proto_rawDescGZIP(), []int{140}
 }
 
 func (x *ScanRiskStatsReply) GetList() []*ScanRiskStatsReply_Details {
@@ -9020,7 +8918,7 @@ type ListBaselineReq struct {
 func (x *ListBaselineReq) Reset() {
 	*x = ListBaselineReq{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[143]
+		mi := &file_ada_proto_msgTypes[141]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -9033,7 +8931,7 @@ func (x *ListBaselineReq) String() string {
 func (*ListBaselineReq) ProtoMessage() {}
 
 func (x *ListBaselineReq) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[143]
+	mi := &file_ada_proto_msgTypes[141]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -9046,7 +8944,7 @@ func (x *ListBaselineReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListBaselineReq.ProtoReflect.Descriptor instead.
 func (*ListBaselineReq) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{143}
+	return file_ada_proto_rawDescGZIP(), []int{141}
 }
 
 func (x *ListBaselineReq) GetPageIdx() int32 {
@@ -9118,7 +9016,7 @@ type ListBaselineReply struct {
 func (x *ListBaselineReply) Reset() {
 	*x = ListBaselineReply{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[144]
+		mi := &file_ada_proto_msgTypes[142]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -9131,7 +9029,7 @@ func (x *ListBaselineReply) String() string {
 func (*ListBaselineReply) ProtoMessage() {}
 
 func (x *ListBaselineReply) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[144]
+	mi := &file_ada_proto_msgTypes[142]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -9144,7 +9042,7 @@ func (x *ListBaselineReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListBaselineReply.ProtoReflect.Descriptor instead.
 func (*ListBaselineReply) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{144}
+	return file_ada_proto_rawDescGZIP(), []int{142}
 }
 
 func (x *ListBaselineReply) GetPage() *ModelPage {
@@ -9179,7 +9077,7 @@ type GetBaselineReq struct {
 func (x *GetBaselineReq) Reset() {
 	*x = GetBaselineReq{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[145]
+		mi := &file_ada_proto_msgTypes[143]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -9192,7 +9090,7 @@ func (x *GetBaselineReq) String() string {
 func (*GetBaselineReq) ProtoMessage() {}
 
 func (x *GetBaselineReq) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[145]
+	mi := &file_ada_proto_msgTypes[143]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -9205,7 +9103,7 @@ func (x *GetBaselineReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetBaselineReq.ProtoReflect.Descriptor instead.
 func (*GetBaselineReq) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{145}
+	return file_ada_proto_rawDescGZIP(), []int{143}
 }
 
 func (x *GetBaselineReq) GetID() string {
@@ -9237,7 +9135,7 @@ type GetBaselineReply struct {
 func (x *GetBaselineReply) Reset() {
 	*x = GetBaselineReply{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[146]
+		mi := &file_ada_proto_msgTypes[144]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -9250,7 +9148,7 @@ func (x *GetBaselineReply) String() string {
 func (*GetBaselineReply) ProtoMessage() {}
 
 func (x *GetBaselineReply) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[146]
+	mi := &file_ada_proto_msgTypes[144]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -9263,7 +9161,7 @@ func (x *GetBaselineReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetBaselineReply.ProtoReflect.Descriptor instead.
 func (*GetBaselineReply) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{146}
+	return file_ada_proto_rawDescGZIP(), []int{144}
 }
 
 func (x *GetBaselineReply) GetID() string {
@@ -9370,7 +9268,7 @@ type ListLeakReq struct {
 func (x *ListLeakReq) Reset() {
 	*x = ListLeakReq{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[147]
+		mi := &file_ada_proto_msgTypes[145]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -9383,7 +9281,7 @@ func (x *ListLeakReq) String() string {
 func (*ListLeakReq) ProtoMessage() {}
 
 func (x *ListLeakReq) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[147]
+	mi := &file_ada_proto_msgTypes[145]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -9396,7 +9294,7 @@ func (x *ListLeakReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListLeakReq.ProtoReflect.Descriptor instead.
 func (*ListLeakReq) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{147}
+	return file_ada_proto_rawDescGZIP(), []int{145}
 }
 
 func (x *ListLeakReq) GetPageIdx() int32 {
@@ -9482,7 +9380,7 @@ type ListLeakReply struct {
 func (x *ListLeakReply) Reset() {
 	*x = ListLeakReply{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[148]
+		mi := &file_ada_proto_msgTypes[146]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -9495,7 +9393,7 @@ func (x *ListLeakReply) String() string {
 func (*ListLeakReply) ProtoMessage() {}
 
 func (x *ListLeakReply) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[148]
+	mi := &file_ada_proto_msgTypes[146]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -9508,7 +9406,7 @@ func (x *ListLeakReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListLeakReply.ProtoReflect.Descriptor instead.
 func (*ListLeakReply) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{148}
+	return file_ada_proto_rawDescGZIP(), []int{146}
 }
 
 func (x *ListLeakReply) GetPage() *ModelPage {
@@ -9549,7 +9447,7 @@ type ListWeakPwdReq struct {
 func (x *ListWeakPwdReq) Reset() {
 	*x = ListWeakPwdReq{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[149]
+		mi := &file_ada_proto_msgTypes[147]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -9562,7 +9460,7 @@ func (x *ListWeakPwdReq) String() string {
 func (*ListWeakPwdReq) ProtoMessage() {}
 
 func (x *ListWeakPwdReq) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[149]
+	mi := &file_ada_proto_msgTypes[147]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -9575,7 +9473,7 @@ func (x *ListWeakPwdReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListWeakPwdReq.ProtoReflect.Descriptor instead.
 func (*ListWeakPwdReq) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{149}
+	return file_ada_proto_rawDescGZIP(), []int{147}
 }
 
 func (x *ListWeakPwdReq) GetPageIdx() int32 {
@@ -9640,7 +9538,7 @@ type ListWeakPwdReply struct {
 func (x *ListWeakPwdReply) Reset() {
 	*x = ListWeakPwdReply{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[150]
+		mi := &file_ada_proto_msgTypes[148]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -9653,7 +9551,7 @@ func (x *ListWeakPwdReply) String() string {
 func (*ListWeakPwdReply) ProtoMessage() {}
 
 func (x *ListWeakPwdReply) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[150]
+	mi := &file_ada_proto_msgTypes[148]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -9666,7 +9564,7 @@ func (x *ListWeakPwdReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListWeakPwdReply.ProtoReflect.Descriptor instead.
 func (*ListWeakPwdReply) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{150}
+	return file_ada_proto_rawDescGZIP(), []int{148}
 }
 
 func (x *ListWeakPwdReply) GetPage() *ModelPage {
@@ -9709,7 +9607,7 @@ type ListScanTaskReq struct {
 func (x *ListScanTaskReq) Reset() {
 	*x = ListScanTaskReq{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[151]
+		mi := &file_ada_proto_msgTypes[149]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -9722,7 +9620,7 @@ func (x *ListScanTaskReq) String() string {
 func (*ListScanTaskReq) ProtoMessage() {}
 
 func (x *ListScanTaskReq) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[151]
+	mi := &file_ada_proto_msgTypes[149]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -9735,7 +9633,7 @@ func (x *ListScanTaskReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListScanTaskReq.ProtoReflect.Descriptor instead.
 func (*ListScanTaskReq) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{151}
+	return file_ada_proto_rawDescGZIP(), []int{149}
 }
 
 func (x *ListScanTaskReq) GetPageIdx() int32 {
@@ -9814,7 +9712,7 @@ type ListScanTaskReply struct {
 func (x *ListScanTaskReply) Reset() {
 	*x = ListScanTaskReply{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[152]
+		mi := &file_ada_proto_msgTypes[150]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -9827,7 +9725,7 @@ func (x *ListScanTaskReply) String() string {
 func (*ListScanTaskReply) ProtoMessage() {}
 
 func (x *ListScanTaskReply) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[152]
+	mi := &file_ada_proto_msgTypes[150]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -9840,7 +9738,7 @@ func (x *ListScanTaskReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListScanTaskReply.ProtoReflect.Descriptor instead.
 func (*ListScanTaskReply) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{152}
+	return file_ada_proto_rawDescGZIP(), []int{150}
 }
 
 func (x *ListScanTaskReply) GetPage() *ModelPage {
@@ -9877,7 +9775,7 @@ type GetScanTaskReq struct {
 func (x *GetScanTaskReq) Reset() {
 	*x = GetScanTaskReq{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[153]
+		mi := &file_ada_proto_msgTypes[151]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -9890,7 +9788,7 @@ func (x *GetScanTaskReq) String() string {
 func (*GetScanTaskReq) ProtoMessage() {}
 
 func (x *GetScanTaskReq) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[153]
+	mi := &file_ada_proto_msgTypes[151]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -9903,7 +9801,7 @@ func (x *GetScanTaskReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetScanTaskReq.ProtoReflect.Descriptor instead.
 func (*GetScanTaskReq) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{153}
+	return file_ada_proto_rawDescGZIP(), []int{151}
 }
 
 func (x *GetScanTaskReq) GetPageIdx() int32 {
@@ -9942,7 +9840,7 @@ type GetScanTaskReply struct {
 func (x *GetScanTaskReply) Reset() {
 	*x = GetScanTaskReply{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[154]
+		mi := &file_ada_proto_msgTypes[152]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -9955,7 +9853,7 @@ func (x *GetScanTaskReply) String() string {
 func (*GetScanTaskReply) ProtoMessage() {}
 
 func (x *GetScanTaskReply) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[154]
+	mi := &file_ada_proto_msgTypes[152]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -9968,7 +9866,7 @@ func (x *GetScanTaskReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetScanTaskReply.ProtoReflect.Descriptor instead.
 func (*GetScanTaskReply) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{154}
+	return file_ada_proto_rawDescGZIP(), []int{152}
 }
 
 func (x *GetScanTaskReply) GetPage() *ModelPage {
@@ -10018,7 +9916,7 @@ type AddScanTaskReq struct {
 func (x *AddScanTaskReq) Reset() {
 	*x = AddScanTaskReq{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[155]
+		mi := &file_ada_proto_msgTypes[153]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -10031,7 +9929,7 @@ func (x *AddScanTaskReq) String() string {
 func (*AddScanTaskReq) ProtoMessage() {}
 
 func (x *AddScanTaskReq) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[155]
+	mi := &file_ada_proto_msgTypes[153]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -10044,7 +9942,7 @@ func (x *AddScanTaskReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AddScanTaskReq.ProtoReflect.Descriptor instead.
 func (*AddScanTaskReq) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{155}
+	return file_ada_proto_rawDescGZIP(), []int{153}
 }
 
 func (x *AddScanTaskReq) GetType() string {
@@ -10072,7 +9970,7 @@ type AddScanTaskReply struct {
 func (x *AddScanTaskReply) Reset() {
 	*x = AddScanTaskReply{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[156]
+		mi := &file_ada_proto_msgTypes[154]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -10085,7 +9983,7 @@ func (x *AddScanTaskReply) String() string {
 func (*AddScanTaskReply) ProtoMessage() {}
 
 func (x *AddScanTaskReply) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[156]
+	mi := &file_ada_proto_msgTypes[154]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -10098,7 +9996,7 @@ func (x *AddScanTaskReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AddScanTaskReply.ProtoReflect.Descriptor instead.
 func (*AddScanTaskReply) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{156}
+	return file_ada_proto_rawDescGZIP(), []int{154}
 }
 
 func (x *AddScanTaskReply) GetResult() string {
@@ -10120,7 +10018,7 @@ type RecheckScanTaskReq struct {
 func (x *RecheckScanTaskReq) Reset() {
 	*x = RecheckScanTaskReq{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[157]
+		mi := &file_ada_proto_msgTypes[155]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -10133,7 +10031,7 @@ func (x *RecheckScanTaskReq) String() string {
 func (*RecheckScanTaskReq) ProtoMessage() {}
 
 func (x *RecheckScanTaskReq) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[157]
+	mi := &file_ada_proto_msgTypes[155]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -10146,7 +10044,7 @@ func (x *RecheckScanTaskReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RecheckScanTaskReq.ProtoReflect.Descriptor instead.
 func (*RecheckScanTaskReq) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{157}
+	return file_ada_proto_rawDescGZIP(), []int{155}
 }
 
 func (x *RecheckScanTaskReq) GetID() string {
@@ -10174,7 +10072,7 @@ type RecheckScanTaskReply struct {
 func (x *RecheckScanTaskReply) Reset() {
 	*x = RecheckScanTaskReply{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[158]
+		mi := &file_ada_proto_msgTypes[156]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -10187,7 +10085,7 @@ func (x *RecheckScanTaskReply) String() string {
 func (*RecheckScanTaskReply) ProtoMessage() {}
 
 func (x *RecheckScanTaskReply) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[158]
+	mi := &file_ada_proto_msgTypes[156]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -10200,7 +10098,7 @@ func (x *RecheckScanTaskReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RecheckScanTaskReply.ProtoReflect.Descriptor instead.
 func (*RecheckScanTaskReply) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{158}
+	return file_ada_proto_rawDescGZIP(), []int{156}
 }
 
 func (x *RecheckScanTaskReply) GetResult() string {
@@ -10221,7 +10119,7 @@ type DeleteScanTaskReq struct {
 func (x *DeleteScanTaskReq) Reset() {
 	*x = DeleteScanTaskReq{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[159]
+		mi := &file_ada_proto_msgTypes[157]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -10234,7 +10132,7 @@ func (x *DeleteScanTaskReq) String() string {
 func (*DeleteScanTaskReq) ProtoMessage() {}
 
 func (x *DeleteScanTaskReq) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[159]
+	mi := &file_ada_proto_msgTypes[157]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -10247,7 +10145,7 @@ func (x *DeleteScanTaskReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteScanTaskReq.ProtoReflect.Descriptor instead.
 func (*DeleteScanTaskReq) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{159}
+	return file_ada_proto_rawDescGZIP(), []int{157}
 }
 
 func (x *DeleteScanTaskReq) GetID() string {
@@ -10268,7 +10166,7 @@ type DeleteScanTaskReply struct {
 func (x *DeleteScanTaskReply) Reset() {
 	*x = DeleteScanTaskReply{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[160]
+		mi := &file_ada_proto_msgTypes[158]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -10281,7 +10179,7 @@ func (x *DeleteScanTaskReply) String() string {
 func (*DeleteScanTaskReply) ProtoMessage() {}
 
 func (x *DeleteScanTaskReply) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[160]
+	mi := &file_ada_proto_msgTypes[158]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -10294,7 +10192,7 @@ func (x *DeleteScanTaskReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteScanTaskReply.ProtoReflect.Descriptor instead.
 func (*DeleteScanTaskReply) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{160}
+	return file_ada_proto_rawDescGZIP(), []int{158}
 }
 
 func (x *DeleteScanTaskReply) GetResult() string {
@@ -10316,7 +10214,7 @@ type ListScanConfReq struct {
 func (x *ListScanConfReq) Reset() {
 	*x = ListScanConfReq{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[161]
+		mi := &file_ada_proto_msgTypes[159]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -10329,7 +10227,7 @@ func (x *ListScanConfReq) String() string {
 func (*ListScanConfReq) ProtoMessage() {}
 
 func (x *ListScanConfReq) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[161]
+	mi := &file_ada_proto_msgTypes[159]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -10342,7 +10240,7 @@ func (x *ListScanConfReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListScanConfReq.ProtoReflect.Descriptor instead.
 func (*ListScanConfReq) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{161}
+	return file_ada_proto_rawDescGZIP(), []int{159}
 }
 
 func (x *ListScanConfReq) GetPageIdx() int32 {
@@ -10372,7 +10270,7 @@ type ListScanConfReply struct {
 func (x *ListScanConfReply) Reset() {
 	*x = ListScanConfReply{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[162]
+		mi := &file_ada_proto_msgTypes[160]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -10385,7 +10283,7 @@ func (x *ListScanConfReply) String() string {
 func (*ListScanConfReply) ProtoMessage() {}
 
 func (x *ListScanConfReply) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[162]
+	mi := &file_ada_proto_msgTypes[160]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -10398,7 +10296,7 @@ func (x *ListScanConfReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListScanConfReply.ProtoReflect.Descriptor instead.
 func (*ListScanConfReply) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{162}
+	return file_ada_proto_rawDescGZIP(), []int{160}
 }
 
 func (x *ListScanConfReply) GetPage() *ModelPage {
@@ -10442,7 +10340,7 @@ type ScanConfDetail struct {
 func (x *ScanConfDetail) Reset() {
 	*x = ScanConfDetail{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[163]
+		mi := &file_ada_proto_msgTypes[161]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -10455,7 +10353,7 @@ func (x *ScanConfDetail) String() string {
 func (*ScanConfDetail) ProtoMessage() {}
 
 func (x *ScanConfDetail) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[163]
+	mi := &file_ada_proto_msgTypes[161]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -10468,7 +10366,7 @@ func (x *ScanConfDetail) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ScanConfDetail.ProtoReflect.Descriptor instead.
 func (*ScanConfDetail) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{163}
+	return file_ada_proto_rawDescGZIP(), []int{161}
 }
 
 func (x *ScanConfDetail) GetID() string {
@@ -10555,7 +10453,7 @@ type SetScanConfReq struct {
 func (x *SetScanConfReq) Reset() {
 	*x = SetScanConfReq{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[164]
+		mi := &file_ada_proto_msgTypes[162]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -10568,7 +10466,7 @@ func (x *SetScanConfReq) String() string {
 func (*SetScanConfReq) ProtoMessage() {}
 
 func (x *SetScanConfReq) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[164]
+	mi := &file_ada_proto_msgTypes[162]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -10581,7 +10479,7 @@ func (x *SetScanConfReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SetScanConfReq.ProtoReflect.Descriptor instead.
 func (*SetScanConfReq) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{164}
+	return file_ada_proto_rawDescGZIP(), []int{162}
 }
 
 func (x *SetScanConfReq) GetID() string {
@@ -10623,7 +10521,7 @@ type SetScanConfReply struct {
 func (x *SetScanConfReply) Reset() {
 	*x = SetScanConfReply{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[165]
+		mi := &file_ada_proto_msgTypes[163]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -10636,7 +10534,7 @@ func (x *SetScanConfReply) String() string {
 func (*SetScanConfReply) ProtoMessage() {}
 
 func (x *SetScanConfReply) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[165]
+	mi := &file_ada_proto_msgTypes[163]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -10649,7 +10547,7 @@ func (x *SetScanConfReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SetScanConfReply.ProtoReflect.Descriptor instead.
 func (*SetScanConfReply) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{165}
+	return file_ada_proto_rawDescGZIP(), []int{163}
 }
 
 func (x *SetScanConfReply) GetResult() string {
@@ -10670,7 +10568,7 @@ type GetScanConfReq struct {
 func (x *GetScanConfReq) Reset() {
 	*x = GetScanConfReq{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[166]
+		mi := &file_ada_proto_msgTypes[164]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -10683,7 +10581,7 @@ func (x *GetScanConfReq) String() string {
 func (*GetScanConfReq) ProtoMessage() {}
 
 func (x *GetScanConfReq) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[166]
+	mi := &file_ada_proto_msgTypes[164]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -10696,7 +10594,7 @@ func (x *GetScanConfReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetScanConfReq.ProtoReflect.Descriptor instead.
 func (*GetScanConfReq) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{166}
+	return file_ada_proto_rawDescGZIP(), []int{164}
 }
 
 func (x *GetScanConfReq) GetID() string {
@@ -10717,7 +10615,7 @@ type GetScanConfReply struct {
 func (x *GetScanConfReply) Reset() {
 	*x = GetScanConfReply{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[167]
+		mi := &file_ada_proto_msgTypes[165]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -10730,7 +10628,7 @@ func (x *GetScanConfReply) String() string {
 func (*GetScanConfReply) ProtoMessage() {}
 
 func (x *GetScanConfReply) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[167]
+	mi := &file_ada_proto_msgTypes[165]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -10743,7 +10641,7 @@ func (x *GetScanConfReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetScanConfReply.ProtoReflect.Descriptor instead.
 func (*GetScanConfReply) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{167}
+	return file_ada_proto_rawDescGZIP(), []int{165}
 }
 
 func (x *GetScanConfReply) GetDetail() *ScanConfDetail {
@@ -10764,7 +10662,7 @@ type GetScanTmplNamesReq struct {
 func (x *GetScanTmplNamesReq) Reset() {
 	*x = GetScanTmplNamesReq{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[168]
+		mi := &file_ada_proto_msgTypes[166]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -10777,7 +10675,7 @@ func (x *GetScanTmplNamesReq) String() string {
 func (*GetScanTmplNamesReq) ProtoMessage() {}
 
 func (x *GetScanTmplNamesReq) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[168]
+	mi := &file_ada_proto_msgTypes[166]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -10790,7 +10688,7 @@ func (x *GetScanTmplNamesReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetScanTmplNamesReq.ProtoReflect.Descriptor instead.
 func (*GetScanTmplNamesReq) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{168}
+	return file_ada_proto_rawDescGZIP(), []int{166}
 }
 
 func (x *GetScanTmplNamesReq) GetType() string {
@@ -10811,7 +10709,7 @@ type GetScanTmplNamesReply struct {
 func (x *GetScanTmplNamesReply) Reset() {
 	*x = GetScanTmplNamesReply{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[169]
+		mi := &file_ada_proto_msgTypes[167]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -10824,7 +10722,7 @@ func (x *GetScanTmplNamesReply) String() string {
 func (*GetScanTmplNamesReply) ProtoMessage() {}
 
 func (x *GetScanTmplNamesReply) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[169]
+	mi := &file_ada_proto_msgTypes[167]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -10837,7 +10735,7 @@ func (x *GetScanTmplNamesReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetScanTmplNamesReply.ProtoReflect.Descriptor instead.
 func (*GetScanTmplNamesReply) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{169}
+	return file_ada_proto_rawDescGZIP(), []int{167}
 }
 
 func (x *GetScanTmplNamesReply) GetList() []*GetScanTmplNamesReplyTmplNames {
@@ -10859,7 +10757,7 @@ type UpdateScanConfReq struct {
 func (x *UpdateScanConfReq) Reset() {
 	*x = UpdateScanConfReq{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[170]
+		mi := &file_ada_proto_msgTypes[168]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -10872,7 +10770,7 @@ func (x *UpdateScanConfReq) String() string {
 func (*UpdateScanConfReq) ProtoMessage() {}
 
 func (x *UpdateScanConfReq) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[170]
+	mi := &file_ada_proto_msgTypes[168]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -10885,7 +10783,7 @@ func (x *UpdateScanConfReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateScanConfReq.ProtoReflect.Descriptor instead.
 func (*UpdateScanConfReq) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{170}
+	return file_ada_proto_rawDescGZIP(), []int{168}
 }
 
 func (x *UpdateScanConfReq) GetID() string {
@@ -10913,7 +10811,7 @@ type UpdateScanConfReply struct {
 func (x *UpdateScanConfReply) Reset() {
 	*x = UpdateScanConfReply{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[171]
+		mi := &file_ada_proto_msgTypes[169]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -10926,7 +10824,7 @@ func (x *UpdateScanConfReply) String() string {
 func (*UpdateScanConfReply) ProtoMessage() {}
 
 func (x *UpdateScanConfReply) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[171]
+	mi := &file_ada_proto_msgTypes[169]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -10939,7 +10837,7 @@ func (x *UpdateScanConfReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateScanConfReply.ProtoReflect.Descriptor instead.
 func (*UpdateScanConfReply) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{171}
+	return file_ada_proto_rawDescGZIP(), []int{169}
 }
 
 func (x *UpdateScanConfReply) GetResult() string {
@@ -10962,7 +10860,7 @@ type ListScanTmplReq struct {
 func (x *ListScanTmplReq) Reset() {
 	*x = ListScanTmplReq{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[172]
+		mi := &file_ada_proto_msgTypes[170]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -10975,7 +10873,7 @@ func (x *ListScanTmplReq) String() string {
 func (*ListScanTmplReq) ProtoMessage() {}
 
 func (x *ListScanTmplReq) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[172]
+	mi := &file_ada_proto_msgTypes[170]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -10988,7 +10886,7 @@ func (x *ListScanTmplReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListScanTmplReq.ProtoReflect.Descriptor instead.
 func (*ListScanTmplReq) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{172}
+	return file_ada_proto_rawDescGZIP(), []int{170}
 }
 
 func (x *ListScanTmplReq) GetPageIdx() int32 {
@@ -11025,7 +10923,7 @@ type ListScanTmplReply struct {
 func (x *ListScanTmplReply) Reset() {
 	*x = ListScanTmplReply{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[173]
+		mi := &file_ada_proto_msgTypes[171]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -11038,7 +10936,7 @@ func (x *ListScanTmplReply) String() string {
 func (*ListScanTmplReply) ProtoMessage() {}
 
 func (x *ListScanTmplReply) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[173]
+	mi := &file_ada_proto_msgTypes[171]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -11051,7 +10949,7 @@ func (x *ListScanTmplReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListScanTmplReply.ProtoReflect.Descriptor instead.
 func (*ListScanTmplReply) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{173}
+	return file_ada_proto_rawDescGZIP(), []int{171}
 }
 
 func (x *ListScanTmplReply) GetPage() *ModelPage {
@@ -11086,7 +10984,7 @@ type GetScanTmplReq struct {
 func (x *GetScanTmplReq) Reset() {
 	*x = GetScanTmplReq{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[174]
+		mi := &file_ada_proto_msgTypes[172]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -11099,7 +10997,7 @@ func (x *GetScanTmplReq) String() string {
 func (*GetScanTmplReq) ProtoMessage() {}
 
 func (x *GetScanTmplReq) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[174]
+	mi := &file_ada_proto_msgTypes[172]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -11112,7 +11010,7 @@ func (x *GetScanTmplReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetScanTmplReq.ProtoReflect.Descriptor instead.
 func (*GetScanTmplReq) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{174}
+	return file_ada_proto_rawDescGZIP(), []int{172}
 }
 
 func (x *GetScanTmplReq) GetID() string {
@@ -11138,7 +11036,7 @@ type PluginInfo struct {
 func (x *PluginInfo) Reset() {
 	*x = PluginInfo{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[175]
+		mi := &file_ada_proto_msgTypes[173]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -11151,7 +11049,7 @@ func (x *PluginInfo) String() string {
 func (*PluginInfo) ProtoMessage() {}
 
 func (x *PluginInfo) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[175]
+	mi := &file_ada_proto_msgTypes[173]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -11164,7 +11062,7 @@ func (x *PluginInfo) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PluginInfo.ProtoReflect.Descriptor instead.
 func (*PluginInfo) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{175}
+	return file_ada_proto_rawDescGZIP(), []int{173}
 }
 
 func (x *PluginInfo) GetID() int32 {
@@ -11226,7 +11124,7 @@ type GetScanTmplReply struct {
 func (x *GetScanTmplReply) Reset() {
 	*x = GetScanTmplReply{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[176]
+		mi := &file_ada_proto_msgTypes[174]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -11239,7 +11137,7 @@ func (x *GetScanTmplReply) String() string {
 func (*GetScanTmplReply) ProtoMessage() {}
 
 func (x *GetScanTmplReply) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[176]
+	mi := &file_ada_proto_msgTypes[174]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -11252,7 +11150,7 @@ func (x *GetScanTmplReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetScanTmplReply.ProtoReflect.Descriptor instead.
 func (*GetScanTmplReply) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{176}
+	return file_ada_proto_rawDescGZIP(), []int{174}
 }
 
 func (x *GetScanTmplReply) GetID() string {
@@ -11317,7 +11215,7 @@ type UpdateScanTmplReq struct {
 func (x *UpdateScanTmplReq) Reset() {
 	*x = UpdateScanTmplReq{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[177]
+		mi := &file_ada_proto_msgTypes[175]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -11330,7 +11228,7 @@ func (x *UpdateScanTmplReq) String() string {
 func (*UpdateScanTmplReq) ProtoMessage() {}
 
 func (x *UpdateScanTmplReq) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[177]
+	mi := &file_ada_proto_msgTypes[175]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -11343,7 +11241,7 @@ func (x *UpdateScanTmplReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateScanTmplReq.ProtoReflect.Descriptor instead.
 func (*UpdateScanTmplReq) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{177}
+	return file_ada_proto_rawDescGZIP(), []int{175}
 }
 
 func (x *UpdateScanTmplReq) GetID() string {
@@ -11378,7 +11276,7 @@ type UpdateScanTmplReply struct {
 func (x *UpdateScanTmplReply) Reset() {
 	*x = UpdateScanTmplReply{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[178]
+		mi := &file_ada_proto_msgTypes[176]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -11391,7 +11289,7 @@ func (x *UpdateScanTmplReply) String() string {
 func (*UpdateScanTmplReply) ProtoMessage() {}
 
 func (x *UpdateScanTmplReply) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[178]
+	mi := &file_ada_proto_msgTypes[176]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -11404,7 +11302,7 @@ func (x *UpdateScanTmplReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateScanTmplReply.ProtoReflect.Descriptor instead.
 func (*UpdateScanTmplReply) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{178}
+	return file_ada_proto_rawDescGZIP(), []int{176}
 }
 
 func (x *UpdateScanTmplReply) GetResult() string {
@@ -11425,7 +11323,7 @@ type DeleteScanTmplReq struct {
 func (x *DeleteScanTmplReq) Reset() {
 	*x = DeleteScanTmplReq{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[179]
+		mi := &file_ada_proto_msgTypes[177]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -11438,7 +11336,7 @@ func (x *DeleteScanTmplReq) String() string {
 func (*DeleteScanTmplReq) ProtoMessage() {}
 
 func (x *DeleteScanTmplReq) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[179]
+	mi := &file_ada_proto_msgTypes[177]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -11451,7 +11349,7 @@ func (x *DeleteScanTmplReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteScanTmplReq.ProtoReflect.Descriptor instead.
 func (*DeleteScanTmplReq) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{179}
+	return file_ada_proto_rawDescGZIP(), []int{177}
 }
 
 func (x *DeleteScanTmplReq) GetID() string {
@@ -11472,7 +11370,7 @@ type DeleteScanTmplReply struct {
 func (x *DeleteScanTmplReply) Reset() {
 	*x = DeleteScanTmplReply{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[180]
+		mi := &file_ada_proto_msgTypes[178]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -11485,7 +11383,7 @@ func (x *DeleteScanTmplReply) String() string {
 func (*DeleteScanTmplReply) ProtoMessage() {}
 
 func (x *DeleteScanTmplReply) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[180]
+	mi := &file_ada_proto_msgTypes[178]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -11498,7 +11396,7 @@ func (x *DeleteScanTmplReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteScanTmplReply.ProtoReflect.Descriptor instead.
 func (*DeleteScanTmplReply) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{180}
+	return file_ada_proto_rawDescGZIP(), []int{178}
 }
 
 func (x *DeleteScanTmplReply) GetResult() string {
@@ -11521,7 +11419,7 @@ type PluginInfoV2 struct {
 func (x *PluginInfoV2) Reset() {
 	*x = PluginInfoV2{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[181]
+		mi := &file_ada_proto_msgTypes[179]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -11534,7 +11432,7 @@ func (x *PluginInfoV2) String() string {
 func (*PluginInfoV2) ProtoMessage() {}
 
 func (x *PluginInfoV2) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[181]
+	mi := &file_ada_proto_msgTypes[179]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -11547,7 +11445,7 @@ func (x *PluginInfoV2) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PluginInfoV2.ProtoReflect.Descriptor instead.
 func (*PluginInfoV2) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{181}
+	return file_ada_proto_rawDescGZIP(), []int{179}
 }
 
 func (x *PluginInfoV2) GetID() int32 {
@@ -11584,7 +11482,7 @@ type AddScanTmplReq struct {
 func (x *AddScanTmplReq) Reset() {
 	*x = AddScanTmplReq{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[182]
+		mi := &file_ada_proto_msgTypes[180]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -11597,7 +11495,7 @@ func (x *AddScanTmplReq) String() string {
 func (*AddScanTmplReq) ProtoMessage() {}
 
 func (x *AddScanTmplReq) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[182]
+	mi := &file_ada_proto_msgTypes[180]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -11610,7 +11508,7 @@ func (x *AddScanTmplReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AddScanTmplReq.ProtoReflect.Descriptor instead.
 func (*AddScanTmplReq) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{182}
+	return file_ada_proto_rawDescGZIP(), []int{180}
 }
 
 func (x *AddScanTmplReq) GetName() string {
@@ -11645,7 +11543,7 @@ type AddScanTmplReply struct {
 func (x *AddScanTmplReply) Reset() {
 	*x = AddScanTmplReply{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[183]
+		mi := &file_ada_proto_msgTypes[181]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -11658,7 +11556,7 @@ func (x *AddScanTmplReply) String() string {
 func (*AddScanTmplReply) ProtoMessage() {}
 
 func (x *AddScanTmplReply) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[183]
+	mi := &file_ada_proto_msgTypes[181]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -11671,7 +11569,7 @@ func (x *AddScanTmplReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AddScanTmplReply.ProtoReflect.Descriptor instead.
 func (*AddScanTmplReply) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{183}
+	return file_ada_proto_rawDescGZIP(), []int{181}
 }
 
 func (x *AddScanTmplReply) GetResult() string {
@@ -11692,7 +11590,7 @@ type ListScanPluginReq struct {
 func (x *ListScanPluginReq) Reset() {
 	*x = ListScanPluginReq{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[184]
+		mi := &file_ada_proto_msgTypes[182]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -11705,7 +11603,7 @@ func (x *ListScanPluginReq) String() string {
 func (*ListScanPluginReq) ProtoMessage() {}
 
 func (x *ListScanPluginReq) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[184]
+	mi := &file_ada_proto_msgTypes[182]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -11718,7 +11616,7 @@ func (x *ListScanPluginReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListScanPluginReq.ProtoReflect.Descriptor instead.
 func (*ListScanPluginReq) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{184}
+	return file_ada_proto_rawDescGZIP(), []int{182}
 }
 
 func (x *ListScanPluginReq) GetType() string {
@@ -11739,7 +11637,7 @@ type ListScanPluginReply struct {
 func (x *ListScanPluginReply) Reset() {
 	*x = ListScanPluginReply{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[185]
+		mi := &file_ada_proto_msgTypes[183]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -11752,7 +11650,7 @@ func (x *ListScanPluginReply) String() string {
 func (*ListScanPluginReply) ProtoMessage() {}
 
 func (x *ListScanPluginReply) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[185]
+	mi := &file_ada_proto_msgTypes[183]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -11765,7 +11663,7 @@ func (x *ListScanPluginReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListScanPluginReply.ProtoReflect.Descriptor instead.
 func (*ListScanPluginReply) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{185}
+	return file_ada_proto_rawDescGZIP(), []int{183}
 }
 
 func (x *ListScanPluginReply) GetPlugins() []*PluginInfo {
@@ -11787,7 +11685,7 @@ type DashboardStatsReq struct {
 func (x *DashboardStatsReq) Reset() {
 	*x = DashboardStatsReq{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[186]
+		mi := &file_ada_proto_msgTypes[184]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -11800,7 +11698,7 @@ func (x *DashboardStatsReq) String() string {
 func (*DashboardStatsReq) ProtoMessage() {}
 
 func (x *DashboardStatsReq) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[186]
+	mi := &file_ada_proto_msgTypes[184]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -11813,7 +11711,7 @@ func (x *DashboardStatsReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DashboardStatsReq.ProtoReflect.Descriptor instead.
 func (*DashboardStatsReq) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{186}
+	return file_ada_proto_rawDescGZIP(), []int{184}
 }
 
 func (x *DashboardStatsReq) GetDomain() string {
@@ -11838,7 +11736,7 @@ type DashboardStatsReply struct {
 func (x *DashboardStatsReply) Reset() {
 	*x = DashboardStatsReply{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[187]
+		mi := &file_ada_proto_msgTypes[185]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -11851,7 +11749,7 @@ func (x *DashboardStatsReply) String() string {
 func (*DashboardStatsReply) ProtoMessage() {}
 
 func (x *DashboardStatsReply) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[187]
+	mi := &file_ada_proto_msgTypes[185]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -11864,7 +11762,7 @@ func (x *DashboardStatsReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DashboardStatsReply.ProtoReflect.Descriptor instead.
 func (*DashboardStatsReply) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{187}
+	return file_ada_proto_rawDescGZIP(), []int{185}
 }
 
 func (x *DashboardStatsReply) GetAsset() map[string]int32 {
@@ -11911,7 +11809,7 @@ type DashboardTrendsReq struct {
 func (x *DashboardTrendsReq) Reset() {
 	*x = DashboardTrendsReq{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[188]
+		mi := &file_ada_proto_msgTypes[186]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -11924,7 +11822,7 @@ func (x *DashboardTrendsReq) String() string {
 func (*DashboardTrendsReq) ProtoMessage() {}
 
 func (x *DashboardTrendsReq) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[188]
+	mi := &file_ada_proto_msgTypes[186]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -11937,7 +11835,7 @@ func (x *DashboardTrendsReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DashboardTrendsReq.ProtoReflect.Descriptor instead.
 func (*DashboardTrendsReq) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{188}
+	return file_ada_proto_rawDescGZIP(), []int{186}
 }
 
 type DashboardTrendsReply struct {
@@ -11949,7 +11847,7 @@ type DashboardTrendsReply struct {
 func (x *DashboardTrendsReply) Reset() {
 	*x = DashboardTrendsReply{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[189]
+		mi := &file_ada_proto_msgTypes[187]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -11962,7 +11860,7 @@ func (x *DashboardTrendsReply) String() string {
 func (*DashboardTrendsReply) ProtoMessage() {}
 
 func (x *DashboardTrendsReply) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[189]
+	mi := &file_ada_proto_msgTypes[187]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -11975,7 +11873,7 @@ func (x *DashboardTrendsReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DashboardTrendsReply.ProtoReflect.Descriptor instead.
 func (*DashboardTrendsReply) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{189}
+	return file_ada_proto_rawDescGZIP(), []int{187}
 }
 
 type DashboardLogStatsReq struct {
@@ -11990,7 +11888,7 @@ type DashboardLogStatsReq struct {
 func (x *DashboardLogStatsReq) Reset() {
 	*x = DashboardLogStatsReq{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[190]
+		mi := &file_ada_proto_msgTypes[188]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -12003,7 +11901,7 @@ func (x *DashboardLogStatsReq) String() string {
 func (*DashboardLogStatsReq) ProtoMessage() {}
 
 func (x *DashboardLogStatsReq) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[190]
+	mi := &file_ada_proto_msgTypes[188]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -12016,7 +11914,7 @@ func (x *DashboardLogStatsReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DashboardLogStatsReq.ProtoReflect.Descriptor instead.
 func (*DashboardLogStatsReq) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{190}
+	return file_ada_proto_rawDescGZIP(), []int{188}
 }
 
 func (x *DashboardLogStatsReq) GetDomain() string {
@@ -12044,7 +11942,7 @@ type DashboardLogStatsReply struct {
 func (x *DashboardLogStatsReply) Reset() {
 	*x = DashboardLogStatsReply{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[191]
+		mi := &file_ada_proto_msgTypes[189]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -12057,7 +11955,7 @@ func (x *DashboardLogStatsReply) String() string {
 func (*DashboardLogStatsReply) ProtoMessage() {}
 
 func (x *DashboardLogStatsReply) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[191]
+	mi := &file_ada_proto_msgTypes[189]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -12070,7 +11968,7 @@ func (x *DashboardLogStatsReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DashboardLogStatsReply.ProtoReflect.Descriptor instead.
 func (*DashboardLogStatsReply) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{191}
+	return file_ada_proto_rawDescGZIP(), []int{189}
 }
 
 func (x *DashboardLogStatsReply) GetList() []*DashboardLogStatsReplyLogStatsList {
@@ -12099,7 +11997,7 @@ type ListAlertRuleReq struct {
 func (x *ListAlertRuleReq) Reset() {
 	*x = ListAlertRuleReq{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[192]
+		mi := &file_ada_proto_msgTypes[190]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -12112,7 +12010,7 @@ func (x *ListAlertRuleReq) String() string {
 func (*ListAlertRuleReq) ProtoMessage() {}
 
 func (x *ListAlertRuleReq) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[192]
+	mi := &file_ada_proto_msgTypes[190]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -12125,7 +12023,7 @@ func (x *ListAlertRuleReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListAlertRuleReq.ProtoReflect.Descriptor instead.
 func (*ListAlertRuleReq) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{192}
+	return file_ada_proto_rawDescGZIP(), []int{190}
 }
 
 func (x *ListAlertRuleReq) GetPageIdx() int32 {
@@ -12198,7 +12096,7 @@ type AttackFlowReply struct {
 func (x *AttackFlowReply) Reset() {
 	*x = AttackFlowReply{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[193]
+		mi := &file_ada_proto_msgTypes[191]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -12211,7 +12109,7 @@ func (x *AttackFlowReply) String() string {
 func (*AttackFlowReply) ProtoMessage() {}
 
 func (x *AttackFlowReply) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[193]
+	mi := &file_ada_proto_msgTypes[191]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -12224,7 +12122,7 @@ func (x *AttackFlowReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AttackFlowReply.ProtoReflect.Descriptor instead.
 func (*AttackFlowReply) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{193}
+	return file_ada_proto_rawDescGZIP(), []int{191}
 }
 
 func (x *AttackFlowReply) GetDesc() string {
@@ -12275,7 +12173,7 @@ type AlertRuleInfo struct {
 func (x *AlertRuleInfo) Reset() {
 	*x = AlertRuleInfo{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[194]
+		mi := &file_ada_proto_msgTypes[192]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -12288,7 +12186,7 @@ func (x *AlertRuleInfo) String() string {
 func (*AlertRuleInfo) ProtoMessage() {}
 
 func (x *AlertRuleInfo) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[194]
+	mi := &file_ada_proto_msgTypes[192]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -12301,7 +12199,7 @@ func (x *AlertRuleInfo) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AlertRuleInfo.ProtoReflect.Descriptor instead.
 func (*AlertRuleInfo) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{194}
+	return file_ada_proto_rawDescGZIP(), []int{192}
 }
 
 func (x *AlertRuleInfo) GetID() string {
@@ -12435,7 +12333,7 @@ type ListAlertRuleReply struct {
 func (x *ListAlertRuleReply) Reset() {
 	*x = ListAlertRuleReply{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[195]
+		mi := &file_ada_proto_msgTypes[193]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -12448,7 +12346,7 @@ func (x *ListAlertRuleReply) String() string {
 func (*ListAlertRuleReply) ProtoMessage() {}
 
 func (x *ListAlertRuleReply) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[195]
+	mi := &file_ada_proto_msgTypes[193]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -12461,7 +12359,7 @@ func (x *ListAlertRuleReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListAlertRuleReply.ProtoReflect.Descriptor instead.
 func (*ListAlertRuleReply) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{195}
+	return file_ada_proto_rawDescGZIP(), []int{193}
 }
 
 func (x *ListAlertRuleReply) GetPage() *ModelPage {
@@ -12503,7 +12401,7 @@ type AddAlertRuleReq struct {
 func (x *AddAlertRuleReq) Reset() {
 	*x = AddAlertRuleReq{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[196]
+		mi := &file_ada_proto_msgTypes[194]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -12516,7 +12414,7 @@ func (x *AddAlertRuleReq) String() string {
 func (*AddAlertRuleReq) ProtoMessage() {}
 
 func (x *AddAlertRuleReq) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[196]
+	mi := &file_ada_proto_msgTypes[194]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -12529,7 +12427,7 @@ func (x *AddAlertRuleReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AddAlertRuleReq.ProtoReflect.Descriptor instead.
 func (*AddAlertRuleReq) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{196}
+	return file_ada_proto_rawDescGZIP(), []int{194}
 }
 
 func (x *AddAlertRuleReq) GetID() string {
@@ -12649,7 +12547,7 @@ type AddAlertRuleReply struct {
 func (x *AddAlertRuleReply) Reset() {
 	*x = AddAlertRuleReply{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[197]
+		mi := &file_ada_proto_msgTypes[195]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -12662,7 +12560,7 @@ func (x *AddAlertRuleReply) String() string {
 func (*AddAlertRuleReply) ProtoMessage() {}
 
 func (x *AddAlertRuleReply) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[197]
+	mi := &file_ada_proto_msgTypes[195]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -12675,7 +12573,7 @@ func (x *AddAlertRuleReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AddAlertRuleReply.ProtoReflect.Descriptor instead.
 func (*AddAlertRuleReply) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{197}
+	return file_ada_proto_rawDescGZIP(), []int{195}
 }
 
 func (x *AddAlertRuleReply) GetID() string {
@@ -12717,7 +12615,7 @@ type UpdateAlertRuleReq struct {
 func (x *UpdateAlertRuleReq) Reset() {
 	*x = UpdateAlertRuleReq{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[198]
+		mi := &file_ada_proto_msgTypes[196]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -12730,7 +12628,7 @@ func (x *UpdateAlertRuleReq) String() string {
 func (*UpdateAlertRuleReq) ProtoMessage() {}
 
 func (x *UpdateAlertRuleReq) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[198]
+	mi := &file_ada_proto_msgTypes[196]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -12743,7 +12641,7 @@ func (x *UpdateAlertRuleReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateAlertRuleReq.ProtoReflect.Descriptor instead.
 func (*UpdateAlertRuleReq) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{198}
+	return file_ada_proto_rawDescGZIP(), []int{196}
 }
 
 func (x *UpdateAlertRuleReq) GetID() string {
@@ -12862,7 +12760,7 @@ type UpdateAlertRuleReply struct {
 func (x *UpdateAlertRuleReply) Reset() {
 	*x = UpdateAlertRuleReply{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[199]
+		mi := &file_ada_proto_msgTypes[197]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -12875,7 +12773,7 @@ func (x *UpdateAlertRuleReply) String() string {
 func (*UpdateAlertRuleReply) ProtoMessage() {}
 
 func (x *UpdateAlertRuleReply) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[199]
+	mi := &file_ada_proto_msgTypes[197]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -12888,7 +12786,7 @@ func (x *UpdateAlertRuleReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateAlertRuleReply.ProtoReflect.Descriptor instead.
 func (*UpdateAlertRuleReply) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{199}
+	return file_ada_proto_rawDescGZIP(), []int{197}
 }
 
 func (x *UpdateAlertRuleReply) GetResult() string {
@@ -12909,7 +12807,7 @@ type DeleteAlertRuleReq struct {
 func (x *DeleteAlertRuleReq) Reset() {
 	*x = DeleteAlertRuleReq{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[200]
+		mi := &file_ada_proto_msgTypes[198]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -12922,7 +12820,7 @@ func (x *DeleteAlertRuleReq) String() string {
 func (*DeleteAlertRuleReq) ProtoMessage() {}
 
 func (x *DeleteAlertRuleReq) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[200]
+	mi := &file_ada_proto_msgTypes[198]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -12935,7 +12833,7 @@ func (x *DeleteAlertRuleReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteAlertRuleReq.ProtoReflect.Descriptor instead.
 func (*DeleteAlertRuleReq) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{200}
+	return file_ada_proto_rawDescGZIP(), []int{198}
 }
 
 func (x *DeleteAlertRuleReq) GetID() string {
@@ -12956,7 +12854,7 @@ type DeleteAlertRuleReply struct {
 func (x *DeleteAlertRuleReply) Reset() {
 	*x = DeleteAlertRuleReply{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[201]
+		mi := &file_ada_proto_msgTypes[199]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -12969,7 +12867,7 @@ func (x *DeleteAlertRuleReply) String() string {
 func (*DeleteAlertRuleReply) ProtoMessage() {}
 
 func (x *DeleteAlertRuleReply) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[201]
+	mi := &file_ada_proto_msgTypes[199]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -12982,7 +12880,7 @@ func (x *DeleteAlertRuleReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteAlertRuleReply.ProtoReflect.Descriptor instead.
 func (*DeleteAlertRuleReply) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{201}
+	return file_ada_proto_rawDescGZIP(), []int{199}
 }
 
 func (x *DeleteAlertRuleReply) GetResult() string {
@@ -13001,7 +12899,7 @@ type GetAlertTypesReq struct {
 func (x *GetAlertTypesReq) Reset() {
 	*x = GetAlertTypesReq{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[202]
+		mi := &file_ada_proto_msgTypes[200]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -13014,7 +12912,7 @@ func (x *GetAlertTypesReq) String() string {
 func (*GetAlertTypesReq) ProtoMessage() {}
 
 func (x *GetAlertTypesReq) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[202]
+	mi := &file_ada_proto_msgTypes[200]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -13027,7 +12925,7 @@ func (x *GetAlertTypesReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetAlertTypesReq.ProtoReflect.Descriptor instead.
 func (*GetAlertTypesReq) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{202}
+	return file_ada_proto_rawDescGZIP(), []int{200}
 }
 
 type GetAlertTypesReply struct {
@@ -13041,7 +12939,7 @@ type GetAlertTypesReply struct {
 func (x *GetAlertTypesReply) Reset() {
 	*x = GetAlertTypesReply{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[203]
+		mi := &file_ada_proto_msgTypes[201]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -13054,7 +12952,7 @@ func (x *GetAlertTypesReply) String() string {
 func (*GetAlertTypesReply) ProtoMessage() {}
 
 func (x *GetAlertTypesReply) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[203]
+	mi := &file_ada_proto_msgTypes[201]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -13067,7 +12965,7 @@ func (x *GetAlertTypesReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetAlertTypesReply.ProtoReflect.Descriptor instead.
 func (*GetAlertTypesReply) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{203}
+	return file_ada_proto_rawDescGZIP(), []int{201}
 }
 
 func (x *GetAlertTypesReply) GetAlertTypes() map[string]string {
@@ -13088,7 +12986,7 @@ type GetAlertRuleNamesReq struct {
 func (x *GetAlertRuleNamesReq) Reset() {
 	*x = GetAlertRuleNamesReq{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[204]
+		mi := &file_ada_proto_msgTypes[202]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -13101,7 +12999,7 @@ func (x *GetAlertRuleNamesReq) String() string {
 func (*GetAlertRuleNamesReq) ProtoMessage() {}
 
 func (x *GetAlertRuleNamesReq) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[204]
+	mi := &file_ada_proto_msgTypes[202]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -13114,7 +13012,7 @@ func (x *GetAlertRuleNamesReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetAlertRuleNamesReq.ProtoReflect.Descriptor instead.
 func (*GetAlertRuleNamesReq) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{204}
+	return file_ada_proto_rawDescGZIP(), []int{202}
 }
 
 func (x *GetAlertRuleNamesReq) GetRuleId() string {
@@ -13135,7 +13033,7 @@ type GetAlertRuleNamesReply struct {
 func (x *GetAlertRuleNamesReply) Reset() {
 	*x = GetAlertRuleNamesReply{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[205]
+		mi := &file_ada_proto_msgTypes[203]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -13148,7 +13046,7 @@ func (x *GetAlertRuleNamesReply) String() string {
 func (*GetAlertRuleNamesReply) ProtoMessage() {}
 
 func (x *GetAlertRuleNamesReply) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[205]
+	mi := &file_ada_proto_msgTypes[203]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -13161,7 +13059,7 @@ func (x *GetAlertRuleNamesReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetAlertRuleNamesReply.ProtoReflect.Descriptor instead.
 func (*GetAlertRuleNamesReply) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{205}
+	return file_ada_proto_rawDescGZIP(), []int{203}
 }
 
 func (x *GetAlertRuleNamesReply) GetNames() map[string]string {
@@ -13180,7 +13078,7 @@ type GetAlertRuleTagsReq struct {
 func (x *GetAlertRuleTagsReq) Reset() {
 	*x = GetAlertRuleTagsReq{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[206]
+		mi := &file_ada_proto_msgTypes[204]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -13193,7 +13091,7 @@ func (x *GetAlertRuleTagsReq) String() string {
 func (*GetAlertRuleTagsReq) ProtoMessage() {}
 
 func (x *GetAlertRuleTagsReq) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[206]
+	mi := &file_ada_proto_msgTypes[204]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -13206,7 +13104,7 @@ func (x *GetAlertRuleTagsReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetAlertRuleTagsReq.ProtoReflect.Descriptor instead.
 func (*GetAlertRuleTagsReq) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{206}
+	return file_ada_proto_rawDescGZIP(), []int{204}
 }
 
 type GetAlertRuleTagsReply struct {
@@ -13220,7 +13118,7 @@ type GetAlertRuleTagsReply struct {
 func (x *GetAlertRuleTagsReply) Reset() {
 	*x = GetAlertRuleTagsReply{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[207]
+		mi := &file_ada_proto_msgTypes[205]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -13233,7 +13131,7 @@ func (x *GetAlertRuleTagsReply) String() string {
 func (*GetAlertRuleTagsReply) ProtoMessage() {}
 
 func (x *GetAlertRuleTagsReply) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[207]
+	mi := &file_ada_proto_msgTypes[205]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -13246,7 +13144,7 @@ func (x *GetAlertRuleTagsReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetAlertRuleTagsReply.ProtoReflect.Descriptor instead.
 func (*GetAlertRuleTagsReply) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{207}
+	return file_ada_proto_rawDescGZIP(), []int{205}
 }
 
 func (x *GetAlertRuleTagsReply) GetTags() []string {
@@ -13265,7 +13163,7 @@ type GetActivityRuleFieldsReq struct {
 func (x *GetActivityRuleFieldsReq) Reset() {
 	*x = GetActivityRuleFieldsReq{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[208]
+		mi := &file_ada_proto_msgTypes[206]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -13278,7 +13176,7 @@ func (x *GetActivityRuleFieldsReq) String() string {
 func (*GetActivityRuleFieldsReq) ProtoMessage() {}
 
 func (x *GetActivityRuleFieldsReq) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[208]
+	mi := &file_ada_proto_msgTypes[206]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -13291,7 +13189,7 @@ func (x *GetActivityRuleFieldsReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetActivityRuleFieldsReq.ProtoReflect.Descriptor instead.
 func (*GetActivityRuleFieldsReq) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{208}
+	return file_ada_proto_rawDescGZIP(), []int{206}
 }
 
 type GetActivityRuleFieldsReply struct {
@@ -13305,7 +13203,7 @@ type GetActivityRuleFieldsReply struct {
 func (x *GetActivityRuleFieldsReply) Reset() {
 	*x = GetActivityRuleFieldsReply{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[209]
+		mi := &file_ada_proto_msgTypes[207]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -13318,7 +13216,7 @@ func (x *GetActivityRuleFieldsReply) String() string {
 func (*GetActivityRuleFieldsReply) ProtoMessage() {}
 
 func (x *GetActivityRuleFieldsReply) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[209]
+	mi := &file_ada_proto_msgTypes[207]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -13331,7 +13229,7 @@ func (x *GetActivityRuleFieldsReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetActivityRuleFieldsReply.ProtoReflect.Descriptor instead.
 func (*GetActivityRuleFieldsReply) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{209}
+	return file_ada_proto_rawDescGZIP(), []int{207}
 }
 
 func (x *GetActivityRuleFieldsReply) GetFields() []string {
@@ -13350,7 +13248,7 @@ type GetActivityRuleUniqueFieldsReq struct {
 func (x *GetActivityRuleUniqueFieldsReq) Reset() {
 	*x = GetActivityRuleUniqueFieldsReq{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[210]
+		mi := &file_ada_proto_msgTypes[208]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -13363,7 +13261,7 @@ func (x *GetActivityRuleUniqueFieldsReq) String() string {
 func (*GetActivityRuleUniqueFieldsReq) ProtoMessage() {}
 
 func (x *GetActivityRuleUniqueFieldsReq) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[210]
+	mi := &file_ada_proto_msgTypes[208]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -13376,7 +13274,7 @@ func (x *GetActivityRuleUniqueFieldsReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetActivityRuleUniqueFieldsReq.ProtoReflect.Descriptor instead.
 func (*GetActivityRuleUniqueFieldsReq) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{210}
+	return file_ada_proto_rawDescGZIP(), []int{208}
 }
 
 type GetActivityRuleUniqueFieldsReply struct {
@@ -13390,7 +13288,7 @@ type GetActivityRuleUniqueFieldsReply struct {
 func (x *GetActivityRuleUniqueFieldsReply) Reset() {
 	*x = GetActivityRuleUniqueFieldsReply{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[211]
+		mi := &file_ada_proto_msgTypes[209]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -13403,7 +13301,7 @@ func (x *GetActivityRuleUniqueFieldsReply) String() string {
 func (*GetActivityRuleUniqueFieldsReply) ProtoMessage() {}
 
 func (x *GetActivityRuleUniqueFieldsReply) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[211]
+	mi := &file_ada_proto_msgTypes[209]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -13416,7 +13314,7 @@ func (x *GetActivityRuleUniqueFieldsReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetActivityRuleUniqueFieldsReply.ProtoReflect.Descriptor instead.
 func (*GetActivityRuleUniqueFieldsReply) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{211}
+	return file_ada_proto_rawDescGZIP(), []int{209}
 }
 
 func (x *GetActivityRuleUniqueFieldsReply) GetUniqueFields() []string {
@@ -13447,7 +13345,7 @@ type ListActivityRuleReq struct {
 func (x *ListActivityRuleReq) Reset() {
 	*x = ListActivityRuleReq{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[212]
+		mi := &file_ada_proto_msgTypes[210]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -13460,7 +13358,7 @@ func (x *ListActivityRuleReq) String() string {
 func (*ListActivityRuleReq) ProtoMessage() {}
 
 func (x *ListActivityRuleReq) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[212]
+	mi := &file_ada_proto_msgTypes[210]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -13473,7 +13371,7 @@ func (x *ListActivityRuleReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListActivityRuleReq.ProtoReflect.Descriptor instead.
 func (*ListActivityRuleReq) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{212}
+	return file_ada_proto_rawDescGZIP(), []int{210}
 }
 
 func (x *ListActivityRuleReq) GetPageIdx() int32 {
@@ -13571,7 +13469,7 @@ type ActivityRuleInfo struct {
 func (x *ActivityRuleInfo) Reset() {
 	*x = ActivityRuleInfo{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[213]
+		mi := &file_ada_proto_msgTypes[211]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -13584,7 +13482,7 @@ func (x *ActivityRuleInfo) String() string {
 func (*ActivityRuleInfo) ProtoMessage() {}
 
 func (x *ActivityRuleInfo) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[213]
+	mi := &file_ada_proto_msgTypes[211]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -13597,7 +13495,7 @@ func (x *ActivityRuleInfo) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ActivityRuleInfo.ProtoReflect.Descriptor instead.
 func (*ActivityRuleInfo) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{213}
+	return file_ada_proto_rawDescGZIP(), []int{211}
 }
 
 func (x *ActivityRuleInfo) GetID() string {
@@ -13717,7 +13615,7 @@ type ListActivityRuleReply struct {
 func (x *ListActivityRuleReply) Reset() {
 	*x = ListActivityRuleReply{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[214]
+		mi := &file_ada_proto_msgTypes[212]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -13730,7 +13628,7 @@ func (x *ListActivityRuleReply) String() string {
 func (*ListActivityRuleReply) ProtoMessage() {}
 
 func (x *ListActivityRuleReply) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[214]
+	mi := &file_ada_proto_msgTypes[212]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -13743,7 +13641,7 @@ func (x *ListActivityRuleReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListActivityRuleReply.ProtoReflect.Descriptor instead.
 func (*ListActivityRuleReply) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{214}
+	return file_ada_proto_rawDescGZIP(), []int{212}
 }
 
 func (x *ListActivityRuleReply) GetPage() *ModelPage {
@@ -13771,7 +13669,7 @@ type GetActivityRuleReq struct {
 func (x *GetActivityRuleReq) Reset() {
 	*x = GetActivityRuleReq{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[215]
+		mi := &file_ada_proto_msgTypes[213]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -13784,7 +13682,7 @@ func (x *GetActivityRuleReq) String() string {
 func (*GetActivityRuleReq) ProtoMessage() {}
 
 func (x *GetActivityRuleReq) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[215]
+	mi := &file_ada_proto_msgTypes[213]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -13797,7 +13695,7 @@ func (x *GetActivityRuleReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetActivityRuleReq.ProtoReflect.Descriptor instead.
 func (*GetActivityRuleReq) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{215}
+	return file_ada_proto_rawDescGZIP(), []int{213}
 }
 
 func (x *GetActivityRuleReq) GetID() string {
@@ -13832,7 +13730,7 @@ type GetActivityRuleReply struct {
 func (x *GetActivityRuleReply) Reset() {
 	*x = GetActivityRuleReply{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[216]
+		mi := &file_ada_proto_msgTypes[214]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -13845,7 +13743,7 @@ func (x *GetActivityRuleReply) String() string {
 func (*GetActivityRuleReply) ProtoMessage() {}
 
 func (x *GetActivityRuleReply) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[216]
+	mi := &file_ada_proto_msgTypes[214]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -13858,7 +13756,7 @@ func (x *GetActivityRuleReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetActivityRuleReply.ProtoReflect.Descriptor instead.
 func (*GetActivityRuleReply) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{216}
+	return file_ada_proto_rawDescGZIP(), []int{214}
 }
 
 func (x *GetActivityRuleReply) GetID() string {
@@ -13989,7 +13887,7 @@ type AddActivityRuleReq struct {
 func (x *AddActivityRuleReq) Reset() {
 	*x = AddActivityRuleReq{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[217]
+		mi := &file_ada_proto_msgTypes[215]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -14002,7 +13900,7 @@ func (x *AddActivityRuleReq) String() string {
 func (*AddActivityRuleReq) ProtoMessage() {}
 
 func (x *AddActivityRuleReq) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[217]
+	mi := &file_ada_proto_msgTypes[215]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -14015,7 +13913,7 @@ func (x *AddActivityRuleReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AddActivityRuleReq.ProtoReflect.Descriptor instead.
 func (*AddActivityRuleReq) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{217}
+	return file_ada_proto_rawDescGZIP(), []int{215}
 }
 
 func (x *AddActivityRuleReq) GetID() string {
@@ -14121,7 +14019,7 @@ type AddActivityRuleReply struct {
 func (x *AddActivityRuleReply) Reset() {
 	*x = AddActivityRuleReply{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[218]
+		mi := &file_ada_proto_msgTypes[216]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -14134,7 +14032,7 @@ func (x *AddActivityRuleReply) String() string {
 func (*AddActivityRuleReply) ProtoMessage() {}
 
 func (x *AddActivityRuleReply) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[218]
+	mi := &file_ada_proto_msgTypes[216]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -14147,7 +14045,7 @@ func (x *AddActivityRuleReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AddActivityRuleReply.ProtoReflect.Descriptor instead.
 func (*AddActivityRuleReply) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{218}
+	return file_ada_proto_rawDescGZIP(), []int{216}
 }
 
 func (x *AddActivityRuleReply) GetID() string {
@@ -14187,7 +14085,7 @@ type UpdateActivityRuleReq struct {
 func (x *UpdateActivityRuleReq) Reset() {
 	*x = UpdateActivityRuleReq{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[219]
+		mi := &file_ada_proto_msgTypes[217]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -14200,7 +14098,7 @@ func (x *UpdateActivityRuleReq) String() string {
 func (*UpdateActivityRuleReq) ProtoMessage() {}
 
 func (x *UpdateActivityRuleReq) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[219]
+	mi := &file_ada_proto_msgTypes[217]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -14213,7 +14111,7 @@ func (x *UpdateActivityRuleReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateActivityRuleReq.ProtoReflect.Descriptor instead.
 func (*UpdateActivityRuleReq) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{219}
+	return file_ada_proto_rawDescGZIP(), []int{217}
 }
 
 func (x *UpdateActivityRuleReq) GetID() string {
@@ -14318,7 +14216,7 @@ type UpdateActivityRuleReply struct {
 func (x *UpdateActivityRuleReply) Reset() {
 	*x = UpdateActivityRuleReply{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[220]
+		mi := &file_ada_proto_msgTypes[218]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -14331,7 +14229,7 @@ func (x *UpdateActivityRuleReply) String() string {
 func (*UpdateActivityRuleReply) ProtoMessage() {}
 
 func (x *UpdateActivityRuleReply) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[220]
+	mi := &file_ada_proto_msgTypes[218]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -14344,7 +14242,7 @@ func (x *UpdateActivityRuleReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateActivityRuleReply.ProtoReflect.Descriptor instead.
 func (*UpdateActivityRuleReply) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{220}
+	return file_ada_proto_rawDescGZIP(), []int{218}
 }
 
 func (x *UpdateActivityRuleReply) GetResult() string {
@@ -14365,7 +14263,7 @@ type DeleteActivityRuleReq struct {
 func (x *DeleteActivityRuleReq) Reset() {
 	*x = DeleteActivityRuleReq{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[221]
+		mi := &file_ada_proto_msgTypes[219]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -14378,7 +14276,7 @@ func (x *DeleteActivityRuleReq) String() string {
 func (*DeleteActivityRuleReq) ProtoMessage() {}
 
 func (x *DeleteActivityRuleReq) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[221]
+	mi := &file_ada_proto_msgTypes[219]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -14391,7 +14289,7 @@ func (x *DeleteActivityRuleReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteActivityRuleReq.ProtoReflect.Descriptor instead.
 func (*DeleteActivityRuleReq) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{221}
+	return file_ada_proto_rawDescGZIP(), []int{219}
 }
 
 func (x *DeleteActivityRuleReq) GetID() string {
@@ -14412,7 +14310,7 @@ type DeleteActivityRuleReply struct {
 func (x *DeleteActivityRuleReply) Reset() {
 	*x = DeleteActivityRuleReply{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[222]
+		mi := &file_ada_proto_msgTypes[220]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -14425,7 +14323,7 @@ func (x *DeleteActivityRuleReply) String() string {
 func (*DeleteActivityRuleReply) ProtoMessage() {}
 
 func (x *DeleteActivityRuleReply) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[222]
+	mi := &file_ada_proto_msgTypes[220]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -14438,7 +14336,7 @@ func (x *DeleteActivityRuleReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteActivityRuleReply.ProtoReflect.Descriptor instead.
 func (*DeleteActivityRuleReply) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{222}
+	return file_ada_proto_rawDescGZIP(), []int{220}
 }
 
 func (x *DeleteActivityRuleReply) GetResult() string {
@@ -14474,7 +14372,7 @@ type ListUserReply_Details struct {
 func (x *ListUserReply_Details) Reset() {
 	*x = ListUserReply_Details{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[223]
+		mi := &file_ada_proto_msgTypes[221]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -14487,7 +14385,7 @@ func (x *ListUserReply_Details) String() string {
 func (*ListUserReply_Details) ProtoMessage() {}
 
 func (x *ListUserReply_Details) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[223]
+	mi := &file_ada_proto_msgTypes[221]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -14636,7 +14534,7 @@ type ListDomainReplyDcList struct {
 func (x *ListDomainReplyDcList) Reset() {
 	*x = ListDomainReplyDcList{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[224]
+		mi := &file_ada_proto_msgTypes[222]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -14649,7 +14547,7 @@ func (x *ListDomainReplyDcList) String() string {
 func (*ListDomainReplyDcList) ProtoMessage() {}
 
 func (x *ListDomainReplyDcList) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[224]
+	mi := &file_ada_proto_msgTypes[222]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -14662,7 +14560,7 @@ func (x *ListDomainReplyDcList) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListDomainReplyDcList.ProtoReflect.Descriptor instead.
 func (*ListDomainReplyDcList) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{30, 0}
+	return file_ada_proto_rawDescGZIP(), []int{28, 0}
 }
 
 func (x *ListDomainReplyDcList) GetHostname() string {
@@ -14760,7 +14658,7 @@ type ListDomainReply_Details struct {
 func (x *ListDomainReply_Details) Reset() {
 	*x = ListDomainReply_Details{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[225]
+		mi := &file_ada_proto_msgTypes[223]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -14773,7 +14671,7 @@ func (x *ListDomainReply_Details) String() string {
 func (*ListDomainReply_Details) ProtoMessage() {}
 
 func (x *ListDomainReply_Details) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[225]
+	mi := &file_ada_proto_msgTypes[223]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -14786,7 +14684,7 @@ func (x *ListDomainReply_Details) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListDomainReply_Details.ProtoReflect.Descriptor instead.
 func (*ListDomainReply_Details) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{30, 1}
+	return file_ada_proto_rawDescGZIP(), []int{28, 1}
 }
 
 func (x *ListDomainReply_Details) GetID() string {
@@ -14856,7 +14754,7 @@ type ListSensorReplyMapSlice struct {
 func (x *ListSensorReplyMapSlice) Reset() {
 	*x = ListSensorReplyMapSlice{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[227]
+		mi := &file_ada_proto_msgTypes[225]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -14869,7 +14767,7 @@ func (x *ListSensorReplyMapSlice) String() string {
 func (*ListSensorReplyMapSlice) ProtoMessage() {}
 
 func (x *ListSensorReplyMapSlice) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[227]
+	mi := &file_ada_proto_msgTypes[225]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -14882,7 +14780,7 @@ func (x *ListSensorReplyMapSlice) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListSensorReplyMapSlice.ProtoReflect.Descriptor instead.
 func (*ListSensorReplyMapSlice) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{44, 0}
+	return file_ada_proto_rawDescGZIP(), []int{42, 0}
 }
 
 func (x *ListSensorReplyMapSlice) GetEvent() map[string]string {
@@ -14939,7 +14837,7 @@ type ListSensorReply_Details struct {
 func (x *ListSensorReply_Details) Reset() {
 	*x = ListSensorReply_Details{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[228]
+		mi := &file_ada_proto_msgTypes[226]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -14952,7 +14850,7 @@ func (x *ListSensorReply_Details) String() string {
 func (*ListSensorReply_Details) ProtoMessage() {}
 
 func (x *ListSensorReply_Details) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[228]
+	mi := &file_ada_proto_msgTypes[226]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -14965,7 +14863,7 @@ func (x *ListSensorReply_Details) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListSensorReply_Details.ProtoReflect.Descriptor instead.
 func (*ListSensorReply_Details) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{44, 1}
+	return file_ada_proto_rawDescGZIP(), []int{42, 1}
 }
 
 func (x *ListSensorReply_Details) GetID() string {
@@ -15244,7 +15142,7 @@ type ListAuditLogReply_Details struct {
 func (x *ListAuditLogReply_Details) Reset() {
 	*x = ListAuditLogReply_Details{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[235]
+		mi := &file_ada_proto_msgTypes[233]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -15257,7 +15155,7 @@ func (x *ListAuditLogReply_Details) String() string {
 func (*ListAuditLogReply_Details) ProtoMessage() {}
 
 func (x *ListAuditLogReply_Details) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[235]
+	mi := &file_ada_proto_msgTypes[233]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -15270,7 +15168,7 @@ func (x *ListAuditLogReply_Details) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListAuditLogReply_Details.ProtoReflect.Descriptor instead.
 func (*ListAuditLogReply_Details) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{67, 0}
+	return file_ada_proto_rawDescGZIP(), []int{65, 0}
 }
 
 func (x *ListAuditLogReply_Details) GetID() string {
@@ -15338,7 +15236,7 @@ type ListSystemLogsReply_Details struct {
 func (x *ListSystemLogsReply_Details) Reset() {
 	*x = ListSystemLogsReply_Details{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[236]
+		mi := &file_ada_proto_msgTypes[234]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -15351,7 +15249,7 @@ func (x *ListSystemLogsReply_Details) String() string {
 func (*ListSystemLogsReply_Details) ProtoMessage() {}
 
 func (x *ListSystemLogsReply_Details) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[236]
+	mi := &file_ada_proto_msgTypes[234]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -15364,7 +15262,7 @@ func (x *ListSystemLogsReply_Details) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListSystemLogsReply_Details.ProtoReflect.Descriptor instead.
 func (*ListSystemLogsReply_Details) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{69, 0}
+	return file_ada_proto_rawDescGZIP(), []int{67, 0}
 }
 
 func (x *ListSystemLogsReply_Details) GetTime() string {
@@ -15427,7 +15325,7 @@ type ListNotifyConfReply_Details struct {
 func (x *ListNotifyConfReply_Details) Reset() {
 	*x = ListNotifyConfReply_Details{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[237]
+		mi := &file_ada_proto_msgTypes[235]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -15440,7 +15338,7 @@ func (x *ListNotifyConfReply_Details) String() string {
 func (*ListNotifyConfReply_Details) ProtoMessage() {}
 
 func (x *ListNotifyConfReply_Details) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[237]
+	mi := &file_ada_proto_msgTypes[235]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -15453,7 +15351,7 @@ func (x *ListNotifyConfReply_Details) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListNotifyConfReply_Details.ProtoReflect.Descriptor instead.
 func (*ListNotifyConfReply_Details) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{77, 0}
+	return file_ada_proto_rawDescGZIP(), []int{75, 0}
 }
 
 func (x *ListNotifyConfReply_Details) GetId() string {
@@ -15532,7 +15430,7 @@ type ListExportTaskReply_Details struct {
 func (x *ListExportTaskReply_Details) Reset() {
 	*x = ListExportTaskReply_Details{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[241]
+		mi := &file_ada_proto_msgTypes[239]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -15545,7 +15443,7 @@ func (x *ListExportTaskReply_Details) String() string {
 func (*ListExportTaskReply_Details) ProtoMessage() {}
 
 func (x *ListExportTaskReply_Details) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[241]
+	mi := &file_ada_proto_msgTypes[239]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -15558,7 +15456,7 @@ func (x *ListExportTaskReply_Details) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListExportTaskReply_Details.ProtoReflect.Descriptor instead.
 func (*ListExportTaskReply_Details) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{85, 0}
+	return file_ada_proto_rawDescGZIP(), []int{83, 0}
 }
 
 func (x *ListExportTaskReply_Details) GetID() string {
@@ -15649,7 +15547,7 @@ type ListNotifyReply_Details struct {
 func (x *ListNotifyReply_Details) Reset() {
 	*x = ListNotifyReply_Details{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[244]
+		mi := &file_ada_proto_msgTypes[242]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -15662,7 +15560,7 @@ func (x *ListNotifyReply_Details) String() string {
 func (*ListNotifyReply_Details) ProtoMessage() {}
 
 func (x *ListNotifyReply_Details) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[244]
+	mi := &file_ada_proto_msgTypes[242]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -15675,7 +15573,7 @@ func (x *ListNotifyReply_Details) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListNotifyReply_Details.ProtoReflect.Descriptor instead.
 func (*ListNotifyReply_Details) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{91, 0}
+	return file_ada_proto_rawDescGZIP(), []int{89, 0}
 }
 
 func (x *ListNotifyReply_Details) GetID() string {
@@ -15746,7 +15644,7 @@ type ThreatTopsReply_Details struct {
 func (x *ThreatTopsReply_Details) Reset() {
 	*x = ThreatTopsReply_Details{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[246]
+		mi := &file_ada_proto_msgTypes[244]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -15759,7 +15657,7 @@ func (x *ThreatTopsReply_Details) String() string {
 func (*ThreatTopsReply_Details) ProtoMessage() {}
 
 func (x *ThreatTopsReply_Details) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[246]
+	mi := &file_ada_proto_msgTypes[244]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -15772,7 +15670,7 @@ func (x *ThreatTopsReply_Details) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ThreatTopsReply_Details.ProtoReflect.Descriptor instead.
 func (*ThreatTopsReply_Details) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{97, 0}
+	return file_ada_proto_rawDescGZIP(), []int{95, 0}
 }
 
 func (x *ThreatTopsReply_Details) GetName() string {
@@ -15801,7 +15699,7 @@ type ThreatTrendsReply_Item struct {
 func (x *ThreatTrendsReply_Item) Reset() {
 	*x = ThreatTrendsReply_Item{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[247]
+		mi := &file_ada_proto_msgTypes[245]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -15814,7 +15712,7 @@ func (x *ThreatTrendsReply_Item) String() string {
 func (*ThreatTrendsReply_Item) ProtoMessage() {}
 
 func (x *ThreatTrendsReply_Item) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[247]
+	mi := &file_ada_proto_msgTypes[245]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -15827,7 +15725,7 @@ func (x *ThreatTrendsReply_Item) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ThreatTrendsReply_Item.ProtoReflect.Descriptor instead.
 func (*ThreatTrendsReply_Item) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{99, 0}
+	return file_ada_proto_rawDescGZIP(), []int{97, 0}
 }
 
 func (x *ThreatTrendsReply_Item) GetTs() int64 {
@@ -15857,7 +15755,7 @@ type ListThreatReq_Details struct {
 func (x *ListThreatReq_Details) Reset() {
 	*x = ListThreatReq_Details{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[248]
+		mi := &file_ada_proto_msgTypes[246]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -15870,7 +15768,7 @@ func (x *ListThreatReq_Details) String() string {
 func (*ListThreatReq_Details) ProtoMessage() {}
 
 func (x *ListThreatReq_Details) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[248]
+	mi := &file_ada_proto_msgTypes[246]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -15883,7 +15781,7 @@ func (x *ListThreatReq_Details) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListThreatReq_Details.ProtoReflect.Descriptor instead.
 func (*ListThreatReq_Details) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{100, 0}
+	return file_ada_proto_rawDescGZIP(), []int{98, 0}
 }
 
 func (x *ListThreatReq_Details) GetName() string {
@@ -15933,7 +15831,7 @@ type ListThreatReply_Details struct {
 func (x *ListThreatReply_Details) Reset() {
 	*x = ListThreatReply_Details{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[249]
+		mi := &file_ada_proto_msgTypes[247]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -15946,7 +15844,7 @@ func (x *ListThreatReply_Details) String() string {
 func (*ListThreatReply_Details) ProtoMessage() {}
 
 func (x *ListThreatReply_Details) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[249]
+	mi := &file_ada_proto_msgTypes[247]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -15959,7 +15857,7 @@ func (x *ListThreatReply_Details) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListThreatReply_Details.ProtoReflect.Descriptor instead.
 func (*ListThreatReply_Details) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{101, 0}
+	return file_ada_proto_rawDescGZIP(), []int{99, 0}
 }
 
 func (x *ListThreatReply_Details) GetID() string {
@@ -16090,7 +15988,7 @@ type ListSensitiveEntryReply_Details struct {
 func (x *ListSensitiveEntryReply_Details) Reset() {
 	*x = ListSensitiveEntryReply_Details{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[254]
+		mi := &file_ada_proto_msgTypes[252]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -16103,7 +16001,7 @@ func (x *ListSensitiveEntryReply_Details) String() string {
 func (*ListSensitiveEntryReply_Details) ProtoMessage() {}
 
 func (x *ListSensitiveEntryReply_Details) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[254]
+	mi := &file_ada_proto_msgTypes[252]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -16116,7 +16014,7 @@ func (x *ListSensitiveEntryReply_Details) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListSensitiveEntryReply_Details.ProtoReflect.Descriptor instead.
 func (*ListSensitiveEntryReply_Details) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{116, 0}
+	return file_ada_proto_rawDescGZIP(), []int{114, 0}
 }
 
 func (x *ListSensitiveEntryReply_Details) GetID() string {
@@ -16181,7 +16079,7 @@ type ListThreatWhitelistReply_Details struct {
 func (x *ListThreatWhitelistReply_Details) Reset() {
 	*x = ListThreatWhitelistReply_Details{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[255]
+		mi := &file_ada_proto_msgTypes[253]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -16194,7 +16092,7 @@ func (x *ListThreatWhitelistReply_Details) String() string {
 func (*ListThreatWhitelistReply_Details) ProtoMessage() {}
 
 func (x *ListThreatWhitelistReply_Details) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[255]
+	mi := &file_ada_proto_msgTypes[253]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -16207,7 +16105,7 @@ func (x *ListThreatWhitelistReply_Details) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListThreatWhitelistReply_Details.ProtoReflect.Descriptor instead.
 func (*ListThreatWhitelistReply_Details) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{124, 0}
+	return file_ada_proto_rawDescGZIP(), []int{122, 0}
 }
 
 func (x *ListThreatWhitelistReply_Details) GetID() string {
@@ -16291,7 +16189,7 @@ type ListThreatWhitelistReply_DetailsRuleInfo struct {
 func (x *ListThreatWhitelistReply_DetailsRuleInfo) Reset() {
 	*x = ListThreatWhitelistReply_DetailsRuleInfo{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[256]
+		mi := &file_ada_proto_msgTypes[254]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -16304,7 +16202,7 @@ func (x *ListThreatWhitelistReply_DetailsRuleInfo) String() string {
 func (*ListThreatWhitelistReply_DetailsRuleInfo) ProtoMessage() {}
 
 func (x *ListThreatWhitelistReply_DetailsRuleInfo) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[256]
+	mi := &file_ada_proto_msgTypes[254]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -16317,7 +16215,7 @@ func (x *ListThreatWhitelistReply_DetailsRuleInfo) ProtoReflect() protoreflect.M
 
 // Deprecated: Use ListThreatWhitelistReply_DetailsRuleInfo.ProtoReflect.Descriptor instead.
 func (*ListThreatWhitelistReply_DetailsRuleInfo) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{124, 0, 0}
+	return file_ada_proto_rawDescGZIP(), []int{122, 0, 0}
 }
 
 func (x *ListThreatWhitelistReply_DetailsRuleInfo) GetInfo() map[string]string {
@@ -16338,7 +16236,7 @@ type AddThreatWhitelistReqRuleInfo struct {
 func (x *AddThreatWhitelistReqRuleInfo) Reset() {
 	*x = AddThreatWhitelistReqRuleInfo{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[258]
+		mi := &file_ada_proto_msgTypes[256]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -16351,7 +16249,7 @@ func (x *AddThreatWhitelistReqRuleInfo) String() string {
 func (*AddThreatWhitelistReqRuleInfo) ProtoMessage() {}
 
 func (x *AddThreatWhitelistReqRuleInfo) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[258]
+	mi := &file_ada_proto_msgTypes[256]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -16364,7 +16262,7 @@ func (x *AddThreatWhitelistReqRuleInfo) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AddThreatWhitelistReqRuleInfo.ProtoReflect.Descriptor instead.
 func (*AddThreatWhitelistReqRuleInfo) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{127, 0}
+	return file_ada_proto_rawDescGZIP(), []int{125, 0}
 }
 
 func (x *AddThreatWhitelistReqRuleInfo) GetInfo() map[string]string {
@@ -16385,7 +16283,7 @@ type UpdateThreatWhitelistReqRuleInfo struct {
 func (x *UpdateThreatWhitelistReqRuleInfo) Reset() {
 	*x = UpdateThreatWhitelistReqRuleInfo{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[260]
+		mi := &file_ada_proto_msgTypes[258]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -16398,7 +16296,7 @@ func (x *UpdateThreatWhitelistReqRuleInfo) String() string {
 func (*UpdateThreatWhitelistReqRuleInfo) ProtoMessage() {}
 
 func (x *UpdateThreatWhitelistReqRuleInfo) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[260]
+	mi := &file_ada_proto_msgTypes[258]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -16411,7 +16309,7 @@ func (x *UpdateThreatWhitelistReqRuleInfo) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateThreatWhitelistReqRuleInfo.ProtoReflect.Descriptor instead.
 func (*UpdateThreatWhitelistReqRuleInfo) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{129, 0}
+	return file_ada_proto_rawDescGZIP(), []int{127, 0}
 }
 
 func (x *UpdateThreatWhitelistReqRuleInfo) GetInfo() map[string]string {
@@ -16432,7 +16330,7 @@ type ListThreatBlockReply_Results struct {
 func (x *ListThreatBlockReply_Results) Reset() {
 	*x = ListThreatBlockReply_Results{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[262]
+		mi := &file_ada_proto_msgTypes[260]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -16445,7 +16343,7 @@ func (x *ListThreatBlockReply_Results) String() string {
 func (*ListThreatBlockReply_Results) ProtoMessage() {}
 
 func (x *ListThreatBlockReply_Results) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[262]
+	mi := &file_ada_proto_msgTypes[260]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -16458,7 +16356,7 @@ func (x *ListThreatBlockReply_Results) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListThreatBlockReply_Results.ProtoReflect.Descriptor instead.
 func (*ListThreatBlockReply_Results) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{134, 0}
+	return file_ada_proto_rawDescGZIP(), []int{132, 0}
 }
 
 func (x *ListThreatBlockReply_Results) GetInfo() map[string]string {
@@ -16490,7 +16388,7 @@ type ListThreatBlockReply_Details struct {
 func (x *ListThreatBlockReply_Details) Reset() {
 	*x = ListThreatBlockReply_Details{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[263]
+		mi := &file_ada_proto_msgTypes[261]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -16503,7 +16401,7 @@ func (x *ListThreatBlockReply_Details) String() string {
 func (*ListThreatBlockReply_Details) ProtoMessage() {}
 
 func (x *ListThreatBlockReply_Details) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[263]
+	mi := &file_ada_proto_msgTypes[261]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -16516,7 +16414,7 @@ func (x *ListThreatBlockReply_Details) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListThreatBlockReply_Details.ProtoReflect.Descriptor instead.
 func (*ListThreatBlockReply_Details) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{134, 1}
+	return file_ada_proto_rawDescGZIP(), []int{132, 1}
 }
 
 func (x *ListThreatBlockReply_Details) GetID() string {
@@ -16617,7 +16515,7 @@ type ScanRiskStatsReply_Details struct {
 func (x *ScanRiskStatsReply_Details) Reset() {
 	*x = ScanRiskStatsReply_Details{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[265]
+		mi := &file_ada_proto_msgTypes[263]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -16630,7 +16528,7 @@ func (x *ScanRiskStatsReply_Details) String() string {
 func (*ScanRiskStatsReply_Details) ProtoMessage() {}
 
 func (x *ScanRiskStatsReply_Details) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[265]
+	mi := &file_ada_proto_msgTypes[263]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -16643,7 +16541,7 @@ func (x *ScanRiskStatsReply_Details) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ScanRiskStatsReply_Details.ProtoReflect.Descriptor instead.
 func (*ScanRiskStatsReply_Details) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{142, 0}
+	return file_ada_proto_rawDescGZIP(), []int{140, 0}
 }
 
 func (x *ScanRiskStatsReply_Details) GetSubType() string {
@@ -16692,7 +16590,7 @@ type ListBaselineReply_Details struct {
 func (x *ListBaselineReply_Details) Reset() {
 	*x = ListBaselineReply_Details{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[266]
+		mi := &file_ada_proto_msgTypes[264]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -16705,7 +16603,7 @@ func (x *ListBaselineReply_Details) String() string {
 func (*ListBaselineReply_Details) ProtoMessage() {}
 
 func (x *ListBaselineReply_Details) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[266]
+	mi := &file_ada_proto_msgTypes[264]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -16718,7 +16616,7 @@ func (x *ListBaselineReply_Details) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListBaselineReply_Details.ProtoReflect.Descriptor instead.
 func (*ListBaselineReply_Details) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{144, 0}
+	return file_ada_proto_rawDescGZIP(), []int{142, 0}
 }
 
 func (x *ListBaselineReply_Details) GetID() string {
@@ -16788,7 +16686,7 @@ type GetBaselineReplyEntryInfo struct {
 func (x *GetBaselineReplyEntryInfo) Reset() {
 	*x = GetBaselineReplyEntryInfo{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[267]
+		mi := &file_ada_proto_msgTypes[265]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -16801,7 +16699,7 @@ func (x *GetBaselineReplyEntryInfo) String() string {
 func (*GetBaselineReplyEntryInfo) ProtoMessage() {}
 
 func (x *GetBaselineReplyEntryInfo) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[267]
+	mi := &file_ada_proto_msgTypes[265]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -16814,7 +16712,7 @@ func (x *GetBaselineReplyEntryInfo) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetBaselineReplyEntryInfo.ProtoReflect.Descriptor instead.
 func (*GetBaselineReplyEntryInfo) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{146, 0}
+	return file_ada_proto_rawDescGZIP(), []int{144, 0}
 }
 
 func (x *GetBaselineReplyEntryInfo) GetInfo() map[string]string {
@@ -16845,7 +16743,7 @@ type ListLeakReply_Details struct {
 func (x *ListLeakReply_Details) Reset() {
 	*x = ListLeakReply_Details{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[269]
+		mi := &file_ada_proto_msgTypes[267]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -16858,7 +16756,7 @@ func (x *ListLeakReply_Details) String() string {
 func (*ListLeakReply_Details) ProtoMessage() {}
 
 func (x *ListLeakReply_Details) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[269]
+	mi := &file_ada_proto_msgTypes[267]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -16871,7 +16769,7 @@ func (x *ListLeakReply_Details) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListLeakReply_Details.ProtoReflect.Descriptor instead.
 func (*ListLeakReply_Details) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{148, 0}
+	return file_ada_proto_rawDescGZIP(), []int{146, 0}
 }
 
 func (x *ListLeakReply_Details) GetID() string {
@@ -16970,7 +16868,7 @@ type ListWeakPwdReply_Details struct {
 func (x *ListWeakPwdReply_Details) Reset() {
 	*x = ListWeakPwdReply_Details{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[270]
+		mi := &file_ada_proto_msgTypes[268]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -16983,7 +16881,7 @@ func (x *ListWeakPwdReply_Details) String() string {
 func (*ListWeakPwdReply_Details) ProtoMessage() {}
 
 func (x *ListWeakPwdReply_Details) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[270]
+	mi := &file_ada_proto_msgTypes[268]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -16996,7 +16894,7 @@ func (x *ListWeakPwdReply_Details) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListWeakPwdReply_Details.ProtoReflect.Descriptor instead.
 func (*ListWeakPwdReply_Details) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{150, 0}
+	return file_ada_proto_rawDescGZIP(), []int{148, 0}
 }
 
 func (x *ListWeakPwdReply_Details) GetID() int32 {
@@ -17081,7 +16979,7 @@ type ListScanTaskReply_Details struct {
 func (x *ListScanTaskReply_Details) Reset() {
 	*x = ListScanTaskReply_Details{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[271]
+		mi := &file_ada_proto_msgTypes[269]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -17094,7 +16992,7 @@ func (x *ListScanTaskReply_Details) String() string {
 func (*ListScanTaskReply_Details) ProtoMessage() {}
 
 func (x *ListScanTaskReply_Details) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[271]
+	mi := &file_ada_proto_msgTypes[269]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -17107,7 +17005,7 @@ func (x *ListScanTaskReply_Details) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListScanTaskReply_Details.ProtoReflect.Descriptor instead.
 func (*ListScanTaskReply_Details) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{152, 0}
+	return file_ada_proto_rawDescGZIP(), []int{150, 0}
 }
 
 func (x *ListScanTaskReply_Details) GetID() string {
@@ -17193,7 +17091,7 @@ type GetScanTaskReply_Details struct {
 func (x *GetScanTaskReply_Details) Reset() {
 	*x = GetScanTaskReply_Details{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[272]
+		mi := &file_ada_proto_msgTypes[270]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -17206,7 +17104,7 @@ func (x *GetScanTaskReply_Details) String() string {
 func (*GetScanTaskReply_Details) ProtoMessage() {}
 
 func (x *GetScanTaskReply_Details) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[272]
+	mi := &file_ada_proto_msgTypes[270]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -17219,7 +17117,7 @@ func (x *GetScanTaskReply_Details) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetScanTaskReply_Details.ProtoReflect.Descriptor instead.
 func (*GetScanTaskReply_Details) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{154, 0}
+	return file_ada_proto_rawDescGZIP(), []int{152, 0}
 }
 
 func (x *GetScanTaskReply_Details) GetID() string {
@@ -17304,7 +17202,7 @@ type GetScanTmplNamesReplyTmplNames struct {
 func (x *GetScanTmplNamesReplyTmplNames) Reset() {
 	*x = GetScanTmplNamesReplyTmplNames{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[276]
+		mi := &file_ada_proto_msgTypes[274]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -17317,7 +17215,7 @@ func (x *GetScanTmplNamesReplyTmplNames) String() string {
 func (*GetScanTmplNamesReplyTmplNames) ProtoMessage() {}
 
 func (x *GetScanTmplNamesReplyTmplNames) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[276]
+	mi := &file_ada_proto_msgTypes[274]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -17330,7 +17228,7 @@ func (x *GetScanTmplNamesReplyTmplNames) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetScanTmplNamesReplyTmplNames.ProtoReflect.Descriptor instead.
 func (*GetScanTmplNamesReplyTmplNames) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{169, 0}
+	return file_ada_proto_rawDescGZIP(), []int{167, 0}
 }
 
 func (x *GetScanTmplNamesReplyTmplNames) GetID() string {
@@ -17362,7 +17260,7 @@ type ListScanTmplReply_Details struct {
 func (x *ListScanTmplReply_Details) Reset() {
 	*x = ListScanTmplReply_Details{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[278]
+		mi := &file_ada_proto_msgTypes[276]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -17375,7 +17273,7 @@ func (x *ListScanTmplReply_Details) String() string {
 func (*ListScanTmplReply_Details) ProtoMessage() {}
 
 func (x *ListScanTmplReply_Details) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[278]
+	mi := &file_ada_proto_msgTypes[276]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -17388,7 +17286,7 @@ func (x *ListScanTmplReply_Details) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListScanTmplReply_Details.ProtoReflect.Descriptor instead.
 func (*ListScanTmplReply_Details) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{173, 0}
+	return file_ada_proto_rawDescGZIP(), []int{171, 0}
 }
 
 func (x *ListScanTmplReply_Details) GetID() string {
@@ -17439,7 +17337,7 @@ type DashboardLogStatsReplyLogStatsList struct {
 func (x *DashboardLogStatsReplyLogStatsList) Reset() {
 	*x = DashboardLogStatsReplyLogStatsList{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[286]
+		mi := &file_ada_proto_msgTypes[284]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -17452,7 +17350,7 @@ func (x *DashboardLogStatsReplyLogStatsList) String() string {
 func (*DashboardLogStatsReplyLogStatsList) ProtoMessage() {}
 
 func (x *DashboardLogStatsReplyLogStatsList) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[286]
+	mi := &file_ada_proto_msgTypes[284]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -17465,7 +17363,7 @@ func (x *DashboardLogStatsReplyLogStatsList) ProtoReflect() protoreflect.Message
 
 // Deprecated: Use DashboardLogStatsReplyLogStatsList.ProtoReflect.Descriptor instead.
 func (*DashboardLogStatsReplyLogStatsList) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{191, 0}
+	return file_ada_proto_rawDescGZIP(), []int{189, 0}
 }
 
 func (x *DashboardLogStatsReplyLogStatsList) GetTs() int64 {
@@ -17502,7 +17400,7 @@ type AttackFlowReply_Field struct {
 func (x *AttackFlowReply_Field) Reset() {
 	*x = AttackFlowReply_Field{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ada_proto_msgTypes[287]
+		mi := &file_ada_proto_msgTypes[285]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -17515,7 +17413,7 @@ func (x *AttackFlowReply_Field) String() string {
 func (*AttackFlowReply_Field) ProtoMessage() {}
 
 func (x *AttackFlowReply_Field) ProtoReflect() protoreflect.Message {
-	mi := &file_ada_proto_msgTypes[287]
+	mi := &file_ada_proto_msgTypes[285]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -17528,7 +17426,7 @@ func (x *AttackFlowReply_Field) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AttackFlowReply_Field.ProtoReflect.Descriptor instead.
 func (*AttackFlowReply_Field) Descriptor() ([]byte, []int) {
-	return file_ada_proto_rawDescGZIP(), []int{193, 0}
+	return file_ada_proto_rawDescGZIP(), []int{191, 0}
 }
 
 func (x *AttackFlowReply_Field) GetObj() string {
@@ -17773,16 +17671,7 @@ var file_ada_proto_rawDesc = []byte{
 	0x52, 0x0b, 0x6e, 0x65, 0x77, 0x50, 0x61, 0x73, 0x73, 0x77, 0x6f, 0x72, 0x64, 0x22, 0x2c, 0x0a,
 	0x12, 0x52, 0x65, 0x73, 0x65, 0x74, 0x50, 0x61, 0x73, 0x73, 0x77, 0x6f, 0x72, 0x64, 0x52, 0x65,
 	0x70, 0x6c, 0x79, 0x12, 0x16, 0x0a, 0x06, 0x72, 0x65, 0x73, 0x75, 0x6c, 0x74, 0x18, 0x02, 0x20,
-	0x01, 0x28, 0x09, 0x52, 0x06, 0x72, 0x65, 0x73, 0x75, 0x6c, 0x74, 0x22, 0x2f, 0x0a, 0x11, 0x47,
-	0x65, 0x74, 0x50, 0x77, 0x64, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x54, 0x6d, 0x52, 0x65, 0x71,
-	0x12, 0x1a, 0x0a, 0x08, 0x75, 0x73, 0x65, 0x72, 0x4e, 0x61, 0x6d, 0x65, 0x18, 0x01, 0x20, 0x01,
-	0x28, 0x09, 0x52, 0x08, 0x75, 0x73, 0x65, 0x72, 0x4e, 0x61, 0x6d, 0x65, 0x22, 0x5d, 0x0a, 0x13,
-	0x47, 0x65, 0x74, 0x50, 0x77, 0x64, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x54, 0x6d, 0x52, 0x65,
-	0x70, 0x6c, 0x79, 0x12, 0x24, 0x0a, 0x0d, 0x6e, 0x65, 0x65, 0x64, 0x43, 0x68, 0x61, 0x6e, 0x67,
-	0x65, 0x50, 0x77, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x08, 0x52, 0x0d, 0x6e, 0x65, 0x65, 0x64,
-	0x43, 0x68, 0x61, 0x6e, 0x67, 0x65, 0x50, 0x77, 0x64, 0x12, 0x20, 0x0a, 0x0b, 0x70, 0x77, 0x64,
-	0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x54, 0x6d, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x0b,
-	0x70, 0x77, 0x64, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x54, 0x6d, 0x22, 0xbb, 0x01, 0x0a, 0x0d,
+	0x01, 0x28, 0x09, 0x52, 0x06, 0x72, 0x65, 0x73, 0x75, 0x6c, 0x74, 0x22, 0xbb, 0x01, 0x0a, 0x0d,
 	0x4c, 0x69, 0x73, 0x74, 0x44, 0x6f, 0x6d, 0x61, 0x69, 0x6e, 0x52, 0x65, 0x71, 0x12, 0x20, 0x0a,
 	0x07, 0x70, 0x61, 0x67, 0x65, 0x49, 0x64, 0x78, 0x18, 0x01, 0x20, 0x01, 0x28, 0x05, 0x42, 0x06,
 	0xe2, 0xdf, 0x1f, 0x02, 0x10, 0x00, 0x52, 0x07, 0x70, 0x61, 0x67, 0x65, 0x49, 0x64, 0x78, 0x12,
@@ -19859,7 +19748,7 @@ var file_ada_proto_rawDesc = []byte{
 	0x52, 0x02, 0x49, 0x44, 0x22, 0x31, 0x0a, 0x17, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x41, 0x63,
 	0x74, 0x69, 0x76, 0x69, 0x74, 0x79, 0x52, 0x75, 0x6c, 0x65, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x12,
 	0x16, 0x0a, 0x06, 0x72, 0x65, 0x73, 0x75, 0x6c, 0x74, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52,
-	0x06, 0x72, 0x65, 0x73, 0x75, 0x6c, 0x74, 0x32, 0xb7, 0x39, 0x0a, 0x03, 0x41, 0x44, 0x41, 0x12,
+	0x06, 0x72, 0x65, 0x73, 0x75, 0x6c, 0x74, 0x32, 0xf1, 0x38, 0x0a, 0x03, 0x41, 0x44, 0x41, 0x12,
 	0x29, 0x0a, 0x05, 0x4c, 0x6f, 0x67, 0x69, 0x6e, 0x12, 0x0d, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x4c,
 	0x6f, 0x67, 0x69, 0x6e, 0x52, 0x65, 0x71, 0x1a, 0x0f, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x4c, 0x6f,
 	0x67, 0x69, 0x6e, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x2c, 0x0a, 0x06, 0x4c, 0x6f,
@@ -19906,421 +19795,416 @@ var file_ada_proto_rawDesc = []byte{
 	0x6f, 0x72, 0x64, 0x12, 0x15, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x52, 0x65, 0x73, 0x65, 0x74, 0x50,
 	0x61, 0x73, 0x73, 0x77, 0x6f, 0x72, 0x64, 0x52, 0x65, 0x71, 0x1a, 0x17, 0x2e, 0x61, 0x64, 0x61,
 	0x2e, 0x52, 0x65, 0x73, 0x65, 0x74, 0x50, 0x61, 0x73, 0x73, 0x77, 0x6f, 0x72, 0x64, 0x52, 0x65,
-	0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x44, 0x0a, 0x0e, 0x47, 0x65, 0x74, 0x50, 0x77, 0x64, 0x55,
-	0x70, 0x64, 0x61, 0x74, 0x65, 0x54, 0x6d, 0x12, 0x16, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x47, 0x65,
-	0x74, 0x50, 0x77, 0x64, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x54, 0x6d, 0x52, 0x65, 0x71, 0x1a,
-	0x18, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x47, 0x65, 0x74, 0x50, 0x77, 0x64, 0x55, 0x70, 0x64, 0x61,
-	0x74, 0x65, 0x54, 0x6d, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x38, 0x0a, 0x0a, 0x4c,
-	0x69, 0x73, 0x74, 0x44, 0x6f, 0x6d, 0x61, 0x69, 0x6e, 0x12, 0x12, 0x2e, 0x61, 0x64, 0x61, 0x2e,
-	0x4c, 0x69, 0x73, 0x74, 0x44, 0x6f, 0x6d, 0x61, 0x69, 0x6e, 0x52, 0x65, 0x71, 0x1a, 0x14, 0x2e,
-	0x61, 0x64, 0x61, 0x2e, 0x4c, 0x69, 0x73, 0x74, 0x44, 0x6f, 0x6d, 0x61, 0x69, 0x6e, 0x52, 0x65,
-	0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x35, 0x0a, 0x09, 0x41, 0x64, 0x64, 0x44, 0x6f, 0x6d, 0x61,
-	0x69, 0x6e, 0x12, 0x11, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x41, 0x64, 0x64, 0x44, 0x6f, 0x6d, 0x61,
-	0x69, 0x6e, 0x52, 0x65, 0x71, 0x1a, 0x13, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x41, 0x64, 0x64, 0x44,
-	0x6f, 0x6d, 0x61, 0x69, 0x6e, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x38, 0x0a, 0x0a,
-	0x54, 0x65, 0x73, 0x74, 0x44, 0x6f, 0x6d, 0x61, 0x69, 0x6e, 0x12, 0x12, 0x2e, 0x61, 0x64, 0x61,
-	0x2e, 0x54, 0x65, 0x73, 0x74, 0x44, 0x6f, 0x6d, 0x61, 0x69, 0x6e, 0x52, 0x65, 0x71, 0x1a, 0x14,
-	0x2e, 0x61, 0x64, 0x61, 0x2e, 0x54, 0x65, 0x73, 0x74, 0x44, 0x6f, 0x6d, 0x61, 0x69, 0x6e, 0x52,
+	0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x38, 0x0a, 0x0a, 0x4c, 0x69, 0x73, 0x74, 0x44, 0x6f, 0x6d,
+	0x61, 0x69, 0x6e, 0x12, 0x12, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x4c, 0x69, 0x73, 0x74, 0x44, 0x6f,
+	0x6d, 0x61, 0x69, 0x6e, 0x52, 0x65, 0x71, 0x1a, 0x14, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x4c, 0x69,
+	0x73, 0x74, 0x44, 0x6f, 0x6d, 0x61, 0x69, 0x6e, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12,
+	0x35, 0x0a, 0x09, 0x41, 0x64, 0x64, 0x44, 0x6f, 0x6d, 0x61, 0x69, 0x6e, 0x12, 0x11, 0x2e, 0x61,
+	0x64, 0x61, 0x2e, 0x41, 0x64, 0x64, 0x44, 0x6f, 0x6d, 0x61, 0x69, 0x6e, 0x52, 0x65, 0x71, 0x1a,
+	0x13, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x41, 0x64, 0x64, 0x44, 0x6f, 0x6d, 0x61, 0x69, 0x6e, 0x52,
+	0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x38, 0x0a, 0x0a, 0x54, 0x65, 0x73, 0x74, 0x44, 0x6f,
+	0x6d, 0x61, 0x69, 0x6e, 0x12, 0x12, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x54, 0x65, 0x73, 0x74, 0x44,
+	0x6f, 0x6d, 0x61, 0x69, 0x6e, 0x52, 0x65, 0x71, 0x1a, 0x14, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x54,
+	0x65, 0x73, 0x74, 0x44, 0x6f, 0x6d, 0x61, 0x69, 0x6e, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00,
+	0x12, 0x3e, 0x0a, 0x0c, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x44, 0x6f, 0x6d, 0x61, 0x69, 0x6e,
+	0x12, 0x14, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x44, 0x6f, 0x6d,
+	0x61, 0x69, 0x6e, 0x52, 0x65, 0x71, 0x1a, 0x16, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x55, 0x70, 0x64,
+	0x61, 0x74, 0x65, 0x44, 0x6f, 0x6d, 0x61, 0x69, 0x6e, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00,
+	0x12, 0x3e, 0x0a, 0x0c, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x44, 0x6f, 0x6d, 0x61, 0x69, 0x6e,
+	0x12, 0x14, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x44, 0x6f, 0x6d,
+	0x61, 0x69, 0x6e, 0x52, 0x65, 0x71, 0x1a, 0x16, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x44, 0x65, 0x6c,
+	0x65, 0x74, 0x65, 0x44, 0x6f, 0x6d, 0x61, 0x69, 0x6e, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00,
+	0x12, 0x4a, 0x0a, 0x10, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x44, 0x6f, 0x6d, 0x61, 0x69, 0x6e,
+	0x44, 0x61, 0x74, 0x61, 0x12, 0x18, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x55, 0x70, 0x64, 0x61, 0x74,
+	0x65, 0x44, 0x6f, 0x6d, 0x61, 0x69, 0x6e, 0x44, 0x61, 0x74, 0x61, 0x52, 0x65, 0x71, 0x1a, 0x1a,
+	0x2e, 0x61, 0x64, 0x61, 0x2e, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x44, 0x6f, 0x6d, 0x61, 0x69,
+	0x6e, 0x44, 0x61, 0x74, 0x61, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x3e, 0x0a, 0x0c,
+	0x44, 0x65, 0x70, 0x6c, 0x6f, 0x79, 0x53, 0x65, 0x6e, 0x73, 0x6f, 0x72, 0x12, 0x14, 0x2e, 0x61,
+	0x64, 0x61, 0x2e, 0x44, 0x65, 0x70, 0x6c, 0x6f, 0x79, 0x53, 0x65, 0x6e, 0x73, 0x6f, 0x72, 0x52,
+	0x65, 0x71, 0x1a, 0x16, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x44, 0x65, 0x70, 0x6c, 0x6f, 0x79, 0x53,
+	0x65, 0x6e, 0x73, 0x6f, 0x72, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x38, 0x0a, 0x0a,
+	0x4c, 0x69, 0x73, 0x74, 0x53, 0x65, 0x6e, 0x73, 0x6f, 0x72, 0x12, 0x12, 0x2e, 0x61, 0x64, 0x61,
+	0x2e, 0x4c, 0x69, 0x73, 0x74, 0x53, 0x65, 0x6e, 0x73, 0x6f, 0x72, 0x52, 0x65, 0x71, 0x1a, 0x14,
+	0x2e, 0x61, 0x64, 0x61, 0x2e, 0x4c, 0x69, 0x73, 0x74, 0x53, 0x65, 0x6e, 0x73, 0x6f, 0x72, 0x52,
 	0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x3e, 0x0a, 0x0c, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65,
-	0x44, 0x6f, 0x6d, 0x61, 0x69, 0x6e, 0x12, 0x14, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x55, 0x70, 0x64,
-	0x61, 0x74, 0x65, 0x44, 0x6f, 0x6d, 0x61, 0x69, 0x6e, 0x52, 0x65, 0x71, 0x1a, 0x16, 0x2e, 0x61,
-	0x64, 0x61, 0x2e, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x44, 0x6f, 0x6d, 0x61, 0x69, 0x6e, 0x52,
-	0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x3e, 0x0a, 0x0c, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65,
-	0x44, 0x6f, 0x6d, 0x61, 0x69, 0x6e, 0x12, 0x14, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x44, 0x65, 0x6c,
-	0x65, 0x74, 0x65, 0x44, 0x6f, 0x6d, 0x61, 0x69, 0x6e, 0x52, 0x65, 0x71, 0x1a, 0x16, 0x2e, 0x61,
-	0x64, 0x61, 0x2e, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x44, 0x6f, 0x6d, 0x61, 0x69, 0x6e, 0x52,
-	0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x4a, 0x0a, 0x10, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65,
-	0x44, 0x6f, 0x6d, 0x61, 0x69, 0x6e, 0x44, 0x61, 0x74, 0x61, 0x12, 0x18, 0x2e, 0x61, 0x64, 0x61,
-	0x2e, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x44, 0x6f, 0x6d, 0x61, 0x69, 0x6e, 0x44, 0x61, 0x74,
-	0x61, 0x52, 0x65, 0x71, 0x1a, 0x1a, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x55, 0x70, 0x64, 0x61, 0x74,
-	0x65, 0x44, 0x6f, 0x6d, 0x61, 0x69, 0x6e, 0x44, 0x61, 0x74, 0x61, 0x52, 0x65, 0x70, 0x6c, 0x79,
-	0x22, 0x00, 0x12, 0x3e, 0x0a, 0x0c, 0x44, 0x65, 0x70, 0x6c, 0x6f, 0x79, 0x53, 0x65, 0x6e, 0x73,
-	0x6f, 0x72, 0x12, 0x14, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x44, 0x65, 0x70, 0x6c, 0x6f, 0x79, 0x53,
-	0x65, 0x6e, 0x73, 0x6f, 0x72, 0x52, 0x65, 0x71, 0x1a, 0x16, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x44,
-	0x65, 0x70, 0x6c, 0x6f, 0x79, 0x53, 0x65, 0x6e, 0x73, 0x6f, 0x72, 0x52, 0x65, 0x70, 0x6c, 0x79,
-	0x22, 0x00, 0x12, 0x38, 0x0a, 0x0a, 0x4c, 0x69, 0x73, 0x74, 0x53, 0x65, 0x6e, 0x73, 0x6f, 0x72,
-	0x12, 0x12, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x4c, 0x69, 0x73, 0x74, 0x53, 0x65, 0x6e, 0x73, 0x6f,
-	0x72, 0x52, 0x65, 0x71, 0x1a, 0x14, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x4c, 0x69, 0x73, 0x74, 0x53,
-	0x65, 0x6e, 0x73, 0x6f, 0x72, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x3e, 0x0a, 0x0c,
-	0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x53, 0x65, 0x6e, 0x73, 0x6f, 0x72, 0x12, 0x14, 0x2e, 0x61,
+	0x53, 0x65, 0x6e, 0x73, 0x6f, 0x72, 0x12, 0x14, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x55, 0x70, 0x64,
+	0x61, 0x74, 0x65, 0x53, 0x65, 0x6e, 0x73, 0x6f, 0x72, 0x52, 0x65, 0x71, 0x1a, 0x16, 0x2e, 0x61,
 	0x64, 0x61, 0x2e, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x53, 0x65, 0x6e, 0x73, 0x6f, 0x72, 0x52,
-	0x65, 0x71, 0x1a, 0x16, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x53,
-	0x65, 0x6e, 0x73, 0x6f, 0x72, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x44, 0x0a, 0x0e,
-	0x44, 0x6f, 0x77, 0x6e, 0x6c, 0x6f, 0x61, 0x64, 0x53, 0x65, 0x6e, 0x73, 0x6f, 0x72, 0x12, 0x16,
-	0x2e, 0x61, 0x64, 0x61, 0x2e, 0x44, 0x6f, 0x77, 0x6e, 0x6c, 0x6f, 0x61, 0x64, 0x53, 0x65, 0x6e,
-	0x73, 0x6f, 0x72, 0x52, 0x65, 0x71, 0x1a, 0x18, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x44, 0x6f, 0x77,
-	0x6e, 0x6c, 0x6f, 0x61, 0x64, 0x53, 0x65, 0x6e, 0x73, 0x6f, 0x72, 0x52, 0x65, 0x70, 0x6c, 0x79,
-	0x22, 0x00, 0x12, 0x35, 0x0a, 0x09, 0x43, 0x6d, 0x64, 0x53, 0x65, 0x6e, 0x73, 0x6f, 0x72, 0x12,
-	0x11, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x43, 0x6d, 0x64, 0x53, 0x65, 0x6e, 0x73, 0x6f, 0x72, 0x52,
-	0x65, 0x71, 0x1a, 0x13, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x43, 0x6d, 0x64, 0x53, 0x65, 0x6e, 0x73,
-	0x6f, 0x72, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x53, 0x0a, 0x13, 0x55, 0x70, 0x64,
-	0x61, 0x74, 0x65, 0x53, 0x65, 0x6e, 0x73, 0x6f, 0x72, 0x56, 0x65, 0x72, 0x73, 0x69, 0x6f, 0x6e,
-	0x12, 0x1b, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x53, 0x65, 0x6e,
-	0x73, 0x6f, 0x72, 0x56, 0x65, 0x72, 0x73, 0x69, 0x6f, 0x6e, 0x52, 0x65, 0x71, 0x1a, 0x1d, 0x2e,
-	0x61, 0x64, 0x61, 0x2e, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x53, 0x65, 0x6e, 0x73, 0x6f, 0x72,
-	0x56, 0x65, 0x72, 0x73, 0x69, 0x6f, 0x6e, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x41,
-	0x0a, 0x0d, 0x47, 0x65, 0x74, 0x53, 0x79, 0x73, 0x74, 0x65, 0x6d, 0x49, 0x6e, 0x66, 0x6f, 0x12,
-	0x15, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x47, 0x65, 0x74, 0x53, 0x79, 0x73, 0x74, 0x65, 0x6d, 0x49,
-	0x6e, 0x66, 0x6f, 0x52, 0x65, 0x71, 0x1a, 0x17, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x47, 0x65, 0x74,
-	0x53, 0x79, 0x73, 0x74, 0x65, 0x6d, 0x49, 0x6e, 0x66, 0x6f, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22,
-	0x00, 0x12, 0x41, 0x0a, 0x0d, 0x47, 0x65, 0x74, 0x53, 0x79, 0x73, 0x74, 0x65, 0x6d, 0x49, 0x63,
-	0x6f, 0x6e, 0x12, 0x15, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x47, 0x65, 0x74, 0x53, 0x79, 0x73, 0x74,
-	0x65, 0x6d, 0x49, 0x63, 0x6f, 0x6e, 0x52, 0x65, 0x71, 0x1a, 0x17, 0x2e, 0x61, 0x64, 0x61, 0x2e,
-	0x47, 0x65, 0x74, 0x53, 0x79, 0x73, 0x74, 0x65, 0x6d, 0x49, 0x63, 0x6f, 0x6e, 0x52, 0x65, 0x70,
-	0x6c, 0x79, 0x22, 0x00, 0x12, 0x56, 0x0a, 0x14, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x53, 0x79,
-	0x73, 0x74, 0x65, 0x6d, 0x4c, 0x61, 0x6e, 0x67, 0x75, 0x61, 0x67, 0x65, 0x12, 0x1c, 0x2e, 0x61,
-	0x64, 0x61, 0x2e, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x53, 0x79, 0x73, 0x74, 0x65, 0x6d, 0x4c,
-	0x61, 0x6e, 0x67, 0x75, 0x61, 0x67, 0x65, 0x52, 0x65, 0x71, 0x1a, 0x1e, 0x2e, 0x61, 0x64, 0x61,
-	0x2e, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x53, 0x79, 0x73, 0x74, 0x65, 0x6d, 0x4c, 0x61, 0x6e,
-	0x67, 0x75, 0x61, 0x67, 0x65, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x47, 0x0a, 0x0f,
-	0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x53, 0x79, 0x73, 0x74, 0x65, 0x6d, 0x43, 0x66, 0x67, 0x12,
-	0x17, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x53, 0x79, 0x73, 0x74,
-	0x65, 0x6d, 0x43, 0x66, 0x67, 0x52, 0x65, 0x71, 0x1a, 0x19, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x55,
-	0x70, 0x64, 0x61, 0x74, 0x65, 0x53, 0x79, 0x73, 0x74, 0x65, 0x6d, 0x43, 0x66, 0x67, 0x52, 0x65,
-	0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x44, 0x0a, 0x0e, 0x47, 0x65, 0x74, 0x53, 0x79, 0x73, 0x74,
-	0x65, 0x6d, 0x53, 0x74, 0x61, 0x74, 0x73, 0x12, 0x16, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x47, 0x65,
-	0x74, 0x53, 0x79, 0x73, 0x74, 0x65, 0x6d, 0x53, 0x74, 0x61, 0x74, 0x73, 0x52, 0x65, 0x71, 0x1a,
-	0x18, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x47, 0x65, 0x74, 0x53, 0x79, 0x73, 0x74, 0x65, 0x6d, 0x53,
-	0x74, 0x61, 0x74, 0x73, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x4d, 0x0a, 0x11, 0x53,
-	0x65, 0x74, 0x53, 0x79, 0x73, 0x74, 0x65, 0x6d, 0x53, 0x74, 0x61, 0x74, 0x73, 0x43, 0x66, 0x67,
-	0x12, 0x19, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x53, 0x65, 0x74, 0x53, 0x79, 0x73, 0x74, 0x65, 0x6d,
-	0x53, 0x74, 0x61, 0x74, 0x73, 0x43, 0x66, 0x67, 0x52, 0x65, 0x71, 0x1a, 0x1b, 0x2e, 0x61, 0x64,
-	0x61, 0x2e, 0x53, 0x65, 0x74, 0x53, 0x79, 0x73, 0x74, 0x65, 0x6d, 0x53, 0x74, 0x61, 0x74, 0x73,
-	0x43, 0x66, 0x67, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x38, 0x0a, 0x0a, 0x47, 0x65,
-	0x74, 0x4c, 0x69, 0x63, 0x65, 0x6e, 0x73, 0x65, 0x12, 0x12, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x47,
-	0x65, 0x74, 0x4c, 0x69, 0x63, 0x65, 0x6e, 0x73, 0x65, 0x52, 0x65, 0x71, 0x1a, 0x14, 0x2e, 0x61,
-	0x64, 0x61, 0x2e, 0x47, 0x65, 0x74, 0x4c, 0x69, 0x63, 0x65, 0x6e, 0x73, 0x65, 0x52, 0x65, 0x70,
-	0x6c, 0x79, 0x22, 0x00, 0x12, 0x41, 0x0a, 0x0d, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x4c, 0x69,
-	0x63, 0x65, 0x6e, 0x73, 0x65, 0x12, 0x15, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x55, 0x70, 0x64, 0x61,
-	0x74, 0x65, 0x4c, 0x69, 0x63, 0x65, 0x6e, 0x73, 0x65, 0x52, 0x65, 0x71, 0x1a, 0x17, 0x2e, 0x61,
-	0x64, 0x61, 0x2e, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x4c, 0x69, 0x63, 0x65, 0x6e, 0x73, 0x65,
-	0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x3e, 0x0a, 0x0c, 0x4e, 0x65, 0x74, 0x77, 0x6f,
-	0x72, 0x6b, 0x44, 0x65, 0x62, 0x75, 0x67, 0x12, 0x14, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x4e, 0x65,
-	0x74, 0x77, 0x6f, 0x72, 0x6b, 0x44, 0x65, 0x62, 0x75, 0x67, 0x52, 0x65, 0x71, 0x1a, 0x16, 0x2e,
-	0x61, 0x64, 0x61, 0x2e, 0x4e, 0x65, 0x74, 0x77, 0x6f, 0x72, 0x6b, 0x44, 0x65, 0x62, 0x75, 0x67,
-	0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x44, 0x0a, 0x0e, 0x4c, 0x69, 0x73, 0x74, 0x4e,
-	0x6f, 0x74, 0x69, 0x66, 0x79, 0x43, 0x6f, 0x6e, 0x66, 0x12, 0x16, 0x2e, 0x61, 0x64, 0x61, 0x2e,
-	0x4c, 0x69, 0x73, 0x74, 0x4e, 0x6f, 0x74, 0x69, 0x66, 0x79, 0x43, 0x6f, 0x6e, 0x66, 0x52, 0x65,
-	0x71, 0x1a, 0x18, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x4c, 0x69, 0x73, 0x74, 0x4e, 0x6f, 0x74, 0x69,
-	0x66, 0x79, 0x43, 0x6f, 0x6e, 0x66, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x4a, 0x0a,
-	0x10, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x4e, 0x6f, 0x74, 0x69, 0x66, 0x79, 0x43, 0x6f, 0x6e,
-	0x66, 0x12, 0x18, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x4e, 0x6f,
-	0x74, 0x69, 0x66, 0x79, 0x43, 0x6f, 0x6e, 0x66, 0x52, 0x65, 0x71, 0x1a, 0x1a, 0x2e, 0x61, 0x64,
+	0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x44, 0x0a, 0x0e, 0x44, 0x6f, 0x77, 0x6e, 0x6c, 0x6f,
+	0x61, 0x64, 0x53, 0x65, 0x6e, 0x73, 0x6f, 0x72, 0x12, 0x16, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x44,
+	0x6f, 0x77, 0x6e, 0x6c, 0x6f, 0x61, 0x64, 0x53, 0x65, 0x6e, 0x73, 0x6f, 0x72, 0x52, 0x65, 0x71,
+	0x1a, 0x18, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x44, 0x6f, 0x77, 0x6e, 0x6c, 0x6f, 0x61, 0x64, 0x53,
+	0x65, 0x6e, 0x73, 0x6f, 0x72, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x35, 0x0a, 0x09,
+	0x43, 0x6d, 0x64, 0x53, 0x65, 0x6e, 0x73, 0x6f, 0x72, 0x12, 0x11, 0x2e, 0x61, 0x64, 0x61, 0x2e,
+	0x43, 0x6d, 0x64, 0x53, 0x65, 0x6e, 0x73, 0x6f, 0x72, 0x52, 0x65, 0x71, 0x1a, 0x13, 0x2e, 0x61,
+	0x64, 0x61, 0x2e, 0x43, 0x6d, 0x64, 0x53, 0x65, 0x6e, 0x73, 0x6f, 0x72, 0x52, 0x65, 0x70, 0x6c,
+	0x79, 0x22, 0x00, 0x12, 0x53, 0x0a, 0x13, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x53, 0x65, 0x6e,
+	0x73, 0x6f, 0x72, 0x56, 0x65, 0x72, 0x73, 0x69, 0x6f, 0x6e, 0x12, 0x1b, 0x2e, 0x61, 0x64, 0x61,
+	0x2e, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x53, 0x65, 0x6e, 0x73, 0x6f, 0x72, 0x56, 0x65, 0x72,
+	0x73, 0x69, 0x6f, 0x6e, 0x52, 0x65, 0x71, 0x1a, 0x1d, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x55, 0x70,
+	0x64, 0x61, 0x74, 0x65, 0x53, 0x65, 0x6e, 0x73, 0x6f, 0x72, 0x56, 0x65, 0x72, 0x73, 0x69, 0x6f,
+	0x6e, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x41, 0x0a, 0x0d, 0x47, 0x65, 0x74, 0x53,
+	0x79, 0x73, 0x74, 0x65, 0x6d, 0x49, 0x6e, 0x66, 0x6f, 0x12, 0x15, 0x2e, 0x61, 0x64, 0x61, 0x2e,
+	0x47, 0x65, 0x74, 0x53, 0x79, 0x73, 0x74, 0x65, 0x6d, 0x49, 0x6e, 0x66, 0x6f, 0x52, 0x65, 0x71,
+	0x1a, 0x17, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x47, 0x65, 0x74, 0x53, 0x79, 0x73, 0x74, 0x65, 0x6d,
+	0x49, 0x6e, 0x66, 0x6f, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x41, 0x0a, 0x0d, 0x47,
+	0x65, 0x74, 0x53, 0x79, 0x73, 0x74, 0x65, 0x6d, 0x49, 0x63, 0x6f, 0x6e, 0x12, 0x15, 0x2e, 0x61,
+	0x64, 0x61, 0x2e, 0x47, 0x65, 0x74, 0x53, 0x79, 0x73, 0x74, 0x65, 0x6d, 0x49, 0x63, 0x6f, 0x6e,
+	0x52, 0x65, 0x71, 0x1a, 0x17, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x47, 0x65, 0x74, 0x53, 0x79, 0x73,
+	0x74, 0x65, 0x6d, 0x49, 0x63, 0x6f, 0x6e, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x56,
+	0x0a, 0x14, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x53, 0x79, 0x73, 0x74, 0x65, 0x6d, 0x4c, 0x61,
+	0x6e, 0x67, 0x75, 0x61, 0x67, 0x65, 0x12, 0x1c, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x55, 0x70, 0x64,
+	0x61, 0x74, 0x65, 0x53, 0x79, 0x73, 0x74, 0x65, 0x6d, 0x4c, 0x61, 0x6e, 0x67, 0x75, 0x61, 0x67,
+	0x65, 0x52, 0x65, 0x71, 0x1a, 0x1e, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x55, 0x70, 0x64, 0x61, 0x74,
+	0x65, 0x53, 0x79, 0x73, 0x74, 0x65, 0x6d, 0x4c, 0x61, 0x6e, 0x67, 0x75, 0x61, 0x67, 0x65, 0x52,
+	0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x47, 0x0a, 0x0f, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65,
+	0x53, 0x79, 0x73, 0x74, 0x65, 0x6d, 0x43, 0x66, 0x67, 0x12, 0x17, 0x2e, 0x61, 0x64, 0x61, 0x2e,
+	0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x53, 0x79, 0x73, 0x74, 0x65, 0x6d, 0x43, 0x66, 0x67, 0x52,
+	0x65, 0x71, 0x1a, 0x19, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x53,
+	0x79, 0x73, 0x74, 0x65, 0x6d, 0x43, 0x66, 0x67, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12,
+	0x44, 0x0a, 0x0e, 0x47, 0x65, 0x74, 0x53, 0x79, 0x73, 0x74, 0x65, 0x6d, 0x53, 0x74, 0x61, 0x74,
+	0x73, 0x12, 0x16, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x47, 0x65, 0x74, 0x53, 0x79, 0x73, 0x74, 0x65,
+	0x6d, 0x53, 0x74, 0x61, 0x74, 0x73, 0x52, 0x65, 0x71, 0x1a, 0x18, 0x2e, 0x61, 0x64, 0x61, 0x2e,
+	0x47, 0x65, 0x74, 0x53, 0x79, 0x73, 0x74, 0x65, 0x6d, 0x53, 0x74, 0x61, 0x74, 0x73, 0x52, 0x65,
+	0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x4d, 0x0a, 0x11, 0x53, 0x65, 0x74, 0x53, 0x79, 0x73, 0x74,
+	0x65, 0x6d, 0x53, 0x74, 0x61, 0x74, 0x73, 0x43, 0x66, 0x67, 0x12, 0x19, 0x2e, 0x61, 0x64, 0x61,
+	0x2e, 0x53, 0x65, 0x74, 0x53, 0x79, 0x73, 0x74, 0x65, 0x6d, 0x53, 0x74, 0x61, 0x74, 0x73, 0x43,
+	0x66, 0x67, 0x52, 0x65, 0x71, 0x1a, 0x1b, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x53, 0x65, 0x74, 0x53,
+	0x79, 0x73, 0x74, 0x65, 0x6d, 0x53, 0x74, 0x61, 0x74, 0x73, 0x43, 0x66, 0x67, 0x52, 0x65, 0x70,
+	0x6c, 0x79, 0x22, 0x00, 0x12, 0x38, 0x0a, 0x0a, 0x47, 0x65, 0x74, 0x4c, 0x69, 0x63, 0x65, 0x6e,
+	0x73, 0x65, 0x12, 0x12, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x47, 0x65, 0x74, 0x4c, 0x69, 0x63, 0x65,
+	0x6e, 0x73, 0x65, 0x52, 0x65, 0x71, 0x1a, 0x14, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x47, 0x65, 0x74,
+	0x4c, 0x69, 0x63, 0x65, 0x6e, 0x73, 0x65, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x41,
+	0x0a, 0x0d, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x4c, 0x69, 0x63, 0x65, 0x6e, 0x73, 0x65, 0x12,
+	0x15, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x4c, 0x69, 0x63, 0x65,
+	0x6e, 0x73, 0x65, 0x52, 0x65, 0x71, 0x1a, 0x17, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x55, 0x70, 0x64,
+	0x61, 0x74, 0x65, 0x4c, 0x69, 0x63, 0x65, 0x6e, 0x73, 0x65, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22,
+	0x00, 0x12, 0x3e, 0x0a, 0x0c, 0x4e, 0x65, 0x74, 0x77, 0x6f, 0x72, 0x6b, 0x44, 0x65, 0x62, 0x75,
+	0x67, 0x12, 0x14, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x4e, 0x65, 0x74, 0x77, 0x6f, 0x72, 0x6b, 0x44,
+	0x65, 0x62, 0x75, 0x67, 0x52, 0x65, 0x71, 0x1a, 0x16, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x4e, 0x65,
+	0x74, 0x77, 0x6f, 0x72, 0x6b, 0x44, 0x65, 0x62, 0x75, 0x67, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22,
+	0x00, 0x12, 0x44, 0x0a, 0x0e, 0x4c, 0x69, 0x73, 0x74, 0x4e, 0x6f, 0x74, 0x69, 0x66, 0x79, 0x43,
+	0x6f, 0x6e, 0x66, 0x12, 0x16, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x4c, 0x69, 0x73, 0x74, 0x4e, 0x6f,
+	0x74, 0x69, 0x66, 0x79, 0x43, 0x6f, 0x6e, 0x66, 0x52, 0x65, 0x71, 0x1a, 0x18, 0x2e, 0x61, 0x64,
+	0x61, 0x2e, 0x4c, 0x69, 0x73, 0x74, 0x4e, 0x6f, 0x74, 0x69, 0x66, 0x79, 0x43, 0x6f, 0x6e, 0x66,
+	0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x4a, 0x0a, 0x10, 0x55, 0x70, 0x64, 0x61, 0x74,
+	0x65, 0x4e, 0x6f, 0x74, 0x69, 0x66, 0x79, 0x43, 0x6f, 0x6e, 0x66, 0x12, 0x18, 0x2e, 0x61, 0x64,
 	0x61, 0x2e, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x4e, 0x6f, 0x74, 0x69, 0x66, 0x79, 0x43, 0x6f,
-	0x6e, 0x66, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x4a, 0x0a, 0x10, 0x45, 0x6e, 0x61,
-	0x62, 0x6c, 0x65, 0x4e, 0x6f, 0x74, 0x69, 0x66, 0x79, 0x43, 0x6f, 0x6e, 0x66, 0x12, 0x18, 0x2e,
-	0x61, 0x64, 0x61, 0x2e, 0x45, 0x6e, 0x61, 0x62, 0x6c, 0x65, 0x4e, 0x6f, 0x74, 0x69, 0x66, 0x79,
-	0x43, 0x6f, 0x6e, 0x66, 0x52, 0x65, 0x71, 0x1a, 0x1a, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x45, 0x6e,
+	0x6e, 0x66, 0x52, 0x65, 0x71, 0x1a, 0x1a, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x55, 0x70, 0x64, 0x61,
+	0x74, 0x65, 0x4e, 0x6f, 0x74, 0x69, 0x66, 0x79, 0x43, 0x6f, 0x6e, 0x66, 0x52, 0x65, 0x70, 0x6c,
+	0x79, 0x22, 0x00, 0x12, 0x4a, 0x0a, 0x10, 0x45, 0x6e, 0x61, 0x62, 0x6c, 0x65, 0x4e, 0x6f, 0x74,
+	0x69, 0x66, 0x79, 0x43, 0x6f, 0x6e, 0x66, 0x12, 0x18, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x45, 0x6e,
 	0x61, 0x62, 0x6c, 0x65, 0x4e, 0x6f, 0x74, 0x69, 0x66, 0x79, 0x43, 0x6f, 0x6e, 0x66, 0x52, 0x65,
-	0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x44, 0x0a, 0x0e, 0x54, 0x65, 0x73, 0x74, 0x4e, 0x6f, 0x74,
-	0x69, 0x66, 0x79, 0x43, 0x6f, 0x6e, 0x66, 0x12, 0x16, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x54, 0x65,
-	0x73, 0x74, 0x4e, 0x6f, 0x74, 0x69, 0x66, 0x79, 0x43, 0x6f, 0x6e, 0x66, 0x52, 0x65, 0x71, 0x1a,
-	0x18, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x54, 0x65, 0x73, 0x74, 0x4e, 0x6f, 0x74, 0x69, 0x66, 0x79,
-	0x43, 0x6f, 0x6e, 0x66, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x44, 0x0a, 0x0e, 0x4c,
-	0x69, 0x73, 0x74, 0x45, 0x78, 0x70, 0x6f, 0x72, 0x74, 0x54, 0x61, 0x73, 0x6b, 0x12, 0x16, 0x2e,
-	0x61, 0x64, 0x61, 0x2e, 0x4c, 0x69, 0x73, 0x74, 0x45, 0x78, 0x70, 0x6f, 0x72, 0x74, 0x54, 0x61,
-	0x73, 0x6b, 0x52, 0x65, 0x71, 0x1a, 0x18, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x4c, 0x69, 0x73, 0x74,
-	0x45, 0x78, 0x70, 0x6f, 0x72, 0x74, 0x54, 0x61, 0x73, 0x6b, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22,
-	0x00, 0x12, 0x41, 0x0a, 0x0d, 0x41, 0x64, 0x64, 0x45, 0x78, 0x70, 0x6f, 0x72, 0x74, 0x54, 0x61,
-	0x73, 0x6b, 0x12, 0x15, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x41, 0x64, 0x64, 0x45, 0x78, 0x70, 0x6f,
-	0x72, 0x74, 0x54, 0x61, 0x73, 0x6b, 0x52, 0x65, 0x71, 0x1a, 0x17, 0x2e, 0x61, 0x64, 0x61, 0x2e,
-	0x41, 0x64, 0x64, 0x45, 0x78, 0x70, 0x6f, 0x72, 0x74, 0x54, 0x61, 0x73, 0x6b, 0x52, 0x65, 0x70,
-	0x6c, 0x79, 0x22, 0x00, 0x12, 0x4a, 0x0a, 0x10, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x45, 0x78,
-	0x70, 0x6f, 0x72, 0x74, 0x54, 0x61, 0x73, 0x6b, 0x12, 0x18, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x44,
-	0x65, 0x6c, 0x65, 0x74, 0x65, 0x45, 0x78, 0x70, 0x6f, 0x72, 0x74, 0x54, 0x61, 0x73, 0x6b, 0x52,
-	0x65, 0x71, 0x1a, 0x1a, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x45,
-	0x78, 0x70, 0x6f, 0x72, 0x74, 0x54, 0x61, 0x73, 0x6b, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00,
-	0x12, 0x38, 0x0a, 0x0a, 0x4c, 0x69, 0x73, 0x74, 0x4e, 0x6f, 0x74, 0x69, 0x66, 0x79, 0x12, 0x12,
-	0x2e, 0x61, 0x64, 0x61, 0x2e, 0x4c, 0x69, 0x73, 0x74, 0x4e, 0x6f, 0x74, 0x69, 0x66, 0x79, 0x52,
-	0x65, 0x71, 0x1a, 0x14, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x4c, 0x69, 0x73, 0x74, 0x4e, 0x6f, 0x74,
-	0x69, 0x66, 0x79, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x3e, 0x0a, 0x0c, 0x55, 0x70,
-	0x64, 0x61, 0x74, 0x65, 0x4e, 0x6f, 0x74, 0x69, 0x66, 0x79, 0x12, 0x14, 0x2e, 0x61, 0x64, 0x61,
-	0x2e, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x4e, 0x6f, 0x74, 0x69, 0x66, 0x79, 0x52, 0x65, 0x71,
-	0x1a, 0x16, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x4e, 0x6f, 0x74,
-	0x69, 0x66, 0x79, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x3b, 0x0a, 0x0b, 0x53, 0x74,
-	0x61, 0x74, 0x73, 0x4e, 0x6f, 0x74, 0x69, 0x66, 0x79, 0x12, 0x13, 0x2e, 0x61, 0x64, 0x61, 0x2e,
-	0x53, 0x74, 0x61, 0x74, 0x73, 0x4e, 0x6f, 0x74, 0x69, 0x66, 0x79, 0x52, 0x65, 0x71, 0x1a, 0x15,
-	0x2e, 0x61, 0x64, 0x61, 0x2e, 0x53, 0x74, 0x61, 0x74, 0x73, 0x4e, 0x6f, 0x74, 0x69, 0x66, 0x79,
-	0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x3e, 0x0a, 0x0c, 0x4c, 0x69, 0x73, 0x74, 0x41,
-	0x75, 0x64, 0x69, 0x74, 0x4c, 0x6f, 0x67, 0x12, 0x14, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x4c, 0x69,
-	0x73, 0x74, 0x41, 0x75, 0x64, 0x69, 0x74, 0x4c, 0x6f, 0x67, 0x52, 0x65, 0x71, 0x1a, 0x16, 0x2e,
-	0x61, 0x64, 0x61, 0x2e, 0x4c, 0x69, 0x73, 0x74, 0x41, 0x75, 0x64, 0x69, 0x74, 0x4c, 0x6f, 0x67,
-	0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x44, 0x0a, 0x0e, 0x4c, 0x69, 0x73, 0x74, 0x53,
-	0x79, 0x73, 0x74, 0x65, 0x6d, 0x4c, 0x6f, 0x67, 0x73, 0x12, 0x16, 0x2e, 0x61, 0x64, 0x61, 0x2e,
-	0x4c, 0x69, 0x73, 0x74, 0x53, 0x79, 0x73, 0x74, 0x65, 0x6d, 0x4c, 0x6f, 0x67, 0x73, 0x52, 0x65,
-	0x71, 0x1a, 0x18, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x4c, 0x69, 0x73, 0x74, 0x53, 0x79, 0x73, 0x74,
-	0x65, 0x6d, 0x4c, 0x6f, 0x67, 0x73, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x38, 0x0a,
-	0x0a, 0x54, 0x68, 0x72, 0x65, 0x61, 0x74, 0x54, 0x6f, 0x70, 0x73, 0x12, 0x12, 0x2e, 0x61, 0x64,
-	0x61, 0x2e, 0x54, 0x68, 0x72, 0x65, 0x61, 0x74, 0x54, 0x6f, 0x70, 0x73, 0x52, 0x65, 0x71, 0x1a,
-	0x14, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x54, 0x68, 0x72, 0x65, 0x61, 0x74, 0x54, 0x6f, 0x70, 0x73,
-	0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x3e, 0x0a, 0x0c, 0x54, 0x68, 0x72, 0x65, 0x61,
-	0x74, 0x54, 0x72, 0x65, 0x6e, 0x64, 0x73, 0x12, 0x14, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x54, 0x68,
-	0x72, 0x65, 0x61, 0x74, 0x54, 0x72, 0x65, 0x6e, 0x64, 0x73, 0x52, 0x65, 0x71, 0x1a, 0x16, 0x2e,
-	0x61, 0x64, 0x61, 0x2e, 0x54, 0x68, 0x72, 0x65, 0x61, 0x74, 0x54, 0x72, 0x65, 0x6e, 0x64, 0x73,
-	0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x38, 0x0a, 0x0a, 0x4c, 0x69, 0x73, 0x74, 0x54,
-	0x68, 0x72, 0x65, 0x61, 0x74, 0x12, 0x12, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x4c, 0x69, 0x73, 0x74,
-	0x54, 0x68, 0x72, 0x65, 0x61, 0x74, 0x52, 0x65, 0x71, 0x1a, 0x14, 0x2e, 0x61, 0x64, 0x61, 0x2e,
-	0x4c, 0x69, 0x73, 0x74, 0x54, 0x68, 0x72, 0x65, 0x61, 0x74, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22,
-	0x00, 0x12, 0x44, 0x0a, 0x0e, 0x47, 0x65, 0x74, 0x54, 0x68, 0x72, 0x65, 0x61, 0x74, 0x4e, 0x61,
-	0x6d, 0x65, 0x73, 0x12, 0x16, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x47, 0x65, 0x74, 0x54, 0x68, 0x72,
-	0x65, 0x61, 0x74, 0x4e, 0x61, 0x6d, 0x65, 0x73, 0x52, 0x65, 0x71, 0x1a, 0x18, 0x2e, 0x61, 0x64,
-	0x61, 0x2e, 0x47, 0x65, 0x74, 0x54, 0x68, 0x72, 0x65, 0x61, 0x74, 0x4e, 0x61, 0x6d, 0x65, 0x73,
-	0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x35, 0x0a, 0x09, 0x47, 0x65, 0x74, 0x54, 0x68,
-	0x72, 0x65, 0x61, 0x74, 0x12, 0x11, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x47, 0x65, 0x74, 0x54, 0x68,
-	0x72, 0x65, 0x61, 0x74, 0x52, 0x65, 0x71, 0x1a, 0x13, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x47, 0x65,
-	0x74, 0x54, 0x68, 0x72, 0x65, 0x61, 0x74, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x3e,
-	0x0a, 0x0c, 0x41, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x54, 0x68, 0x72, 0x65, 0x61, 0x74, 0x12, 0x14,
+	0x71, 0x1a, 0x1a, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x45, 0x6e, 0x61, 0x62, 0x6c, 0x65, 0x4e, 0x6f,
+	0x74, 0x69, 0x66, 0x79, 0x43, 0x6f, 0x6e, 0x66, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12,
+	0x44, 0x0a, 0x0e, 0x54, 0x65, 0x73, 0x74, 0x4e, 0x6f, 0x74, 0x69, 0x66, 0x79, 0x43, 0x6f, 0x6e,
+	0x66, 0x12, 0x16, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x54, 0x65, 0x73, 0x74, 0x4e, 0x6f, 0x74, 0x69,
+	0x66, 0x79, 0x43, 0x6f, 0x6e, 0x66, 0x52, 0x65, 0x71, 0x1a, 0x18, 0x2e, 0x61, 0x64, 0x61, 0x2e,
+	0x54, 0x65, 0x73, 0x74, 0x4e, 0x6f, 0x74, 0x69, 0x66, 0x79, 0x43, 0x6f, 0x6e, 0x66, 0x52, 0x65,
+	0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x44, 0x0a, 0x0e, 0x4c, 0x69, 0x73, 0x74, 0x45, 0x78, 0x70,
+	0x6f, 0x72, 0x74, 0x54, 0x61, 0x73, 0x6b, 0x12, 0x16, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x4c, 0x69,
+	0x73, 0x74, 0x45, 0x78, 0x70, 0x6f, 0x72, 0x74, 0x54, 0x61, 0x73, 0x6b, 0x52, 0x65, 0x71, 0x1a,
+	0x18, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x4c, 0x69, 0x73, 0x74, 0x45, 0x78, 0x70, 0x6f, 0x72, 0x74,
+	0x54, 0x61, 0x73, 0x6b, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x41, 0x0a, 0x0d, 0x41,
+	0x64, 0x64, 0x45, 0x78, 0x70, 0x6f, 0x72, 0x74, 0x54, 0x61, 0x73, 0x6b, 0x12, 0x15, 0x2e, 0x61,
+	0x64, 0x61, 0x2e, 0x41, 0x64, 0x64, 0x45, 0x78, 0x70, 0x6f, 0x72, 0x74, 0x54, 0x61, 0x73, 0x6b,
+	0x52, 0x65, 0x71, 0x1a, 0x17, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x41, 0x64, 0x64, 0x45, 0x78, 0x70,
+	0x6f, 0x72, 0x74, 0x54, 0x61, 0x73, 0x6b, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x4a,
+	0x0a, 0x10, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x45, 0x78, 0x70, 0x6f, 0x72, 0x74, 0x54, 0x61,
+	0x73, 0x6b, 0x12, 0x18, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x45,
+	0x78, 0x70, 0x6f, 0x72, 0x74, 0x54, 0x61, 0x73, 0x6b, 0x52, 0x65, 0x71, 0x1a, 0x1a, 0x2e, 0x61,
+	0x64, 0x61, 0x2e, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x45, 0x78, 0x70, 0x6f, 0x72, 0x74, 0x54,
+	0x61, 0x73, 0x6b, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x38, 0x0a, 0x0a, 0x4c, 0x69,
+	0x73, 0x74, 0x4e, 0x6f, 0x74, 0x69, 0x66, 0x79, 0x12, 0x12, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x4c,
+	0x69, 0x73, 0x74, 0x4e, 0x6f, 0x74, 0x69, 0x66, 0x79, 0x52, 0x65, 0x71, 0x1a, 0x14, 0x2e, 0x61,
+	0x64, 0x61, 0x2e, 0x4c, 0x69, 0x73, 0x74, 0x4e, 0x6f, 0x74, 0x69, 0x66, 0x79, 0x52, 0x65, 0x70,
+	0x6c, 0x79, 0x22, 0x00, 0x12, 0x3e, 0x0a, 0x0c, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x4e, 0x6f,
+	0x74, 0x69, 0x66, 0x79, 0x12, 0x14, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x55, 0x70, 0x64, 0x61, 0x74,
+	0x65, 0x4e, 0x6f, 0x74, 0x69, 0x66, 0x79, 0x52, 0x65, 0x71, 0x1a, 0x16, 0x2e, 0x61, 0x64, 0x61,
+	0x2e, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x4e, 0x6f, 0x74, 0x69, 0x66, 0x79, 0x52, 0x65, 0x70,
+	0x6c, 0x79, 0x22, 0x00, 0x12, 0x3b, 0x0a, 0x0b, 0x53, 0x74, 0x61, 0x74, 0x73, 0x4e, 0x6f, 0x74,
+	0x69, 0x66, 0x79, 0x12, 0x13, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x53, 0x74, 0x61, 0x74, 0x73, 0x4e,
+	0x6f, 0x74, 0x69, 0x66, 0x79, 0x52, 0x65, 0x71, 0x1a, 0x15, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x53,
+	0x74, 0x61, 0x74, 0x73, 0x4e, 0x6f, 0x74, 0x69, 0x66, 0x79, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22,
+	0x00, 0x12, 0x3e, 0x0a, 0x0c, 0x4c, 0x69, 0x73, 0x74, 0x41, 0x75, 0x64, 0x69, 0x74, 0x4c, 0x6f,
+	0x67, 0x12, 0x14, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x4c, 0x69, 0x73, 0x74, 0x41, 0x75, 0x64, 0x69,
+	0x74, 0x4c, 0x6f, 0x67, 0x52, 0x65, 0x71, 0x1a, 0x16, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x4c, 0x69,
+	0x73, 0x74, 0x41, 0x75, 0x64, 0x69, 0x74, 0x4c, 0x6f, 0x67, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22,
+	0x00, 0x12, 0x44, 0x0a, 0x0e, 0x4c, 0x69, 0x73, 0x74, 0x53, 0x79, 0x73, 0x74, 0x65, 0x6d, 0x4c,
+	0x6f, 0x67, 0x73, 0x12, 0x16, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x4c, 0x69, 0x73, 0x74, 0x53, 0x79,
+	0x73, 0x74, 0x65, 0x6d, 0x4c, 0x6f, 0x67, 0x73, 0x52, 0x65, 0x71, 0x1a, 0x18, 0x2e, 0x61, 0x64,
+	0x61, 0x2e, 0x4c, 0x69, 0x73, 0x74, 0x53, 0x79, 0x73, 0x74, 0x65, 0x6d, 0x4c, 0x6f, 0x67, 0x73,
+	0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x38, 0x0a, 0x0a, 0x54, 0x68, 0x72, 0x65, 0x61,
+	0x74, 0x54, 0x6f, 0x70, 0x73, 0x12, 0x12, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x54, 0x68, 0x72, 0x65,
+	0x61, 0x74, 0x54, 0x6f, 0x70, 0x73, 0x52, 0x65, 0x71, 0x1a, 0x14, 0x2e, 0x61, 0x64, 0x61, 0x2e,
+	0x54, 0x68, 0x72, 0x65, 0x61, 0x74, 0x54, 0x6f, 0x70, 0x73, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22,
+	0x00, 0x12, 0x3e, 0x0a, 0x0c, 0x54, 0x68, 0x72, 0x65, 0x61, 0x74, 0x54, 0x72, 0x65, 0x6e, 0x64,
+	0x73, 0x12, 0x14, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x54, 0x68, 0x72, 0x65, 0x61, 0x74, 0x54, 0x72,
+	0x65, 0x6e, 0x64, 0x73, 0x52, 0x65, 0x71, 0x1a, 0x16, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x54, 0x68,
+	0x72, 0x65, 0x61, 0x74, 0x54, 0x72, 0x65, 0x6e, 0x64, 0x73, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22,
+	0x00, 0x12, 0x38, 0x0a, 0x0a, 0x4c, 0x69, 0x73, 0x74, 0x54, 0x68, 0x72, 0x65, 0x61, 0x74, 0x12,
+	0x12, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x4c, 0x69, 0x73, 0x74, 0x54, 0x68, 0x72, 0x65, 0x61, 0x74,
+	0x52, 0x65, 0x71, 0x1a, 0x14, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x4c, 0x69, 0x73, 0x74, 0x54, 0x68,
+	0x72, 0x65, 0x61, 0x74, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x44, 0x0a, 0x0e, 0x47,
+	0x65, 0x74, 0x54, 0x68, 0x72, 0x65, 0x61, 0x74, 0x4e, 0x61, 0x6d, 0x65, 0x73, 0x12, 0x16, 0x2e,
+	0x61, 0x64, 0x61, 0x2e, 0x47, 0x65, 0x74, 0x54, 0x68, 0x72, 0x65, 0x61, 0x74, 0x4e, 0x61, 0x6d,
+	0x65, 0x73, 0x52, 0x65, 0x71, 0x1a, 0x18, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x47, 0x65, 0x74, 0x54,
+	0x68, 0x72, 0x65, 0x61, 0x74, 0x4e, 0x61, 0x6d, 0x65, 0x73, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22,
+	0x00, 0x12, 0x35, 0x0a, 0x09, 0x47, 0x65, 0x74, 0x54, 0x68, 0x72, 0x65, 0x61, 0x74, 0x12, 0x11,
+	0x2e, 0x61, 0x64, 0x61, 0x2e, 0x47, 0x65, 0x74, 0x54, 0x68, 0x72, 0x65, 0x61, 0x74, 0x52, 0x65,
+	0x71, 0x1a, 0x13, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x47, 0x65, 0x74, 0x54, 0x68, 0x72, 0x65, 0x61,
+	0x74, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x3e, 0x0a, 0x0c, 0x41, 0x63, 0x74, 0x69,
+	0x6f, 0x6e, 0x54, 0x68, 0x72, 0x65, 0x61, 0x74, 0x12, 0x14, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x41,
+	0x63, 0x74, 0x69, 0x6f, 0x6e, 0x54, 0x68, 0x72, 0x65, 0x61, 0x74, 0x52, 0x65, 0x71, 0x1a, 0x16,
 	0x2e, 0x61, 0x64, 0x61, 0x2e, 0x41, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x54, 0x68, 0x72, 0x65, 0x61,
-	0x74, 0x52, 0x65, 0x71, 0x1a, 0x16, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x41, 0x63, 0x74, 0x69, 0x6f,
-	0x6e, 0x54, 0x68, 0x72, 0x65, 0x61, 0x74, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x3e,
-	0x0a, 0x0c, 0x4c, 0x69, 0x73, 0x74, 0x41, 0x63, 0x74, 0x69, 0x76, 0x69, 0x74, 0x79, 0x12, 0x14,
+	0x74, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x3e, 0x0a, 0x0c, 0x4c, 0x69, 0x73, 0x74,
+	0x41, 0x63, 0x74, 0x69, 0x76, 0x69, 0x74, 0x79, 0x12, 0x14, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x4c,
+	0x69, 0x73, 0x74, 0x41, 0x63, 0x74, 0x69, 0x76, 0x69, 0x74, 0x79, 0x52, 0x65, 0x71, 0x1a, 0x16,
 	0x2e, 0x61, 0x64, 0x61, 0x2e, 0x4c, 0x69, 0x73, 0x74, 0x41, 0x63, 0x74, 0x69, 0x76, 0x69, 0x74,
-	0x79, 0x52, 0x65, 0x71, 0x1a, 0x16, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x4c, 0x69, 0x73, 0x74, 0x41,
-	0x63, 0x74, 0x69, 0x76, 0x69, 0x74, 0x79, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x4a,
-	0x0a, 0x10, 0x47, 0x65, 0x74, 0x41, 0x63, 0x74, 0x69, 0x76, 0x69, 0x74, 0x79, 0x4e, 0x61, 0x6d,
-	0x65, 0x73, 0x12, 0x18, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x47, 0x65, 0x74, 0x41, 0x63, 0x74, 0x69,
-	0x76, 0x69, 0x74, 0x79, 0x4e, 0x61, 0x6d, 0x65, 0x73, 0x52, 0x65, 0x71, 0x1a, 0x1a, 0x2e, 0x61,
+	0x79, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x4a, 0x0a, 0x10, 0x47, 0x65, 0x74, 0x41,
+	0x63, 0x74, 0x69, 0x76, 0x69, 0x74, 0x79, 0x4e, 0x61, 0x6d, 0x65, 0x73, 0x12, 0x18, 0x2e, 0x61,
 	0x64, 0x61, 0x2e, 0x47, 0x65, 0x74, 0x41, 0x63, 0x74, 0x69, 0x76, 0x69, 0x74, 0x79, 0x4e, 0x61,
-	0x6d, 0x65, 0x73, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x3b, 0x0a, 0x0b, 0x47, 0x65,
-	0x74, 0x41, 0x63, 0x74, 0x69, 0x76, 0x69, 0x74, 0x79, 0x12, 0x13, 0x2e, 0x61, 0x64, 0x61, 0x2e,
-	0x47, 0x65, 0x74, 0x41, 0x63, 0x74, 0x69, 0x76, 0x69, 0x74, 0x79, 0x52, 0x65, 0x71, 0x1a, 0x15,
-	0x2e, 0x61, 0x64, 0x61, 0x2e, 0x47, 0x65, 0x74, 0x41, 0x63, 0x74, 0x69, 0x76, 0x69, 0x74, 0x79,
-	0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x50, 0x0a, 0x12, 0x4c, 0x69, 0x73, 0x74, 0x53,
-	0x65, 0x6e, 0x73, 0x69, 0x74, 0x69, 0x76, 0x65, 0x45, 0x6e, 0x74, 0x72, 0x79, 0x12, 0x1a, 0x2e,
-	0x61, 0x64, 0x61, 0x2e, 0x4c, 0x69, 0x73, 0x74, 0x53, 0x65, 0x6e, 0x73, 0x69, 0x74, 0x69, 0x76,
-	0x65, 0x45, 0x6e, 0x74, 0x72, 0x79, 0x52, 0x65, 0x71, 0x1a, 0x1c, 0x2e, 0x61, 0x64, 0x61, 0x2e,
-	0x4c, 0x69, 0x73, 0x74, 0x53, 0x65, 0x6e, 0x73, 0x69, 0x74, 0x69, 0x76, 0x65, 0x45, 0x6e, 0x74,
-	0x72, 0x79, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x4d, 0x0a, 0x11, 0x41, 0x64, 0x64,
-	0x53, 0x65, 0x6e, 0x73, 0x69, 0x74, 0x69, 0x76, 0x65, 0x45, 0x6e, 0x74, 0x72, 0x79, 0x12, 0x19,
-	0x2e, 0x61, 0x64, 0x61, 0x2e, 0x41, 0x64, 0x64, 0x53, 0x65, 0x6e, 0x73, 0x69, 0x74, 0x69, 0x76,
-	0x65, 0x45, 0x6e, 0x74, 0x72, 0x79, 0x52, 0x65, 0x71, 0x1a, 0x1b, 0x2e, 0x61, 0x64, 0x61, 0x2e,
-	0x41, 0x64, 0x64, 0x53, 0x65, 0x6e, 0x73, 0x69, 0x74, 0x69, 0x76, 0x65, 0x45, 0x6e, 0x74, 0x72,
-	0x79, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x47, 0x0a, 0x0f, 0x4c, 0x69, 0x73, 0x74,
-	0x44, 0x6f, 0x6d, 0x61, 0x69, 0x6e, 0x45, 0x6e, 0x74, 0x72, 0x79, 0x12, 0x17, 0x2e, 0x61, 0x64,
-	0x61, 0x2e, 0x4c, 0x69, 0x73, 0x74, 0x44, 0x6f, 0x6d, 0x61, 0x69, 0x6e, 0x45, 0x6e, 0x74, 0x72,
-	0x79, 0x52, 0x65, 0x71, 0x1a, 0x19, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x4c, 0x69, 0x73, 0x74, 0x44,
-	0x6f, 0x6d, 0x61, 0x69, 0x6e, 0x45, 0x6e, 0x74, 0x72, 0x79, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22,
-	0x00, 0x12, 0x56, 0x0a, 0x14, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x53, 0x65, 0x6e, 0x73, 0x69,
-	0x74, 0x69, 0x76, 0x65, 0x45, 0x6e, 0x74, 0x72, 0x79, 0x12, 0x1c, 0x2e, 0x61, 0x64, 0x61, 0x2e,
-	0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x53, 0x65, 0x6e, 0x73, 0x69, 0x74, 0x69, 0x76, 0x65, 0x45,
-	0x6e, 0x74, 0x72, 0x79, 0x52, 0x65, 0x71, 0x1a, 0x1e, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x44, 0x65,
-	0x6c, 0x65, 0x74, 0x65, 0x53, 0x65, 0x6e, 0x73, 0x69, 0x74, 0x69, 0x76, 0x65, 0x45, 0x6e, 0x74,
-	0x72, 0x79, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x53, 0x0a, 0x13, 0x4c, 0x69, 0x73,
-	0x74, 0x54, 0x68, 0x72, 0x65, 0x61, 0x74, 0x57, 0x68, 0x69, 0x74, 0x65, 0x6c, 0x69, 0x73, 0x74,
-	0x12, 0x1b, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x4c, 0x69, 0x73, 0x74, 0x54, 0x68, 0x72, 0x65, 0x61,
-	0x74, 0x57, 0x68, 0x69, 0x74, 0x65, 0x6c, 0x69, 0x73, 0x74, 0x52, 0x65, 0x71, 0x1a, 0x1d, 0x2e,
-	0x61, 0x64, 0x61, 0x2e, 0x4c, 0x69, 0x73, 0x74, 0x54, 0x68, 0x72, 0x65, 0x61, 0x74, 0x57, 0x68,
-	0x69, 0x74, 0x65, 0x6c, 0x69, 0x73, 0x74, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x5f,
-	0x0a, 0x17, 0x47, 0x65, 0x74, 0x54, 0x68, 0x72, 0x65, 0x61, 0x74, 0x57, 0x68, 0x69, 0x74, 0x65,
-	0x6c, 0x69, 0x73, 0x74, 0x46, 0x69, 0x65, 0x6c, 0x64, 0x12, 0x1f, 0x2e, 0x61, 0x64, 0x61, 0x2e,
-	0x47, 0x65, 0x74, 0x54, 0x68, 0x72, 0x65, 0x61, 0x74, 0x57, 0x68, 0x69, 0x74, 0x65, 0x6c, 0x69,
-	0x73, 0x74, 0x46, 0x69, 0x65, 0x6c, 0x64, 0x52, 0x65, 0x71, 0x1a, 0x21, 0x2e, 0x61, 0x64, 0x61,
-	0x2e, 0x47, 0x65, 0x74, 0x54, 0x68, 0x72, 0x65, 0x61, 0x74, 0x57, 0x68, 0x69, 0x74, 0x65, 0x6c,
-	0x69, 0x73, 0x74, 0x46, 0x69, 0x65, 0x6c, 0x64, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12,
-	0x50, 0x0a, 0x12, 0x41, 0x64, 0x64, 0x54, 0x68, 0x72, 0x65, 0x61, 0x74, 0x57, 0x68, 0x69, 0x74,
-	0x65, 0x6c, 0x69, 0x73, 0x74, 0x12, 0x1a, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x41, 0x64, 0x64, 0x54,
-	0x68, 0x72, 0x65, 0x61, 0x74, 0x57, 0x68, 0x69, 0x74, 0x65, 0x6c, 0x69, 0x73, 0x74, 0x52, 0x65,
-	0x71, 0x1a, 0x1c, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x41, 0x64, 0x64, 0x54, 0x68, 0x72, 0x65, 0x61,
-	0x74, 0x57, 0x68, 0x69, 0x74, 0x65, 0x6c, 0x69, 0x73, 0x74, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22,
-	0x00, 0x12, 0x59, 0x0a, 0x15, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x54, 0x68, 0x72, 0x65, 0x61,
-	0x74, 0x57, 0x68, 0x69, 0x74, 0x65, 0x6c, 0x69, 0x73, 0x74, 0x12, 0x1d, 0x2e, 0x61, 0x64, 0x61,
-	0x2e, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x54, 0x68, 0x72, 0x65, 0x61, 0x74, 0x57, 0x68, 0x69,
-	0x74, 0x65, 0x6c, 0x69, 0x73, 0x74, 0x52, 0x65, 0x71, 0x1a, 0x1f, 0x2e, 0x61, 0x64, 0x61, 0x2e,
-	0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x54, 0x68, 0x72, 0x65, 0x61, 0x74, 0x57, 0x68, 0x69, 0x74,
-	0x65, 0x6c, 0x69, 0x73, 0x74, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x59, 0x0a, 0x15,
-	0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x54, 0x68, 0x72, 0x65, 0x61, 0x74, 0x57, 0x68, 0x69, 0x74,
-	0x65, 0x6c, 0x69, 0x73, 0x74, 0x12, 0x1d, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x44, 0x65, 0x6c, 0x65,
-	0x74, 0x65, 0x54, 0x68, 0x72, 0x65, 0x61, 0x74, 0x57, 0x68, 0x69, 0x74, 0x65, 0x6c, 0x69, 0x73,
-	0x74, 0x52, 0x65, 0x71, 0x1a, 0x1f, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x44, 0x65, 0x6c, 0x65, 0x74,
+	0x6d, 0x65, 0x73, 0x52, 0x65, 0x71, 0x1a, 0x1a, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x47, 0x65, 0x74,
+	0x41, 0x63, 0x74, 0x69, 0x76, 0x69, 0x74, 0x79, 0x4e, 0x61, 0x6d, 0x65, 0x73, 0x52, 0x65, 0x70,
+	0x6c, 0x79, 0x22, 0x00, 0x12, 0x3b, 0x0a, 0x0b, 0x47, 0x65, 0x74, 0x41, 0x63, 0x74, 0x69, 0x76,
+	0x69, 0x74, 0x79, 0x12, 0x13, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x47, 0x65, 0x74, 0x41, 0x63, 0x74,
+	0x69, 0x76, 0x69, 0x74, 0x79, 0x52, 0x65, 0x71, 0x1a, 0x15, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x47,
+	0x65, 0x74, 0x41, 0x63, 0x74, 0x69, 0x76, 0x69, 0x74, 0x79, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22,
+	0x00, 0x12, 0x50, 0x0a, 0x12, 0x4c, 0x69, 0x73, 0x74, 0x53, 0x65, 0x6e, 0x73, 0x69, 0x74, 0x69,
+	0x76, 0x65, 0x45, 0x6e, 0x74, 0x72, 0x79, 0x12, 0x1a, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x4c, 0x69,
+	0x73, 0x74, 0x53, 0x65, 0x6e, 0x73, 0x69, 0x74, 0x69, 0x76, 0x65, 0x45, 0x6e, 0x74, 0x72, 0x79,
+	0x52, 0x65, 0x71, 0x1a, 0x1c, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x4c, 0x69, 0x73, 0x74, 0x53, 0x65,
+	0x6e, 0x73, 0x69, 0x74, 0x69, 0x76, 0x65, 0x45, 0x6e, 0x74, 0x72, 0x79, 0x52, 0x65, 0x70, 0x6c,
+	0x79, 0x22, 0x00, 0x12, 0x4d, 0x0a, 0x11, 0x41, 0x64, 0x64, 0x53, 0x65, 0x6e, 0x73, 0x69, 0x74,
+	0x69, 0x76, 0x65, 0x45, 0x6e, 0x74, 0x72, 0x79, 0x12, 0x19, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x41,
+	0x64, 0x64, 0x53, 0x65, 0x6e, 0x73, 0x69, 0x74, 0x69, 0x76, 0x65, 0x45, 0x6e, 0x74, 0x72, 0x79,
+	0x52, 0x65, 0x71, 0x1a, 0x1b, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x41, 0x64, 0x64, 0x53, 0x65, 0x6e,
+	0x73, 0x69, 0x74, 0x69, 0x76, 0x65, 0x45, 0x6e, 0x74, 0x72, 0x79, 0x52, 0x65, 0x70, 0x6c, 0x79,
+	0x22, 0x00, 0x12, 0x47, 0x0a, 0x0f, 0x4c, 0x69, 0x73, 0x74, 0x44, 0x6f, 0x6d, 0x61, 0x69, 0x6e,
+	0x45, 0x6e, 0x74, 0x72, 0x79, 0x12, 0x17, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x4c, 0x69, 0x73, 0x74,
+	0x44, 0x6f, 0x6d, 0x61, 0x69, 0x6e, 0x45, 0x6e, 0x74, 0x72, 0x79, 0x52, 0x65, 0x71, 0x1a, 0x19,
+	0x2e, 0x61, 0x64, 0x61, 0x2e, 0x4c, 0x69, 0x73, 0x74, 0x44, 0x6f, 0x6d, 0x61, 0x69, 0x6e, 0x45,
+	0x6e, 0x74, 0x72, 0x79, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x56, 0x0a, 0x14, 0x44,
+	0x65, 0x6c, 0x65, 0x74, 0x65, 0x53, 0x65, 0x6e, 0x73, 0x69, 0x74, 0x69, 0x76, 0x65, 0x45, 0x6e,
+	0x74, 0x72, 0x79, 0x12, 0x1c, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65,
+	0x53, 0x65, 0x6e, 0x73, 0x69, 0x74, 0x69, 0x76, 0x65, 0x45, 0x6e, 0x74, 0x72, 0x79, 0x52, 0x65,
+	0x71, 0x1a, 0x1e, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x53, 0x65,
+	0x6e, 0x73, 0x69, 0x74, 0x69, 0x76, 0x65, 0x45, 0x6e, 0x74, 0x72, 0x79, 0x52, 0x65, 0x70, 0x6c,
+	0x79, 0x22, 0x00, 0x12, 0x53, 0x0a, 0x13, 0x4c, 0x69, 0x73, 0x74, 0x54, 0x68, 0x72, 0x65, 0x61,
+	0x74, 0x57, 0x68, 0x69, 0x74, 0x65, 0x6c, 0x69, 0x73, 0x74, 0x12, 0x1b, 0x2e, 0x61, 0x64, 0x61,
+	0x2e, 0x4c, 0x69, 0x73, 0x74, 0x54, 0x68, 0x72, 0x65, 0x61, 0x74, 0x57, 0x68, 0x69, 0x74, 0x65,
+	0x6c, 0x69, 0x73, 0x74, 0x52, 0x65, 0x71, 0x1a, 0x1d, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x4c, 0x69,
+	0x73, 0x74, 0x54, 0x68, 0x72, 0x65, 0x61, 0x74, 0x57, 0x68, 0x69, 0x74, 0x65, 0x6c, 0x69, 0x73,
+	0x74, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x5f, 0x0a, 0x17, 0x47, 0x65, 0x74, 0x54,
+	0x68, 0x72, 0x65, 0x61, 0x74, 0x57, 0x68, 0x69, 0x74, 0x65, 0x6c, 0x69, 0x73, 0x74, 0x46, 0x69,
+	0x65, 0x6c, 0x64, 0x12, 0x1f, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x47, 0x65, 0x74, 0x54, 0x68, 0x72,
+	0x65, 0x61, 0x74, 0x57, 0x68, 0x69, 0x74, 0x65, 0x6c, 0x69, 0x73, 0x74, 0x46, 0x69, 0x65, 0x6c,
+	0x64, 0x52, 0x65, 0x71, 0x1a, 0x21, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x47, 0x65, 0x74, 0x54, 0x68,
+	0x72, 0x65, 0x61, 0x74, 0x57, 0x68, 0x69, 0x74, 0x65, 0x6c, 0x69, 0x73, 0x74, 0x46, 0x69, 0x65,
+	0x6c, 0x64, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x50, 0x0a, 0x12, 0x41, 0x64, 0x64,
+	0x54, 0x68, 0x72, 0x65, 0x61, 0x74, 0x57, 0x68, 0x69, 0x74, 0x65, 0x6c, 0x69, 0x73, 0x74, 0x12,
+	0x1a, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x41, 0x64, 0x64, 0x54, 0x68, 0x72, 0x65, 0x61, 0x74, 0x57,
+	0x68, 0x69, 0x74, 0x65, 0x6c, 0x69, 0x73, 0x74, 0x52, 0x65, 0x71, 0x1a, 0x1c, 0x2e, 0x61, 0x64,
+	0x61, 0x2e, 0x41, 0x64, 0x64, 0x54, 0x68, 0x72, 0x65, 0x61, 0x74, 0x57, 0x68, 0x69, 0x74, 0x65,
+	0x6c, 0x69, 0x73, 0x74, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x59, 0x0a, 0x15, 0x55,
+	0x70, 0x64, 0x61, 0x74, 0x65, 0x54, 0x68, 0x72, 0x65, 0x61, 0x74, 0x57, 0x68, 0x69, 0x74, 0x65,
+	0x6c, 0x69, 0x73, 0x74, 0x12, 0x1d, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x55, 0x70, 0x64, 0x61, 0x74,
 	0x65, 0x54, 0x68, 0x72, 0x65, 0x61, 0x74, 0x57, 0x68, 0x69, 0x74, 0x65, 0x6c, 0x69, 0x73, 0x74,
-	0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x47, 0x0a, 0x0f, 0x4c, 0x69, 0x73, 0x74, 0x54,
-	0x68, 0x72, 0x65, 0x61, 0x74, 0x42, 0x6c, 0x6f, 0x63, 0x6b, 0x12, 0x17, 0x2e, 0x61, 0x64, 0x61,
-	0x2e, 0x4c, 0x69, 0x73, 0x74, 0x54, 0x68, 0x72, 0x65, 0x61, 0x74, 0x42, 0x6c, 0x6f, 0x63, 0x6b,
-	0x52, 0x65, 0x71, 0x1a, 0x19, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x4c, 0x69, 0x73, 0x74, 0x54, 0x68,
+	0x52, 0x65, 0x71, 0x1a, 0x1f, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65,
+	0x54, 0x68, 0x72, 0x65, 0x61, 0x74, 0x57, 0x68, 0x69, 0x74, 0x65, 0x6c, 0x69, 0x73, 0x74, 0x52,
+	0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x59, 0x0a, 0x15, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65,
+	0x54, 0x68, 0x72, 0x65, 0x61, 0x74, 0x57, 0x68, 0x69, 0x74, 0x65, 0x6c, 0x69, 0x73, 0x74, 0x12,
+	0x1d, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x54, 0x68, 0x72, 0x65,
+	0x61, 0x74, 0x57, 0x68, 0x69, 0x74, 0x65, 0x6c, 0x69, 0x73, 0x74, 0x52, 0x65, 0x71, 0x1a, 0x1f,
+	0x2e, 0x61, 0x64, 0x61, 0x2e, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x54, 0x68, 0x72, 0x65, 0x61,
+	0x74, 0x57, 0x68, 0x69, 0x74, 0x65, 0x6c, 0x69, 0x73, 0x74, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22,
+	0x00, 0x12, 0x47, 0x0a, 0x0f, 0x4c, 0x69, 0x73, 0x74, 0x54, 0x68, 0x72, 0x65, 0x61, 0x74, 0x42,
+	0x6c, 0x6f, 0x63, 0x6b, 0x12, 0x17, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x4c, 0x69, 0x73, 0x74, 0x54,
+	0x68, 0x72, 0x65, 0x61, 0x74, 0x42, 0x6c, 0x6f, 0x63, 0x6b, 0x52, 0x65, 0x71, 0x1a, 0x19, 0x2e,
+	0x61, 0x64, 0x61, 0x2e, 0x4c, 0x69, 0x73, 0x74, 0x54, 0x68, 0x72, 0x65, 0x61, 0x74, 0x42, 0x6c,
+	0x6f, 0x63, 0x6b, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x44, 0x0a, 0x0e, 0x41, 0x64,
+	0x64, 0x54, 0x68, 0x72, 0x65, 0x61, 0x74, 0x42, 0x6c, 0x6f, 0x63, 0x6b, 0x12, 0x16, 0x2e, 0x61,
+	0x64, 0x61, 0x2e, 0x41, 0x64, 0x64, 0x54, 0x68, 0x72, 0x65, 0x61, 0x74, 0x42, 0x6c, 0x6f, 0x63,
+	0x6b, 0x52, 0x65, 0x71, 0x1a, 0x18, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x41, 0x64, 0x64, 0x54, 0x68,
 	0x72, 0x65, 0x61, 0x74, 0x42, 0x6c, 0x6f, 0x63, 0x6b, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00,
-	0x12, 0x44, 0x0a, 0x0e, 0x41, 0x64, 0x64, 0x54, 0x68, 0x72, 0x65, 0x61, 0x74, 0x42, 0x6c, 0x6f,
-	0x63, 0x6b, 0x12, 0x16, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x41, 0x64, 0x64, 0x54, 0x68, 0x72, 0x65,
-	0x61, 0x74, 0x42, 0x6c, 0x6f, 0x63, 0x6b, 0x52, 0x65, 0x71, 0x1a, 0x18, 0x2e, 0x61, 0x64, 0x61,
-	0x2e, 0x41, 0x64, 0x64, 0x54, 0x68, 0x72, 0x65, 0x61, 0x74, 0x42, 0x6c, 0x6f, 0x63, 0x6b, 0x52,
-	0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x4d, 0x0a, 0x11, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65,
-	0x54, 0x68, 0x72, 0x65, 0x61, 0x74, 0x42, 0x6c, 0x6f, 0x63, 0x6b, 0x12, 0x19, 0x2e, 0x61, 0x64,
-	0x61, 0x2e, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x54, 0x68, 0x72, 0x65, 0x61, 0x74, 0x42, 0x6c,
-	0x6f, 0x63, 0x6b, 0x52, 0x65, 0x71, 0x1a, 0x1b, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x55, 0x70, 0x64,
-	0x61, 0x74, 0x65, 0x54, 0x68, 0x72, 0x65, 0x61, 0x74, 0x42, 0x6c, 0x6f, 0x63, 0x6b, 0x52, 0x65,
-	0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x4d, 0x0a, 0x11, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x54,
-	0x68, 0x72, 0x65, 0x61, 0x74, 0x42, 0x6c, 0x6f, 0x63, 0x6b, 0x12, 0x19, 0x2e, 0x61, 0x64, 0x61,
-	0x2e, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x54, 0x68, 0x72, 0x65, 0x61, 0x74, 0x42, 0x6c, 0x6f,
-	0x63, 0x6b, 0x52, 0x65, 0x71, 0x1a, 0x1b, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x44, 0x65, 0x6c, 0x65,
-	0x74, 0x65, 0x54, 0x68, 0x72, 0x65, 0x61, 0x74, 0x42, 0x6c, 0x6f, 0x63, 0x6b, 0x52, 0x65, 0x70,
-	0x6c, 0x79, 0x22, 0x00, 0x12, 0x41, 0x0a, 0x0d, 0x4c, 0x69, 0x73, 0x74, 0x41, 0x6c, 0x65, 0x72,
-	0x74, 0x52, 0x75, 0x6c, 0x65, 0x12, 0x15, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x4c, 0x69, 0x73, 0x74,
-	0x41, 0x6c, 0x65, 0x72, 0x74, 0x52, 0x75, 0x6c, 0x65, 0x52, 0x65, 0x71, 0x1a, 0x17, 0x2e, 0x61,
-	0x64, 0x61, 0x2e, 0x4c, 0x69, 0x73, 0x74, 0x41, 0x6c, 0x65, 0x72, 0x74, 0x52, 0x75, 0x6c, 0x65,
-	0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x3e, 0x0a, 0x0c, 0x41, 0x64, 0x64, 0x41, 0x6c,
-	0x65, 0x72, 0x74, 0x52, 0x75, 0x6c, 0x65, 0x12, 0x14, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x41, 0x64,
-	0x64, 0x41, 0x6c, 0x65, 0x72, 0x74, 0x52, 0x75, 0x6c, 0x65, 0x52, 0x65, 0x71, 0x1a, 0x16, 0x2e,
-	0x61, 0x64, 0x61, 0x2e, 0x41, 0x64, 0x64, 0x41, 0x6c, 0x65, 0x72, 0x74, 0x52, 0x75, 0x6c, 0x65,
-	0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x47, 0x0a, 0x0f, 0x55, 0x70, 0x64, 0x61, 0x74,
-	0x65, 0x41, 0x6c, 0x65, 0x72, 0x74, 0x52, 0x75, 0x6c, 0x65, 0x12, 0x17, 0x2e, 0x61, 0x64, 0x61,
-	0x2e, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x41, 0x6c, 0x65, 0x72, 0x74, 0x52, 0x75, 0x6c, 0x65,
-	0x52, 0x65, 0x71, 0x1a, 0x19, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65,
-	0x41, 0x6c, 0x65, 0x72, 0x74, 0x52, 0x75, 0x6c, 0x65, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00,
-	0x12, 0x47, 0x0a, 0x0f, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x41, 0x6c, 0x65, 0x72, 0x74, 0x52,
-	0x75, 0x6c, 0x65, 0x12, 0x17, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65,
-	0x41, 0x6c, 0x65, 0x72, 0x74, 0x52, 0x75, 0x6c, 0x65, 0x52, 0x65, 0x71, 0x1a, 0x19, 0x2e, 0x61,
-	0x64, 0x61, 0x2e, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x41, 0x6c, 0x65, 0x72, 0x74, 0x52, 0x75,
-	0x6c, 0x65, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x4d, 0x0a, 0x11, 0x47, 0x65, 0x74,
-	0x41, 0x6c, 0x65, 0x72, 0x74, 0x52, 0x75, 0x6c, 0x65, 0x4e, 0x61, 0x6d, 0x65, 0x73, 0x12, 0x19,
-	0x2e, 0x61, 0x64, 0x61, 0x2e, 0x47, 0x65, 0x74, 0x41, 0x6c, 0x65, 0x72, 0x74, 0x52, 0x75, 0x6c,
-	0x65, 0x4e, 0x61, 0x6d, 0x65, 0x73, 0x52, 0x65, 0x71, 0x1a, 0x1b, 0x2e, 0x61, 0x64, 0x61, 0x2e,
-	0x47, 0x65, 0x74, 0x41, 0x6c, 0x65, 0x72, 0x74, 0x52, 0x75, 0x6c, 0x65, 0x4e, 0x61, 0x6d, 0x65,
-	0x73, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x41, 0x0a, 0x0d, 0x47, 0x65, 0x74, 0x41,
-	0x6c, 0x65, 0x72, 0x74, 0x54, 0x79, 0x70, 0x65, 0x73, 0x12, 0x15, 0x2e, 0x61, 0x64, 0x61, 0x2e,
-	0x47, 0x65, 0x74, 0x41, 0x6c, 0x65, 0x72, 0x74, 0x54, 0x79, 0x70, 0x65, 0x73, 0x52, 0x65, 0x71,
-	0x1a, 0x17, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x47, 0x65, 0x74, 0x41, 0x6c, 0x65, 0x72, 0x74, 0x54,
-	0x79, 0x70, 0x65, 0x73, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x4a, 0x0a, 0x10, 0x47,
-	0x65, 0x74, 0x41, 0x6c, 0x65, 0x72, 0x74, 0x52, 0x75, 0x6c, 0x65, 0x54, 0x61, 0x67, 0x73, 0x12,
-	0x18, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x47, 0x65, 0x74, 0x41, 0x6c, 0x65, 0x72, 0x74, 0x52, 0x75,
-	0x6c, 0x65, 0x54, 0x61, 0x67, 0x73, 0x52, 0x65, 0x71, 0x1a, 0x1a, 0x2e, 0x61, 0x64, 0x61, 0x2e,
+	0x12, 0x4d, 0x0a, 0x11, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x54, 0x68, 0x72, 0x65, 0x61, 0x74,
+	0x42, 0x6c, 0x6f, 0x63, 0x6b, 0x12, 0x19, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x55, 0x70, 0x64, 0x61,
+	0x74, 0x65, 0x54, 0x68, 0x72, 0x65, 0x61, 0x74, 0x42, 0x6c, 0x6f, 0x63, 0x6b, 0x52, 0x65, 0x71,
+	0x1a, 0x1b, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x54, 0x68, 0x72,
+	0x65, 0x61, 0x74, 0x42, 0x6c, 0x6f, 0x63, 0x6b, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12,
+	0x4d, 0x0a, 0x11, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x54, 0x68, 0x72, 0x65, 0x61, 0x74, 0x42,
+	0x6c, 0x6f, 0x63, 0x6b, 0x12, 0x19, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x44, 0x65, 0x6c, 0x65, 0x74,
+	0x65, 0x54, 0x68, 0x72, 0x65, 0x61, 0x74, 0x42, 0x6c, 0x6f, 0x63, 0x6b, 0x52, 0x65, 0x71, 0x1a,
+	0x1b, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x54, 0x68, 0x72, 0x65,
+	0x61, 0x74, 0x42, 0x6c, 0x6f, 0x63, 0x6b, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x41,
+	0x0a, 0x0d, 0x4c, 0x69, 0x73, 0x74, 0x41, 0x6c, 0x65, 0x72, 0x74, 0x52, 0x75, 0x6c, 0x65, 0x12,
+	0x15, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x4c, 0x69, 0x73, 0x74, 0x41, 0x6c, 0x65, 0x72, 0x74, 0x52,
+	0x75, 0x6c, 0x65, 0x52, 0x65, 0x71, 0x1a, 0x17, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x4c, 0x69, 0x73,
+	0x74, 0x41, 0x6c, 0x65, 0x72, 0x74, 0x52, 0x75, 0x6c, 0x65, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22,
+	0x00, 0x12, 0x3e, 0x0a, 0x0c, 0x41, 0x64, 0x64, 0x41, 0x6c, 0x65, 0x72, 0x74, 0x52, 0x75, 0x6c,
+	0x65, 0x12, 0x14, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x41, 0x64, 0x64, 0x41, 0x6c, 0x65, 0x72, 0x74,
+	0x52, 0x75, 0x6c, 0x65, 0x52, 0x65, 0x71, 0x1a, 0x16, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x41, 0x64,
+	0x64, 0x41, 0x6c, 0x65, 0x72, 0x74, 0x52, 0x75, 0x6c, 0x65, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22,
+	0x00, 0x12, 0x47, 0x0a, 0x0f, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x41, 0x6c, 0x65, 0x72, 0x74,
+	0x52, 0x75, 0x6c, 0x65, 0x12, 0x17, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x55, 0x70, 0x64, 0x61, 0x74,
+	0x65, 0x41, 0x6c, 0x65, 0x72, 0x74, 0x52, 0x75, 0x6c, 0x65, 0x52, 0x65, 0x71, 0x1a, 0x19, 0x2e,
+	0x61, 0x64, 0x61, 0x2e, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x41, 0x6c, 0x65, 0x72, 0x74, 0x52,
+	0x75, 0x6c, 0x65, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x47, 0x0a, 0x0f, 0x44, 0x65,
+	0x6c, 0x65, 0x74, 0x65, 0x41, 0x6c, 0x65, 0x72, 0x74, 0x52, 0x75, 0x6c, 0x65, 0x12, 0x17, 0x2e,
+	0x61, 0x64, 0x61, 0x2e, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x41, 0x6c, 0x65, 0x72, 0x74, 0x52,
+	0x75, 0x6c, 0x65, 0x52, 0x65, 0x71, 0x1a, 0x19, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x44, 0x65, 0x6c,
+	0x65, 0x74, 0x65, 0x41, 0x6c, 0x65, 0x72, 0x74, 0x52, 0x75, 0x6c, 0x65, 0x52, 0x65, 0x70, 0x6c,
+	0x79, 0x22, 0x00, 0x12, 0x4d, 0x0a, 0x11, 0x47, 0x65, 0x74, 0x41, 0x6c, 0x65, 0x72, 0x74, 0x52,
+	0x75, 0x6c, 0x65, 0x4e, 0x61, 0x6d, 0x65, 0x73, 0x12, 0x19, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x47,
+	0x65, 0x74, 0x41, 0x6c, 0x65, 0x72, 0x74, 0x52, 0x75, 0x6c, 0x65, 0x4e, 0x61, 0x6d, 0x65, 0x73,
+	0x52, 0x65, 0x71, 0x1a, 0x1b, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x47, 0x65, 0x74, 0x41, 0x6c, 0x65,
+	0x72, 0x74, 0x52, 0x75, 0x6c, 0x65, 0x4e, 0x61, 0x6d, 0x65, 0x73, 0x52, 0x65, 0x70, 0x6c, 0x79,
+	0x22, 0x00, 0x12, 0x41, 0x0a, 0x0d, 0x47, 0x65, 0x74, 0x41, 0x6c, 0x65, 0x72, 0x74, 0x54, 0x79,
+	0x70, 0x65, 0x73, 0x12, 0x15, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x47, 0x65, 0x74, 0x41, 0x6c, 0x65,
+	0x72, 0x74, 0x54, 0x79, 0x70, 0x65, 0x73, 0x52, 0x65, 0x71, 0x1a, 0x17, 0x2e, 0x61, 0x64, 0x61,
+	0x2e, 0x47, 0x65, 0x74, 0x41, 0x6c, 0x65, 0x72, 0x74, 0x54, 0x79, 0x70, 0x65, 0x73, 0x52, 0x65,
+	0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x4a, 0x0a, 0x10, 0x47, 0x65, 0x74, 0x41, 0x6c, 0x65, 0x72,
+	0x74, 0x52, 0x75, 0x6c, 0x65, 0x54, 0x61, 0x67, 0x73, 0x12, 0x18, 0x2e, 0x61, 0x64, 0x61, 0x2e,
 	0x47, 0x65, 0x74, 0x41, 0x6c, 0x65, 0x72, 0x74, 0x52, 0x75, 0x6c, 0x65, 0x54, 0x61, 0x67, 0x73,
-	0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x4a, 0x0a, 0x10, 0x4c, 0x69, 0x73, 0x74, 0x41,
-	0x63, 0x74, 0x69, 0x76, 0x69, 0x74, 0x79, 0x52, 0x75, 0x6c, 0x65, 0x12, 0x18, 0x2e, 0x61, 0x64,
-	0x61, 0x2e, 0x4c, 0x69, 0x73, 0x74, 0x41, 0x63, 0x74, 0x69, 0x76, 0x69, 0x74, 0x79, 0x52, 0x75,
-	0x6c, 0x65, 0x52, 0x65, 0x71, 0x1a, 0x1a, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x4c, 0x69, 0x73, 0x74,
-	0x41, 0x63, 0x74, 0x69, 0x76, 0x69, 0x74, 0x79, 0x52, 0x75, 0x6c, 0x65, 0x52, 0x65, 0x70, 0x6c,
-	0x79, 0x22, 0x00, 0x12, 0x47, 0x0a, 0x0f, 0x47, 0x65, 0x74, 0x41, 0x63, 0x74, 0x69, 0x76, 0x69,
-	0x74, 0x79, 0x52, 0x75, 0x6c, 0x65, 0x12, 0x17, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x47, 0x65, 0x74,
+	0x52, 0x65, 0x71, 0x1a, 0x1a, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x47, 0x65, 0x74, 0x41, 0x6c, 0x65,
+	0x72, 0x74, 0x52, 0x75, 0x6c, 0x65, 0x54, 0x61, 0x67, 0x73, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22,
+	0x00, 0x12, 0x4a, 0x0a, 0x10, 0x4c, 0x69, 0x73, 0x74, 0x41, 0x63, 0x74, 0x69, 0x76, 0x69, 0x74,
+	0x79, 0x52, 0x75, 0x6c, 0x65, 0x12, 0x18, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x4c, 0x69, 0x73, 0x74,
 	0x41, 0x63, 0x74, 0x69, 0x76, 0x69, 0x74, 0x79, 0x52, 0x75, 0x6c, 0x65, 0x52, 0x65, 0x71, 0x1a,
-	0x19, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x47, 0x65, 0x74, 0x41, 0x63, 0x74, 0x69, 0x76, 0x69, 0x74,
-	0x79, 0x52, 0x75, 0x6c, 0x65, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x47, 0x0a, 0x0f,
-	0x41, 0x64, 0x64, 0x41, 0x63, 0x74, 0x69, 0x76, 0x69, 0x74, 0x79, 0x52, 0x75, 0x6c, 0x65, 0x12,
-	0x17, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x41, 0x64, 0x64, 0x41, 0x63, 0x74, 0x69, 0x76, 0x69, 0x74,
-	0x79, 0x52, 0x75, 0x6c, 0x65, 0x52, 0x65, 0x71, 0x1a, 0x19, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x41,
-	0x64, 0x64, 0x41, 0x63, 0x74, 0x69, 0x76, 0x69, 0x74, 0x79, 0x52, 0x75, 0x6c, 0x65, 0x52, 0x65,
-	0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x50, 0x0a, 0x12, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x41,
-	0x63, 0x74, 0x69, 0x76, 0x69, 0x74, 0x79, 0x52, 0x75, 0x6c, 0x65, 0x12, 0x1a, 0x2e, 0x61, 0x64,
-	0x61, 0x2e, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x41, 0x63, 0x74, 0x69, 0x76, 0x69, 0x74, 0x79,
-	0x52, 0x75, 0x6c, 0x65, 0x52, 0x65, 0x71, 0x1a, 0x1c, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x55, 0x70,
-	0x64, 0x61, 0x74, 0x65, 0x41, 0x63, 0x74, 0x69, 0x76, 0x69, 0x74, 0x79, 0x52, 0x75, 0x6c, 0x65,
-	0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x50, 0x0a, 0x12, 0x44, 0x65, 0x6c, 0x65, 0x74,
-	0x65, 0x41, 0x63, 0x74, 0x69, 0x76, 0x69, 0x74, 0x79, 0x52, 0x75, 0x6c, 0x65, 0x12, 0x1a, 0x2e,
-	0x61, 0x64, 0x61, 0x2e, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x41, 0x63, 0x74, 0x69, 0x76, 0x69,
-	0x74, 0x79, 0x52, 0x75, 0x6c, 0x65, 0x52, 0x65, 0x71, 0x1a, 0x1c, 0x2e, 0x61, 0x64, 0x61, 0x2e,
-	0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x41, 0x63, 0x74, 0x69, 0x76, 0x69, 0x74, 0x79, 0x52, 0x75,
-	0x6c, 0x65, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x59, 0x0a, 0x15, 0x47, 0x65, 0x74,
-	0x41, 0x63, 0x74, 0x69, 0x76, 0x69, 0x74, 0x79, 0x52, 0x75, 0x6c, 0x65, 0x46, 0x69, 0x65, 0x6c,
-	0x64, 0x73, 0x12, 0x1d, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x47, 0x65, 0x74, 0x41, 0x63, 0x74, 0x69,
-	0x76, 0x69, 0x74, 0x79, 0x52, 0x75, 0x6c, 0x65, 0x46, 0x69, 0x65, 0x6c, 0x64, 0x73, 0x52, 0x65,
-	0x71, 0x1a, 0x1f, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x47, 0x65, 0x74, 0x41, 0x63, 0x74, 0x69, 0x76,
-	0x69, 0x74, 0x79, 0x52, 0x75, 0x6c, 0x65, 0x46, 0x69, 0x65, 0x6c, 0x64, 0x73, 0x52, 0x65, 0x70,
-	0x6c, 0x79, 0x22, 0x00, 0x12, 0x6b, 0x0a, 0x1b, 0x47, 0x65, 0x74, 0x41, 0x63, 0x74, 0x69, 0x76,
-	0x69, 0x74, 0x79, 0x52, 0x75, 0x6c, 0x65, 0x55, 0x6e, 0x69, 0x71, 0x75, 0x65, 0x46, 0x69, 0x65,
-	0x6c, 0x64, 0x73, 0x12, 0x23, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x47, 0x65, 0x74, 0x41, 0x63, 0x74,
-	0x69, 0x76, 0x69, 0x74, 0x79, 0x52, 0x75, 0x6c, 0x65, 0x55, 0x6e, 0x69, 0x71, 0x75, 0x65, 0x46,
-	0x69, 0x65, 0x6c, 0x64, 0x73, 0x52, 0x65, 0x71, 0x1a, 0x25, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x47,
-	0x65, 0x74, 0x41, 0x63, 0x74, 0x69, 0x76, 0x69, 0x74, 0x79, 0x52, 0x75, 0x6c, 0x65, 0x55, 0x6e,
-	0x69, 0x71, 0x75, 0x65, 0x46, 0x69, 0x65, 0x6c, 0x64, 0x73, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22,
-	0x00, 0x12, 0x41, 0x0a, 0x0d, 0x53, 0x63, 0x61, 0x6e, 0x52, 0x69, 0x73, 0x6b, 0x53, 0x74, 0x61,
-	0x74, 0x73, 0x12, 0x15, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x53, 0x63, 0x61, 0x6e, 0x52, 0x69, 0x73,
-	0x6b, 0x53, 0x74, 0x61, 0x74, 0x73, 0x52, 0x65, 0x71, 0x1a, 0x17, 0x2e, 0x61, 0x64, 0x61, 0x2e,
-	0x53, 0x63, 0x61, 0x6e, 0x52, 0x69, 0x73, 0x6b, 0x53, 0x74, 0x61, 0x74, 0x73, 0x52, 0x65, 0x70,
-	0x6c, 0x79, 0x22, 0x00, 0x12, 0x3e, 0x0a, 0x0c, 0x4c, 0x69, 0x73, 0x74, 0x42, 0x61, 0x73, 0x65,
-	0x6c, 0x69, 0x6e, 0x65, 0x12, 0x14, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x4c, 0x69, 0x73, 0x74, 0x42,
-	0x61, 0x73, 0x65, 0x6c, 0x69, 0x6e, 0x65, 0x52, 0x65, 0x71, 0x1a, 0x16, 0x2e, 0x61, 0x64, 0x61,
-	0x2e, 0x4c, 0x69, 0x73, 0x74, 0x42, 0x61, 0x73, 0x65, 0x6c, 0x69, 0x6e, 0x65, 0x52, 0x65, 0x70,
-	0x6c, 0x79, 0x22, 0x00, 0x12, 0x3b, 0x0a, 0x0b, 0x47, 0x65, 0x74, 0x42, 0x61, 0x73, 0x65, 0x6c,
-	0x69, 0x6e, 0x65, 0x12, 0x13, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x47, 0x65, 0x74, 0x42, 0x61, 0x73,
-	0x65, 0x6c, 0x69, 0x6e, 0x65, 0x52, 0x65, 0x71, 0x1a, 0x15, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x47,
-	0x65, 0x74, 0x42, 0x61, 0x73, 0x65, 0x6c, 0x69, 0x6e, 0x65, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22,
-	0x00, 0x12, 0x32, 0x0a, 0x08, 0x4c, 0x69, 0x73, 0x74, 0x4c, 0x65, 0x61, 0x6b, 0x12, 0x10, 0x2e,
-	0x61, 0x64, 0x61, 0x2e, 0x4c, 0x69, 0x73, 0x74, 0x4c, 0x65, 0x61, 0x6b, 0x52, 0x65, 0x71, 0x1a,
-	0x12, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x4c, 0x69, 0x73, 0x74, 0x4c, 0x65, 0x61, 0x6b, 0x52, 0x65,
-	0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x3b, 0x0a, 0x0b, 0x4c, 0x69, 0x73, 0x74, 0x57, 0x65, 0x61,
-	0x6b, 0x50, 0x77, 0x64, 0x12, 0x13, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x4c, 0x69, 0x73, 0x74, 0x57,
-	0x65, 0x61, 0x6b, 0x50, 0x77, 0x64, 0x52, 0x65, 0x71, 0x1a, 0x15, 0x2e, 0x61, 0x64, 0x61, 0x2e,
-	0x4c, 0x69, 0x73, 0x74, 0x57, 0x65, 0x61, 0x6b, 0x50, 0x77, 0x64, 0x52, 0x65, 0x70, 0x6c, 0x79,
-	0x22, 0x00, 0x12, 0x3e, 0x0a, 0x0c, 0x4c, 0x69, 0x73, 0x74, 0x53, 0x63, 0x61, 0x6e, 0x54, 0x61,
-	0x73, 0x6b, 0x12, 0x14, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x4c, 0x69, 0x73, 0x74, 0x53, 0x63, 0x61,
-	0x6e, 0x54, 0x61, 0x73, 0x6b, 0x52, 0x65, 0x71, 0x1a, 0x16, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x4c,
-	0x69, 0x73, 0x74, 0x53, 0x63, 0x61, 0x6e, 0x54, 0x61, 0x73, 0x6b, 0x52, 0x65, 0x70, 0x6c, 0x79,
-	0x22, 0x00, 0x12, 0x3b, 0x0a, 0x0b, 0x47, 0x65, 0x74, 0x53, 0x63, 0x61, 0x6e, 0x54, 0x61, 0x73,
-	0x6b, 0x12, 0x13, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x47, 0x65, 0x74, 0x53, 0x63, 0x61, 0x6e, 0x54,
-	0x61, 0x73, 0x6b, 0x52, 0x65, 0x71, 0x1a, 0x15, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x47, 0x65, 0x74,
+	0x1a, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x4c, 0x69, 0x73, 0x74, 0x41, 0x63, 0x74, 0x69, 0x76, 0x69,
+	0x74, 0x79, 0x52, 0x75, 0x6c, 0x65, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x47, 0x0a,
+	0x0f, 0x47, 0x65, 0x74, 0x41, 0x63, 0x74, 0x69, 0x76, 0x69, 0x74, 0x79, 0x52, 0x75, 0x6c, 0x65,
+	0x12, 0x17, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x47, 0x65, 0x74, 0x41, 0x63, 0x74, 0x69, 0x76, 0x69,
+	0x74, 0x79, 0x52, 0x75, 0x6c, 0x65, 0x52, 0x65, 0x71, 0x1a, 0x19, 0x2e, 0x61, 0x64, 0x61, 0x2e,
+	0x47, 0x65, 0x74, 0x41, 0x63, 0x74, 0x69, 0x76, 0x69, 0x74, 0x79, 0x52, 0x75, 0x6c, 0x65, 0x52,
+	0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x47, 0x0a, 0x0f, 0x41, 0x64, 0x64, 0x41, 0x63, 0x74,
+	0x69, 0x76, 0x69, 0x74, 0x79, 0x52, 0x75, 0x6c, 0x65, 0x12, 0x17, 0x2e, 0x61, 0x64, 0x61, 0x2e,
+	0x41, 0x64, 0x64, 0x41, 0x63, 0x74, 0x69, 0x76, 0x69, 0x74, 0x79, 0x52, 0x75, 0x6c, 0x65, 0x52,
+	0x65, 0x71, 0x1a, 0x19, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x41, 0x64, 0x64, 0x41, 0x63, 0x74, 0x69,
+	0x76, 0x69, 0x74, 0x79, 0x52, 0x75, 0x6c, 0x65, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12,
+	0x50, 0x0a, 0x12, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x41, 0x63, 0x74, 0x69, 0x76, 0x69, 0x74,
+	0x79, 0x52, 0x75, 0x6c, 0x65, 0x12, 0x1a, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x55, 0x70, 0x64, 0x61,
+	0x74, 0x65, 0x41, 0x63, 0x74, 0x69, 0x76, 0x69, 0x74, 0x79, 0x52, 0x75, 0x6c, 0x65, 0x52, 0x65,
+	0x71, 0x1a, 0x1c, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x41, 0x63,
+	0x74, 0x69, 0x76, 0x69, 0x74, 0x79, 0x52, 0x75, 0x6c, 0x65, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22,
+	0x00, 0x12, 0x50, 0x0a, 0x12, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x41, 0x63, 0x74, 0x69, 0x76,
+	0x69, 0x74, 0x79, 0x52, 0x75, 0x6c, 0x65, 0x12, 0x1a, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x44, 0x65,
+	0x6c, 0x65, 0x74, 0x65, 0x41, 0x63, 0x74, 0x69, 0x76, 0x69, 0x74, 0x79, 0x52, 0x75, 0x6c, 0x65,
+	0x52, 0x65, 0x71, 0x1a, 0x1c, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65,
+	0x41, 0x63, 0x74, 0x69, 0x76, 0x69, 0x74, 0x79, 0x52, 0x75, 0x6c, 0x65, 0x52, 0x65, 0x70, 0x6c,
+	0x79, 0x22, 0x00, 0x12, 0x59, 0x0a, 0x15, 0x47, 0x65, 0x74, 0x41, 0x63, 0x74, 0x69, 0x76, 0x69,
+	0x74, 0x79, 0x52, 0x75, 0x6c, 0x65, 0x46, 0x69, 0x65, 0x6c, 0x64, 0x73, 0x12, 0x1d, 0x2e, 0x61,
+	0x64, 0x61, 0x2e, 0x47, 0x65, 0x74, 0x41, 0x63, 0x74, 0x69, 0x76, 0x69, 0x74, 0x79, 0x52, 0x75,
+	0x6c, 0x65, 0x46, 0x69, 0x65, 0x6c, 0x64, 0x73, 0x52, 0x65, 0x71, 0x1a, 0x1f, 0x2e, 0x61, 0x64,
+	0x61, 0x2e, 0x47, 0x65, 0x74, 0x41, 0x63, 0x74, 0x69, 0x76, 0x69, 0x74, 0x79, 0x52, 0x75, 0x6c,
+	0x65, 0x46, 0x69, 0x65, 0x6c, 0x64, 0x73, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x6b,
+	0x0a, 0x1b, 0x47, 0x65, 0x74, 0x41, 0x63, 0x74, 0x69, 0x76, 0x69, 0x74, 0x79, 0x52, 0x75, 0x6c,
+	0x65, 0x55, 0x6e, 0x69, 0x71, 0x75, 0x65, 0x46, 0x69, 0x65, 0x6c, 0x64, 0x73, 0x12, 0x23, 0x2e,
+	0x61, 0x64, 0x61, 0x2e, 0x47, 0x65, 0x74, 0x41, 0x63, 0x74, 0x69, 0x76, 0x69, 0x74, 0x79, 0x52,
+	0x75, 0x6c, 0x65, 0x55, 0x6e, 0x69, 0x71, 0x75, 0x65, 0x46, 0x69, 0x65, 0x6c, 0x64, 0x73, 0x52,
+	0x65, 0x71, 0x1a, 0x25, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x47, 0x65, 0x74, 0x41, 0x63, 0x74, 0x69,
+	0x76, 0x69, 0x74, 0x79, 0x52, 0x75, 0x6c, 0x65, 0x55, 0x6e, 0x69, 0x71, 0x75, 0x65, 0x46, 0x69,
+	0x65, 0x6c, 0x64, 0x73, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x41, 0x0a, 0x0d, 0x53,
+	0x63, 0x61, 0x6e, 0x52, 0x69, 0x73, 0x6b, 0x53, 0x74, 0x61, 0x74, 0x73, 0x12, 0x15, 0x2e, 0x61,
+	0x64, 0x61, 0x2e, 0x53, 0x63, 0x61, 0x6e, 0x52, 0x69, 0x73, 0x6b, 0x53, 0x74, 0x61, 0x74, 0x73,
+	0x52, 0x65, 0x71, 0x1a, 0x17, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x53, 0x63, 0x61, 0x6e, 0x52, 0x69,
+	0x73, 0x6b, 0x53, 0x74, 0x61, 0x74, 0x73, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x3e,
+	0x0a, 0x0c, 0x4c, 0x69, 0x73, 0x74, 0x42, 0x61, 0x73, 0x65, 0x6c, 0x69, 0x6e, 0x65, 0x12, 0x14,
+	0x2e, 0x61, 0x64, 0x61, 0x2e, 0x4c, 0x69, 0x73, 0x74, 0x42, 0x61, 0x73, 0x65, 0x6c, 0x69, 0x6e,
+	0x65, 0x52, 0x65, 0x71, 0x1a, 0x16, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x4c, 0x69, 0x73, 0x74, 0x42,
+	0x61, 0x73, 0x65, 0x6c, 0x69, 0x6e, 0x65, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x3b,
+	0x0a, 0x0b, 0x47, 0x65, 0x74, 0x42, 0x61, 0x73, 0x65, 0x6c, 0x69, 0x6e, 0x65, 0x12, 0x13, 0x2e,
+	0x61, 0x64, 0x61, 0x2e, 0x47, 0x65, 0x74, 0x42, 0x61, 0x73, 0x65, 0x6c, 0x69, 0x6e, 0x65, 0x52,
+	0x65, 0x71, 0x1a, 0x15, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x47, 0x65, 0x74, 0x42, 0x61, 0x73, 0x65,
+	0x6c, 0x69, 0x6e, 0x65, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x32, 0x0a, 0x08, 0x4c,
+	0x69, 0x73, 0x74, 0x4c, 0x65, 0x61, 0x6b, 0x12, 0x10, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x4c, 0x69,
+	0x73, 0x74, 0x4c, 0x65, 0x61, 0x6b, 0x52, 0x65, 0x71, 0x1a, 0x12, 0x2e, 0x61, 0x64, 0x61, 0x2e,
+	0x4c, 0x69, 0x73, 0x74, 0x4c, 0x65, 0x61, 0x6b, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12,
+	0x3b, 0x0a, 0x0b, 0x4c, 0x69, 0x73, 0x74, 0x57, 0x65, 0x61, 0x6b, 0x50, 0x77, 0x64, 0x12, 0x13,
+	0x2e, 0x61, 0x64, 0x61, 0x2e, 0x4c, 0x69, 0x73, 0x74, 0x57, 0x65, 0x61, 0x6b, 0x50, 0x77, 0x64,
+	0x52, 0x65, 0x71, 0x1a, 0x15, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x4c, 0x69, 0x73, 0x74, 0x57, 0x65,
+	0x61, 0x6b, 0x50, 0x77, 0x64, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x3e, 0x0a, 0x0c,
+	0x4c, 0x69, 0x73, 0x74, 0x53, 0x63, 0x61, 0x6e, 0x54, 0x61, 0x73, 0x6b, 0x12, 0x14, 0x2e, 0x61,
+	0x64, 0x61, 0x2e, 0x4c, 0x69, 0x73, 0x74, 0x53, 0x63, 0x61, 0x6e, 0x54, 0x61, 0x73, 0x6b, 0x52,
+	0x65, 0x71, 0x1a, 0x16, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x4c, 0x69, 0x73, 0x74, 0x53, 0x63, 0x61,
+	0x6e, 0x54, 0x61, 0x73, 0x6b, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x3b, 0x0a, 0x0b,
+	0x47, 0x65, 0x74, 0x53, 0x63, 0x61, 0x6e, 0x54, 0x61, 0x73, 0x6b, 0x12, 0x13, 0x2e, 0x61, 0x64,
+	0x61, 0x2e, 0x47, 0x65, 0x74, 0x53, 0x63, 0x61, 0x6e, 0x54, 0x61, 0x73, 0x6b, 0x52, 0x65, 0x71,
+	0x1a, 0x15, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x47, 0x65, 0x74, 0x53, 0x63, 0x61, 0x6e, 0x54, 0x61,
+	0x73, 0x6b, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x3b, 0x0a, 0x0b, 0x41, 0x64, 0x64,
+	0x53, 0x63, 0x61, 0x6e, 0x54, 0x61, 0x73, 0x6b, 0x12, 0x13, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x41,
+	0x64, 0x64, 0x53, 0x63, 0x61, 0x6e, 0x54, 0x61, 0x73, 0x6b, 0x52, 0x65, 0x71, 0x1a, 0x15, 0x2e,
+	0x61, 0x64, 0x61, 0x2e, 0x41, 0x64, 0x64, 0x53, 0x63, 0x61, 0x6e, 0x54, 0x61, 0x73, 0x6b, 0x52,
+	0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x47, 0x0a, 0x0f, 0x52, 0x65, 0x63, 0x68, 0x65, 0x63,
+	0x6b, 0x53, 0x63, 0x61, 0x6e, 0x54, 0x61, 0x73, 0x6b, 0x12, 0x17, 0x2e, 0x61, 0x64, 0x61, 0x2e,
+	0x52, 0x65, 0x63, 0x68, 0x65, 0x63, 0x6b, 0x53, 0x63, 0x61, 0x6e, 0x54, 0x61, 0x73, 0x6b, 0x52,
+	0x65, 0x71, 0x1a, 0x19, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x52, 0x65, 0x63, 0x68, 0x65, 0x63, 0x6b,
 	0x53, 0x63, 0x61, 0x6e, 0x54, 0x61, 0x73, 0x6b, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12,
-	0x3b, 0x0a, 0x0b, 0x41, 0x64, 0x64, 0x53, 0x63, 0x61, 0x6e, 0x54, 0x61, 0x73, 0x6b, 0x12, 0x13,
-	0x2e, 0x61, 0x64, 0x61, 0x2e, 0x41, 0x64, 0x64, 0x53, 0x63, 0x61, 0x6e, 0x54, 0x61, 0x73, 0x6b,
-	0x52, 0x65, 0x71, 0x1a, 0x15, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x41, 0x64, 0x64, 0x53, 0x63, 0x61,
-	0x6e, 0x54, 0x61, 0x73, 0x6b, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x47, 0x0a, 0x0f,
-	0x52, 0x65, 0x63, 0x68, 0x65, 0x63, 0x6b, 0x53, 0x63, 0x61, 0x6e, 0x54, 0x61, 0x73, 0x6b, 0x12,
-	0x17, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x52, 0x65, 0x63, 0x68, 0x65, 0x63, 0x6b, 0x53, 0x63, 0x61,
-	0x6e, 0x54, 0x61, 0x73, 0x6b, 0x52, 0x65, 0x71, 0x1a, 0x19, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x52,
-	0x65, 0x63, 0x68, 0x65, 0x63, 0x6b, 0x53, 0x63, 0x61, 0x6e, 0x54, 0x61, 0x73, 0x6b, 0x52, 0x65,
-	0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x44, 0x0a, 0x0e, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x53,
-	0x63, 0x61, 0x6e, 0x54, 0x61, 0x73, 0x6b, 0x12, 0x16, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x44, 0x65,
-	0x6c, 0x65, 0x74, 0x65, 0x53, 0x63, 0x61, 0x6e, 0x54, 0x61, 0x73, 0x6b, 0x52, 0x65, 0x71, 0x1a,
-	0x18, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x53, 0x63, 0x61, 0x6e,
-	0x54, 0x61, 0x73, 0x6b, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x3e, 0x0a, 0x0c, 0x4c,
-	0x69, 0x73, 0x74, 0x53, 0x63, 0x61, 0x6e, 0x43, 0x6f, 0x6e, 0x66, 0x12, 0x14, 0x2e, 0x61, 0x64,
+	0x44, 0x0a, 0x0e, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x53, 0x63, 0x61, 0x6e, 0x54, 0x61, 0x73,
+	0x6b, 0x12, 0x16, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x53, 0x63,
+	0x61, 0x6e, 0x54, 0x61, 0x73, 0x6b, 0x52, 0x65, 0x71, 0x1a, 0x18, 0x2e, 0x61, 0x64, 0x61, 0x2e,
+	0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x53, 0x63, 0x61, 0x6e, 0x54, 0x61, 0x73, 0x6b, 0x52, 0x65,
+	0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x3e, 0x0a, 0x0c, 0x4c, 0x69, 0x73, 0x74, 0x53, 0x63, 0x61,
+	0x6e, 0x43, 0x6f, 0x6e, 0x66, 0x12, 0x14, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x4c, 0x69, 0x73, 0x74,
+	0x53, 0x63, 0x61, 0x6e, 0x43, 0x6f, 0x6e, 0x66, 0x52, 0x65, 0x71, 0x1a, 0x16, 0x2e, 0x61, 0x64,
 	0x61, 0x2e, 0x4c, 0x69, 0x73, 0x74, 0x53, 0x63, 0x61, 0x6e, 0x43, 0x6f, 0x6e, 0x66, 0x52, 0x65,
-	0x71, 0x1a, 0x16, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x4c, 0x69, 0x73, 0x74, 0x53, 0x63, 0x61, 0x6e,
-	0x43, 0x6f, 0x6e, 0x66, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x3b, 0x0a, 0x0b, 0x53,
-	0x65, 0x74, 0x53, 0x63, 0x61, 0x6e, 0x43, 0x6f, 0x6e, 0x66, 0x12, 0x13, 0x2e, 0x61, 0x64, 0x61,
-	0x2e, 0x53, 0x65, 0x74, 0x53, 0x63, 0x61, 0x6e, 0x43, 0x6f, 0x6e, 0x66, 0x52, 0x65, 0x71, 0x1a,
-	0x15, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x53, 0x65, 0x74, 0x53, 0x63, 0x61, 0x6e, 0x43, 0x6f, 0x6e,
-	0x66, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x3b, 0x0a, 0x0b, 0x47, 0x65, 0x74, 0x53,
-	0x63, 0x61, 0x6e, 0x43, 0x6f, 0x6e, 0x66, 0x12, 0x13, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x47, 0x65,
-	0x74, 0x53, 0x63, 0x61, 0x6e, 0x43, 0x6f, 0x6e, 0x66, 0x52, 0x65, 0x71, 0x1a, 0x15, 0x2e, 0x61,
-	0x64, 0x61, 0x2e, 0x47, 0x65, 0x74, 0x53, 0x63, 0x61, 0x6e, 0x43, 0x6f, 0x6e, 0x66, 0x52, 0x65,
-	0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x4a, 0x0a, 0x10, 0x47, 0x65, 0x74, 0x53, 0x63, 0x61, 0x6e,
-	0x54, 0x6d, 0x70, 0x6c, 0x4e, 0x61, 0x6d, 0x65, 0x73, 0x12, 0x18, 0x2e, 0x61, 0x64, 0x61, 0x2e,
-	0x47, 0x65, 0x74, 0x53, 0x63, 0x61, 0x6e, 0x54, 0x6d, 0x70, 0x6c, 0x4e, 0x61, 0x6d, 0x65, 0x73,
-	0x52, 0x65, 0x71, 0x1a, 0x1a, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x47, 0x65, 0x74, 0x53, 0x63, 0x61,
-	0x6e, 0x54, 0x6d, 0x70, 0x6c, 0x4e, 0x61, 0x6d, 0x65, 0x73, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22,
-	0x00, 0x12, 0x44, 0x0a, 0x0e, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x53, 0x63, 0x61, 0x6e, 0x43,
-	0x6f, 0x6e, 0x66, 0x12, 0x16, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65,
-	0x53, 0x63, 0x61, 0x6e, 0x43, 0x6f, 0x6e, 0x66, 0x52, 0x65, 0x71, 0x1a, 0x18, 0x2e, 0x61, 0x64,
-	0x61, 0x2e, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x53, 0x63, 0x61, 0x6e, 0x43, 0x6f, 0x6e, 0x66,
-	0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x3e, 0x0a, 0x0c, 0x4c, 0x69, 0x73, 0x74, 0x53,
-	0x63, 0x61, 0x6e, 0x54, 0x6d, 0x70, 0x6c, 0x12, 0x14, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x4c, 0x69,
-	0x73, 0x74, 0x53, 0x63, 0x61, 0x6e, 0x54, 0x6d, 0x70, 0x6c, 0x52, 0x65, 0x71, 0x1a, 0x16, 0x2e,
-	0x61, 0x64, 0x61, 0x2e, 0x4c, 0x69, 0x73, 0x74, 0x53, 0x63, 0x61, 0x6e, 0x54, 0x6d, 0x70, 0x6c,
-	0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x3b, 0x0a, 0x0b, 0x47, 0x65, 0x74, 0x53, 0x63,
-	0x61, 0x6e, 0x54, 0x6d, 0x70, 0x6c, 0x12, 0x13, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x47, 0x65, 0x74,
-	0x53, 0x63, 0x61, 0x6e, 0x54, 0x6d, 0x70, 0x6c, 0x52, 0x65, 0x71, 0x1a, 0x15, 0x2e, 0x61, 0x64,
-	0x61, 0x2e, 0x47, 0x65, 0x74, 0x53, 0x63, 0x61, 0x6e, 0x54, 0x6d, 0x70, 0x6c, 0x52, 0x65, 0x70,
-	0x6c, 0x79, 0x22, 0x00, 0x12, 0x44, 0x0a, 0x0e, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x53, 0x63,
-	0x61, 0x6e, 0x54, 0x6d, 0x70, 0x6c, 0x12, 0x16, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x55, 0x70, 0x64,
-	0x61, 0x74, 0x65, 0x53, 0x63, 0x61, 0x6e, 0x54, 0x6d, 0x70, 0x6c, 0x52, 0x65, 0x71, 0x1a, 0x18,
-	0x2e, 0x61, 0x64, 0x61, 0x2e, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x53, 0x63, 0x61, 0x6e, 0x54,
-	0x6d, 0x70, 0x6c, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x44, 0x0a, 0x0e, 0x44, 0x65,
-	0x6c, 0x65, 0x74, 0x65, 0x53, 0x63, 0x61, 0x6e, 0x54, 0x6d, 0x70, 0x6c, 0x12, 0x16, 0x2e, 0x61,
-	0x64, 0x61, 0x2e, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x53, 0x63, 0x61, 0x6e, 0x54, 0x6d, 0x70,
-	0x6c, 0x52, 0x65, 0x71, 0x1a, 0x18, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x44, 0x65, 0x6c, 0x65, 0x74,
-	0x65, 0x53, 0x63, 0x61, 0x6e, 0x54, 0x6d, 0x70, 0x6c, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00,
-	0x12, 0x3b, 0x0a, 0x0b, 0x41, 0x64, 0x64, 0x53, 0x63, 0x61, 0x6e, 0x54, 0x6d, 0x70, 0x6c, 0x12,
-	0x13, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x41, 0x64, 0x64, 0x53, 0x63, 0x61, 0x6e, 0x54, 0x6d, 0x70,
-	0x6c, 0x52, 0x65, 0x71, 0x1a, 0x15, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x41, 0x64, 0x64, 0x53, 0x63,
-	0x61, 0x6e, 0x54, 0x6d, 0x70, 0x6c, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x44, 0x0a,
-	0x0e, 0x4c, 0x69, 0x73, 0x74, 0x53, 0x63, 0x61, 0x6e, 0x50, 0x6c, 0x75, 0x67, 0x69, 0x6e, 0x12,
-	0x16, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x4c, 0x69, 0x73, 0x74, 0x53, 0x63, 0x61, 0x6e, 0x50, 0x6c,
-	0x75, 0x67, 0x69, 0x6e, 0x52, 0x65, 0x71, 0x1a, 0x18, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x4c, 0x69,
-	0x73, 0x74, 0x53, 0x63, 0x61, 0x6e, 0x50, 0x6c, 0x75, 0x67, 0x69, 0x6e, 0x52, 0x65, 0x70, 0x6c,
-	0x79, 0x22, 0x00, 0x12, 0x44, 0x0a, 0x0e, 0x44, 0x61, 0x73, 0x68, 0x62, 0x6f, 0x61, 0x72, 0x64,
-	0x53, 0x74, 0x61, 0x74, 0x73, 0x12, 0x16, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x44, 0x61, 0x73, 0x68,
-	0x62, 0x6f, 0x61, 0x72, 0x64, 0x53, 0x74, 0x61, 0x74, 0x73, 0x52, 0x65, 0x71, 0x1a, 0x18, 0x2e,
-	0x61, 0x64, 0x61, 0x2e, 0x44, 0x61, 0x73, 0x68, 0x62, 0x6f, 0x61, 0x72, 0x64, 0x53, 0x74, 0x61,
-	0x74, 0x73, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x47, 0x0a, 0x0f, 0x44, 0x61, 0x73,
-	0x68, 0x62, 0x6f, 0x61, 0x72, 0x64, 0x54, 0x72, 0x65, 0x6e, 0x64, 0x73, 0x12, 0x17, 0x2e, 0x61,
-	0x64, 0x61, 0x2e, 0x44, 0x61, 0x73, 0x68, 0x62, 0x6f, 0x61, 0x72, 0x64, 0x54, 0x72, 0x65, 0x6e,
-	0x64, 0x73, 0x52, 0x65, 0x71, 0x1a, 0x19, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x44, 0x61, 0x73, 0x68,
-	0x62, 0x6f, 0x61, 0x72, 0x64, 0x54, 0x72, 0x65, 0x6e, 0x64, 0x73, 0x52, 0x65, 0x70, 0x6c, 0x79,
-	0x22, 0x00, 0x12, 0x4d, 0x0a, 0x11, 0x44, 0x61, 0x73, 0x68, 0x62, 0x6f, 0x61, 0x72, 0x64, 0x4c,
-	0x6f, 0x67, 0x53, 0x74, 0x61, 0x74, 0x73, 0x12, 0x19, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x44, 0x61,
-	0x73, 0x68, 0x62, 0x6f, 0x61, 0x72, 0x64, 0x4c, 0x6f, 0x67, 0x53, 0x74, 0x61, 0x74, 0x73, 0x52,
-	0x65, 0x71, 0x1a, 0x1b, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x44, 0x61, 0x73, 0x68, 0x62, 0x6f, 0x61,
-	0x72, 0x64, 0x4c, 0x6f, 0x67, 0x53, 0x74, 0x61, 0x74, 0x73, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22,
-	0x00, 0x42, 0x07, 0x5a, 0x05, 0x2e, 0x2f, 0x3b, 0x76, 0x32, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74,
-	0x6f, 0x33,
+	0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x3b, 0x0a, 0x0b, 0x53, 0x65, 0x74, 0x53, 0x63, 0x61, 0x6e,
+	0x43, 0x6f, 0x6e, 0x66, 0x12, 0x13, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x53, 0x65, 0x74, 0x53, 0x63,
+	0x61, 0x6e, 0x43, 0x6f, 0x6e, 0x66, 0x52, 0x65, 0x71, 0x1a, 0x15, 0x2e, 0x61, 0x64, 0x61, 0x2e,
+	0x53, 0x65, 0x74, 0x53, 0x63, 0x61, 0x6e, 0x43, 0x6f, 0x6e, 0x66, 0x52, 0x65, 0x70, 0x6c, 0x79,
+	0x22, 0x00, 0x12, 0x3b, 0x0a, 0x0b, 0x47, 0x65, 0x74, 0x53, 0x63, 0x61, 0x6e, 0x43, 0x6f, 0x6e,
+	0x66, 0x12, 0x13, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x47, 0x65, 0x74, 0x53, 0x63, 0x61, 0x6e, 0x43,
+	0x6f, 0x6e, 0x66, 0x52, 0x65, 0x71, 0x1a, 0x15, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x47, 0x65, 0x74,
+	0x53, 0x63, 0x61, 0x6e, 0x43, 0x6f, 0x6e, 0x66, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12,
+	0x4a, 0x0a, 0x10, 0x47, 0x65, 0x74, 0x53, 0x63, 0x61, 0x6e, 0x54, 0x6d, 0x70, 0x6c, 0x4e, 0x61,
+	0x6d, 0x65, 0x73, 0x12, 0x18, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x47, 0x65, 0x74, 0x53, 0x63, 0x61,
+	0x6e, 0x54, 0x6d, 0x70, 0x6c, 0x4e, 0x61, 0x6d, 0x65, 0x73, 0x52, 0x65, 0x71, 0x1a, 0x1a, 0x2e,
+	0x61, 0x64, 0x61, 0x2e, 0x47, 0x65, 0x74, 0x53, 0x63, 0x61, 0x6e, 0x54, 0x6d, 0x70, 0x6c, 0x4e,
+	0x61, 0x6d, 0x65, 0x73, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x44, 0x0a, 0x0e, 0x55,
+	0x70, 0x64, 0x61, 0x74, 0x65, 0x53, 0x63, 0x61, 0x6e, 0x43, 0x6f, 0x6e, 0x66, 0x12, 0x16, 0x2e,
+	0x61, 0x64, 0x61, 0x2e, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x53, 0x63, 0x61, 0x6e, 0x43, 0x6f,
+	0x6e, 0x66, 0x52, 0x65, 0x71, 0x1a, 0x18, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x55, 0x70, 0x64, 0x61,
+	0x74, 0x65, 0x53, 0x63, 0x61, 0x6e, 0x43, 0x6f, 0x6e, 0x66, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22,
+	0x00, 0x12, 0x3e, 0x0a, 0x0c, 0x4c, 0x69, 0x73, 0x74, 0x53, 0x63, 0x61, 0x6e, 0x54, 0x6d, 0x70,
+	0x6c, 0x12, 0x14, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x4c, 0x69, 0x73, 0x74, 0x53, 0x63, 0x61, 0x6e,
+	0x54, 0x6d, 0x70, 0x6c, 0x52, 0x65, 0x71, 0x1a, 0x16, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x4c, 0x69,
+	0x73, 0x74, 0x53, 0x63, 0x61, 0x6e, 0x54, 0x6d, 0x70, 0x6c, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22,
+	0x00, 0x12, 0x3b, 0x0a, 0x0b, 0x47, 0x65, 0x74, 0x53, 0x63, 0x61, 0x6e, 0x54, 0x6d, 0x70, 0x6c,
+	0x12, 0x13, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x47, 0x65, 0x74, 0x53, 0x63, 0x61, 0x6e, 0x54, 0x6d,
+	0x70, 0x6c, 0x52, 0x65, 0x71, 0x1a, 0x15, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x47, 0x65, 0x74, 0x53,
+	0x63, 0x61, 0x6e, 0x54, 0x6d, 0x70, 0x6c, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x44,
+	0x0a, 0x0e, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x53, 0x63, 0x61, 0x6e, 0x54, 0x6d, 0x70, 0x6c,
+	0x12, 0x16, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x53, 0x63, 0x61,
+	0x6e, 0x54, 0x6d, 0x70, 0x6c, 0x52, 0x65, 0x71, 0x1a, 0x18, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x55,
+	0x70, 0x64, 0x61, 0x74, 0x65, 0x53, 0x63, 0x61, 0x6e, 0x54, 0x6d, 0x70, 0x6c, 0x52, 0x65, 0x70,
+	0x6c, 0x79, 0x22, 0x00, 0x12, 0x44, 0x0a, 0x0e, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x53, 0x63,
+	0x61, 0x6e, 0x54, 0x6d, 0x70, 0x6c, 0x12, 0x16, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x44, 0x65, 0x6c,
+	0x65, 0x74, 0x65, 0x53, 0x63, 0x61, 0x6e, 0x54, 0x6d, 0x70, 0x6c, 0x52, 0x65, 0x71, 0x1a, 0x18,
+	0x2e, 0x61, 0x64, 0x61, 0x2e, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x53, 0x63, 0x61, 0x6e, 0x54,
+	0x6d, 0x70, 0x6c, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x3b, 0x0a, 0x0b, 0x41, 0x64,
+	0x64, 0x53, 0x63, 0x61, 0x6e, 0x54, 0x6d, 0x70, 0x6c, 0x12, 0x13, 0x2e, 0x61, 0x64, 0x61, 0x2e,
+	0x41, 0x64, 0x64, 0x53, 0x63, 0x61, 0x6e, 0x54, 0x6d, 0x70, 0x6c, 0x52, 0x65, 0x71, 0x1a, 0x15,
+	0x2e, 0x61, 0x64, 0x61, 0x2e, 0x41, 0x64, 0x64, 0x53, 0x63, 0x61, 0x6e, 0x54, 0x6d, 0x70, 0x6c,
+	0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x44, 0x0a, 0x0e, 0x4c, 0x69, 0x73, 0x74, 0x53,
+	0x63, 0x61, 0x6e, 0x50, 0x6c, 0x75, 0x67, 0x69, 0x6e, 0x12, 0x16, 0x2e, 0x61, 0x64, 0x61, 0x2e,
+	0x4c, 0x69, 0x73, 0x74, 0x53, 0x63, 0x61, 0x6e, 0x50, 0x6c, 0x75, 0x67, 0x69, 0x6e, 0x52, 0x65,
+	0x71, 0x1a, 0x18, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x4c, 0x69, 0x73, 0x74, 0x53, 0x63, 0x61, 0x6e,
+	0x50, 0x6c, 0x75, 0x67, 0x69, 0x6e, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x44, 0x0a,
+	0x0e, 0x44, 0x61, 0x73, 0x68, 0x62, 0x6f, 0x61, 0x72, 0x64, 0x53, 0x74, 0x61, 0x74, 0x73, 0x12,
+	0x16, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x44, 0x61, 0x73, 0x68, 0x62, 0x6f, 0x61, 0x72, 0x64, 0x53,
+	0x74, 0x61, 0x74, 0x73, 0x52, 0x65, 0x71, 0x1a, 0x18, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x44, 0x61,
+	0x73, 0x68, 0x62, 0x6f, 0x61, 0x72, 0x64, 0x53, 0x74, 0x61, 0x74, 0x73, 0x52, 0x65, 0x70, 0x6c,
+	0x79, 0x22, 0x00, 0x12, 0x47, 0x0a, 0x0f, 0x44, 0x61, 0x73, 0x68, 0x62, 0x6f, 0x61, 0x72, 0x64,
+	0x54, 0x72, 0x65, 0x6e, 0x64, 0x73, 0x12, 0x17, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x44, 0x61, 0x73,
+	0x68, 0x62, 0x6f, 0x61, 0x72, 0x64, 0x54, 0x72, 0x65, 0x6e, 0x64, 0x73, 0x52, 0x65, 0x71, 0x1a,
+	0x19, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x44, 0x61, 0x73, 0x68, 0x62, 0x6f, 0x61, 0x72, 0x64, 0x54,
+	0x72, 0x65, 0x6e, 0x64, 0x73, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x4d, 0x0a, 0x11,
+	0x44, 0x61, 0x73, 0x68, 0x62, 0x6f, 0x61, 0x72, 0x64, 0x4c, 0x6f, 0x67, 0x53, 0x74, 0x61, 0x74,
+	0x73, 0x12, 0x19, 0x2e, 0x61, 0x64, 0x61, 0x2e, 0x44, 0x61, 0x73, 0x68, 0x62, 0x6f, 0x61, 0x72,
+	0x64, 0x4c, 0x6f, 0x67, 0x53, 0x74, 0x61, 0x74, 0x73, 0x52, 0x65, 0x71, 0x1a, 0x1b, 0x2e, 0x61,
+	0x64, 0x61, 0x2e, 0x44, 0x61, 0x73, 0x68, 0x62, 0x6f, 0x61, 0x72, 0x64, 0x4c, 0x6f, 0x67, 0x53,
+	0x74, 0x61, 0x74, 0x73, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x42, 0x07, 0x5a, 0x05, 0x2e,
+	0x2f, 0x3b, 0x76, 0x32, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
@@ -20335,7 +20219,7 @@ func file_ada_proto_rawDescGZIP() []byte {
 	return file_ada_proto_rawDescData
 }
 
-var file_ada_proto_msgTypes = make([]protoimpl.MessageInfo, 290)
+var file_ada_proto_msgTypes = make([]protoimpl.MessageInfo, 288)
 var file_ada_proto_goTypes = []interface{}{
 	(*ModelPage)(nil),                                // 0: ada.ModelPage
 	(*LoginReq)(nil),                                 // 1: ada.LoginReq
@@ -20364,377 +20248,375 @@ var file_ada_proto_goTypes = []interface{}{
 	(*UpdateAvatarReply)(nil),                        // 24: ada.UpdateAvatarReply
 	(*ResetPasswordReq)(nil),                         // 25: ada.ResetPasswordReq
 	(*ResetPasswordReply)(nil),                       // 26: ada.ResetPasswordReply
-	(*GetPwdUpdateTmReq)(nil),                        // 27: ada.GetPwdUpdateTmReq
-	(*GetPwdUpdateTmReply)(nil),                      // 28: ada.GetPwdUpdateTmReply
-	(*ListDomainReq)(nil),                            // 29: ada.ListDomainReq
-	(*ListDomainReply)(nil),                          // 30: ada.ListDomainReply
-	(*AddDomainReq)(nil),                             // 31: ada.AddDomainReq
-	(*AddDomainReply)(nil),                           // 32: ada.AddDomainReply
-	(*TestDomainReq)(nil),                            // 33: ada.TestDomainReq
-	(*TestDomainReply)(nil),                          // 34: ada.TestDomainReply
-	(*UpdateDomainReq)(nil),                          // 35: ada.UpdateDomainReq
-	(*UpdateDomainReply)(nil),                        // 36: ada.UpdateDomainReply
-	(*DeleteDomainReq)(nil),                          // 37: ada.DeleteDomainReq
-	(*DeleteDomainReply)(nil),                        // 38: ada.DeleteDomainReply
-	(*UpdateDomainDataReq)(nil),                      // 39: ada.UpdateDomainDataReq
-	(*UpdateDomainDataReply)(nil),                    // 40: ada.UpdateDomainDataReply
-	(*DeploySensorReq)(nil),                          // 41: ada.DeploySensorReq
-	(*DeploySensorReply)(nil),                        // 42: ada.DeploySensorReply
-	(*ListSensorReq)(nil),                            // 43: ada.ListSensorReq
-	(*ListSensorReply)(nil),                          // 44: ada.ListSensorReply
-	(*UpdateSensorReq)(nil),                          // 45: ada.UpdateSensorReq
-	(*UpdateSensorReply)(nil),                        // 46: ada.UpdateSensorReply
-	(*DownloadSensorReq)(nil),                        // 47: ada.DownloadSensorReq
-	(*DownloadSensorReply)(nil),                      // 48: ada.DownloadSensorReply
-	(*CmdSensorReq)(nil),                             // 49: ada.CmdSensorReq
-	(*CmdSensorReply)(nil),                           // 50: ada.CmdSensorReply
-	(*UpdateSensorVersionReq)(nil),                   // 51: ada.UpdateSensorVersionReq
-	(*UpdateSensorVersionReply)(nil),                 // 52: ada.UpdateSensorVersionReply
-	(*GetSystemInfoReq)(nil),                         // 53: ada.GetSystemInfoReq
-	(*GetSystemInfoReply)(nil),                       // 54: ada.GetSystemInfoReply
-	(*GetSystemIconReq)(nil),                         // 55: ada.GetSystemIconReq
-	(*GetSystemIconReply)(nil),                       // 56: ada.GetSystemIconReply
-	(*UpdateSystemLanguageReq)(nil),                  // 57: ada.UpdateSystemLanguageReq
-	(*UpdateSystemLanguageReply)(nil),                // 58: ada.UpdateSystemLanguageReply
-	(*UpdateSystemCfgReq)(nil),                       // 59: ada.UpdateSystemCfgReq
-	(*UpdateSystemCfgReply)(nil),                     // 60: ada.UpdateSystemCfgReply
-	(*GetSystemStatsReq)(nil),                        // 61: ada.GetSystemStatsReq
-	(*StatsInfo)(nil),                                // 62: ada.StatsInfo
-	(*GetSystemStatsReply)(nil),                      // 63: ada.GetSystemStatsReply
-	(*SetSystemStatsCfgReq)(nil),                     // 64: ada.SetSystemStatsCfgReq
-	(*SetSystemStatsCfgReply)(nil),                   // 65: ada.SetSystemStatsCfgReply
-	(*ListAuditLogReq)(nil),                          // 66: ada.ListAuditLogReq
-	(*ListAuditLogReply)(nil),                        // 67: ada.ListAuditLogReply
-	(*ListSystemLogsReq)(nil),                        // 68: ada.ListSystemLogsReq
-	(*ListSystemLogsReply)(nil),                      // 69: ada.ListSystemLogsReply
-	(*GetLicenseReq)(nil),                            // 70: ada.GetLicenseReq
-	(*GetLicenseReply)(nil),                          // 71: ada.GetLicenseReply
-	(*UpdateLicenseReq)(nil),                         // 72: ada.UpdateLicenseReq
-	(*UpdateLicenseReply)(nil),                       // 73: ada.UpdateLicenseReply
-	(*NetworkDebugReq)(nil),                          // 74: ada.NetworkDebugReq
-	(*NetworkDebugReply)(nil),                        // 75: ada.NetworkDebugReply
-	(*ListNotifyConfReq)(nil),                        // 76: ada.ListNotifyConfReq
-	(*ListNotifyConfReply)(nil),                      // 77: ada.ListNotifyConfReply
-	(*UpdateNotifyConfReq)(nil),                      // 78: ada.UpdateNotifyConfReq
-	(*UpdateNotifyConfReply)(nil),                    // 79: ada.UpdateNotifyConfReply
-	(*EnableNotifyConfReq)(nil),                      // 80: ada.EnableNotifyConfReq
-	(*EnableNotifyConfReply)(nil),                    // 81: ada.EnableNotifyConfReply
-	(*TestNotifyConfReq)(nil),                        // 82: ada.TestNotifyConfReq
-	(*TestNotifyConfReply)(nil),                      // 83: ada.TestNotifyConfReply
-	(*ListExportTaskReq)(nil),                        // 84: ada.ListExportTaskReq
-	(*ListExportTaskReply)(nil),                      // 85: ada.ListExportTaskReply
-	(*AddExportTaskReq)(nil),                         // 86: ada.AddExportTaskReq
-	(*AddExportTaskReply)(nil),                       // 87: ada.AddExportTaskReply
-	(*DeleteExportTaskReq)(nil),                      // 88: ada.DeleteExportTaskReq
-	(*DeleteExportTaskReply)(nil),                    // 89: ada.DeleteExportTaskReply
-	(*ListNotifyReq)(nil),                            // 90: ada.ListNotifyReq
-	(*ListNotifyReply)(nil),                          // 91: ada.ListNotifyReply
-	(*UpdateNotifyReq)(nil),                          // 92: ada.UpdateNotifyReq
-	(*UpdateNotifyReply)(nil),                        // 93: ada.UpdateNotifyReply
-	(*StatsNotifyReq)(nil),                           // 94: ada.StatsNotifyReq
-	(*StatsNotifyReply)(nil),                         // 95: ada.StatsNotifyReply
-	(*ThreatTopsReq)(nil),                            // 96: ada.ThreatTopsReq
-	(*ThreatTopsReply)(nil),                          // 97: ada.ThreatTopsReply
-	(*ThreatTrendsReq)(nil),                          // 98: ada.ThreatTrendsReq
-	(*ThreatTrendsReply)(nil),                        // 99: ada.ThreatTrendsReply
-	(*ListThreatReq)(nil),                            // 100: ada.ListThreatReq
-	(*ListThreatReply)(nil),                          // 101: ada.ListThreatReply
-	(*GetThreatNamesReq)(nil),                        // 102: ada.GetThreatNamesReq
-	(*GetThreatNamesReply)(nil),                      // 103: ada.GetThreatNamesReply
-	(*GetThreatReq)(nil),                             // 104: ada.GetThreatReq
-	(*GetThreatReply)(nil),                           // 105: ada.GetThreatReply
-	(*ActionThreatReq)(nil),                          // 106: ada.ActionThreatReq
-	(*ActionThreatReply)(nil),                        // 107: ada.ActionThreatReply
-	(*ListActivityReq)(nil),                          // 108: ada.ListActivityReq
-	(*ActivityDetails)(nil),                          // 109: ada.ActivityDetails
-	(*ListActivityReply)(nil),                        // 110: ada.ListActivityReply
-	(*GetActivityNamesReq)(nil),                      // 111: ada.GetActivityNamesReq
-	(*GetActivityNamesReply)(nil),                    // 112: ada.GetActivityNamesReply
-	(*GetActivityReq)(nil),                           // 113: ada.GetActivityReq
-	(*GetActivityReply)(nil),                         // 114: ada.GetActivityReply
-	(*ListSensitiveEntryReq)(nil),                    // 115: ada.ListSensitiveEntryReq
-	(*ListSensitiveEntryReply)(nil),                  // 116: ada.ListSensitiveEntryReply
-	(*AddSensitiveEntryReq)(nil),                     // 117: ada.AddSensitiveEntryReq
-	(*AddSensitiveEntryReply)(nil),                   // 118: ada.AddSensitiveEntryReply
-	(*ListDomainEntryReq)(nil),                       // 119: ada.ListDomainEntryReq
-	(*ListDomainEntryReply)(nil),                     // 120: ada.ListDomainEntryReply
-	(*DeleteSensitiveEntryReq)(nil),                  // 121: ada.DeleteSensitiveEntryReq
-	(*DeleteSensitiveEntryReply)(nil),                // 122: ada.DeleteSensitiveEntryReply
-	(*ListThreatWhitelistReq)(nil),                   // 123: ada.ListThreatWhitelistReq
-	(*ListThreatWhitelistReply)(nil),                 // 124: ada.ListThreatWhitelistReply
-	(*GetThreatWhitelistFieldReq)(nil),               // 125: ada.GetThreatWhitelistFieldReq
-	(*GetThreatWhitelistFieldReply)(nil),             // 126: ada.GetThreatWhitelistFieldReply
-	(*AddThreatWhitelistReq)(nil),                    // 127: ada.AddThreatWhitelistReq
-	(*AddThreatWhitelistReply)(nil),                  // 128: ada.AddThreatWhitelistReply
-	(*UpdateThreatWhitelistReq)(nil),                 // 129: ada.UpdateThreatWhitelistReq
-	(*UpdateThreatWhitelistReply)(nil),               // 130: ada.UpdateThreatWhitelistReply
-	(*DeleteThreatWhitelistReq)(nil),                 // 131: ada.DeleteThreatWhitelistReq
-	(*DeleteThreatWhitelistReply)(nil),               // 132: ada.DeleteThreatWhitelistReply
-	(*ListThreatBlockReq)(nil),                       // 133: ada.ListThreatBlockReq
-	(*ListThreatBlockReply)(nil),                     // 134: ada.ListThreatBlockReply
-	(*AddThreatBlockReq)(nil),                        // 135: ada.AddThreatBlockReq
-	(*AddThreatBlockReply)(nil),                      // 136: ada.AddThreatBlockReply
-	(*UpdateThreatBlockReq)(nil),                     // 137: ada.UpdateThreatBlockReq
-	(*UpdateThreatBlockReply)(nil),                   // 138: ada.UpdateThreatBlockReply
-	(*DeleteThreatBlockReq)(nil),                     // 139: ada.DeleteThreatBlockReq
-	(*DeleteThreatBlockReply)(nil),                   // 140: ada.DeleteThreatBlockReply
-	(*ScanRiskStatsReq)(nil),                         // 141: ada.ScanRiskStatsReq
-	(*ScanRiskStatsReply)(nil),                       // 142: ada.ScanRiskStatsReply
-	(*ListBaselineReq)(nil),                          // 143: ada.ListBaselineReq
-	(*ListBaselineReply)(nil),                        // 144: ada.ListBaselineReply
-	(*GetBaselineReq)(nil),                           // 145: ada.GetBaselineReq
-	(*GetBaselineReply)(nil),                         // 146: ada.GetBaselineReply
-	(*ListLeakReq)(nil),                              // 147: ada.ListLeakReq
-	(*ListLeakReply)(nil),                            // 148: ada.ListLeakReply
-	(*ListWeakPwdReq)(nil),                           // 149: ada.ListWeakPwdReq
-	(*ListWeakPwdReply)(nil),                         // 150: ada.ListWeakPwdReply
-	(*ListScanTaskReq)(nil),                          // 151: ada.ListScanTaskReq
-	(*ListScanTaskReply)(nil),                        // 152: ada.ListScanTaskReply
-	(*GetScanTaskReq)(nil),                           // 153: ada.GetScanTaskReq
-	(*GetScanTaskReply)(nil),                         // 154: ada.GetScanTaskReply
-	(*AddScanTaskReq)(nil),                           // 155: ada.AddScanTaskReq
-	(*AddScanTaskReply)(nil),                         // 156: ada.AddScanTaskReply
-	(*RecheckScanTaskReq)(nil),                       // 157: ada.RecheckScanTaskReq
-	(*RecheckScanTaskReply)(nil),                     // 158: ada.RecheckScanTaskReply
-	(*DeleteScanTaskReq)(nil),                        // 159: ada.DeleteScanTaskReq
-	(*DeleteScanTaskReply)(nil),                      // 160: ada.DeleteScanTaskReply
-	(*ListScanConfReq)(nil),                          // 161: ada.ListScanConfReq
-	(*ListScanConfReply)(nil),                        // 162: ada.ListScanConfReply
-	(*ScanConfDetail)(nil),                           // 163: ada.scanConfDetail
-	(*SetScanConfReq)(nil),                           // 164: ada.SetScanConfReq
-	(*SetScanConfReply)(nil),                         // 165: ada.SetScanConfReply
-	(*GetScanConfReq)(nil),                           // 166: ada.GetScanConfReq
-	(*GetScanConfReply)(nil),                         // 167: ada.GetScanConfReply
-	(*GetScanTmplNamesReq)(nil),                      // 168: ada.GetScanTmplNamesReq
-	(*GetScanTmplNamesReply)(nil),                    // 169: ada.GetScanTmplNamesReply
-	(*UpdateScanConfReq)(nil),                        // 170: ada.UpdateScanConfReq
-	(*UpdateScanConfReply)(nil),                      // 171: ada.UpdateScanConfReply
-	(*ListScanTmplReq)(nil),                          // 172: ada.ListScanTmplReq
-	(*ListScanTmplReply)(nil),                        // 173: ada.ListScanTmplReply
-	(*GetScanTmplReq)(nil),                           // 174: ada.GetScanTmplReq
-	(*PluginInfo)(nil),                               // 175: ada.pluginInfo
-	(*GetScanTmplReply)(nil),                         // 176: ada.GetScanTmplReply
-	(*UpdateScanTmplReq)(nil),                        // 177: ada.UpdateScanTmplReq
-	(*UpdateScanTmplReply)(nil),                      // 178: ada.UpdateScanTmplReply
-	(*DeleteScanTmplReq)(nil),                        // 179: ada.DeleteScanTmplReq
-	(*DeleteScanTmplReply)(nil),                      // 180: ada.DeleteScanTmplReply
-	(*PluginInfoV2)(nil),                             // 181: ada.pluginInfoV2
-	(*AddScanTmplReq)(nil),                           // 182: ada.AddScanTmplReq
-	(*AddScanTmplReply)(nil),                         // 183: ada.AddScanTmplReply
-	(*ListScanPluginReq)(nil),                        // 184: ada.ListScanPluginReq
-	(*ListScanPluginReply)(nil),                      // 185: ada.ListScanPluginReply
-	(*DashboardStatsReq)(nil),                        // 186: ada.DashboardStatsReq
-	(*DashboardStatsReply)(nil),                      // 187: ada.DashboardStatsReply
-	(*DashboardTrendsReq)(nil),                       // 188: ada.DashboardTrendsReq
-	(*DashboardTrendsReply)(nil),                     // 189: ada.DashboardTrendsReply
-	(*DashboardLogStatsReq)(nil),                     // 190: ada.DashboardLogStatsReq
-	(*DashboardLogStatsReply)(nil),                   // 191: ada.DashboardLogStatsReply
-	(*ListAlertRuleReq)(nil),                         // 192: ada.ListAlertRuleReq
-	(*AttackFlowReply)(nil),                          // 193: ada.AttackFlowReply
-	(*AlertRuleInfo)(nil),                            // 194: ada.AlertRuleInfo
-	(*ListAlertRuleReply)(nil),                       // 195: ada.ListAlertRuleReply
-	(*AddAlertRuleReq)(nil),                          // 196: ada.AddAlertRuleReq
-	(*AddAlertRuleReply)(nil),                        // 197: ada.AddAlertRuleReply
-	(*UpdateAlertRuleReq)(nil),                       // 198: ada.UpdateAlertRuleReq
-	(*UpdateAlertRuleReply)(nil),                     // 199: ada.UpdateAlertRuleReply
-	(*DeleteAlertRuleReq)(nil),                       // 200: ada.DeleteAlertRuleReq
-	(*DeleteAlertRuleReply)(nil),                     // 201: ada.DeleteAlertRuleReply
-	(*GetAlertTypesReq)(nil),                         // 202: ada.GetAlertTypesReq
-	(*GetAlertTypesReply)(nil),                       // 203: ada.GetAlertTypesReply
-	(*GetAlertRuleNamesReq)(nil),                     // 204: ada.GetAlertRuleNamesReq
-	(*GetAlertRuleNamesReply)(nil),                   // 205: ada.GetAlertRuleNamesReply
-	(*GetAlertRuleTagsReq)(nil),                      // 206: ada.GetAlertRuleTagsReq
-	(*GetAlertRuleTagsReply)(nil),                    // 207: ada.GetAlertRuleTagsReply
-	(*GetActivityRuleFieldsReq)(nil),                 // 208: ada.GetActivityRuleFieldsReq
-	(*GetActivityRuleFieldsReply)(nil),               // 209: ada.GetActivityRuleFieldsReply
-	(*GetActivityRuleUniqueFieldsReq)(nil),           // 210: ada.GetActivityRuleUniqueFieldsReq
-	(*GetActivityRuleUniqueFieldsReply)(nil),         // 211: ada.GetActivityRuleUniqueFieldsReply
-	(*ListActivityRuleReq)(nil),                      // 212: ada.ListActivityRuleReq
-	(*ActivityRuleInfo)(nil),                         // 213: ada.ActivityRuleInfo
-	(*ListActivityRuleReply)(nil),                    // 214: ada.ListActivityRuleReply
-	(*GetActivityRuleReq)(nil),                       // 215: ada.GetActivityRuleReq
-	(*GetActivityRuleReply)(nil),                     // 216: ada.GetActivityRuleReply
-	(*AddActivityRuleReq)(nil),                       // 217: ada.AddActivityRuleReq
-	(*AddActivityRuleReply)(nil),                     // 218: ada.AddActivityRuleReply
-	(*UpdateActivityRuleReq)(nil),                    // 219: ada.UpdateActivityRuleReq
-	(*UpdateActivityRuleReply)(nil),                  // 220: ada.UpdateActivityRuleReply
-	(*DeleteActivityRuleReq)(nil),                    // 221: ada.DeleteActivityRuleReq
-	(*DeleteActivityRuleReply)(nil),                  // 222: ada.DeleteActivityRuleReply
-	(*ListUserReply_Details)(nil),                    // 223: ada.ListUserReply.Details
-	(*ListDomainReplyDcList)(nil),                    // 224: ada.ListDomainReply.dcList
-	(*ListDomainReply_Details)(nil),                  // 225: ada.ListDomainReply.Details
-	nil,                                              // 226: ada.ListDomainReply.Details.DomainInfoEntry
-	(*ListSensorReplyMapSlice)(nil),                  // 227: ada.ListSensorReply.mapSlice
-	(*ListSensorReply_Details)(nil),                  // 228: ada.ListSensorReply.Details
-	nil,                                              // 229: ada.ListSensorReply.mapSlice.EventEntry
-	nil,                                              // 230: ada.ListSensorReply.Details.NetIfaceEntry
-	nil,                                              // 231: ada.ListSensorReply.Details.PerfLimitEntry
-	nil,                                              // 232: ada.UpdateSensorReq.PerfLimitEntry
-	nil,                                              // 233: ada.GetSystemInfoReply.StatsCfgEntry
-	nil,                                              // 234: ada.SetSystemStatsCfgReq.StatsEntry
-	(*ListAuditLogReply_Details)(nil),                // 235: ada.ListAuditLogReply.Details
-	(*ListSystemLogsReply_Details)(nil),              // 236: ada.ListSystemLogsReply.Details
-	(*ListNotifyConfReply_Details)(nil),              // 237: ada.ListNotifyConfReply.Details
-	nil,                                              // 238: ada.ListNotifyConfReply.Details.MetadataEntry
-	nil,                                              // 239: ada.UpdateNotifyConfReq.MetadataEntry
-	nil,                                              // 240: ada.TestNotifyConfReq.MetadataEntry
-	(*ListExportTaskReply_Details)(nil),              // 241: ada.ListExportTaskReply.Details
-	nil,                                              // 242: ada.ListExportTaskReply.Details.ParamsEntry
-	nil,                                              // 243: ada.AddExportTaskReq.ParamsEntry
-	(*ListNotifyReply_Details)(nil),                  // 244: ada.ListNotifyReply.Details
-	nil,                                              // 245: ada.ListNotifyReply.Details.ParamsEntry
-	(*ThreatTopsReply_Details)(nil),                  // 246: ada.ThreatTopsReply.Details
-	(*ThreatTrendsReply_Item)(nil),                   // 247: ada.ThreatTrendsReply.Item
-	(*ListThreatReq_Details)(nil),                    // 248: ada.ListThreatReq.Details
-	(*ListThreatReply_Details)(nil),                  // 249: ada.ListThreatReply.Details
-	nil,                                              // 250: ada.GetThreatNamesReply.NamesEntry
-	nil,                                              // 251: ada.GetThreatReply.FieldDataEntry
-	nil,                                              // 252: ada.ActivityDetails.FieldDataEntry
-	nil,                                              // 253: ada.GetActivityNamesReply.NamesEntry
-	(*ListSensitiveEntryReply_Details)(nil),          // 254: ada.ListSensitiveEntryReply.Details
-	(*ListThreatWhitelistReply_Details)(nil),         // 255: ada.ListThreatWhitelistReply.Details
-	(*ListThreatWhitelistReply_DetailsRuleInfo)(nil), // 256: ada.ListThreatWhitelistReply.Details.ruleInfo
-	nil,                                      // 257: ada.ListThreatWhitelistReply.Details.ruleInfo.InfoEntry
-	(*AddThreatWhitelistReqRuleInfo)(nil),    // 258: ada.AddThreatWhitelistReq.ruleInfo
-	nil,                                      // 259: ada.AddThreatWhitelistReq.ruleInfo.InfoEntry
-	(*UpdateThreatWhitelistReqRuleInfo)(nil), // 260: ada.UpdateThreatWhitelistReq.ruleInfo
-	nil,                                      // 261: ada.UpdateThreatWhitelistReq.ruleInfo.InfoEntry
-	(*ListThreatBlockReply_Results)(nil),     // 262: ada.ListThreatBlockReply.Results
-	(*ListThreatBlockReply_Details)(nil),     // 263: ada.ListThreatBlockReply.Details
-	nil,                                      // 264: ada.ListThreatBlockReply.Results.InfoEntry
-	(*ScanRiskStatsReply_Details)(nil),       // 265: ada.ScanRiskStatsReply.Details
-	(*ListBaselineReply_Details)(nil),        // 266: ada.ListBaselineReply.Details
-	(*GetBaselineReplyEntryInfo)(nil),        // 267: ada.GetBaselineReply.entryInfo
-	nil,                                      // 268: ada.GetBaselineReply.entryInfo.InfoEntry
-	(*ListLeakReply_Details)(nil),            // 269: ada.ListLeakReply.Details
-	(*ListWeakPwdReply_Details)(nil),         // 270: ada.ListWeakPwdReply.Details
-	(*ListScanTaskReply_Details)(nil),        // 271: ada.ListScanTaskReply.Details
-	(*GetScanTaskReply_Details)(nil),         // 272: ada.GetScanTaskReply.Details
-	nil,                                      // 273: ada.GetScanTaskReply.Details.ParamsEntry
-	nil,                                      // 274: ada.AddScanTaskReq.PlansEntry
-	nil,                                      // 275: ada.scanConfDetail.PlansEntry
-	(*GetScanTmplNamesReplyTmplNames)(nil),   // 276: ada.GetScanTmplNamesReply.tmplNames
-	nil,                                      // 277: ada.UpdateScanConfReq.PlansEntry
-	(*ListScanTmplReply_Details)(nil),        // 278: ada.ListScanTmplReply.Details
-	nil,                                      // 279: ada.pluginInfo.MetaDataEntry
-	nil,                                      // 280: ada.pluginInfoV2.MetaDataEntry
-	nil,                                      // 281: ada.DashboardStatsReply.AssetEntry
-	nil,                                      // 282: ada.DashboardStatsReply.AlertEntry
-	nil,                                      // 283: ada.DashboardStatsReply.BaselineEntry
-	nil,                                      // 284: ada.DashboardStatsReply.LeakEntry
-	nil,                                      // 285: ada.DashboardStatsReply.WeakpwdEntry
-	(*DashboardLogStatsReplyLogStatsList)(nil), // 286: ada.DashboardLogStatsReply.logStatsList
-	(*AttackFlowReply_Field)(nil),              // 287: ada.AttackFlowReply.Field
-	nil,                                        // 288: ada.GetAlertTypesReply.AlertTypesEntry
-	nil,                                        // 289: ada.GetAlertRuleNamesReply.NamesEntry
+	(*ListDomainReq)(nil),                            // 27: ada.ListDomainReq
+	(*ListDomainReply)(nil),                          // 28: ada.ListDomainReply
+	(*AddDomainReq)(nil),                             // 29: ada.AddDomainReq
+	(*AddDomainReply)(nil),                           // 30: ada.AddDomainReply
+	(*TestDomainReq)(nil),                            // 31: ada.TestDomainReq
+	(*TestDomainReply)(nil),                          // 32: ada.TestDomainReply
+	(*UpdateDomainReq)(nil),                          // 33: ada.UpdateDomainReq
+	(*UpdateDomainReply)(nil),                        // 34: ada.UpdateDomainReply
+	(*DeleteDomainReq)(nil),                          // 35: ada.DeleteDomainReq
+	(*DeleteDomainReply)(nil),                        // 36: ada.DeleteDomainReply
+	(*UpdateDomainDataReq)(nil),                      // 37: ada.UpdateDomainDataReq
+	(*UpdateDomainDataReply)(nil),                    // 38: ada.UpdateDomainDataReply
+	(*DeploySensorReq)(nil),                          // 39: ada.DeploySensorReq
+	(*DeploySensorReply)(nil),                        // 40: ada.DeploySensorReply
+	(*ListSensorReq)(nil),                            // 41: ada.ListSensorReq
+	(*ListSensorReply)(nil),                          // 42: ada.ListSensorReply
+	(*UpdateSensorReq)(nil),                          // 43: ada.UpdateSensorReq
+	(*UpdateSensorReply)(nil),                        // 44: ada.UpdateSensorReply
+	(*DownloadSensorReq)(nil),                        // 45: ada.DownloadSensorReq
+	(*DownloadSensorReply)(nil),                      // 46: ada.DownloadSensorReply
+	(*CmdSensorReq)(nil),                             // 47: ada.CmdSensorReq
+	(*CmdSensorReply)(nil),                           // 48: ada.CmdSensorReply
+	(*UpdateSensorVersionReq)(nil),                   // 49: ada.UpdateSensorVersionReq
+	(*UpdateSensorVersionReply)(nil),                 // 50: ada.UpdateSensorVersionReply
+	(*GetSystemInfoReq)(nil),                         // 51: ada.GetSystemInfoReq
+	(*GetSystemInfoReply)(nil),                       // 52: ada.GetSystemInfoReply
+	(*GetSystemIconReq)(nil),                         // 53: ada.GetSystemIconReq
+	(*GetSystemIconReply)(nil),                       // 54: ada.GetSystemIconReply
+	(*UpdateSystemLanguageReq)(nil),                  // 55: ada.UpdateSystemLanguageReq
+	(*UpdateSystemLanguageReply)(nil),                // 56: ada.UpdateSystemLanguageReply
+	(*UpdateSystemCfgReq)(nil),                       // 57: ada.UpdateSystemCfgReq
+	(*UpdateSystemCfgReply)(nil),                     // 58: ada.UpdateSystemCfgReply
+	(*GetSystemStatsReq)(nil),                        // 59: ada.GetSystemStatsReq
+	(*StatsInfo)(nil),                                // 60: ada.StatsInfo
+	(*GetSystemStatsReply)(nil),                      // 61: ada.GetSystemStatsReply
+	(*SetSystemStatsCfgReq)(nil),                     // 62: ada.SetSystemStatsCfgReq
+	(*SetSystemStatsCfgReply)(nil),                   // 63: ada.SetSystemStatsCfgReply
+	(*ListAuditLogReq)(nil),                          // 64: ada.ListAuditLogReq
+	(*ListAuditLogReply)(nil),                        // 65: ada.ListAuditLogReply
+	(*ListSystemLogsReq)(nil),                        // 66: ada.ListSystemLogsReq
+	(*ListSystemLogsReply)(nil),                      // 67: ada.ListSystemLogsReply
+	(*GetLicenseReq)(nil),                            // 68: ada.GetLicenseReq
+	(*GetLicenseReply)(nil),                          // 69: ada.GetLicenseReply
+	(*UpdateLicenseReq)(nil),                         // 70: ada.UpdateLicenseReq
+	(*UpdateLicenseReply)(nil),                       // 71: ada.UpdateLicenseReply
+	(*NetworkDebugReq)(nil),                          // 72: ada.NetworkDebugReq
+	(*NetworkDebugReply)(nil),                        // 73: ada.NetworkDebugReply
+	(*ListNotifyConfReq)(nil),                        // 74: ada.ListNotifyConfReq
+	(*ListNotifyConfReply)(nil),                      // 75: ada.ListNotifyConfReply
+	(*UpdateNotifyConfReq)(nil),                      // 76: ada.UpdateNotifyConfReq
+	(*UpdateNotifyConfReply)(nil),                    // 77: ada.UpdateNotifyConfReply
+	(*EnableNotifyConfReq)(nil),                      // 78: ada.EnableNotifyConfReq
+	(*EnableNotifyConfReply)(nil),                    // 79: ada.EnableNotifyConfReply
+	(*TestNotifyConfReq)(nil),                        // 80: ada.TestNotifyConfReq
+	(*TestNotifyConfReply)(nil),                      // 81: ada.TestNotifyConfReply
+	(*ListExportTaskReq)(nil),                        // 82: ada.ListExportTaskReq
+	(*ListExportTaskReply)(nil),                      // 83: ada.ListExportTaskReply
+	(*AddExportTaskReq)(nil),                         // 84: ada.AddExportTaskReq
+	(*AddExportTaskReply)(nil),                       // 85: ada.AddExportTaskReply
+	(*DeleteExportTaskReq)(nil),                      // 86: ada.DeleteExportTaskReq
+	(*DeleteExportTaskReply)(nil),                    // 87: ada.DeleteExportTaskReply
+	(*ListNotifyReq)(nil),                            // 88: ada.ListNotifyReq
+	(*ListNotifyReply)(nil),                          // 89: ada.ListNotifyReply
+	(*UpdateNotifyReq)(nil),                          // 90: ada.UpdateNotifyReq
+	(*UpdateNotifyReply)(nil),                        // 91: ada.UpdateNotifyReply
+	(*StatsNotifyReq)(nil),                           // 92: ada.StatsNotifyReq
+	(*StatsNotifyReply)(nil),                         // 93: ada.StatsNotifyReply
+	(*ThreatTopsReq)(nil),                            // 94: ada.ThreatTopsReq
+	(*ThreatTopsReply)(nil),                          // 95: ada.ThreatTopsReply
+	(*ThreatTrendsReq)(nil),                          // 96: ada.ThreatTrendsReq
+	(*ThreatTrendsReply)(nil),                        // 97: ada.ThreatTrendsReply
+	(*ListThreatReq)(nil),                            // 98: ada.ListThreatReq
+	(*ListThreatReply)(nil),                          // 99: ada.ListThreatReply
+	(*GetThreatNamesReq)(nil),                        // 100: ada.GetThreatNamesReq
+	(*GetThreatNamesReply)(nil),                      // 101: ada.GetThreatNamesReply
+	(*GetThreatReq)(nil),                             // 102: ada.GetThreatReq
+	(*GetThreatReply)(nil),                           // 103: ada.GetThreatReply
+	(*ActionThreatReq)(nil),                          // 104: ada.ActionThreatReq
+	(*ActionThreatReply)(nil),                        // 105: ada.ActionThreatReply
+	(*ListActivityReq)(nil),                          // 106: ada.ListActivityReq
+	(*ActivityDetails)(nil),                          // 107: ada.ActivityDetails
+	(*ListActivityReply)(nil),                        // 108: ada.ListActivityReply
+	(*GetActivityNamesReq)(nil),                      // 109: ada.GetActivityNamesReq
+	(*GetActivityNamesReply)(nil),                    // 110: ada.GetActivityNamesReply
+	(*GetActivityReq)(nil),                           // 111: ada.GetActivityReq
+	(*GetActivityReply)(nil),                         // 112: ada.GetActivityReply
+	(*ListSensitiveEntryReq)(nil),                    // 113: ada.ListSensitiveEntryReq
+	(*ListSensitiveEntryReply)(nil),                  // 114: ada.ListSensitiveEntryReply
+	(*AddSensitiveEntryReq)(nil),                     // 115: ada.AddSensitiveEntryReq
+	(*AddSensitiveEntryReply)(nil),                   // 116: ada.AddSensitiveEntryReply
+	(*ListDomainEntryReq)(nil),                       // 117: ada.ListDomainEntryReq
+	(*ListDomainEntryReply)(nil),                     // 118: ada.ListDomainEntryReply
+	(*DeleteSensitiveEntryReq)(nil),                  // 119: ada.DeleteSensitiveEntryReq
+	(*DeleteSensitiveEntryReply)(nil),                // 120: ada.DeleteSensitiveEntryReply
+	(*ListThreatWhitelistReq)(nil),                   // 121: ada.ListThreatWhitelistReq
+	(*ListThreatWhitelistReply)(nil),                 // 122: ada.ListThreatWhitelistReply
+	(*GetThreatWhitelistFieldReq)(nil),               // 123: ada.GetThreatWhitelistFieldReq
+	(*GetThreatWhitelistFieldReply)(nil),             // 124: ada.GetThreatWhitelistFieldReply
+	(*AddThreatWhitelistReq)(nil),                    // 125: ada.AddThreatWhitelistReq
+	(*AddThreatWhitelistReply)(nil),                  // 126: ada.AddThreatWhitelistReply
+	(*UpdateThreatWhitelistReq)(nil),                 // 127: ada.UpdateThreatWhitelistReq
+	(*UpdateThreatWhitelistReply)(nil),               // 128: ada.UpdateThreatWhitelistReply
+	(*DeleteThreatWhitelistReq)(nil),                 // 129: ada.DeleteThreatWhitelistReq
+	(*DeleteThreatWhitelistReply)(nil),               // 130: ada.DeleteThreatWhitelistReply
+	(*ListThreatBlockReq)(nil),                       // 131: ada.ListThreatBlockReq
+	(*ListThreatBlockReply)(nil),                     // 132: ada.ListThreatBlockReply
+	(*AddThreatBlockReq)(nil),                        // 133: ada.AddThreatBlockReq
+	(*AddThreatBlockReply)(nil),                      // 134: ada.AddThreatBlockReply
+	(*UpdateThreatBlockReq)(nil),                     // 135: ada.UpdateThreatBlockReq
+	(*UpdateThreatBlockReply)(nil),                   // 136: ada.UpdateThreatBlockReply
+	(*DeleteThreatBlockReq)(nil),                     // 137: ada.DeleteThreatBlockReq
+	(*DeleteThreatBlockReply)(nil),                   // 138: ada.DeleteThreatBlockReply
+	(*ScanRiskStatsReq)(nil),                         // 139: ada.ScanRiskStatsReq
+	(*ScanRiskStatsReply)(nil),                       // 140: ada.ScanRiskStatsReply
+	(*ListBaselineReq)(nil),                          // 141: ada.ListBaselineReq
+	(*ListBaselineReply)(nil),                        // 142: ada.ListBaselineReply
+	(*GetBaselineReq)(nil),                           // 143: ada.GetBaselineReq
+	(*GetBaselineReply)(nil),                         // 144: ada.GetBaselineReply
+	(*ListLeakReq)(nil),                              // 145: ada.ListLeakReq
+	(*ListLeakReply)(nil),                            // 146: ada.ListLeakReply
+	(*ListWeakPwdReq)(nil),                           // 147: ada.ListWeakPwdReq
+	(*ListWeakPwdReply)(nil),                         // 148: ada.ListWeakPwdReply
+	(*ListScanTaskReq)(nil),                          // 149: ada.ListScanTaskReq
+	(*ListScanTaskReply)(nil),                        // 150: ada.ListScanTaskReply
+	(*GetScanTaskReq)(nil),                           // 151: ada.GetScanTaskReq
+	(*GetScanTaskReply)(nil),                         // 152: ada.GetScanTaskReply
+	(*AddScanTaskReq)(nil),                           // 153: ada.AddScanTaskReq
+	(*AddScanTaskReply)(nil),                         // 154: ada.AddScanTaskReply
+	(*RecheckScanTaskReq)(nil),                       // 155: ada.RecheckScanTaskReq
+	(*RecheckScanTaskReply)(nil),                     // 156: ada.RecheckScanTaskReply
+	(*DeleteScanTaskReq)(nil),                        // 157: ada.DeleteScanTaskReq
+	(*DeleteScanTaskReply)(nil),                      // 158: ada.DeleteScanTaskReply
+	(*ListScanConfReq)(nil),                          // 159: ada.ListScanConfReq
+	(*ListScanConfReply)(nil),                        // 160: ada.ListScanConfReply
+	(*ScanConfDetail)(nil),                           // 161: ada.scanConfDetail
+	(*SetScanConfReq)(nil),                           // 162: ada.SetScanConfReq
+	(*SetScanConfReply)(nil),                         // 163: ada.SetScanConfReply
+	(*GetScanConfReq)(nil),                           // 164: ada.GetScanConfReq
+	(*GetScanConfReply)(nil),                         // 165: ada.GetScanConfReply
+	(*GetScanTmplNamesReq)(nil),                      // 166: ada.GetScanTmplNamesReq
+	(*GetScanTmplNamesReply)(nil),                    // 167: ada.GetScanTmplNamesReply
+	(*UpdateScanConfReq)(nil),                        // 168: ada.UpdateScanConfReq
+	(*UpdateScanConfReply)(nil),                      // 169: ada.UpdateScanConfReply
+	(*ListScanTmplReq)(nil),                          // 170: ada.ListScanTmplReq
+	(*ListScanTmplReply)(nil),                        // 171: ada.ListScanTmplReply
+	(*GetScanTmplReq)(nil),                           // 172: ada.GetScanTmplReq
+	(*PluginInfo)(nil),                               // 173: ada.pluginInfo
+	(*GetScanTmplReply)(nil),                         // 174: ada.GetScanTmplReply
+	(*UpdateScanTmplReq)(nil),                        // 175: ada.UpdateScanTmplReq
+	(*UpdateScanTmplReply)(nil),                      // 176: ada.UpdateScanTmplReply
+	(*DeleteScanTmplReq)(nil),                        // 177: ada.DeleteScanTmplReq
+	(*DeleteScanTmplReply)(nil),                      // 178: ada.DeleteScanTmplReply
+	(*PluginInfoV2)(nil),                             // 179: ada.pluginInfoV2
+	(*AddScanTmplReq)(nil),                           // 180: ada.AddScanTmplReq
+	(*AddScanTmplReply)(nil),                         // 181: ada.AddScanTmplReply
+	(*ListScanPluginReq)(nil),                        // 182: ada.ListScanPluginReq
+	(*ListScanPluginReply)(nil),                      // 183: ada.ListScanPluginReply
+	(*DashboardStatsReq)(nil),                        // 184: ada.DashboardStatsReq
+	(*DashboardStatsReply)(nil),                      // 185: ada.DashboardStatsReply
+	(*DashboardTrendsReq)(nil),                       // 186: ada.DashboardTrendsReq
+	(*DashboardTrendsReply)(nil),                     // 187: ada.DashboardTrendsReply
+	(*DashboardLogStatsReq)(nil),                     // 188: ada.DashboardLogStatsReq
+	(*DashboardLogStatsReply)(nil),                   // 189: ada.DashboardLogStatsReply
+	(*ListAlertRuleReq)(nil),                         // 190: ada.ListAlertRuleReq
+	(*AttackFlowReply)(nil),                          // 191: ada.AttackFlowReply
+	(*AlertRuleInfo)(nil),                            // 192: ada.AlertRuleInfo
+	(*ListAlertRuleReply)(nil),                       // 193: ada.ListAlertRuleReply
+	(*AddAlertRuleReq)(nil),                          // 194: ada.AddAlertRuleReq
+	(*AddAlertRuleReply)(nil),                        // 195: ada.AddAlertRuleReply
+	(*UpdateAlertRuleReq)(nil),                       // 196: ada.UpdateAlertRuleReq
+	(*UpdateAlertRuleReply)(nil),                     // 197: ada.UpdateAlertRuleReply
+	(*DeleteAlertRuleReq)(nil),                       // 198: ada.DeleteAlertRuleReq
+	(*DeleteAlertRuleReply)(nil),                     // 199: ada.DeleteAlertRuleReply
+	(*GetAlertTypesReq)(nil),                         // 200: ada.GetAlertTypesReq
+	(*GetAlertTypesReply)(nil),                       // 201: ada.GetAlertTypesReply
+	(*GetAlertRuleNamesReq)(nil),                     // 202: ada.GetAlertRuleNamesReq
+	(*GetAlertRuleNamesReply)(nil),                   // 203: ada.GetAlertRuleNamesReply
+	(*GetAlertRuleTagsReq)(nil),                      // 204: ada.GetAlertRuleTagsReq
+	(*GetAlertRuleTagsReply)(nil),                    // 205: ada.GetAlertRuleTagsReply
+	(*GetActivityRuleFieldsReq)(nil),                 // 206: ada.GetActivityRuleFieldsReq
+	(*GetActivityRuleFieldsReply)(nil),               // 207: ada.GetActivityRuleFieldsReply
+	(*GetActivityRuleUniqueFieldsReq)(nil),           // 208: ada.GetActivityRuleUniqueFieldsReq
+	(*GetActivityRuleUniqueFieldsReply)(nil),         // 209: ada.GetActivityRuleUniqueFieldsReply
+	(*ListActivityRuleReq)(nil),                      // 210: ada.ListActivityRuleReq
+	(*ActivityRuleInfo)(nil),                         // 211: ada.ActivityRuleInfo
+	(*ListActivityRuleReply)(nil),                    // 212: ada.ListActivityRuleReply
+	(*GetActivityRuleReq)(nil),                       // 213: ada.GetActivityRuleReq
+	(*GetActivityRuleReply)(nil),                     // 214: ada.GetActivityRuleReply
+	(*AddActivityRuleReq)(nil),                       // 215: ada.AddActivityRuleReq
+	(*AddActivityRuleReply)(nil),                     // 216: ada.AddActivityRuleReply
+	(*UpdateActivityRuleReq)(nil),                    // 217: ada.UpdateActivityRuleReq
+	(*UpdateActivityRuleReply)(nil),                  // 218: ada.UpdateActivityRuleReply
+	(*DeleteActivityRuleReq)(nil),                    // 219: ada.DeleteActivityRuleReq
+	(*DeleteActivityRuleReply)(nil),                  // 220: ada.DeleteActivityRuleReply
+	(*ListUserReply_Details)(nil),                    // 221: ada.ListUserReply.Details
+	(*ListDomainReplyDcList)(nil),                    // 222: ada.ListDomainReply.dcList
+	(*ListDomainReply_Details)(nil),                  // 223: ada.ListDomainReply.Details
+	nil,                                              // 224: ada.ListDomainReply.Details.DomainInfoEntry
+	(*ListSensorReplyMapSlice)(nil),                  // 225: ada.ListSensorReply.mapSlice
+	(*ListSensorReply_Details)(nil),                  // 226: ada.ListSensorReply.Details
+	nil,                                              // 227: ada.ListSensorReply.mapSlice.EventEntry
+	nil,                                              // 228: ada.ListSensorReply.Details.NetIfaceEntry
+	nil,                                              // 229: ada.ListSensorReply.Details.PerfLimitEntry
+	nil,                                              // 230: ada.UpdateSensorReq.PerfLimitEntry
+	nil,                                              // 231: ada.GetSystemInfoReply.StatsCfgEntry
+	nil,                                              // 232: ada.SetSystemStatsCfgReq.StatsEntry
+	(*ListAuditLogReply_Details)(nil),                // 233: ada.ListAuditLogReply.Details
+	(*ListSystemLogsReply_Details)(nil),              // 234: ada.ListSystemLogsReply.Details
+	(*ListNotifyConfReply_Details)(nil),              // 235: ada.ListNotifyConfReply.Details
+	nil,                                              // 236: ada.ListNotifyConfReply.Details.MetadataEntry
+	nil,                                              // 237: ada.UpdateNotifyConfReq.MetadataEntry
+	nil,                                              // 238: ada.TestNotifyConfReq.MetadataEntry
+	(*ListExportTaskReply_Details)(nil),              // 239: ada.ListExportTaskReply.Details
+	nil,                                              // 240: ada.ListExportTaskReply.Details.ParamsEntry
+	nil,                                              // 241: ada.AddExportTaskReq.ParamsEntry
+	(*ListNotifyReply_Details)(nil),                  // 242: ada.ListNotifyReply.Details
+	nil,                                              // 243: ada.ListNotifyReply.Details.ParamsEntry
+	(*ThreatTopsReply_Details)(nil),                  // 244: ada.ThreatTopsReply.Details
+	(*ThreatTrendsReply_Item)(nil),                   // 245: ada.ThreatTrendsReply.Item
+	(*ListThreatReq_Details)(nil),                    // 246: ada.ListThreatReq.Details
+	(*ListThreatReply_Details)(nil),                  // 247: ada.ListThreatReply.Details
+	nil,                                              // 248: ada.GetThreatNamesReply.NamesEntry
+	nil,                                              // 249: ada.GetThreatReply.FieldDataEntry
+	nil,                                              // 250: ada.ActivityDetails.FieldDataEntry
+	nil,                                              // 251: ada.GetActivityNamesReply.NamesEntry
+	(*ListSensitiveEntryReply_Details)(nil),          // 252: ada.ListSensitiveEntryReply.Details
+	(*ListThreatWhitelistReply_Details)(nil),         // 253: ada.ListThreatWhitelistReply.Details
+	(*ListThreatWhitelistReply_DetailsRuleInfo)(nil), // 254: ada.ListThreatWhitelistReply.Details.ruleInfo
+	nil,                                      // 255: ada.ListThreatWhitelistReply.Details.ruleInfo.InfoEntry
+	(*AddThreatWhitelistReqRuleInfo)(nil),    // 256: ada.AddThreatWhitelistReq.ruleInfo
+	nil,                                      // 257: ada.AddThreatWhitelistReq.ruleInfo.InfoEntry
+	(*UpdateThreatWhitelistReqRuleInfo)(nil), // 258: ada.UpdateThreatWhitelistReq.ruleInfo
+	nil,                                      // 259: ada.UpdateThreatWhitelistReq.ruleInfo.InfoEntry
+	(*ListThreatBlockReply_Results)(nil),     // 260: ada.ListThreatBlockReply.Results
+	(*ListThreatBlockReply_Details)(nil),     // 261: ada.ListThreatBlockReply.Details
+	nil,                                      // 262: ada.ListThreatBlockReply.Results.InfoEntry
+	(*ScanRiskStatsReply_Details)(nil),       // 263: ada.ScanRiskStatsReply.Details
+	(*ListBaselineReply_Details)(nil),        // 264: ada.ListBaselineReply.Details
+	(*GetBaselineReplyEntryInfo)(nil),        // 265: ada.GetBaselineReply.entryInfo
+	nil,                                      // 266: ada.GetBaselineReply.entryInfo.InfoEntry
+	(*ListLeakReply_Details)(nil),            // 267: ada.ListLeakReply.Details
+	(*ListWeakPwdReply_Details)(nil),         // 268: ada.ListWeakPwdReply.Details
+	(*ListScanTaskReply_Details)(nil),        // 269: ada.ListScanTaskReply.Details
+	(*GetScanTaskReply_Details)(nil),         // 270: ada.GetScanTaskReply.Details
+	nil,                                      // 271: ada.GetScanTaskReply.Details.ParamsEntry
+	nil,                                      // 272: ada.AddScanTaskReq.PlansEntry
+	nil,                                      // 273: ada.scanConfDetail.PlansEntry
+	(*GetScanTmplNamesReplyTmplNames)(nil),   // 274: ada.GetScanTmplNamesReply.tmplNames
+	nil,                                      // 275: ada.UpdateScanConfReq.PlansEntry
+	(*ListScanTmplReply_Details)(nil),        // 276: ada.ListScanTmplReply.Details
+	nil,                                      // 277: ada.pluginInfo.MetaDataEntry
+	nil,                                      // 278: ada.pluginInfoV2.MetaDataEntry
+	nil,                                      // 279: ada.DashboardStatsReply.AssetEntry
+	nil,                                      // 280: ada.DashboardStatsReply.AlertEntry
+	nil,                                      // 281: ada.DashboardStatsReply.BaselineEntry
+	nil,                                      // 282: ada.DashboardStatsReply.LeakEntry
+	nil,                                      // 283: ada.DashboardStatsReply.WeakpwdEntry
+	(*DashboardLogStatsReplyLogStatsList)(nil), // 284: ada.DashboardLogStatsReply.logStatsList
+	(*AttackFlowReply_Field)(nil),              // 285: ada.AttackFlowReply.Field
+	nil,                                        // 286: ada.GetAlertTypesReply.AlertTypesEntry
+	nil,                                        // 287: ada.GetAlertRuleNamesReply.NamesEntry
 }
 var file_ada_proto_depIdxs = []int32{
 	0,   // 0: ada.ListUserReply.page:type_name -> ada.ModelPage
-	223, // 1: ada.ListUserReply.List:type_name -> ada.ListUserReply.Details
+	221, // 1: ada.ListUserReply.List:type_name -> ada.ListUserReply.Details
 	0,   // 2: ada.ListDomainReply.page:type_name -> ada.ModelPage
-	225, // 3: ada.ListDomainReply.List:type_name -> ada.ListDomainReply.Details
+	223, // 3: ada.ListDomainReply.List:type_name -> ada.ListDomainReply.Details
 	0,   // 4: ada.ListSensorReply.page:type_name -> ada.ModelPage
-	228, // 5: ada.ListSensorReply.List:type_name -> ada.ListSensorReply.Details
-	232, // 6: ada.UpdateSensorReq.perfLimit:type_name -> ada.UpdateSensorReq.PerfLimitEntry
-	233, // 7: ada.GetSystemInfoReply.statsCfg:type_name -> ada.GetSystemInfoReply.StatsCfgEntry
-	62,  // 8: ada.GetSystemStatsReply.stats:type_name -> ada.StatsInfo
-	234, // 9: ada.SetSystemStatsCfgReq.stats:type_name -> ada.SetSystemStatsCfgReq.StatsEntry
+	226, // 5: ada.ListSensorReply.List:type_name -> ada.ListSensorReply.Details
+	230, // 6: ada.UpdateSensorReq.perfLimit:type_name -> ada.UpdateSensorReq.PerfLimitEntry
+	231, // 7: ada.GetSystemInfoReply.statsCfg:type_name -> ada.GetSystemInfoReply.StatsCfgEntry
+	60,  // 8: ada.GetSystemStatsReply.stats:type_name -> ada.StatsInfo
+	232, // 9: ada.SetSystemStatsCfgReq.stats:type_name -> ada.SetSystemStatsCfgReq.StatsEntry
 	0,   // 10: ada.ListAuditLogReply.page:type_name -> ada.ModelPage
-	235, // 11: ada.ListAuditLogReply.List:type_name -> ada.ListAuditLogReply.Details
+	233, // 11: ada.ListAuditLogReply.List:type_name -> ada.ListAuditLogReply.Details
 	0,   // 12: ada.ListSystemLogsReply.page:type_name -> ada.ModelPage
-	236, // 13: ada.ListSystemLogsReply.list:type_name -> ada.ListSystemLogsReply.Details
-	237, // 14: ada.ListNotifyConfReply.list:type_name -> ada.ListNotifyConfReply.Details
+	234, // 13: ada.ListSystemLogsReply.list:type_name -> ada.ListSystemLogsReply.Details
+	235, // 14: ada.ListNotifyConfReply.list:type_name -> ada.ListNotifyConfReply.Details
 	0,   // 15: ada.ListNotifyConfReply.page:type_name -> ada.ModelPage
-	239, // 16: ada.UpdateNotifyConfReq.metadata:type_name -> ada.UpdateNotifyConfReq.MetadataEntry
-	240, // 17: ada.TestNotifyConfReq.metadata:type_name -> ada.TestNotifyConfReq.MetadataEntry
+	237, // 16: ada.UpdateNotifyConfReq.metadata:type_name -> ada.UpdateNotifyConfReq.MetadataEntry
+	238, // 17: ada.TestNotifyConfReq.metadata:type_name -> ada.TestNotifyConfReq.MetadataEntry
 	0,   // 18: ada.ListExportTaskReply.page:type_name -> ada.ModelPage
-	241, // 19: ada.ListExportTaskReply.list:type_name -> ada.ListExportTaskReply.Details
-	243, // 20: ada.AddExportTaskReq.params:type_name -> ada.AddExportTaskReq.ParamsEntry
+	239, // 19: ada.ListExportTaskReply.list:type_name -> ada.ListExportTaskReply.Details
+	241, // 20: ada.AddExportTaskReq.params:type_name -> ada.AddExportTaskReq.ParamsEntry
 	0,   // 21: ada.ListNotifyReply.page:type_name -> ada.ModelPage
-	244, // 22: ada.ListNotifyReply.List:type_name -> ada.ListNotifyReply.Details
-	246, // 23: ada.ThreatTopsReply.List:type_name -> ada.ThreatTopsReply.Details
-	247, // 24: ada.ThreatTrendsReply.List:type_name -> ada.ThreatTrendsReply.Item
-	248, // 25: ada.ListThreatReq.advancedSearch:type_name -> ada.ListThreatReq.Details
+	242, // 22: ada.ListNotifyReply.List:type_name -> ada.ListNotifyReply.Details
+	244, // 23: ada.ThreatTopsReply.List:type_name -> ada.ThreatTopsReply.Details
+	245, // 24: ada.ThreatTrendsReply.List:type_name -> ada.ThreatTrendsReply.Item
+	246, // 25: ada.ListThreatReq.advancedSearch:type_name -> ada.ListThreatReq.Details
 	0,   // 26: ada.ListThreatReply.page:type_name -> ada.ModelPage
-	249, // 27: ada.ListThreatReply.List:type_name -> ada.ListThreatReply.Details
-	250, // 28: ada.GetThreatNamesReply.names:type_name -> ada.GetThreatNamesReply.NamesEntry
-	251, // 29: ada.GetThreatReply.fieldData:type_name -> ada.GetThreatReply.FieldDataEntry
-	193, // 30: ada.GetThreatReply.attackFlow:type_name -> ada.AttackFlowReply
-	109, // 31: ada.GetThreatReply.activities:type_name -> ada.ActivityDetails
-	252, // 32: ada.ActivityDetails.fieldData:type_name -> ada.ActivityDetails.FieldDataEntry
+	247, // 27: ada.ListThreatReply.List:type_name -> ada.ListThreatReply.Details
+	248, // 28: ada.GetThreatNamesReply.names:type_name -> ada.GetThreatNamesReply.NamesEntry
+	249, // 29: ada.GetThreatReply.fieldData:type_name -> ada.GetThreatReply.FieldDataEntry
+	191, // 30: ada.GetThreatReply.attackFlow:type_name -> ada.AttackFlowReply
+	107, // 31: ada.GetThreatReply.activities:type_name -> ada.ActivityDetails
+	250, // 32: ada.ActivityDetails.fieldData:type_name -> ada.ActivityDetails.FieldDataEntry
 	0,   // 33: ada.ListActivityReply.page:type_name -> ada.ModelPage
-	109, // 34: ada.ListActivityReply.List:type_name -> ada.ActivityDetails
-	253, // 35: ada.GetActivityNamesReply.names:type_name -> ada.GetActivityNamesReply.NamesEntry
-	109, // 36: ada.GetActivityReply.details:type_name -> ada.ActivityDetails
+	107, // 34: ada.ListActivityReply.List:type_name -> ada.ActivityDetails
+	251, // 35: ada.GetActivityNamesReply.names:type_name -> ada.GetActivityNamesReply.NamesEntry
+	107, // 36: ada.GetActivityReply.details:type_name -> ada.ActivityDetails
 	0,   // 37: ada.ListSensitiveEntryReply.page:type_name -> ada.ModelPage
-	254, // 38: ada.ListSensitiveEntryReply.List:type_name -> ada.ListSensitiveEntryReply.Details
+	252, // 38: ada.ListSensitiveEntryReply.List:type_name -> ada.ListSensitiveEntryReply.Details
 	0,   // 39: ada.ListThreatWhitelistReply.page:type_name -> ada.ModelPage
-	255, // 40: ada.ListThreatWhitelistReply.List:type_name -> ada.ListThreatWhitelistReply.Details
-	258, // 41: ada.AddThreatWhitelistReq.rules:type_name -> ada.AddThreatWhitelistReq.ruleInfo
-	260, // 42: ada.UpdateThreatWhitelistReq.rules:type_name -> ada.UpdateThreatWhitelistReq.ruleInfo
+	253, // 40: ada.ListThreatWhitelistReply.List:type_name -> ada.ListThreatWhitelistReply.Details
+	256, // 41: ada.AddThreatWhitelistReq.rules:type_name -> ada.AddThreatWhitelistReq.ruleInfo
+	258, // 42: ada.UpdateThreatWhitelistReq.rules:type_name -> ada.UpdateThreatWhitelistReq.ruleInfo
 	0,   // 43: ada.ListThreatBlockReply.page:type_name -> ada.ModelPage
-	263, // 44: ada.ListThreatBlockReply.List:type_name -> ada.ListThreatBlockReply.Details
-	265, // 45: ada.ScanRiskStatsReply.List:type_name -> ada.ScanRiskStatsReply.Details
+	261, // 44: ada.ListThreatBlockReply.List:type_name -> ada.ListThreatBlockReply.Details
+	263, // 45: ada.ScanRiskStatsReply.List:type_name -> ada.ScanRiskStatsReply.Details
 	0,   // 46: ada.ListBaselineReply.page:type_name -> ada.ModelPage
-	266, // 47: ada.ListBaselineReply.List:type_name -> ada.ListBaselineReply.Details
-	267, // 48: ada.GetBaselineReply.entries:type_name -> ada.GetBaselineReply.entryInfo
+	264, // 47: ada.ListBaselineReply.List:type_name -> ada.ListBaselineReply.Details
+	265, // 48: ada.GetBaselineReply.entries:type_name -> ada.GetBaselineReply.entryInfo
 	0,   // 49: ada.ListLeakReply.page:type_name -> ada.ModelPage
-	269, // 50: ada.ListLeakReply.List:type_name -> ada.ListLeakReply.Details
+	267, // 50: ada.ListLeakReply.List:type_name -> ada.ListLeakReply.Details
 	0,   // 51: ada.ListWeakPwdReply.page:type_name -> ada.ModelPage
-	270, // 52: ada.ListWeakPwdReply.List:type_name -> ada.ListWeakPwdReply.Details
+	268, // 52: ada.ListWeakPwdReply.List:type_name -> ada.ListWeakPwdReply.Details
 	0,   // 53: ada.ListScanTaskReply.page:type_name -> ada.ModelPage
-	271, // 54: ada.ListScanTaskReply.List:type_name -> ada.ListScanTaskReply.Details
+	269, // 54: ada.ListScanTaskReply.List:type_name -> ada.ListScanTaskReply.Details
 	0,   // 55: ada.GetScanTaskReply.page:type_name -> ada.ModelPage
-	272, // 56: ada.GetScanTaskReply.List:type_name -> ada.GetScanTaskReply.Details
-	274, // 57: ada.AddScanTaskReq.plans:type_name -> ada.AddScanTaskReq.PlansEntry
+	270, // 56: ada.GetScanTaskReply.List:type_name -> ada.GetScanTaskReply.Details
+	272, // 57: ada.AddScanTaskReq.plans:type_name -> ada.AddScanTaskReq.PlansEntry
 	0,   // 58: ada.ListScanConfReply.page:type_name -> ada.ModelPage
-	163, // 59: ada.ListScanConfReply.List:type_name -> ada.scanConfDetail
-	275, // 60: ada.scanConfDetail.plans:type_name -> ada.scanConfDetail.PlansEntry
-	163, // 61: ada.GetScanConfReply.Detail:type_name -> ada.scanConfDetail
-	276, // 62: ada.GetScanTmplNamesReply.List:type_name -> ada.GetScanTmplNamesReply.tmplNames
-	277, // 63: ada.UpdateScanConfReq.plans:type_name -> ada.UpdateScanConfReq.PlansEntry
+	161, // 59: ada.ListScanConfReply.List:type_name -> ada.scanConfDetail
+	273, // 60: ada.scanConfDetail.plans:type_name -> ada.scanConfDetail.PlansEntry
+	161, // 61: ada.GetScanConfReply.Detail:type_name -> ada.scanConfDetail
+	274, // 62: ada.GetScanTmplNamesReply.List:type_name -> ada.GetScanTmplNamesReply.tmplNames
+	275, // 63: ada.UpdateScanConfReq.plans:type_name -> ada.UpdateScanConfReq.PlansEntry
 	0,   // 64: ada.ListScanTmplReply.page:type_name -> ada.ModelPage
-	278, // 65: ada.ListScanTmplReply.List:type_name -> ada.ListScanTmplReply.Details
-	279, // 66: ada.pluginInfo.metaData:type_name -> ada.pluginInfo.MetaDataEntry
-	175, // 67: ada.GetScanTmplReply.Plugins:type_name -> ada.pluginInfo
-	181, // 68: ada.UpdateScanTmplReq.Plugins:type_name -> ada.pluginInfoV2
-	280, // 69: ada.pluginInfoV2.metaData:type_name -> ada.pluginInfoV2.MetaDataEntry
-	181, // 70: ada.AddScanTmplReq.Plugins:type_name -> ada.pluginInfoV2
-	175, // 71: ada.ListScanPluginReply.Plugins:type_name -> ada.pluginInfo
-	281, // 72: ada.DashboardStatsReply.asset:type_name -> ada.DashboardStatsReply.AssetEntry
-	282, // 73: ada.DashboardStatsReply.alert:type_name -> ada.DashboardStatsReply.AlertEntry
-	283, // 74: ada.DashboardStatsReply.baseline:type_name -> ada.DashboardStatsReply.BaselineEntry
-	284, // 75: ada.DashboardStatsReply.leak:type_name -> ada.DashboardStatsReply.LeakEntry
-	285, // 76: ada.DashboardStatsReply.weakpwd:type_name -> ada.DashboardStatsReply.WeakpwdEntry
-	286, // 77: ada.DashboardLogStatsReply.List:type_name -> ada.DashboardLogStatsReply.logStatsList
-	287, // 78: ada.AttackFlowReply.fields:type_name -> ada.AttackFlowReply.Field
-	193, // 79: ada.AlertRuleInfo.attackFlow:type_name -> ada.AttackFlowReply
+	276, // 65: ada.ListScanTmplReply.List:type_name -> ada.ListScanTmplReply.Details
+	277, // 66: ada.pluginInfo.metaData:type_name -> ada.pluginInfo.MetaDataEntry
+	173, // 67: ada.GetScanTmplReply.Plugins:type_name -> ada.pluginInfo
+	179, // 68: ada.UpdateScanTmplReq.Plugins:type_name -> ada.pluginInfoV2
+	278, // 69: ada.pluginInfoV2.metaData:type_name -> ada.pluginInfoV2.MetaDataEntry
+	179, // 70: ada.AddScanTmplReq.Plugins:type_name -> ada.pluginInfoV2
+	173, // 71: ada.ListScanPluginReply.Plugins:type_name -> ada.pluginInfo
+	279, // 72: ada.DashboardStatsReply.asset:type_name -> ada.DashboardStatsReply.AssetEntry
+	280, // 73: ada.DashboardStatsReply.alert:type_name -> ada.DashboardStatsReply.AlertEntry
+	281, // 74: ada.DashboardStatsReply.baseline:type_name -> ada.DashboardStatsReply.BaselineEntry
+	282, // 75: ada.DashboardStatsReply.leak:type_name -> ada.DashboardStatsReply.LeakEntry
+	283, // 76: ada.DashboardStatsReply.weakpwd:type_name -> ada.DashboardStatsReply.WeakpwdEntry
+	284, // 77: ada.DashboardLogStatsReply.List:type_name -> ada.DashboardLogStatsReply.logStatsList
+	285, // 78: ada.AttackFlowReply.fields:type_name -> ada.AttackFlowReply.Field
+	191, // 79: ada.AlertRuleInfo.attackFlow:type_name -> ada.AttackFlowReply
 	0,   // 80: ada.ListAlertRuleReply.page:type_name -> ada.ModelPage
-	194, // 81: ada.ListAlertRuleReply.rules:type_name -> ada.AlertRuleInfo
-	193, // 82: ada.AddAlertRuleReq.attackFlow:type_name -> ada.AttackFlowReply
-	193, // 83: ada.UpdateAlertRuleReq.attackFlow:type_name -> ada.AttackFlowReply
-	288, // 84: ada.GetAlertTypesReply.alertTypes:type_name -> ada.GetAlertTypesReply.AlertTypesEntry
-	289, // 85: ada.GetAlertRuleNamesReply.names:type_name -> ada.GetAlertRuleNamesReply.NamesEntry
+	192, // 81: ada.ListAlertRuleReply.rules:type_name -> ada.AlertRuleInfo
+	191, // 82: ada.AddAlertRuleReq.attackFlow:type_name -> ada.AttackFlowReply
+	191, // 83: ada.UpdateAlertRuleReq.attackFlow:type_name -> ada.AttackFlowReply
+	286, // 84: ada.GetAlertTypesReply.alertTypes:type_name -> ada.GetAlertTypesReply.AlertTypesEntry
+	287, // 85: ada.GetAlertRuleNamesReply.names:type_name -> ada.GetAlertRuleNamesReply.NamesEntry
 	0,   // 86: ada.ListActivityRuleReply.page:type_name -> ada.ModelPage
-	213, // 87: ada.ListActivityRuleReply.rules:type_name -> ada.ActivityRuleInfo
-	226, // 88: ada.ListDomainReply.Details.domainInfo:type_name -> ada.ListDomainReply.Details.DomainInfoEntry
-	224, // 89: ada.ListDomainReply.Details.DCs:type_name -> ada.ListDomainReply.dcList
-	229, // 90: ada.ListSensorReply.mapSlice.event:type_name -> ada.ListSensorReply.mapSlice.EventEntry
-	230, // 91: ada.ListSensorReply.Details.netIface:type_name -> ada.ListSensorReply.Details.NetIfaceEntry
-	231, // 92: ada.ListSensorReply.Details.perfLimit:type_name -> ada.ListSensorReply.Details.PerfLimitEntry
-	227, // 93: ada.ListSensorReply.Details.events:type_name -> ada.ListSensorReply.mapSlice
-	238, // 94: ada.ListNotifyConfReply.Details.metadata:type_name -> ada.ListNotifyConfReply.Details.MetadataEntry
-	242, // 95: ada.ListExportTaskReply.Details.params:type_name -> ada.ListExportTaskReply.Details.ParamsEntry
-	245, // 96: ada.ListNotifyReply.Details.params:type_name -> ada.ListNotifyReply.Details.ParamsEntry
-	193, // 97: ada.ListThreatReply.Details.attackFlow:type_name -> ada.AttackFlowReply
-	256, // 98: ada.ListThreatWhitelistReply.Details.rules:type_name -> ada.ListThreatWhitelistReply.Details.ruleInfo
-	257, // 99: ada.ListThreatWhitelistReply.Details.ruleInfo.info:type_name -> ada.ListThreatWhitelistReply.Details.ruleInfo.InfoEntry
-	259, // 100: ada.AddThreatWhitelistReq.ruleInfo.info:type_name -> ada.AddThreatWhitelistReq.ruleInfo.InfoEntry
-	261, // 101: ada.UpdateThreatWhitelistReq.ruleInfo.info:type_name -> ada.UpdateThreatWhitelistReq.ruleInfo.InfoEntry
-	264, // 102: ada.ListThreatBlockReply.Results.info:type_name -> ada.ListThreatBlockReply.Results.InfoEntry
-	262, // 103: ada.ListThreatBlockReply.Details.results:type_name -> ada.ListThreatBlockReply.Results
-	268, // 104: ada.GetBaselineReply.entryInfo.info:type_name -> ada.GetBaselineReply.entryInfo.InfoEntry
-	273, // 105: ada.GetScanTaskReply.Details.params:type_name -> ada.GetScanTaskReply.Details.ParamsEntry
+	211, // 87: ada.ListActivityRuleReply.rules:type_name -> ada.ActivityRuleInfo
+	224, // 88: ada.ListDomainReply.Details.domainInfo:type_name -> ada.ListDomainReply.Details.DomainInfoEntry
+	222, // 89: ada.ListDomainReply.Details.DCs:type_name -> ada.ListDomainReply.dcList
+	227, // 90: ada.ListSensorReply.mapSlice.event:type_name -> ada.ListSensorReply.mapSlice.EventEntry
+	228, // 91: ada.ListSensorReply.Details.netIface:type_name -> ada.ListSensorReply.Details.NetIfaceEntry
+	229, // 92: ada.ListSensorReply.Details.perfLimit:type_name -> ada.ListSensorReply.Details.PerfLimitEntry
+	225, // 93: ada.ListSensorReply.Details.events:type_name -> ada.ListSensorReply.mapSlice
+	236, // 94: ada.ListNotifyConfReply.Details.metadata:type_name -> ada.ListNotifyConfReply.Details.MetadataEntry
+	240, // 95: ada.ListExportTaskReply.Details.params:type_name -> ada.ListExportTaskReply.Details.ParamsEntry
+	243, // 96: ada.ListNotifyReply.Details.params:type_name -> ada.ListNotifyReply.Details.ParamsEntry
+	191, // 97: ada.ListThreatReply.Details.attackFlow:type_name -> ada.AttackFlowReply
+	254, // 98: ada.ListThreatWhitelistReply.Details.rules:type_name -> ada.ListThreatWhitelistReply.Details.ruleInfo
+	255, // 99: ada.ListThreatWhitelistReply.Details.ruleInfo.info:type_name -> ada.ListThreatWhitelistReply.Details.ruleInfo.InfoEntry
+	257, // 100: ada.AddThreatWhitelistReq.ruleInfo.info:type_name -> ada.AddThreatWhitelistReq.ruleInfo.InfoEntry
+	259, // 101: ada.UpdateThreatWhitelistReq.ruleInfo.info:type_name -> ada.UpdateThreatWhitelistReq.ruleInfo.InfoEntry
+	262, // 102: ada.ListThreatBlockReply.Results.info:type_name -> ada.ListThreatBlockReply.Results.InfoEntry
+	260, // 103: ada.ListThreatBlockReply.Details.results:type_name -> ada.ListThreatBlockReply.Results
+	266, // 104: ada.GetBaselineReply.entryInfo.info:type_name -> ada.GetBaselineReply.entryInfo.InfoEntry
+	271, // 105: ada.GetScanTaskReply.Details.params:type_name -> ada.GetScanTaskReply.Details.ParamsEntry
 	1,   // 106: ada.ADA.Login:input_type -> ada.LoginReq
 	3,   // 107: ada.ADA.Logout:input_type -> ada.LogoutReq
 	5,   // 108: ada.ADA.ListUser:input_type -> ada.ListUserReq
@@ -20748,209 +20630,207 @@ var file_ada_proto_depIdxs = []int32{
 	21,  // 116: ada.ADA.DisableMfa:input_type -> ada.DisableMfaReq
 	23,  // 117: ada.ADA.UpdateAvatar:input_type -> ada.UpdateAvatarReq
 	25,  // 118: ada.ADA.ResetPassword:input_type -> ada.ResetPasswordReq
-	27,  // 119: ada.ADA.GetPwdUpdateTm:input_type -> ada.GetPwdUpdateTmReq
-	29,  // 120: ada.ADA.ListDomain:input_type -> ada.ListDomainReq
-	31,  // 121: ada.ADA.AddDomain:input_type -> ada.AddDomainReq
-	33,  // 122: ada.ADA.TestDomain:input_type -> ada.TestDomainReq
-	35,  // 123: ada.ADA.UpdateDomain:input_type -> ada.UpdateDomainReq
-	37,  // 124: ada.ADA.DeleteDomain:input_type -> ada.DeleteDomainReq
-	39,  // 125: ada.ADA.UpdateDomainData:input_type -> ada.UpdateDomainDataReq
-	41,  // 126: ada.ADA.DeploySensor:input_type -> ada.DeploySensorReq
-	43,  // 127: ada.ADA.ListSensor:input_type -> ada.ListSensorReq
-	45,  // 128: ada.ADA.UpdateSensor:input_type -> ada.UpdateSensorReq
-	47,  // 129: ada.ADA.DownloadSensor:input_type -> ada.DownloadSensorReq
-	49,  // 130: ada.ADA.CmdSensor:input_type -> ada.CmdSensorReq
-	51,  // 131: ada.ADA.UpdateSensorVersion:input_type -> ada.UpdateSensorVersionReq
-	53,  // 132: ada.ADA.GetSystemInfo:input_type -> ada.GetSystemInfoReq
-	55,  // 133: ada.ADA.GetSystemIcon:input_type -> ada.GetSystemIconReq
-	57,  // 134: ada.ADA.UpdateSystemLanguage:input_type -> ada.UpdateSystemLanguageReq
-	59,  // 135: ada.ADA.UpdateSystemCfg:input_type -> ada.UpdateSystemCfgReq
-	61,  // 136: ada.ADA.GetSystemStats:input_type -> ada.GetSystemStatsReq
-	64,  // 137: ada.ADA.SetSystemStatsCfg:input_type -> ada.SetSystemStatsCfgReq
-	70,  // 138: ada.ADA.GetLicense:input_type -> ada.GetLicenseReq
-	72,  // 139: ada.ADA.UpdateLicense:input_type -> ada.UpdateLicenseReq
-	74,  // 140: ada.ADA.NetworkDebug:input_type -> ada.NetworkDebugReq
-	76,  // 141: ada.ADA.ListNotifyConf:input_type -> ada.ListNotifyConfReq
-	78,  // 142: ada.ADA.UpdateNotifyConf:input_type -> ada.UpdateNotifyConfReq
-	80,  // 143: ada.ADA.EnableNotifyConf:input_type -> ada.EnableNotifyConfReq
-	82,  // 144: ada.ADA.TestNotifyConf:input_type -> ada.TestNotifyConfReq
-	84,  // 145: ada.ADA.ListExportTask:input_type -> ada.ListExportTaskReq
-	86,  // 146: ada.ADA.AddExportTask:input_type -> ada.AddExportTaskReq
-	88,  // 147: ada.ADA.DeleteExportTask:input_type -> ada.DeleteExportTaskReq
-	90,  // 148: ada.ADA.ListNotify:input_type -> ada.ListNotifyReq
-	92,  // 149: ada.ADA.UpdateNotify:input_type -> ada.UpdateNotifyReq
-	94,  // 150: ada.ADA.StatsNotify:input_type -> ada.StatsNotifyReq
-	66,  // 151: ada.ADA.ListAuditLog:input_type -> ada.ListAuditLogReq
-	68,  // 152: ada.ADA.ListSystemLogs:input_type -> ada.ListSystemLogsReq
-	96,  // 153: ada.ADA.ThreatTops:input_type -> ada.ThreatTopsReq
-	98,  // 154: ada.ADA.ThreatTrends:input_type -> ada.ThreatTrendsReq
-	100, // 155: ada.ADA.ListThreat:input_type -> ada.ListThreatReq
-	102, // 156: ada.ADA.GetThreatNames:input_type -> ada.GetThreatNamesReq
-	104, // 157: ada.ADA.GetThreat:input_type -> ada.GetThreatReq
-	106, // 158: ada.ADA.ActionThreat:input_type -> ada.ActionThreatReq
-	108, // 159: ada.ADA.ListActivity:input_type -> ada.ListActivityReq
-	111, // 160: ada.ADA.GetActivityNames:input_type -> ada.GetActivityNamesReq
-	113, // 161: ada.ADA.GetActivity:input_type -> ada.GetActivityReq
-	115, // 162: ada.ADA.ListSensitiveEntry:input_type -> ada.ListSensitiveEntryReq
-	117, // 163: ada.ADA.AddSensitiveEntry:input_type -> ada.AddSensitiveEntryReq
-	119, // 164: ada.ADA.ListDomainEntry:input_type -> ada.ListDomainEntryReq
-	121, // 165: ada.ADA.DeleteSensitiveEntry:input_type -> ada.DeleteSensitiveEntryReq
-	123, // 166: ada.ADA.ListThreatWhitelist:input_type -> ada.ListThreatWhitelistReq
-	125, // 167: ada.ADA.GetThreatWhitelistField:input_type -> ada.GetThreatWhitelistFieldReq
-	127, // 168: ada.ADA.AddThreatWhitelist:input_type -> ada.AddThreatWhitelistReq
-	129, // 169: ada.ADA.UpdateThreatWhitelist:input_type -> ada.UpdateThreatWhitelistReq
-	131, // 170: ada.ADA.DeleteThreatWhitelist:input_type -> ada.DeleteThreatWhitelistReq
-	133, // 171: ada.ADA.ListThreatBlock:input_type -> ada.ListThreatBlockReq
-	135, // 172: ada.ADA.AddThreatBlock:input_type -> ada.AddThreatBlockReq
-	137, // 173: ada.ADA.UpdateThreatBlock:input_type -> ada.UpdateThreatBlockReq
-	139, // 174: ada.ADA.DeleteThreatBlock:input_type -> ada.DeleteThreatBlockReq
-	192, // 175: ada.ADA.ListAlertRule:input_type -> ada.ListAlertRuleReq
-	196, // 176: ada.ADA.AddAlertRule:input_type -> ada.AddAlertRuleReq
-	198, // 177: ada.ADA.UpdateAlertRule:input_type -> ada.UpdateAlertRuleReq
-	200, // 178: ada.ADA.DeleteAlertRule:input_type -> ada.DeleteAlertRuleReq
-	204, // 179: ada.ADA.GetAlertRuleNames:input_type -> ada.GetAlertRuleNamesReq
-	202, // 180: ada.ADA.GetAlertTypes:input_type -> ada.GetAlertTypesReq
-	206, // 181: ada.ADA.GetAlertRuleTags:input_type -> ada.GetAlertRuleTagsReq
-	212, // 182: ada.ADA.ListActivityRule:input_type -> ada.ListActivityRuleReq
-	215, // 183: ada.ADA.GetActivityRule:input_type -> ada.GetActivityRuleReq
-	217, // 184: ada.ADA.AddActivityRule:input_type -> ada.AddActivityRuleReq
-	219, // 185: ada.ADA.UpdateActivityRule:input_type -> ada.UpdateActivityRuleReq
-	221, // 186: ada.ADA.DeleteActivityRule:input_type -> ada.DeleteActivityRuleReq
-	208, // 187: ada.ADA.GetActivityRuleFields:input_type -> ada.GetActivityRuleFieldsReq
-	210, // 188: ada.ADA.GetActivityRuleUniqueFields:input_type -> ada.GetActivityRuleUniqueFieldsReq
-	141, // 189: ada.ADA.ScanRiskStats:input_type -> ada.ScanRiskStatsReq
-	143, // 190: ada.ADA.ListBaseline:input_type -> ada.ListBaselineReq
-	145, // 191: ada.ADA.GetBaseline:input_type -> ada.GetBaselineReq
-	147, // 192: ada.ADA.ListLeak:input_type -> ada.ListLeakReq
-	149, // 193: ada.ADA.ListWeakPwd:input_type -> ada.ListWeakPwdReq
-	151, // 194: ada.ADA.ListScanTask:input_type -> ada.ListScanTaskReq
-	153, // 195: ada.ADA.GetScanTask:input_type -> ada.GetScanTaskReq
-	155, // 196: ada.ADA.AddScanTask:input_type -> ada.AddScanTaskReq
-	157, // 197: ada.ADA.RecheckScanTask:input_type -> ada.RecheckScanTaskReq
-	159, // 198: ada.ADA.DeleteScanTask:input_type -> ada.DeleteScanTaskReq
-	161, // 199: ada.ADA.ListScanConf:input_type -> ada.ListScanConfReq
-	164, // 200: ada.ADA.SetScanConf:input_type -> ada.SetScanConfReq
-	166, // 201: ada.ADA.GetScanConf:input_type -> ada.GetScanConfReq
-	168, // 202: ada.ADA.GetScanTmplNames:input_type -> ada.GetScanTmplNamesReq
-	170, // 203: ada.ADA.UpdateScanConf:input_type -> ada.UpdateScanConfReq
-	172, // 204: ada.ADA.ListScanTmpl:input_type -> ada.ListScanTmplReq
-	174, // 205: ada.ADA.GetScanTmpl:input_type -> ada.GetScanTmplReq
-	177, // 206: ada.ADA.UpdateScanTmpl:input_type -> ada.UpdateScanTmplReq
-	179, // 207: ada.ADA.DeleteScanTmpl:input_type -> ada.DeleteScanTmplReq
-	182, // 208: ada.ADA.AddScanTmpl:input_type -> ada.AddScanTmplReq
-	184, // 209: ada.ADA.ListScanPlugin:input_type -> ada.ListScanPluginReq
-	186, // 210: ada.ADA.DashboardStats:input_type -> ada.DashboardStatsReq
-	188, // 211: ada.ADA.DashboardTrends:input_type -> ada.DashboardTrendsReq
-	190, // 212: ada.ADA.DashboardLogStats:input_type -> ada.DashboardLogStatsReq
-	2,   // 213: ada.ADA.Login:output_type -> ada.LoginReply
-	4,   // 214: ada.ADA.Logout:output_type -> ada.LogoutReply
-	6,   // 215: ada.ADA.ListUser:output_type -> ada.ListUserReply
-	8,   // 216: ada.ADA.AddUser:output_type -> ada.AddUserReply
-	10,  // 217: ada.ADA.UpdateUser:output_type -> ada.UpdateUserReply
-	12,  // 218: ada.ADA.UpdateUserPassword:output_type -> ada.UpdateUserPasswordReply
-	14,  // 219: ada.ADA.DeleteUser:output_type -> ada.DeleteUserReply
-	16,  // 220: ada.ADA.UserExists:output_type -> ada.UserExistsReply
-	18,  // 221: ada.ADA.CheckMfa:output_type -> ada.CheckMfaReply
-	20,  // 222: ada.ADA.EnableMfa:output_type -> ada.EnableMfaReply
-	22,  // 223: ada.ADA.DisableMfa:output_type -> ada.DisableMfaReply
-	24,  // 224: ada.ADA.UpdateAvatar:output_type -> ada.UpdateAvatarReply
-	26,  // 225: ada.ADA.ResetPassword:output_type -> ada.ResetPasswordReply
-	28,  // 226: ada.ADA.GetPwdUpdateTm:output_type -> ada.GetPwdUpdateTmReply
-	30,  // 227: ada.ADA.ListDomain:output_type -> ada.ListDomainReply
-	32,  // 228: ada.ADA.AddDomain:output_type -> ada.AddDomainReply
-	34,  // 229: ada.ADA.TestDomain:output_type -> ada.TestDomainReply
-	36,  // 230: ada.ADA.UpdateDomain:output_type -> ada.UpdateDomainReply
-	38,  // 231: ada.ADA.DeleteDomain:output_type -> ada.DeleteDomainReply
-	40,  // 232: ada.ADA.UpdateDomainData:output_type -> ada.UpdateDomainDataReply
-	42,  // 233: ada.ADA.DeploySensor:output_type -> ada.DeploySensorReply
-	44,  // 234: ada.ADA.ListSensor:output_type -> ada.ListSensorReply
-	46,  // 235: ada.ADA.UpdateSensor:output_type -> ada.UpdateSensorReply
-	48,  // 236: ada.ADA.DownloadSensor:output_type -> ada.DownloadSensorReply
-	50,  // 237: ada.ADA.CmdSensor:output_type -> ada.CmdSensorReply
-	52,  // 238: ada.ADA.UpdateSensorVersion:output_type -> ada.UpdateSensorVersionReply
-	54,  // 239: ada.ADA.GetSystemInfo:output_type -> ada.GetSystemInfoReply
-	56,  // 240: ada.ADA.GetSystemIcon:output_type -> ada.GetSystemIconReply
-	58,  // 241: ada.ADA.UpdateSystemLanguage:output_type -> ada.UpdateSystemLanguageReply
-	60,  // 242: ada.ADA.UpdateSystemCfg:output_type -> ada.UpdateSystemCfgReply
-	63,  // 243: ada.ADA.GetSystemStats:output_type -> ada.GetSystemStatsReply
-	65,  // 244: ada.ADA.SetSystemStatsCfg:output_type -> ada.SetSystemStatsCfgReply
-	71,  // 245: ada.ADA.GetLicense:output_type -> ada.GetLicenseReply
-	73,  // 246: ada.ADA.UpdateLicense:output_type -> ada.UpdateLicenseReply
-	75,  // 247: ada.ADA.NetworkDebug:output_type -> ada.NetworkDebugReply
-	77,  // 248: ada.ADA.ListNotifyConf:output_type -> ada.ListNotifyConfReply
-	79,  // 249: ada.ADA.UpdateNotifyConf:output_type -> ada.UpdateNotifyConfReply
-	81,  // 250: ada.ADA.EnableNotifyConf:output_type -> ada.EnableNotifyConfReply
-	83,  // 251: ada.ADA.TestNotifyConf:output_type -> ada.TestNotifyConfReply
-	85,  // 252: ada.ADA.ListExportTask:output_type -> ada.ListExportTaskReply
-	87,  // 253: ada.ADA.AddExportTask:output_type -> ada.AddExportTaskReply
-	89,  // 254: ada.ADA.DeleteExportTask:output_type -> ada.DeleteExportTaskReply
-	91,  // 255: ada.ADA.ListNotify:output_type -> ada.ListNotifyReply
-	93,  // 256: ada.ADA.UpdateNotify:output_type -> ada.UpdateNotifyReply
-	95,  // 257: ada.ADA.StatsNotify:output_type -> ada.StatsNotifyReply
-	67,  // 258: ada.ADA.ListAuditLog:output_type -> ada.ListAuditLogReply
-	69,  // 259: ada.ADA.ListSystemLogs:output_type -> ada.ListSystemLogsReply
-	97,  // 260: ada.ADA.ThreatTops:output_type -> ada.ThreatTopsReply
-	99,  // 261: ada.ADA.ThreatTrends:output_type -> ada.ThreatTrendsReply
-	101, // 262: ada.ADA.ListThreat:output_type -> ada.ListThreatReply
-	103, // 263: ada.ADA.GetThreatNames:output_type -> ada.GetThreatNamesReply
-	105, // 264: ada.ADA.GetThreat:output_type -> ada.GetThreatReply
-	107, // 265: ada.ADA.ActionThreat:output_type -> ada.ActionThreatReply
-	110, // 266: ada.ADA.ListActivity:output_type -> ada.ListActivityReply
-	112, // 267: ada.ADA.GetActivityNames:output_type -> ada.GetActivityNamesReply
-	114, // 268: ada.ADA.GetActivity:output_type -> ada.GetActivityReply
-	116, // 269: ada.ADA.ListSensitiveEntry:output_type -> ada.ListSensitiveEntryReply
-	118, // 270: ada.ADA.AddSensitiveEntry:output_type -> ada.AddSensitiveEntryReply
-	120, // 271: ada.ADA.ListDomainEntry:output_type -> ada.ListDomainEntryReply
-	122, // 272: ada.ADA.DeleteSensitiveEntry:output_type -> ada.DeleteSensitiveEntryReply
-	124, // 273: ada.ADA.ListThreatWhitelist:output_type -> ada.ListThreatWhitelistReply
-	126, // 274: ada.ADA.GetThreatWhitelistField:output_type -> ada.GetThreatWhitelistFieldReply
-	128, // 275: ada.ADA.AddThreatWhitelist:output_type -> ada.AddThreatWhitelistReply
-	130, // 276: ada.ADA.UpdateThreatWhitelist:output_type -> ada.UpdateThreatWhitelistReply
-	132, // 277: ada.ADA.DeleteThreatWhitelist:output_type -> ada.DeleteThreatWhitelistReply
-	134, // 278: ada.ADA.ListThreatBlock:output_type -> ada.ListThreatBlockReply
-	136, // 279: ada.ADA.AddThreatBlock:output_type -> ada.AddThreatBlockReply
-	138, // 280: ada.ADA.UpdateThreatBlock:output_type -> ada.UpdateThreatBlockReply
-	140, // 281: ada.ADA.DeleteThreatBlock:output_type -> ada.DeleteThreatBlockReply
-	195, // 282: ada.ADA.ListAlertRule:output_type -> ada.ListAlertRuleReply
-	197, // 283: ada.ADA.AddAlertRule:output_type -> ada.AddAlertRuleReply
-	199, // 284: ada.ADA.UpdateAlertRule:output_type -> ada.UpdateAlertRuleReply
-	201, // 285: ada.ADA.DeleteAlertRule:output_type -> ada.DeleteAlertRuleReply
-	205, // 286: ada.ADA.GetAlertRuleNames:output_type -> ada.GetAlertRuleNamesReply
-	203, // 287: ada.ADA.GetAlertTypes:output_type -> ada.GetAlertTypesReply
-	207, // 288: ada.ADA.GetAlertRuleTags:output_type -> ada.GetAlertRuleTagsReply
-	214, // 289: ada.ADA.ListActivityRule:output_type -> ada.ListActivityRuleReply
-	216, // 290: ada.ADA.GetActivityRule:output_type -> ada.GetActivityRuleReply
-	218, // 291: ada.ADA.AddActivityRule:output_type -> ada.AddActivityRuleReply
-	220, // 292: ada.ADA.UpdateActivityRule:output_type -> ada.UpdateActivityRuleReply
-	222, // 293: ada.ADA.DeleteActivityRule:output_type -> ada.DeleteActivityRuleReply
-	209, // 294: ada.ADA.GetActivityRuleFields:output_type -> ada.GetActivityRuleFieldsReply
-	211, // 295: ada.ADA.GetActivityRuleUniqueFields:output_type -> ada.GetActivityRuleUniqueFieldsReply
-	142, // 296: ada.ADA.ScanRiskStats:output_type -> ada.ScanRiskStatsReply
-	144, // 297: ada.ADA.ListBaseline:output_type -> ada.ListBaselineReply
-	146, // 298: ada.ADA.GetBaseline:output_type -> ada.GetBaselineReply
-	148, // 299: ada.ADA.ListLeak:output_type -> ada.ListLeakReply
-	150, // 300: ada.ADA.ListWeakPwd:output_type -> ada.ListWeakPwdReply
-	152, // 301: ada.ADA.ListScanTask:output_type -> ada.ListScanTaskReply
-	154, // 302: ada.ADA.GetScanTask:output_type -> ada.GetScanTaskReply
-	156, // 303: ada.ADA.AddScanTask:output_type -> ada.AddScanTaskReply
-	158, // 304: ada.ADA.RecheckScanTask:output_type -> ada.RecheckScanTaskReply
-	160, // 305: ada.ADA.DeleteScanTask:output_type -> ada.DeleteScanTaskReply
-	162, // 306: ada.ADA.ListScanConf:output_type -> ada.ListScanConfReply
-	165, // 307: ada.ADA.SetScanConf:output_type -> ada.SetScanConfReply
-	167, // 308: ada.ADA.GetScanConf:output_type -> ada.GetScanConfReply
-	169, // 309: ada.ADA.GetScanTmplNames:output_type -> ada.GetScanTmplNamesReply
-	171, // 310: ada.ADA.UpdateScanConf:output_type -> ada.UpdateScanConfReply
-	173, // 311: ada.ADA.ListScanTmpl:output_type -> ada.ListScanTmplReply
-	176, // 312: ada.ADA.GetScanTmpl:output_type -> ada.GetScanTmplReply
-	178, // 313: ada.ADA.UpdateScanTmpl:output_type -> ada.UpdateScanTmplReply
-	180, // 314: ada.ADA.DeleteScanTmpl:output_type -> ada.DeleteScanTmplReply
-	183, // 315: ada.ADA.AddScanTmpl:output_type -> ada.AddScanTmplReply
-	185, // 316: ada.ADA.ListScanPlugin:output_type -> ada.ListScanPluginReply
-	187, // 317: ada.ADA.DashboardStats:output_type -> ada.DashboardStatsReply
-	189, // 318: ada.ADA.DashboardTrends:output_type -> ada.DashboardTrendsReply
-	191, // 319: ada.ADA.DashboardLogStats:output_type -> ada.DashboardLogStatsReply
-	213, // [213:320] is the sub-list for method output_type
-	106, // [106:213] is the sub-list for method input_type
+	27,  // 119: ada.ADA.ListDomain:input_type -> ada.ListDomainReq
+	29,  // 120: ada.ADA.AddDomain:input_type -> ada.AddDomainReq
+	31,  // 121: ada.ADA.TestDomain:input_type -> ada.TestDomainReq
+	33,  // 122: ada.ADA.UpdateDomain:input_type -> ada.UpdateDomainReq
+	35,  // 123: ada.ADA.DeleteDomain:input_type -> ada.DeleteDomainReq
+	37,  // 124: ada.ADA.UpdateDomainData:input_type -> ada.UpdateDomainDataReq
+	39,  // 125: ada.ADA.DeploySensor:input_type -> ada.DeploySensorReq
+	41,  // 126: ada.ADA.ListSensor:input_type -> ada.ListSensorReq
+	43,  // 127: ada.ADA.UpdateSensor:input_type -> ada.UpdateSensorReq
+	45,  // 128: ada.ADA.DownloadSensor:input_type -> ada.DownloadSensorReq
+	47,  // 129: ada.ADA.CmdSensor:input_type -> ada.CmdSensorReq
+	49,  // 130: ada.ADA.UpdateSensorVersion:input_type -> ada.UpdateSensorVersionReq
+	51,  // 131: ada.ADA.GetSystemInfo:input_type -> ada.GetSystemInfoReq
+	53,  // 132: ada.ADA.GetSystemIcon:input_type -> ada.GetSystemIconReq
+	55,  // 133: ada.ADA.UpdateSystemLanguage:input_type -> ada.UpdateSystemLanguageReq
+	57,  // 134: ada.ADA.UpdateSystemCfg:input_type -> ada.UpdateSystemCfgReq
+	59,  // 135: ada.ADA.GetSystemStats:input_type -> ada.GetSystemStatsReq
+	62,  // 136: ada.ADA.SetSystemStatsCfg:input_type -> ada.SetSystemStatsCfgReq
+	68,  // 137: ada.ADA.GetLicense:input_type -> ada.GetLicenseReq
+	70,  // 138: ada.ADA.UpdateLicense:input_type -> ada.UpdateLicenseReq
+	72,  // 139: ada.ADA.NetworkDebug:input_type -> ada.NetworkDebugReq
+	74,  // 140: ada.ADA.ListNotifyConf:input_type -> ada.ListNotifyConfReq
+	76,  // 141: ada.ADA.UpdateNotifyConf:input_type -> ada.UpdateNotifyConfReq
+	78,  // 142: ada.ADA.EnableNotifyConf:input_type -> ada.EnableNotifyConfReq
+	80,  // 143: ada.ADA.TestNotifyConf:input_type -> ada.TestNotifyConfReq
+	82,  // 144: ada.ADA.ListExportTask:input_type -> ada.ListExportTaskReq
+	84,  // 145: ada.ADA.AddExportTask:input_type -> ada.AddExportTaskReq
+	86,  // 146: ada.ADA.DeleteExportTask:input_type -> ada.DeleteExportTaskReq
+	88,  // 147: ada.ADA.ListNotify:input_type -> ada.ListNotifyReq
+	90,  // 148: ada.ADA.UpdateNotify:input_type -> ada.UpdateNotifyReq
+	92,  // 149: ada.ADA.StatsNotify:input_type -> ada.StatsNotifyReq
+	64,  // 150: ada.ADA.ListAuditLog:input_type -> ada.ListAuditLogReq
+	66,  // 151: ada.ADA.ListSystemLogs:input_type -> ada.ListSystemLogsReq
+	94,  // 152: ada.ADA.ThreatTops:input_type -> ada.ThreatTopsReq
+	96,  // 153: ada.ADA.ThreatTrends:input_type -> ada.ThreatTrendsReq
+	98,  // 154: ada.ADA.ListThreat:input_type -> ada.ListThreatReq
+	100, // 155: ada.ADA.GetThreatNames:input_type -> ada.GetThreatNamesReq
+	102, // 156: ada.ADA.GetThreat:input_type -> ada.GetThreatReq
+	104, // 157: ada.ADA.ActionThreat:input_type -> ada.ActionThreatReq
+	106, // 158: ada.ADA.ListActivity:input_type -> ada.ListActivityReq
+	109, // 159: ada.ADA.GetActivityNames:input_type -> ada.GetActivityNamesReq
+	111, // 160: ada.ADA.GetActivity:input_type -> ada.GetActivityReq
+	113, // 161: ada.ADA.ListSensitiveEntry:input_type -> ada.ListSensitiveEntryReq
+	115, // 162: ada.ADA.AddSensitiveEntry:input_type -> ada.AddSensitiveEntryReq
+	117, // 163: ada.ADA.ListDomainEntry:input_type -> ada.ListDomainEntryReq
+	119, // 164: ada.ADA.DeleteSensitiveEntry:input_type -> ada.DeleteSensitiveEntryReq
+	121, // 165: ada.ADA.ListThreatWhitelist:input_type -> ada.ListThreatWhitelistReq
+	123, // 166: ada.ADA.GetThreatWhitelistField:input_type -> ada.GetThreatWhitelistFieldReq
+	125, // 167: ada.ADA.AddThreatWhitelist:input_type -> ada.AddThreatWhitelistReq
+	127, // 168: ada.ADA.UpdateThreatWhitelist:input_type -> ada.UpdateThreatWhitelistReq
+	129, // 169: ada.ADA.DeleteThreatWhitelist:input_type -> ada.DeleteThreatWhitelistReq
+	131, // 170: ada.ADA.ListThreatBlock:input_type -> ada.ListThreatBlockReq
+	133, // 171: ada.ADA.AddThreatBlock:input_type -> ada.AddThreatBlockReq
+	135, // 172: ada.ADA.UpdateThreatBlock:input_type -> ada.UpdateThreatBlockReq
+	137, // 173: ada.ADA.DeleteThreatBlock:input_type -> ada.DeleteThreatBlockReq
+	190, // 174: ada.ADA.ListAlertRule:input_type -> ada.ListAlertRuleReq
+	194, // 175: ada.ADA.AddAlertRule:input_type -> ada.AddAlertRuleReq
+	196, // 176: ada.ADA.UpdateAlertRule:input_type -> ada.UpdateAlertRuleReq
+	198, // 177: ada.ADA.DeleteAlertRule:input_type -> ada.DeleteAlertRuleReq
+	202, // 178: ada.ADA.GetAlertRuleNames:input_type -> ada.GetAlertRuleNamesReq
+	200, // 179: ada.ADA.GetAlertTypes:input_type -> ada.GetAlertTypesReq
+	204, // 180: ada.ADA.GetAlertRuleTags:input_type -> ada.GetAlertRuleTagsReq
+	210, // 181: ada.ADA.ListActivityRule:input_type -> ada.ListActivityRuleReq
+	213, // 182: ada.ADA.GetActivityRule:input_type -> ada.GetActivityRuleReq
+	215, // 183: ada.ADA.AddActivityRule:input_type -> ada.AddActivityRuleReq
+	217, // 184: ada.ADA.UpdateActivityRule:input_type -> ada.UpdateActivityRuleReq
+	219, // 185: ada.ADA.DeleteActivityRule:input_type -> ada.DeleteActivityRuleReq
+	206, // 186: ada.ADA.GetActivityRuleFields:input_type -> ada.GetActivityRuleFieldsReq
+	208, // 187: ada.ADA.GetActivityRuleUniqueFields:input_type -> ada.GetActivityRuleUniqueFieldsReq
+	139, // 188: ada.ADA.ScanRiskStats:input_type -> ada.ScanRiskStatsReq
+	141, // 189: ada.ADA.ListBaseline:input_type -> ada.ListBaselineReq
+	143, // 190: ada.ADA.GetBaseline:input_type -> ada.GetBaselineReq
+	145, // 191: ada.ADA.ListLeak:input_type -> ada.ListLeakReq
+	147, // 192: ada.ADA.ListWeakPwd:input_type -> ada.ListWeakPwdReq
+	149, // 193: ada.ADA.ListScanTask:input_type -> ada.ListScanTaskReq
+	151, // 194: ada.ADA.GetScanTask:input_type -> ada.GetScanTaskReq
+	153, // 195: ada.ADA.AddScanTask:input_type -> ada.AddScanTaskReq
+	155, // 196: ada.ADA.RecheckScanTask:input_type -> ada.RecheckScanTaskReq
+	157, // 197: ada.ADA.DeleteScanTask:input_type -> ada.DeleteScanTaskReq
+	159, // 198: ada.ADA.ListScanConf:input_type -> ada.ListScanConfReq
+	162, // 199: ada.ADA.SetScanConf:input_type -> ada.SetScanConfReq
+	164, // 200: ada.ADA.GetScanConf:input_type -> ada.GetScanConfReq
+	166, // 201: ada.ADA.GetScanTmplNames:input_type -> ada.GetScanTmplNamesReq
+	168, // 202: ada.ADA.UpdateScanConf:input_type -> ada.UpdateScanConfReq
+	170, // 203: ada.ADA.ListScanTmpl:input_type -> ada.ListScanTmplReq
+	172, // 204: ada.ADA.GetScanTmpl:input_type -> ada.GetScanTmplReq
+	175, // 205: ada.ADA.UpdateScanTmpl:input_type -> ada.UpdateScanTmplReq
+	177, // 206: ada.ADA.DeleteScanTmpl:input_type -> ada.DeleteScanTmplReq
+	180, // 207: ada.ADA.AddScanTmpl:input_type -> ada.AddScanTmplReq
+	182, // 208: ada.ADA.ListScanPlugin:input_type -> ada.ListScanPluginReq
+	184, // 209: ada.ADA.DashboardStats:input_type -> ada.DashboardStatsReq
+	186, // 210: ada.ADA.DashboardTrends:input_type -> ada.DashboardTrendsReq
+	188, // 211: ada.ADA.DashboardLogStats:input_type -> ada.DashboardLogStatsReq
+	2,   // 212: ada.ADA.Login:output_type -> ada.LoginReply
+	4,   // 213: ada.ADA.Logout:output_type -> ada.LogoutReply
+	6,   // 214: ada.ADA.ListUser:output_type -> ada.ListUserReply
+	8,   // 215: ada.ADA.AddUser:output_type -> ada.AddUserReply
+	10,  // 216: ada.ADA.UpdateUser:output_type -> ada.UpdateUserReply
+	12,  // 217: ada.ADA.UpdateUserPassword:output_type -> ada.UpdateUserPasswordReply
+	14,  // 218: ada.ADA.DeleteUser:output_type -> ada.DeleteUserReply
+	16,  // 219: ada.ADA.UserExists:output_type -> ada.UserExistsReply
+	18,  // 220: ada.ADA.CheckMfa:output_type -> ada.CheckMfaReply
+	20,  // 221: ada.ADA.EnableMfa:output_type -> ada.EnableMfaReply
+	22,  // 222: ada.ADA.DisableMfa:output_type -> ada.DisableMfaReply
+	24,  // 223: ada.ADA.UpdateAvatar:output_type -> ada.UpdateAvatarReply
+	26,  // 224: ada.ADA.ResetPassword:output_type -> ada.ResetPasswordReply
+	28,  // 225: ada.ADA.ListDomain:output_type -> ada.ListDomainReply
+	30,  // 226: ada.ADA.AddDomain:output_type -> ada.AddDomainReply
+	32,  // 227: ada.ADA.TestDomain:output_type -> ada.TestDomainReply
+	34,  // 228: ada.ADA.UpdateDomain:output_type -> ada.UpdateDomainReply
+	36,  // 229: ada.ADA.DeleteDomain:output_type -> ada.DeleteDomainReply
+	38,  // 230: ada.ADA.UpdateDomainData:output_type -> ada.UpdateDomainDataReply
+	40,  // 231: ada.ADA.DeploySensor:output_type -> ada.DeploySensorReply
+	42,  // 232: ada.ADA.ListSensor:output_type -> ada.ListSensorReply
+	44,  // 233: ada.ADA.UpdateSensor:output_type -> ada.UpdateSensorReply
+	46,  // 234: ada.ADA.DownloadSensor:output_type -> ada.DownloadSensorReply
+	48,  // 235: ada.ADA.CmdSensor:output_type -> ada.CmdSensorReply
+	50,  // 236: ada.ADA.UpdateSensorVersion:output_type -> ada.UpdateSensorVersionReply
+	52,  // 237: ada.ADA.GetSystemInfo:output_type -> ada.GetSystemInfoReply
+	54,  // 238: ada.ADA.GetSystemIcon:output_type -> ada.GetSystemIconReply
+	56,  // 239: ada.ADA.UpdateSystemLanguage:output_type -> ada.UpdateSystemLanguageReply
+	58,  // 240: ada.ADA.UpdateSystemCfg:output_type -> ada.UpdateSystemCfgReply
+	61,  // 241: ada.ADA.GetSystemStats:output_type -> ada.GetSystemStatsReply
+	63,  // 242: ada.ADA.SetSystemStatsCfg:output_type -> ada.SetSystemStatsCfgReply
+	69,  // 243: ada.ADA.GetLicense:output_type -> ada.GetLicenseReply
+	71,  // 244: ada.ADA.UpdateLicense:output_type -> ada.UpdateLicenseReply
+	73,  // 245: ada.ADA.NetworkDebug:output_type -> ada.NetworkDebugReply
+	75,  // 246: ada.ADA.ListNotifyConf:output_type -> ada.ListNotifyConfReply
+	77,  // 247: ada.ADA.UpdateNotifyConf:output_type -> ada.UpdateNotifyConfReply
+	79,  // 248: ada.ADA.EnableNotifyConf:output_type -> ada.EnableNotifyConfReply
+	81,  // 249: ada.ADA.TestNotifyConf:output_type -> ada.TestNotifyConfReply
+	83,  // 250: ada.ADA.ListExportTask:output_type -> ada.ListExportTaskReply
+	85,  // 251: ada.ADA.AddExportTask:output_type -> ada.AddExportTaskReply
+	87,  // 252: ada.ADA.DeleteExportTask:output_type -> ada.DeleteExportTaskReply
+	89,  // 253: ada.ADA.ListNotify:output_type -> ada.ListNotifyReply
+	91,  // 254: ada.ADA.UpdateNotify:output_type -> ada.UpdateNotifyReply
+	93,  // 255: ada.ADA.StatsNotify:output_type -> ada.StatsNotifyReply
+	65,  // 256: ada.ADA.ListAuditLog:output_type -> ada.ListAuditLogReply
+	67,  // 257: ada.ADA.ListSystemLogs:output_type -> ada.ListSystemLogsReply
+	95,  // 258: ada.ADA.ThreatTops:output_type -> ada.ThreatTopsReply
+	97,  // 259: ada.ADA.ThreatTrends:output_type -> ada.ThreatTrendsReply
+	99,  // 260: ada.ADA.ListThreat:output_type -> ada.ListThreatReply
+	101, // 261: ada.ADA.GetThreatNames:output_type -> ada.GetThreatNamesReply
+	103, // 262: ada.ADA.GetThreat:output_type -> ada.GetThreatReply
+	105, // 263: ada.ADA.ActionThreat:output_type -> ada.ActionThreatReply
+	108, // 264: ada.ADA.ListActivity:output_type -> ada.ListActivityReply
+	110, // 265: ada.ADA.GetActivityNames:output_type -> ada.GetActivityNamesReply
+	112, // 266: ada.ADA.GetActivity:output_type -> ada.GetActivityReply
+	114, // 267: ada.ADA.ListSensitiveEntry:output_type -> ada.ListSensitiveEntryReply
+	116, // 268: ada.ADA.AddSensitiveEntry:output_type -> ada.AddSensitiveEntryReply
+	118, // 269: ada.ADA.ListDomainEntry:output_type -> ada.ListDomainEntryReply
+	120, // 270: ada.ADA.DeleteSensitiveEntry:output_type -> ada.DeleteSensitiveEntryReply
+	122, // 271: ada.ADA.ListThreatWhitelist:output_type -> ada.ListThreatWhitelistReply
+	124, // 272: ada.ADA.GetThreatWhitelistField:output_type -> ada.GetThreatWhitelistFieldReply
+	126, // 273: ada.ADA.AddThreatWhitelist:output_type -> ada.AddThreatWhitelistReply
+	128, // 274: ada.ADA.UpdateThreatWhitelist:output_type -> ada.UpdateThreatWhitelistReply
+	130, // 275: ada.ADA.DeleteThreatWhitelist:output_type -> ada.DeleteThreatWhitelistReply
+	132, // 276: ada.ADA.ListThreatBlock:output_type -> ada.ListThreatBlockReply
+	134, // 277: ada.ADA.AddThreatBlock:output_type -> ada.AddThreatBlockReply
+	136, // 278: ada.ADA.UpdateThreatBlock:output_type -> ada.UpdateThreatBlockReply
+	138, // 279: ada.ADA.DeleteThreatBlock:output_type -> ada.DeleteThreatBlockReply
+	193, // 280: ada.ADA.ListAlertRule:output_type -> ada.ListAlertRuleReply
+	195, // 281: ada.ADA.AddAlertRule:output_type -> ada.AddAlertRuleReply
+	197, // 282: ada.ADA.UpdateAlertRule:output_type -> ada.UpdateAlertRuleReply
+	199, // 283: ada.ADA.DeleteAlertRule:output_type -> ada.DeleteAlertRuleReply
+	203, // 284: ada.ADA.GetAlertRuleNames:output_type -> ada.GetAlertRuleNamesReply
+	201, // 285: ada.ADA.GetAlertTypes:output_type -> ada.GetAlertTypesReply
+	205, // 286: ada.ADA.GetAlertRuleTags:output_type -> ada.GetAlertRuleTagsReply
+	212, // 287: ada.ADA.ListActivityRule:output_type -> ada.ListActivityRuleReply
+	214, // 288: ada.ADA.GetActivityRule:output_type -> ada.GetActivityRuleReply
+	216, // 289: ada.ADA.AddActivityRule:output_type -> ada.AddActivityRuleReply
+	218, // 290: ada.ADA.UpdateActivityRule:output_type -> ada.UpdateActivityRuleReply
+	220, // 291: ada.ADA.DeleteActivityRule:output_type -> ada.DeleteActivityRuleReply
+	207, // 292: ada.ADA.GetActivityRuleFields:output_type -> ada.GetActivityRuleFieldsReply
+	209, // 293: ada.ADA.GetActivityRuleUniqueFields:output_type -> ada.GetActivityRuleUniqueFieldsReply
+	140, // 294: ada.ADA.ScanRiskStats:output_type -> ada.ScanRiskStatsReply
+	142, // 295: ada.ADA.ListBaseline:output_type -> ada.ListBaselineReply
+	144, // 296: ada.ADA.GetBaseline:output_type -> ada.GetBaselineReply
+	146, // 297: ada.ADA.ListLeak:output_type -> ada.ListLeakReply
+	148, // 298: ada.ADA.ListWeakPwd:output_type -> ada.ListWeakPwdReply
+	150, // 299: ada.ADA.ListScanTask:output_type -> ada.ListScanTaskReply
+	152, // 300: ada.ADA.GetScanTask:output_type -> ada.GetScanTaskReply
+	154, // 301: ada.ADA.AddScanTask:output_type -> ada.AddScanTaskReply
+	156, // 302: ada.ADA.RecheckScanTask:output_type -> ada.RecheckScanTaskReply
+	158, // 303: ada.ADA.DeleteScanTask:output_type -> ada.DeleteScanTaskReply
+	160, // 304: ada.ADA.ListScanConf:output_type -> ada.ListScanConfReply
+	163, // 305: ada.ADA.SetScanConf:output_type -> ada.SetScanConfReply
+	165, // 306: ada.ADA.GetScanConf:output_type -> ada.GetScanConfReply
+	167, // 307: ada.ADA.GetScanTmplNames:output_type -> ada.GetScanTmplNamesReply
+	169, // 308: ada.ADA.UpdateScanConf:output_type -> ada.UpdateScanConfReply
+	171, // 309: ada.ADA.ListScanTmpl:output_type -> ada.ListScanTmplReply
+	174, // 310: ada.ADA.GetScanTmpl:output_type -> ada.GetScanTmplReply
+	176, // 311: ada.ADA.UpdateScanTmpl:output_type -> ada.UpdateScanTmplReply
+	178, // 312: ada.ADA.DeleteScanTmpl:output_type -> ada.DeleteScanTmplReply
+	181, // 313: ada.ADA.AddScanTmpl:output_type -> ada.AddScanTmplReply
+	183, // 314: ada.ADA.ListScanPlugin:output_type -> ada.ListScanPluginReply
+	185, // 315: ada.ADA.DashboardStats:output_type -> ada.DashboardStatsReply
+	187, // 316: ada.ADA.DashboardTrends:output_type -> ada.DashboardTrendsReply
+	189, // 317: ada.ADA.DashboardLogStats:output_type -> ada.DashboardLogStatsReply
+	212, // [212:318] is the sub-list for method output_type
+	106, // [106:212] is the sub-list for method input_type
 	106, // [106:106] is the sub-list for extension type_name
 	106, // [106:106] is the sub-list for extension extendee
 	0,   // [0:106] is the sub-list for field type_name
@@ -21287,30 +21167,6 @@ func file_ada_proto_init() {
 			}
 		}
 		file_ada_proto_msgTypes[27].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*GetPwdUpdateTmReq); i {
-			case 0:
-				return &v.state
-			case 1:
-				return &v.sizeCache
-			case 2:
-				return &v.unknownFields
-			default:
-				return nil
-			}
-		}
-		file_ada_proto_msgTypes[28].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*GetPwdUpdateTmReply); i {
-			case 0:
-				return &v.state
-			case 1:
-				return &v.sizeCache
-			case 2:
-				return &v.unknownFields
-			default:
-				return nil
-			}
-		}
-		file_ada_proto_msgTypes[29].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ListDomainReq); i {
 			case 0:
 				return &v.state
@@ -21322,7 +21178,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[30].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[28].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ListDomainReply); i {
 			case 0:
 				return &v.state
@@ -21334,7 +21190,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[31].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[29].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*AddDomainReq); i {
 			case 0:
 				return &v.state
@@ -21346,7 +21202,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[32].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[30].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*AddDomainReply); i {
 			case 0:
 				return &v.state
@@ -21358,7 +21214,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[33].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[31].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*TestDomainReq); i {
 			case 0:
 				return &v.state
@@ -21370,7 +21226,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[34].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[32].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*TestDomainReply); i {
 			case 0:
 				return &v.state
@@ -21382,7 +21238,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[35].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[33].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*UpdateDomainReq); i {
 			case 0:
 				return &v.state
@@ -21394,7 +21250,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[36].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[34].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*UpdateDomainReply); i {
 			case 0:
 				return &v.state
@@ -21406,7 +21262,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[37].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[35].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*DeleteDomainReq); i {
 			case 0:
 				return &v.state
@@ -21418,7 +21274,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[38].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[36].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*DeleteDomainReply); i {
 			case 0:
 				return &v.state
@@ -21430,7 +21286,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[39].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[37].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*UpdateDomainDataReq); i {
 			case 0:
 				return &v.state
@@ -21442,7 +21298,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[40].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[38].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*UpdateDomainDataReply); i {
 			case 0:
 				return &v.state
@@ -21454,7 +21310,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[41].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[39].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*DeploySensorReq); i {
 			case 0:
 				return &v.state
@@ -21466,7 +21322,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[42].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[40].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*DeploySensorReply); i {
 			case 0:
 				return &v.state
@@ -21478,7 +21334,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[43].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[41].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ListSensorReq); i {
 			case 0:
 				return &v.state
@@ -21490,7 +21346,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[44].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[42].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ListSensorReply); i {
 			case 0:
 				return &v.state
@@ -21502,7 +21358,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[45].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[43].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*UpdateSensorReq); i {
 			case 0:
 				return &v.state
@@ -21514,7 +21370,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[46].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[44].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*UpdateSensorReply); i {
 			case 0:
 				return &v.state
@@ -21526,7 +21382,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[47].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[45].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*DownloadSensorReq); i {
 			case 0:
 				return &v.state
@@ -21538,7 +21394,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[48].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[46].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*DownloadSensorReply); i {
 			case 0:
 				return &v.state
@@ -21550,7 +21406,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[49].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[47].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*CmdSensorReq); i {
 			case 0:
 				return &v.state
@@ -21562,7 +21418,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[50].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[48].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*CmdSensorReply); i {
 			case 0:
 				return &v.state
@@ -21574,7 +21430,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[51].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[49].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*UpdateSensorVersionReq); i {
 			case 0:
 				return &v.state
@@ -21586,7 +21442,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[52].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[50].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*UpdateSensorVersionReply); i {
 			case 0:
 				return &v.state
@@ -21598,7 +21454,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[53].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[51].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*GetSystemInfoReq); i {
 			case 0:
 				return &v.state
@@ -21610,7 +21466,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[54].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[52].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*GetSystemInfoReply); i {
 			case 0:
 				return &v.state
@@ -21622,7 +21478,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[55].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[53].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*GetSystemIconReq); i {
 			case 0:
 				return &v.state
@@ -21634,7 +21490,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[56].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[54].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*GetSystemIconReply); i {
 			case 0:
 				return &v.state
@@ -21646,7 +21502,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[57].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[55].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*UpdateSystemLanguageReq); i {
 			case 0:
 				return &v.state
@@ -21658,7 +21514,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[58].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[56].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*UpdateSystemLanguageReply); i {
 			case 0:
 				return &v.state
@@ -21670,7 +21526,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[59].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[57].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*UpdateSystemCfgReq); i {
 			case 0:
 				return &v.state
@@ -21682,7 +21538,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[60].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[58].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*UpdateSystemCfgReply); i {
 			case 0:
 				return &v.state
@@ -21694,7 +21550,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[61].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[59].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*GetSystemStatsReq); i {
 			case 0:
 				return &v.state
@@ -21706,7 +21562,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[62].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[60].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*StatsInfo); i {
 			case 0:
 				return &v.state
@@ -21718,7 +21574,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[63].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[61].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*GetSystemStatsReply); i {
 			case 0:
 				return &v.state
@@ -21730,7 +21586,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[64].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[62].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*SetSystemStatsCfgReq); i {
 			case 0:
 				return &v.state
@@ -21742,7 +21598,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[65].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[63].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*SetSystemStatsCfgReply); i {
 			case 0:
 				return &v.state
@@ -21754,7 +21610,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[66].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[64].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ListAuditLogReq); i {
 			case 0:
 				return &v.state
@@ -21766,7 +21622,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[67].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[65].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ListAuditLogReply); i {
 			case 0:
 				return &v.state
@@ -21778,7 +21634,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[68].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[66].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ListSystemLogsReq); i {
 			case 0:
 				return &v.state
@@ -21790,7 +21646,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[69].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[67].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ListSystemLogsReply); i {
 			case 0:
 				return &v.state
@@ -21802,7 +21658,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[70].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[68].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*GetLicenseReq); i {
 			case 0:
 				return &v.state
@@ -21814,7 +21670,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[71].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[69].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*GetLicenseReply); i {
 			case 0:
 				return &v.state
@@ -21826,7 +21682,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[72].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[70].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*UpdateLicenseReq); i {
 			case 0:
 				return &v.state
@@ -21838,7 +21694,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[73].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[71].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*UpdateLicenseReply); i {
 			case 0:
 				return &v.state
@@ -21850,7 +21706,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[74].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[72].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*NetworkDebugReq); i {
 			case 0:
 				return &v.state
@@ -21862,7 +21718,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[75].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[73].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*NetworkDebugReply); i {
 			case 0:
 				return &v.state
@@ -21874,7 +21730,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[76].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[74].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ListNotifyConfReq); i {
 			case 0:
 				return &v.state
@@ -21886,7 +21742,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[77].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[75].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ListNotifyConfReply); i {
 			case 0:
 				return &v.state
@@ -21898,7 +21754,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[78].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[76].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*UpdateNotifyConfReq); i {
 			case 0:
 				return &v.state
@@ -21910,7 +21766,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[79].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[77].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*UpdateNotifyConfReply); i {
 			case 0:
 				return &v.state
@@ -21922,7 +21778,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[80].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[78].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*EnableNotifyConfReq); i {
 			case 0:
 				return &v.state
@@ -21934,7 +21790,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[81].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[79].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*EnableNotifyConfReply); i {
 			case 0:
 				return &v.state
@@ -21946,7 +21802,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[82].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[80].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*TestNotifyConfReq); i {
 			case 0:
 				return &v.state
@@ -21958,7 +21814,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[83].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[81].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*TestNotifyConfReply); i {
 			case 0:
 				return &v.state
@@ -21970,7 +21826,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[84].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[82].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ListExportTaskReq); i {
 			case 0:
 				return &v.state
@@ -21982,7 +21838,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[85].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[83].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ListExportTaskReply); i {
 			case 0:
 				return &v.state
@@ -21994,7 +21850,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[86].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[84].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*AddExportTaskReq); i {
 			case 0:
 				return &v.state
@@ -22006,7 +21862,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[87].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[85].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*AddExportTaskReply); i {
 			case 0:
 				return &v.state
@@ -22018,7 +21874,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[88].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[86].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*DeleteExportTaskReq); i {
 			case 0:
 				return &v.state
@@ -22030,7 +21886,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[89].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[87].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*DeleteExportTaskReply); i {
 			case 0:
 				return &v.state
@@ -22042,7 +21898,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[90].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[88].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ListNotifyReq); i {
 			case 0:
 				return &v.state
@@ -22054,7 +21910,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[91].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[89].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ListNotifyReply); i {
 			case 0:
 				return &v.state
@@ -22066,7 +21922,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[92].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[90].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*UpdateNotifyReq); i {
 			case 0:
 				return &v.state
@@ -22078,7 +21934,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[93].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[91].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*UpdateNotifyReply); i {
 			case 0:
 				return &v.state
@@ -22090,7 +21946,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[94].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[92].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*StatsNotifyReq); i {
 			case 0:
 				return &v.state
@@ -22102,7 +21958,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[95].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[93].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*StatsNotifyReply); i {
 			case 0:
 				return &v.state
@@ -22114,7 +21970,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[96].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[94].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ThreatTopsReq); i {
 			case 0:
 				return &v.state
@@ -22126,7 +21982,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[97].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[95].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ThreatTopsReply); i {
 			case 0:
 				return &v.state
@@ -22138,7 +21994,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[98].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[96].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ThreatTrendsReq); i {
 			case 0:
 				return &v.state
@@ -22150,7 +22006,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[99].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[97].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ThreatTrendsReply); i {
 			case 0:
 				return &v.state
@@ -22162,7 +22018,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[100].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[98].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ListThreatReq); i {
 			case 0:
 				return &v.state
@@ -22174,7 +22030,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[101].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[99].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ListThreatReply); i {
 			case 0:
 				return &v.state
@@ -22186,7 +22042,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[102].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[100].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*GetThreatNamesReq); i {
 			case 0:
 				return &v.state
@@ -22198,7 +22054,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[103].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[101].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*GetThreatNamesReply); i {
 			case 0:
 				return &v.state
@@ -22210,7 +22066,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[104].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[102].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*GetThreatReq); i {
 			case 0:
 				return &v.state
@@ -22222,7 +22078,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[105].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[103].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*GetThreatReply); i {
 			case 0:
 				return &v.state
@@ -22234,7 +22090,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[106].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[104].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ActionThreatReq); i {
 			case 0:
 				return &v.state
@@ -22246,7 +22102,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[107].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[105].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ActionThreatReply); i {
 			case 0:
 				return &v.state
@@ -22258,7 +22114,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[108].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[106].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ListActivityReq); i {
 			case 0:
 				return &v.state
@@ -22270,7 +22126,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[109].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[107].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ActivityDetails); i {
 			case 0:
 				return &v.state
@@ -22282,7 +22138,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[110].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[108].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ListActivityReply); i {
 			case 0:
 				return &v.state
@@ -22294,7 +22150,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[111].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[109].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*GetActivityNamesReq); i {
 			case 0:
 				return &v.state
@@ -22306,7 +22162,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[112].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[110].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*GetActivityNamesReply); i {
 			case 0:
 				return &v.state
@@ -22318,7 +22174,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[113].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[111].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*GetActivityReq); i {
 			case 0:
 				return &v.state
@@ -22330,7 +22186,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[114].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[112].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*GetActivityReply); i {
 			case 0:
 				return &v.state
@@ -22342,7 +22198,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[115].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[113].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ListSensitiveEntryReq); i {
 			case 0:
 				return &v.state
@@ -22354,7 +22210,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[116].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[114].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ListSensitiveEntryReply); i {
 			case 0:
 				return &v.state
@@ -22366,7 +22222,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[117].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[115].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*AddSensitiveEntryReq); i {
 			case 0:
 				return &v.state
@@ -22378,7 +22234,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[118].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[116].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*AddSensitiveEntryReply); i {
 			case 0:
 				return &v.state
@@ -22390,7 +22246,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[119].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[117].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ListDomainEntryReq); i {
 			case 0:
 				return &v.state
@@ -22402,7 +22258,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[120].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[118].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ListDomainEntryReply); i {
 			case 0:
 				return &v.state
@@ -22414,7 +22270,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[121].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[119].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*DeleteSensitiveEntryReq); i {
 			case 0:
 				return &v.state
@@ -22426,7 +22282,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[122].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[120].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*DeleteSensitiveEntryReply); i {
 			case 0:
 				return &v.state
@@ -22438,7 +22294,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[123].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[121].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ListThreatWhitelistReq); i {
 			case 0:
 				return &v.state
@@ -22450,7 +22306,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[124].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[122].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ListThreatWhitelistReply); i {
 			case 0:
 				return &v.state
@@ -22462,7 +22318,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[125].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[123].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*GetThreatWhitelistFieldReq); i {
 			case 0:
 				return &v.state
@@ -22474,7 +22330,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[126].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[124].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*GetThreatWhitelistFieldReply); i {
 			case 0:
 				return &v.state
@@ -22486,7 +22342,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[127].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[125].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*AddThreatWhitelistReq); i {
 			case 0:
 				return &v.state
@@ -22498,7 +22354,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[128].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[126].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*AddThreatWhitelistReply); i {
 			case 0:
 				return &v.state
@@ -22510,7 +22366,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[129].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[127].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*UpdateThreatWhitelistReq); i {
 			case 0:
 				return &v.state
@@ -22522,7 +22378,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[130].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[128].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*UpdateThreatWhitelistReply); i {
 			case 0:
 				return &v.state
@@ -22534,7 +22390,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[131].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[129].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*DeleteThreatWhitelistReq); i {
 			case 0:
 				return &v.state
@@ -22546,7 +22402,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[132].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[130].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*DeleteThreatWhitelistReply); i {
 			case 0:
 				return &v.state
@@ -22558,7 +22414,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[133].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[131].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ListThreatBlockReq); i {
 			case 0:
 				return &v.state
@@ -22570,7 +22426,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[134].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[132].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ListThreatBlockReply); i {
 			case 0:
 				return &v.state
@@ -22582,7 +22438,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[135].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[133].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*AddThreatBlockReq); i {
 			case 0:
 				return &v.state
@@ -22594,7 +22450,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[136].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[134].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*AddThreatBlockReply); i {
 			case 0:
 				return &v.state
@@ -22606,7 +22462,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[137].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[135].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*UpdateThreatBlockReq); i {
 			case 0:
 				return &v.state
@@ -22618,7 +22474,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[138].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[136].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*UpdateThreatBlockReply); i {
 			case 0:
 				return &v.state
@@ -22630,7 +22486,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[139].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[137].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*DeleteThreatBlockReq); i {
 			case 0:
 				return &v.state
@@ -22642,7 +22498,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[140].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[138].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*DeleteThreatBlockReply); i {
 			case 0:
 				return &v.state
@@ -22654,7 +22510,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[141].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[139].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ScanRiskStatsReq); i {
 			case 0:
 				return &v.state
@@ -22666,7 +22522,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[142].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[140].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ScanRiskStatsReply); i {
 			case 0:
 				return &v.state
@@ -22678,7 +22534,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[143].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[141].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ListBaselineReq); i {
 			case 0:
 				return &v.state
@@ -22690,7 +22546,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[144].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[142].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ListBaselineReply); i {
 			case 0:
 				return &v.state
@@ -22702,7 +22558,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[145].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[143].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*GetBaselineReq); i {
 			case 0:
 				return &v.state
@@ -22714,7 +22570,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[146].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[144].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*GetBaselineReply); i {
 			case 0:
 				return &v.state
@@ -22726,7 +22582,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[147].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[145].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ListLeakReq); i {
 			case 0:
 				return &v.state
@@ -22738,7 +22594,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[148].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[146].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ListLeakReply); i {
 			case 0:
 				return &v.state
@@ -22750,7 +22606,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[149].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[147].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ListWeakPwdReq); i {
 			case 0:
 				return &v.state
@@ -22762,7 +22618,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[150].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[148].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ListWeakPwdReply); i {
 			case 0:
 				return &v.state
@@ -22774,7 +22630,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[151].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[149].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ListScanTaskReq); i {
 			case 0:
 				return &v.state
@@ -22786,7 +22642,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[152].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[150].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ListScanTaskReply); i {
 			case 0:
 				return &v.state
@@ -22798,7 +22654,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[153].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[151].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*GetScanTaskReq); i {
 			case 0:
 				return &v.state
@@ -22810,7 +22666,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[154].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[152].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*GetScanTaskReply); i {
 			case 0:
 				return &v.state
@@ -22822,7 +22678,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[155].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[153].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*AddScanTaskReq); i {
 			case 0:
 				return &v.state
@@ -22834,7 +22690,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[156].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[154].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*AddScanTaskReply); i {
 			case 0:
 				return &v.state
@@ -22846,7 +22702,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[157].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[155].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*RecheckScanTaskReq); i {
 			case 0:
 				return &v.state
@@ -22858,7 +22714,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[158].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[156].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*RecheckScanTaskReply); i {
 			case 0:
 				return &v.state
@@ -22870,7 +22726,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[159].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[157].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*DeleteScanTaskReq); i {
 			case 0:
 				return &v.state
@@ -22882,7 +22738,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[160].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[158].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*DeleteScanTaskReply); i {
 			case 0:
 				return &v.state
@@ -22894,7 +22750,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[161].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[159].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ListScanConfReq); i {
 			case 0:
 				return &v.state
@@ -22906,7 +22762,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[162].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[160].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ListScanConfReply); i {
 			case 0:
 				return &v.state
@@ -22918,7 +22774,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[163].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[161].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ScanConfDetail); i {
 			case 0:
 				return &v.state
@@ -22930,7 +22786,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[164].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[162].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*SetScanConfReq); i {
 			case 0:
 				return &v.state
@@ -22942,7 +22798,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[165].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[163].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*SetScanConfReply); i {
 			case 0:
 				return &v.state
@@ -22954,7 +22810,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[166].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[164].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*GetScanConfReq); i {
 			case 0:
 				return &v.state
@@ -22966,7 +22822,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[167].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[165].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*GetScanConfReply); i {
 			case 0:
 				return &v.state
@@ -22978,7 +22834,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[168].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[166].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*GetScanTmplNamesReq); i {
 			case 0:
 				return &v.state
@@ -22990,7 +22846,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[169].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[167].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*GetScanTmplNamesReply); i {
 			case 0:
 				return &v.state
@@ -23002,7 +22858,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[170].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[168].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*UpdateScanConfReq); i {
 			case 0:
 				return &v.state
@@ -23014,7 +22870,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[171].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[169].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*UpdateScanConfReply); i {
 			case 0:
 				return &v.state
@@ -23026,7 +22882,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[172].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[170].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ListScanTmplReq); i {
 			case 0:
 				return &v.state
@@ -23038,7 +22894,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[173].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[171].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ListScanTmplReply); i {
 			case 0:
 				return &v.state
@@ -23050,7 +22906,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[174].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[172].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*GetScanTmplReq); i {
 			case 0:
 				return &v.state
@@ -23062,7 +22918,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[175].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[173].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*PluginInfo); i {
 			case 0:
 				return &v.state
@@ -23074,7 +22930,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[176].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[174].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*GetScanTmplReply); i {
 			case 0:
 				return &v.state
@@ -23086,7 +22942,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[177].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[175].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*UpdateScanTmplReq); i {
 			case 0:
 				return &v.state
@@ -23098,7 +22954,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[178].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[176].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*UpdateScanTmplReply); i {
 			case 0:
 				return &v.state
@@ -23110,7 +22966,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[179].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[177].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*DeleteScanTmplReq); i {
 			case 0:
 				return &v.state
@@ -23122,7 +22978,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[180].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[178].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*DeleteScanTmplReply); i {
 			case 0:
 				return &v.state
@@ -23134,7 +22990,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[181].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[179].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*PluginInfoV2); i {
 			case 0:
 				return &v.state
@@ -23146,7 +23002,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[182].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[180].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*AddScanTmplReq); i {
 			case 0:
 				return &v.state
@@ -23158,7 +23014,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[183].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[181].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*AddScanTmplReply); i {
 			case 0:
 				return &v.state
@@ -23170,7 +23026,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[184].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[182].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ListScanPluginReq); i {
 			case 0:
 				return &v.state
@@ -23182,7 +23038,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[185].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[183].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ListScanPluginReply); i {
 			case 0:
 				return &v.state
@@ -23194,7 +23050,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[186].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[184].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*DashboardStatsReq); i {
 			case 0:
 				return &v.state
@@ -23206,7 +23062,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[187].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[185].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*DashboardStatsReply); i {
 			case 0:
 				return &v.state
@@ -23218,7 +23074,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[188].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[186].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*DashboardTrendsReq); i {
 			case 0:
 				return &v.state
@@ -23230,7 +23086,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[189].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[187].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*DashboardTrendsReply); i {
 			case 0:
 				return &v.state
@@ -23242,7 +23098,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[190].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[188].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*DashboardLogStatsReq); i {
 			case 0:
 				return &v.state
@@ -23254,7 +23110,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[191].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[189].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*DashboardLogStatsReply); i {
 			case 0:
 				return &v.state
@@ -23266,7 +23122,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[192].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[190].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ListAlertRuleReq); i {
 			case 0:
 				return &v.state
@@ -23278,7 +23134,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[193].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[191].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*AttackFlowReply); i {
 			case 0:
 				return &v.state
@@ -23290,7 +23146,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[194].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[192].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*AlertRuleInfo); i {
 			case 0:
 				return &v.state
@@ -23302,7 +23158,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[195].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[193].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ListAlertRuleReply); i {
 			case 0:
 				return &v.state
@@ -23314,7 +23170,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[196].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[194].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*AddAlertRuleReq); i {
 			case 0:
 				return &v.state
@@ -23326,7 +23182,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[197].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[195].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*AddAlertRuleReply); i {
 			case 0:
 				return &v.state
@@ -23338,7 +23194,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[198].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[196].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*UpdateAlertRuleReq); i {
 			case 0:
 				return &v.state
@@ -23350,7 +23206,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[199].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[197].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*UpdateAlertRuleReply); i {
 			case 0:
 				return &v.state
@@ -23362,7 +23218,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[200].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[198].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*DeleteAlertRuleReq); i {
 			case 0:
 				return &v.state
@@ -23374,7 +23230,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[201].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[199].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*DeleteAlertRuleReply); i {
 			case 0:
 				return &v.state
@@ -23386,7 +23242,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[202].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[200].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*GetAlertTypesReq); i {
 			case 0:
 				return &v.state
@@ -23398,7 +23254,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[203].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[201].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*GetAlertTypesReply); i {
 			case 0:
 				return &v.state
@@ -23410,7 +23266,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[204].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[202].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*GetAlertRuleNamesReq); i {
 			case 0:
 				return &v.state
@@ -23422,7 +23278,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[205].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[203].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*GetAlertRuleNamesReply); i {
 			case 0:
 				return &v.state
@@ -23434,7 +23290,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[206].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[204].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*GetAlertRuleTagsReq); i {
 			case 0:
 				return &v.state
@@ -23446,7 +23302,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[207].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[205].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*GetAlertRuleTagsReply); i {
 			case 0:
 				return &v.state
@@ -23458,7 +23314,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[208].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[206].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*GetActivityRuleFieldsReq); i {
 			case 0:
 				return &v.state
@@ -23470,7 +23326,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[209].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[207].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*GetActivityRuleFieldsReply); i {
 			case 0:
 				return &v.state
@@ -23482,7 +23338,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[210].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[208].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*GetActivityRuleUniqueFieldsReq); i {
 			case 0:
 				return &v.state
@@ -23494,7 +23350,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[211].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[209].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*GetActivityRuleUniqueFieldsReply); i {
 			case 0:
 				return &v.state
@@ -23506,7 +23362,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[212].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[210].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ListActivityRuleReq); i {
 			case 0:
 				return &v.state
@@ -23518,7 +23374,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[213].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[211].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ActivityRuleInfo); i {
 			case 0:
 				return &v.state
@@ -23530,7 +23386,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[214].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[212].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ListActivityRuleReply); i {
 			case 0:
 				return &v.state
@@ -23542,7 +23398,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[215].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[213].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*GetActivityRuleReq); i {
 			case 0:
 				return &v.state
@@ -23554,7 +23410,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[216].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[214].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*GetActivityRuleReply); i {
 			case 0:
 				return &v.state
@@ -23566,7 +23422,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[217].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[215].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*AddActivityRuleReq); i {
 			case 0:
 				return &v.state
@@ -23578,7 +23434,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[218].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[216].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*AddActivityRuleReply); i {
 			case 0:
 				return &v.state
@@ -23590,7 +23446,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[219].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[217].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*UpdateActivityRuleReq); i {
 			case 0:
 				return &v.state
@@ -23602,7 +23458,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[220].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[218].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*UpdateActivityRuleReply); i {
 			case 0:
 				return &v.state
@@ -23614,7 +23470,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[221].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[219].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*DeleteActivityRuleReq); i {
 			case 0:
 				return &v.state
@@ -23626,7 +23482,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[222].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[220].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*DeleteActivityRuleReply); i {
 			case 0:
 				return &v.state
@@ -23638,7 +23494,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[223].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[221].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ListUserReply_Details); i {
 			case 0:
 				return &v.state
@@ -23650,7 +23506,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[224].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[222].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ListDomainReplyDcList); i {
 			case 0:
 				return &v.state
@@ -23662,7 +23518,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[225].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[223].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ListDomainReply_Details); i {
 			case 0:
 				return &v.state
@@ -23674,7 +23530,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[227].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[225].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ListSensorReplyMapSlice); i {
 			case 0:
 				return &v.state
@@ -23686,7 +23542,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[228].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[226].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ListSensorReply_Details); i {
 			case 0:
 				return &v.state
@@ -23698,7 +23554,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[235].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[233].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ListAuditLogReply_Details); i {
 			case 0:
 				return &v.state
@@ -23710,7 +23566,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[236].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[234].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ListSystemLogsReply_Details); i {
 			case 0:
 				return &v.state
@@ -23722,7 +23578,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[237].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[235].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ListNotifyConfReply_Details); i {
 			case 0:
 				return &v.state
@@ -23734,7 +23590,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[241].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[239].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ListExportTaskReply_Details); i {
 			case 0:
 				return &v.state
@@ -23746,7 +23602,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[244].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[242].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ListNotifyReply_Details); i {
 			case 0:
 				return &v.state
@@ -23758,7 +23614,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[246].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[244].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ThreatTopsReply_Details); i {
 			case 0:
 				return &v.state
@@ -23770,7 +23626,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[247].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[245].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ThreatTrendsReply_Item); i {
 			case 0:
 				return &v.state
@@ -23782,7 +23638,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[248].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[246].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ListThreatReq_Details); i {
 			case 0:
 				return &v.state
@@ -23794,7 +23650,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[249].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[247].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ListThreatReply_Details); i {
 			case 0:
 				return &v.state
@@ -23806,7 +23662,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[254].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[252].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ListSensitiveEntryReply_Details); i {
 			case 0:
 				return &v.state
@@ -23818,7 +23674,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[255].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[253].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ListThreatWhitelistReply_Details); i {
 			case 0:
 				return &v.state
@@ -23830,7 +23686,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[256].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[254].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ListThreatWhitelistReply_DetailsRuleInfo); i {
 			case 0:
 				return &v.state
@@ -23842,7 +23698,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[258].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[256].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*AddThreatWhitelistReqRuleInfo); i {
 			case 0:
 				return &v.state
@@ -23854,7 +23710,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[260].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[258].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*UpdateThreatWhitelistReqRuleInfo); i {
 			case 0:
 				return &v.state
@@ -23866,7 +23722,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[262].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[260].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ListThreatBlockReply_Results); i {
 			case 0:
 				return &v.state
@@ -23878,7 +23734,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[263].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[261].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ListThreatBlockReply_Details); i {
 			case 0:
 				return &v.state
@@ -23890,7 +23746,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[265].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[263].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ScanRiskStatsReply_Details); i {
 			case 0:
 				return &v.state
@@ -23902,7 +23758,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[266].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[264].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ListBaselineReply_Details); i {
 			case 0:
 				return &v.state
@@ -23914,7 +23770,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[267].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[265].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*GetBaselineReplyEntryInfo); i {
 			case 0:
 				return &v.state
@@ -23926,7 +23782,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[269].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[267].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ListLeakReply_Details); i {
 			case 0:
 				return &v.state
@@ -23938,7 +23794,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[270].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[268].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ListWeakPwdReply_Details); i {
 			case 0:
 				return &v.state
@@ -23950,7 +23806,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[271].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[269].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ListScanTaskReply_Details); i {
 			case 0:
 				return &v.state
@@ -23962,7 +23818,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[272].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[270].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*GetScanTaskReply_Details); i {
 			case 0:
 				return &v.state
@@ -23974,7 +23830,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[276].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[274].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*GetScanTmplNamesReplyTmplNames); i {
 			case 0:
 				return &v.state
@@ -23986,7 +23842,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[278].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[276].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ListScanTmplReply_Details); i {
 			case 0:
 				return &v.state
@@ -23998,7 +23854,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[286].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[284].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*DashboardLogStatsReplyLogStatsList); i {
 			case 0:
 				return &v.state
@@ -24010,7 +23866,7 @@ func file_ada_proto_init() {
 				return nil
 			}
 		}
-		file_ada_proto_msgTypes[287].Exporter = func(v interface{}, i int) interface{} {
+		file_ada_proto_msgTypes[285].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*AttackFlowReply_Field); i {
 			case 0:
 				return &v.state
@@ -24029,7 +23885,7 @@ func file_ada_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_ada_proto_rawDesc,
 			NumEnums:      0,
-			NumMessages:   290,
+			NumMessages:   288,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
@@ -24070,7 +23926,6 @@ type ADAClient interface {
 	DisableMfa(ctx context.Context, in *DisableMfaReq, opts ...grpc.CallOption) (*DisableMfaReply, error)
 	UpdateAvatar(ctx context.Context, in *UpdateAvatarReq, opts ...grpc.CallOption) (*UpdateAvatarReply, error)
 	ResetPassword(ctx context.Context, in *ResetPasswordReq, opts ...grpc.CallOption) (*ResetPasswordReply, error)
-	GetPwdUpdateTm(ctx context.Context, in *GetPwdUpdateTmReq, opts ...grpc.CallOption) (*GetPwdUpdateTmReply, error)
 	// Domain
 	ListDomain(ctx context.Context, in *ListDomainReq, opts ...grpc.CallOption) (*ListDomainReply, error)
 	AddDomain(ctx context.Context, in *AddDomainReq, opts ...grpc.CallOption) (*AddDomainReply, error)
@@ -24308,15 +24163,6 @@ func (c *aDAClient) UpdateAvatar(ctx context.Context, in *UpdateAvatarReq, opts 
 func (c *aDAClient) ResetPassword(ctx context.Context, in *ResetPasswordReq, opts ...grpc.CallOption) (*ResetPasswordReply, error) {
 	out := new(ResetPasswordReply)
 	err := c.cc.Invoke(ctx, "/ada.ADA/ResetPassword", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *aDAClient) GetPwdUpdateTm(ctx context.Context, in *GetPwdUpdateTmReq, opts ...grpc.CallOption) (*GetPwdUpdateTmReply, error) {
-	out := new(GetPwdUpdateTmReply)
-	err := c.cc.Invoke(ctx, "/ada.ADA/GetPwdUpdateTm", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -25177,7 +25023,6 @@ type ADAServer interface {
 	DisableMfa(context.Context, *DisableMfaReq) (*DisableMfaReply, error)
 	UpdateAvatar(context.Context, *UpdateAvatarReq) (*UpdateAvatarReply, error)
 	ResetPassword(context.Context, *ResetPasswordReq) (*ResetPasswordReply, error)
-	GetPwdUpdateTm(context.Context, *GetPwdUpdateTmReq) (*GetPwdUpdateTmReply, error)
 	// Domain
 	ListDomain(context.Context, *ListDomainReq) (*ListDomainReply, error)
 	AddDomain(context.Context, *AddDomainReq) (*AddDomainReply, error)
@@ -25338,9 +25183,6 @@ func (*UnimplementedADAServer) UpdateAvatar(context.Context, *UpdateAvatarReq) (
 }
 func (*UnimplementedADAServer) ResetPassword(context.Context, *ResetPasswordReq) (*ResetPasswordReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ResetPassword not implemented")
-}
-func (*UnimplementedADAServer) GetPwdUpdateTm(context.Context, *GetPwdUpdateTmReq) (*GetPwdUpdateTmReply, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetPwdUpdateTm not implemented")
 }
 func (*UnimplementedADAServer) ListDomain(context.Context, *ListDomainReq) (*ListDomainReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListDomain not implemented")
@@ -25856,24 +25698,6 @@ func _ADA_ResetPassword_Handler(srv interface{}, ctx context.Context, dec func(i
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ADAServer).ResetPassword(ctx, req.(*ResetPasswordReq))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _ADA_GetPwdUpdateTm_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetPwdUpdateTmReq)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(ADAServer).GetPwdUpdateTm(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/ada.ADA/GetPwdUpdateTm",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ADAServer).GetPwdUpdateTm(ctx, req.(*GetPwdUpdateTmReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -27607,10 +27431,6 @@ var _ADA_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ResetPassword",
 			Handler:    _ADA_ResetPassword_Handler,
-		},
-		{
-			MethodName: "GetPwdUpdateTm",
-			Handler:    _ADA_GetPwdUpdateTm_Handler,
 		},
 		{
 			MethodName: "ListDomain",

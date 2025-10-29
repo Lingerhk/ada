@@ -27,7 +27,6 @@ service ADA {
   rpc DisableMfa(DisableMfaReq)returns(DisableMfaReply) {} // 禁用二次验证
   rpc UpdateAvatar(UpdateAvatarReq)returns (UpdateAvatarReply) {}// 更新头像
   rpc ResetPassword(ResetPasswordReq)returns (ResetPasswordReply) {}// 重置用户密码
-  rpc GetPwdUpdateTm(GetPwdUpdateTmReq)returns(GetPwdUpdateTmReply) {} //获取用户最后修改密码时间
 
   // Domain
   rpc ListDomain(ListDomainReq) returns (ListDomainReply) {}  //域列表
@@ -345,14 +344,6 @@ message ResetPasswordReq {
 
 message ResetPasswordReply {
   string result = 2;
-}
-
-message GetPwdUpdateTmReq{
-  string userName = 1;
-}
-message GetPwdUpdateTmReply{
-  bool needChangePwd = 1;
-  string pwdUpdateTm = 2;
 }
 
 // Domain

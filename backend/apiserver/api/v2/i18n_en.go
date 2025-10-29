@@ -110,9 +110,6 @@ var I18nLangEnMap = map[string]any{
 			"FileTooLarge":    "Avatar file too large, please upload an image smaller than 512KB",
 			"InvalidFileType": "Only JPG, JPEG, PNG image files can be uploaded",
 		},
-		"GetPwdUpdateTm": map[string]any{
-			"UserNotFound": "User information not found",
-		},
 	},
 
 	// Notify module
