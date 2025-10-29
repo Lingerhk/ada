@@ -154,12 +154,6 @@ func (this *ResetPasswordReq) Validate() error {
 func (this *ResetPasswordReply) Validate() error {
 	return nil
 }
-func (this *GetPwdUpdateTmReq) Validate() error {
-	return nil
-}
-func (this *GetPwdUpdateTmReply) Validate() error {
-	return nil
-}
 func (this *ListDomainReq) Validate() error {
 	if !(this.PageIdx > 0) {
 		return github_com_mwitkow_go_proto_validators.FieldError("PageIdx", fmt.Errorf(`value '%v' must be greater than '0'`, this.PageIdx))

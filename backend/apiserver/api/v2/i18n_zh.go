@@ -110,9 +110,6 @@ var I18nLangZhMap = map[string]any{
 			"FileTooLarge":    "上传头像文件过大，请上传小于512Kb的图片文件",
 			"InvalidFileType": "仅限上传JPG，JPEG，PNG格式的图片文件",
 		},
-		"GetPwdUpdateTm": map[string]any{
-			"UserNotFound": "未能找到用户信息",
-		},
 	},
 
 	// Notify module

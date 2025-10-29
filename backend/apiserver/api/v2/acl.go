@@ -115,7 +115,7 @@ var moduleMap = map[string][]string{
 	"User": {
 		"Login", "Logout", "ListUser", "AddUser", "UpdateUser", "UpdateUserPassword",
 		"DeleteUser", "UserExists", "CheckMfa", "EnableMfa", "DisableMfa", "UpdateAvatar",
-		"ResetPassword", "GetPwdUpdateTm",
+		"ResetPassword",
 	},
 	// Domain Management
 	"Domain": {
