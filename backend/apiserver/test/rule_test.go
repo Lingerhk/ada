@@ -100,14 +100,13 @@ func TestListAlertRuleWithFilters(t *testing.T) {
 func TestAddAlertRule(t *testing.T) {
 	Convey("Test AddAlertRule API", t, func() {
 		// Create detection JSON for flow rule
-		detection := map[string]interface{}{
-			"event_type":  "multi_eve",
-			"win_size":    60,
-			"sorted":      false,
-			"sigma_rules": []string{"winlog-0000-0001", "winlog-0102-0001"},
-			"match_by":    "$s1.TargetUserName == $s2.SubjectUserName",
+		detection := &v2.AlertDetection{
+			EventType:  "multi_eve",
+			WinSize:    "60",
+			Sorted:     false,
+			SigmaRules: []string{"winlog-0000-0001", "winlog-0102-0001"},
+			MatchBy:    "$s1.TargetUserName == $s2.SubjectUserName",
 		}
-		detectionJSON, _ := json.Marshal(detection)
 
 		req := &v2.AddAlertRuleReq{
 			Title:       "Test Alert Rule - Automated Test",
@@ -117,7 +116,7 @@ func TestAddAlertRule(t *testing.T) {
 			Status:      "test",
 			Tags:        []string{"TA0001", "test"},
 			Logsource:   "flow",
-			Detection:   string(detectionJSON),
+			Detection:   detection,
 			Type:        "suspicious_activity",
 			References:  []string{"https://attack.mitre.org/"},
 			Suggestion:  "Review the activity and investigate if necessary",
@@ -171,14 +170,13 @@ func TestUpdateAlertRule(t *testing.T) {
 func TestUpdateAlertRuleAutoBlock(t *testing.T) {
 	Convey("Test UpdateAlertRule AutoBlock functionality", t, func() {
 		// Step 1: Create a new alert rule with autoBlock = false
-		detection := map[string]interface{}{
-			"event_type":  "multi_eve",
-			"win_size":    60,
-			"sorted":      false,
-			"sigma_rules": []string{"winlog-0000-0001", "winlog-0102-0001"},
-			"match_by":    "$s1.TargetUserName == $s2.SubjectUserName",
+		detection := &v2.AlertDetection{
+			EventType:  "multi_eve",
+			WinSize:    "60",
+			Sorted:     false,
+			SigmaRules: []string{"winlog-0000-0001", "winlog-0102-0001"},
+			MatchBy:    "$s1.TargetUserName == $s2.SubjectUserName",
 		}
-		detectionJSON, _ := json.Marshal(detection)
 
 		createReq := &v2.AddAlertRuleReq{
 			Title:       "Test AutoBlock Rule - Initial",
@@ -188,7 +186,7 @@ func TestUpdateAlertRuleAutoBlock(t *testing.T) {
 			Status:      "test",
 			Tags:        []string{"test", "autoblock"},
 			Logsource:   "flow",
-			Detection:   string(detectionJSON),
+			Detection:   detection,
 			Type:        "suspicious_activity",
 			Author:      "unit_test",
 			AutoBlock:   false, // Initially set to false
@@ -319,12 +317,13 @@ func TestUpdateAlertRuleAutoBlock(t *testing.T) {
 func TestUpdateAlertRuleAutoBlockWithEnable(t *testing.T) {
 	Convey("Test autoBlock and enable boolean fields together", t, func() {
 		// Create a rule with enable=true, autoBlock=true
-		detection := map[string]interface{}{
-			"event_type":  "multi_eve",
-			"win_size":    60,
-			"sigma_rules": []string{"winlog-0000-0001"},
+		detection := &v2.AlertDetection{
+			EventType:  "multi_eve",
+			WinSize:    "60",
+			Sorted:     false,
+			SigmaRules: []string{"winlog-0000-0001"},
+			MatchBy:    "$s1.TargetUserName == $s2.SubjectUserName",
 		}
-		detectionJSON, _ := json.Marshal(detection)
 
 		createReq := &v2.AddAlertRuleReq{
 			Title:       "Test Boolean Fields",
@@ -334,7 +333,7 @@ func TestUpdateAlertRuleAutoBlockWithEnable(t *testing.T) {
 			Status:      "test",
 			Tags:        []string{"test"},
 			Logsource:   "flow",
-			Detection:   string(detectionJSON),
+			Detection:   detection,
 			Author:      "unit_test",
 			AutoBlock:   true,
 		}

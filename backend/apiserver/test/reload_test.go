@@ -1,7 +1,6 @@
 package test
 
 import (
-	"encoding/json"
 	"testing"
 	"time"
 
@@ -15,15 +14,13 @@ func TestRuleReloadMechanism(t *testing.T) {
 		var ruleID string
 
 		Convey("Step 1: Add test alert rule", func() {
-			detection := map[string]interface{}{
-				"event_type":  "multi_eve",
-				"win_size":    60,
-				"sorted":      false,
-				"sigma_rules": []string{"winlog-0000-0001", "winlog-0102-0001"},
-				"match_by":    "$s1.TargetUserName == $s2.SubjectUserName",
+			detection := &v2.AlertDetection{
+				EventType:  "multi_eve",
+				WinSize:    "60",
+				Sorted:     false,
+				SigmaRules: []string{"winlog-0000-0001", "winlog-0102-0001"},
+				MatchBy:    "$s1.TargetUserName == $s2.SubjectUserName",
 			}
-			detectionJSON, err := json.Marshal(detection)
-			So(err, ShouldBeNil)
 
 			addReq := &v2.AddAlertRuleReq{
 				Title:       "Test Reload Mechanism - Automated Test",
@@ -33,9 +30,9 @@ func TestRuleReloadMechanism(t *testing.T) {
 				Status:      "test",
 				Tags:        []string{"test", "reload"},
 				Logsource:   "flow",
-				Detection:   string(detectionJSON),
+				Detection:   detection,
 				Type:        "test_reload",
-				References:   []string{"https://github.com/test"},
+				References:  []string{"https://github.com/test"},
 				Suggestion:  "This is a test rule",
 				Author:      "reload_test",
 				AutoBlock:   false,
