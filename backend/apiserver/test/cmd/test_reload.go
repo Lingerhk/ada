@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"encoding/json"
 	"log"
 	"time"
 
@@ -46,14 +45,13 @@ func main() {
 
 	// Step 1: Add a test rule
 	log.Println("\n[Step 1] Adding test alert rule...")
-	detection := map[string]interface{}{
-		"event_type":  "multi_eve",
-		"win_size":    60,
-		"sorted":      false,
-		"sigma_rules": []string{"winlog-0000-0001", "winlog-0102-0001"},
-		"match_by":    "$s1.TargetUserName == $s2.SubjectUserName",
+	detection := &v2.AlertDetection{
+		EventType:  "multi_eve",
+		WinSize:    "60",
+		Sorted:     false,
+		SigmaRules: []string{"winlog-0000-0001", "winlog-0102-0001"},
+		MatchBy:    "$s1.TargetUserName == $s2.SubjectUserName",
 	}
-	detectionJSON, _ := json.Marshal(detection)
 
 	addReq := &v2.AddAlertRuleReq{
 		Title:       "Test Reload Mechanism - Automated Test",
@@ -63,7 +61,7 @@ func main() {
 		Status:      "test",
 		Tags:        []string{"test", "reload"},
 		Logsource:   "flow",
-		Detection:   string(detectionJSON),
+		Detection:   detection,
 		Type:        "test_reload",
 		References:  []string{"https://github.com/test"},
 		Suggestion:  "This is a test rule",
