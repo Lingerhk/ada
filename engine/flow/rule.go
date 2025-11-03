@@ -41,22 +41,21 @@ type FlowRule struct {
 	Title       string   `yaml:"title"`
 	ID          string   `yaml:"id"`
 	Status      string   `yaml:"status"`
+	Enable      bool     `yaml:"enable"`
 	Description string   `yaml:"description"`
 	References  []string `yaml:"references"`
 	Author      string   `yaml:"author"`
 	Date        string   `yaml:"date"`
 	Modified    string   `yaml:"modified"`
 	Tags        []string `yaml:"tags"`
-	Logsource   struct {
-		Product string `yaml:"product"`
-	} `yaml:"logsource"`
-	Detection struct {
+	Logsource   string   `yaml:"logsource"`
+	Detection   struct {
 		EventType string `yaml:"event_type"`
 		WinSize   string `yaml:"win_size"`
 		WinSizeTs int64  // win_size的时间戳(int64类型，在初始化时从WinSize转换而来)
 		Sorted    bool   `yaml:"sorted"`
 		Selection struct {
-			SigmaID []string `yaml:"sigma_id"`
+			SigmaID []string `yaml:"sigma_rules"` // sigma_id list
 			MatchBy string   `yaml:"match_by"`
 		} `yaml:"selection"`
 		Conditions []Condition
@@ -114,14 +113,14 @@ func NewRuleList(files []string) ([]FlowRule, error) {
 		}
 
 		// ignore which logsrouce is not 'sigma_flow'
-		if r.Logsource.Product != "sigma_flow" {
-			logger.Warnf("ignore invalid logsource:%s", r.Logsource.Product)
+		if r.Logsource != "sigma_flow" {
+			logger.Warnf("ignore invalid logsource:%s", r.Logsource)
 			continue
 		}
 
-		// ignore status if 'disabled'
-		if r.Status == "disabled" {
-			logger.Warnf("ignore status 'disabled' flow:%s", r.ID)
+		// ignore enable status if false
+		if r.Enable == false {
+			logger.Warnf("ignore disabled flow:%s", r.ID)
 			continue
 		}
 
