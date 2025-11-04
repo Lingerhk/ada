@@ -1,11 +1,13 @@
 package sigma
 
 import (
+	"ada/engine/common"
 	"bytes"
 	"fmt"
 	"os"
 	"path/filepath"
 	"slices"
+	"strconv"
 	"strings"
 
 	logger "github.com/sirupsen/logrus"
@@ -87,10 +89,18 @@ func (r *Rule) margeFields(extFields map[string][]string) {
 	r.Fields = destFields
 }
 
-func (r *Rule) checkLevel() bool {
+func (r *Rule) convertLevel() error {
 	// levels defines in engine/common/ruletype.go
 	validLevels := []string{"info", "low", "medium", "high", "critical", "1", "2", "3", "4", "5"}
-	return slices.Contains(validLevels, r.Level)
+	if !slices.Contains(validLevels, r.Level) {
+		return fmt.Errorf("invalid level: %s", r.Level)
+	}
+
+	// convert level: '1' -> 'info', '2' -> 'low', etc.
+	if levelInt, err := strconv.Atoi(r.Level); err == nil {
+		r.Level = common.ConvertRiskLevel(levelInt)
+	}
+	return nil
 }
 
 // RuleFromYAML parses yaml data into Rule object
@@ -146,8 +156,8 @@ loop:
 		r.margeFields(extFields)
 
 		// 检测yml规则文件中level是否书写正确
-		if !r.checkLevel() {
-			logger.Warnf("check level in rule(%s) failed: %s, will ignore!", r.ID, r.Level)
+		if err := r.convertLevel(); err != nil {
+			logger.Warnf("check and convert level in rule(%s) failed: %v, will ignore!", r.ID, err)
 			continue
 		}
 
