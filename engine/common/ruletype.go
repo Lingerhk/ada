@@ -1,6 +1,8 @@
 package common
 
-import logger "github.com/sirupsen/logrus"
+import (
+	logger "github.com/sirupsen/logrus"
+)
 
 // 规则类型定义, ATT&CK
 // https://attack.mitre.org/tactics/enterprise/
@@ -63,4 +65,22 @@ func GetRiskLevel(l string) int32 {
 	}
 	logger.Warnf("invalid risk level:%s, will return low level as default.", l)
 	return RiskLevelLow
+}
+
+func ConvertRiskLevel(l int) string {
+	switch l {
+	case RiskLevelInfo:
+		return "info"
+	case RiskLevelLow:
+		return "low"
+	case RiskLevelMedium:
+		return "medium"
+	case RiskLevelHigh:
+		return "high"
+	case RiskLevelCritical:
+		return "critical"
+	default:
+		logger.Warnf("invalid risk level:%d, will return low level as default.", l)
+		return "low"
+	}
 }

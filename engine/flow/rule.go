@@ -141,6 +141,10 @@ func NewRuleList(files []string) ([]FlowRule, error) {
 			logger.Warnf("ignore invalid level:%s", r.Level)
 			continue
 		}
+		// convert level: '1' -> 'info', '2' -> 'low', etc.
+		if levelInt, err := strconv.Atoi(r.Level); err == nil {
+			r.Level = common.ConvertRiskLevel(levelInt)
+		}
 
 		// ignore the repeated flow_id rule
 		for _, rt := range rules {

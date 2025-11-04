@@ -15,40 +15,6 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
-// AlertRuleYAML represents the YAML structure for flow/alert rules
-type AlertRuleYAML struct {
-	ID          string         `yaml:"id"`
-	Title       string         `yaml:"title"`
-	Description string         `yaml:"description,omitempty"`
-	Level       string         `yaml:"level"`
-	Status      string         `yaml:"status"`
-	Tags        []string       `yaml:"tags,omitempty"`
-	Logsource   string         `yaml:"logsource,omitempty"`
-	Detection   map[string]any `yaml:"detection"`
-	Type        string         `yaml:"type,omitempty"`
-	References  []string       `yaml:"references,omitempty"`
-	Suggestion  string         `yaml:"suggestion,omitempty"`
-	Author      string         `yaml:"author,omitempty"`
-	AutoBlock   bool           `yaml:"auto_block,omitempty"`
-}
-
-// ActivityRuleYAML represents the YAML structure for sigma/activity rules
-type ActivityRuleYAML struct {
-	ID          string         `yaml:"id"`
-	Title       string         `yaml:"title"`
-	Description string         `yaml:"description,omitempty"`
-	Level       string         `yaml:"level"`
-	Status      string         `yaml:"status"`
-	Tags        []string       `yaml:"tags,omitempty"`
-	Logsource   string         `yaml:"logsource,omitempty"`
-	Detection   map[string]any `yaml:"detection"`
-	References  []string       `yaml:"references,omitempty"`
-	Author      string         `yaml:"author,omitempty"`
-	RdxKey      string         `yaml:"rdx_key,omitempty"`
-	Fields      []string       `yaml:"fields,omitempty"`
-}
-
-// WriteAlertRuleToFile writes an AlertRule to a YAML file
 func WriteAlertRuleToFile(rule *model.AlertRule) error {
 	// Ensure directory exists
 	ruleDir := filepath.Join(common.ROOT_PATH, "rules", common.RuleTypeFlow)
@@ -56,34 +22,8 @@ func WriteAlertRuleToFile(rule *model.AlertRule) error {
 		return fmt.Errorf("failed to create rule directory: %v", err)
 	}
 
-	// Convert to YAML structure
-	yamlRule := AlertRuleYAML{
-		ID:          rule.ID,
-		Title:       rule.Title,
-		Description: rule.Description,
-		Level:       LevelIntToString(rule.Level),
-		Status:      rule.Status,
-		Tags:        rule.Tags,
-		Logsource:   rule.Logsource,
-		Detection: map[string]any{
-			"event_type": rule.Detection.EventType,
-			"match_by":   rule.Detection.MatchBy,
-			"win_size":   rule.Detection.WinSize,
-			"sorted":     rule.Detection.Sorted,
-		},
-		Type:       rule.Type,
-		References: rule.References,
-		Suggestion: rule.Suggestion,
-		Author:     rule.Author,
-		AutoBlock:  rule.AutoBlock,
-	}
-
-	if len(rule.Detection.SigmaRules) > 0 {
-		yamlRule.Detection["sigma_rules"] = rule.Detection.SigmaRules
-	}
-
 	// Marshal to YAML
-	data, err := yaml.Marshal(yamlRule)
+	data, err := yaml.Marshal(rule)
 	if err != nil {
 		return fmt.Errorf("failed to marshal rule to YAML: %v", err)
 	}
@@ -115,24 +55,8 @@ func WriteActivityRuleToFile(rule *model.AlertActivityRule) error {
 		return fmt.Errorf("failed to create rule directory: %v", err)
 	}
 
-	// Convert to YAML structure
-	yamlRule := ActivityRuleYAML{
-		ID:          rule.ID,
-		Title:       rule.Title,
-		Description: rule.Description,
-		Level:       LevelIntToString(rule.Level),
-		Status:      rule.Status,
-		Tags:        rule.Tags,
-		Logsource:   rule.Logsource,
-		Detection:   rule.Detection,
-		References:  rule.References,
-		Author:      rule.Author,
-		RdxKey:      rule.RdxKey,
-		Fields:      rule.Fields,
-	}
-
 	// Marshal to YAML
-	data, err := yaml.Marshal(yamlRule)
+	data, err := yaml.Marshal(rule)
 	if err != nil {
 		return fmt.Errorf("failed to marshal rule to YAML: %v", err)
 	}
@@ -247,10 +171,10 @@ func GenerateVersionFile() error {
 		return fmt.Errorf("failed to create rules directory: %v", err)
 	}
 
-	// Get current time
+	// Get current time in local timezone
 	now := time.Now()
 	timestamp := now.Unix()
-	buildTime := now.Format("2006-01-02 15:04:05")
+	buildTime := now.Format("2006-01-02 15:04:05 MST")
 
 	// Create version file content
 	versionContent := fmt.Sprintf("version: %d\nbuild_time: %s\n", timestamp, buildTime)

@@ -1,7 +1,6 @@
 package model
 
 import (
-	"strings"
 	"time"
 
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -357,65 +356,6 @@ func (r *AlertRule) CollectName() string {
 	return "tb_alert_rule"
 }
 
-// UnmarshalYAML implements custom YAML unmarshaling for AlertRule
-func (r *AlertRule) UnmarshalYAML(unmarshal func(any) error) error {
-	// Define a temporary struct with string/map fields for YAML parsing
-	type yamlAlertRule struct {
-		ID           string         `yaml:"id"`
-		Title        string         `yaml:"title"`
-		Description  string         `yaml:"description"`
-		Enable       bool           `yaml:"enable,omitempty"`
-		Level        string         `yaml:"level"` // string in YAML
-		Status       string         `yaml:"status"`
-		Tags         []string       `yaml:"tags,omitempty"`
-		Logsource    map[string]any `yaml:"logsource"` // map in YAML
-		Detection    map[string]any `yaml:"detection"` // will be processed separately
-		Type         string         `yaml:"type"`
-		References   []string       `yaml:"references,omitempty"`
-		Suggestion   string         `yaml:"suggestion,omitempty"`
-		Author       string         `yaml:"author,omitempty"`
-		AutoBlock    bool           `yaml:"auto_block,omitempty"`
-		AttackFlow   map[string]any `yaml:"attack_flow,omitempty"` // will be processed separately
-		RuleDate     string         `yaml:"date,omitempty"`
-		RuleModified string         `yaml:"modified,omitempty"`
-	}
-
-	var temp yamlAlertRule
-	if err := unmarshal(&temp); err != nil {
-		return err
-	}
-
-	// Copy fields
-	r.ID = temp.ID
-	r.Title = temp.Title
-	r.Description = temp.Description
-	r.Enable = temp.Enable
-	r.Status = temp.Status
-	r.Tags = temp.Tags
-	r.References = temp.References
-	r.Suggestion = temp.Suggestion
-	r.Author = temp.Author
-	r.AutoBlock = temp.AutoBlock
-	r.Type = temp.Type
-	r.RuleDate = temp.RuleDate
-	r.RuleModified = temp.RuleModified
-
-	// Convert level string to int32
-	r.Level = convertLevelToInt(temp.Level)
-
-	// Extract logsource product from map
-	if temp.Logsource != nil {
-		if product, ok := temp.Logsource["product"].(string); ok {
-			r.Logsource = product
-		}
-	}
-
-	// Note: Detection and AttackFlow need special handling in rule_sync.go
-	// because they have complex structures that vary by rule type
-
-	return nil
-}
-
 // ActivityDetection stores the dynamic detection field from Sigma rules.
 // The structure varies by rule type:
 //
@@ -454,60 +394,6 @@ type AlertActivityRule struct {
 
 func (a *AlertActivityRule) CollectName() string {
 	return "tb_activity_rule"
-}
-
-// UnmarshalYAML implements custom YAML unmarshaling for AlertActivityRule
-func (a *AlertActivityRule) UnmarshalYAML(unmarshal func(any) error) error {
-	// Define a temporary struct with string/map fields for YAML parsing
-	type yamlActivityRule struct {
-		ID           string            `yaml:"id"`
-		Title        string            `yaml:"title"`
-		Description  string            `yaml:"description"`
-		Level        string            `yaml:"level"` // string in YAML
-		Status       string            `yaml:"status"`
-		Tags         []string          `yaml:"tags"`
-		Logsource    map[string]any    `yaml:"logsource"` // map in YAML
-		References   []string          `yaml:"references"`
-		Detection    ActivityDetection `yaml:"detection"`
-		RdxKey       string            `yaml:"rdx_key,omitempty"`
-		Fields       []string          `yaml:"fields"`
-		UniqueFields []string          `yaml:"unique_fields"`
-		Author       string            `yaml:"author,omitempty"`
-		RuleDate     string            `yaml:"date,omitempty"`
-		RuleModified string            `yaml:"modified,omitempty"`
-	}
-
-	var temp yamlActivityRule
-	if err := unmarshal(&temp); err != nil {
-		return err
-	}
-
-	// Copy fields
-	a.ID = temp.ID
-	a.Title = temp.Title
-	a.Description = temp.Description
-	a.Status = temp.Status
-	a.Tags = temp.Tags
-	a.References = temp.References
-	a.Detection = temp.Detection
-	a.RdxKey = temp.RdxKey
-	a.Fields = temp.Fields
-	a.UniqueFields = temp.UniqueFields
-	a.Author = temp.Author
-	a.RuleDate = temp.RuleDate
-	a.RuleModified = temp.RuleModified
-
-	// Convert level string to int32
-	a.Level = convertLevelToInt(temp.Level)
-
-	// Extract logsource product from map
-	if temp.Logsource != nil {
-		if product, ok := temp.Logsource["product"].(string); ok {
-			a.Logsource = product
-		}
-	}
-
-	return nil
 }
 
 // AlertActivityESDB 告警行为表(该表必须保持和engine/core/types.go:AlertActivityESDB一致)
@@ -715,22 +601,4 @@ type SystemLogs struct {
 
 func (s *SystemLogs) CollectName() string {
 	return "tb_system_logs"
-}
-
-// convertLevelToInt converts level string to integer
-func convertLevelToInt(level string) int32 {
-	switch strings.ToLower(level) {
-	case "critical":
-		return 5
-	case "high":
-		return 4
-	case "medium":
-		return 3
-	case "low":
-		return 2
-	case "info", "informational":
-		return 1
-	default:
-		return 3 // default to medium
-	}
 }
