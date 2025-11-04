@@ -29,7 +29,7 @@ func WriteAlertRuleToFile(rule *model.AlertRule) error {
 	}
 
 	// Write to file
-	filename := filepath.Join(ruleDir, fmt.Sprintf("%s.yaml", rule.ID))
+	filename := filepath.Join(ruleDir, fmt.Sprintf("%s.yml", rule.ID))
 	if err := os.WriteFile(filename, data, 0644); err != nil {
 		return fmt.Errorf("failed to write rule file: %v", err)
 	}
@@ -62,7 +62,7 @@ func WriteActivityRuleToFile(rule *model.AlertActivityRule) error {
 	}
 
 	// Write to file
-	filename := filepath.Join(ruleDir, fmt.Sprintf("%s.yaml", rule.ID))
+	filename := filepath.Join(ruleDir, fmt.Sprintf("%s.yml", rule.ID))
 	if err := os.WriteFile(filename, data, 0644); err != nil {
 		return fmt.Errorf("failed to write rule file: %v", err)
 	}
@@ -74,7 +74,7 @@ func WriteActivityRuleToFile(rule *model.AlertActivityRule) error {
 // DeleteAlertRuleFile deletes an AlertRule YAML file
 func DeleteAlertRuleFile(ruleID string) error {
 	ruleDir := filepath.Join(common.ROOT_PATH, "rules", common.RuleTypeFlow)
-	filename := filepath.Join(ruleDir, fmt.Sprintf("%s.yaml", ruleID))
+	filename := filepath.Join(ruleDir, fmt.Sprintf("%s.yml", ruleID))
 
 	if err := os.Remove(filename); err != nil && !os.IsNotExist(err) {
 		return fmt.Errorf("failed to delete rule file: %v", err)
@@ -96,7 +96,7 @@ func DeleteActivityRuleFile(ruleID string) error {
 		return fmt.Errorf("invalid activity rule ID format: %s", ruleID)
 	}
 
-	filename := filepath.Join(ruleDir, fmt.Sprintf("%s.yaml", ruleID))
+	filename := filepath.Join(ruleDir, fmt.Sprintf("%s.yml", ruleID))
 
 	if err := os.Remove(filename); err != nil && !os.IsNotExist(err) {
 		return fmt.Errorf("failed to delete rule file: %v", err)

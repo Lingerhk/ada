@@ -63,8 +63,8 @@ func New(env *config.Env) (*EngineWorker, error) {
 		time.Sleep(3 * time.Second)
 		flowset, err = flow.NewRuleset(env.RedisCli, env.MongoCli, flowRulePath)
 		if err == flow.ErrMissingRuleList {
-			logger.Warnf("empty rules %v, wait 60s...", err)
-			time.Sleep(60 * time.Second)
+			logger.Warnf("empty rules %v, wait 20s...", err)
+			time.Sleep(20 * time.Second)
 			continue
 		}
 

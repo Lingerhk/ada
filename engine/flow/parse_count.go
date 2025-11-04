@@ -32,7 +32,7 @@ func (r *Ruleset) matchEventCount(ctx context.Context, fr FlowRule, flowInstance
 		logger.Debugf("22----handle EventTypeCount activities %#v", activities)
 
 		// match_by: "$s1._count == 3"
-		matchBy := fr.Detection.Selection.MatchBy
+		matchBy := fr.Detection.MatchBy
 		_, v, err := parseExpression(matchBy)
 		if err != nil {
 			logger.Warnf("parse matchBy err:%v, will ignore this flow instance!", err)

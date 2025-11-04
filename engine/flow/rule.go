@@ -50,14 +50,12 @@ type FlowRule struct {
 	Tags        []string `yaml:"tags"`
 	Logsource   string   `yaml:"logsource"`
 	Detection   struct {
-		EventType string `yaml:"event_type"`
-		WinSize   string `yaml:"win_size"`
-		WinSizeTs int64  // win_size的时间戳(int64类型，在初始化时从WinSize转换而来)
-		Sorted    bool   `yaml:"sorted"`
-		Selection struct {
-			SigmaID []string `yaml:"sigma_rules"` // sigma_id list
-			MatchBy string   `yaml:"match_by"`
-		} `yaml:"selection"`
+		EventType  string   `yaml:"event_type"`
+		WinSize    string   `yaml:"win_size"`
+		WinSizeTs  int64    // win_size的时间戳(int64类型，在初始化时从WinSize转换而来)
+		Sorted     bool     `yaml:"sorted"`
+		SigmaRules []string `yaml:"sigma_rules"` // sigma_id list
+		MatchBy    string   `yaml:"match_by"`
 		Conditions []Condition
 	} `yaml:"detection"`
 	Level        string              `yaml:"level"`
@@ -112,8 +110,8 @@ func NewRuleList(files []string) ([]FlowRule, error) {
 			return nil, err
 		}
 
-		// ignore which logsrouce is not 'sigma_flow'
-		if r.Logsource != "sigma_flow" {
+		// ignore which logsrouce is not 'flow'
+		if r.Logsource != "flow" {
 			logger.Warnf("ignore invalid logsource:%s", r.Logsource)
 			continue
 		}
@@ -154,9 +152,9 @@ func NewRuleList(files []string) ([]FlowRule, error) {
 			}
 		}
 
-		// check the length of Detection.SigmaID
-		if len(r.Detection.Selection.SigmaID) > common.MaxFlowSelections {
-			logger.Warnf("ignore too length(%d) Selection.SigmaID(must <= %d)", len(r.Detection.Selection.SigmaID), common.MaxFlowSelections)
+		// check the length of Detection.SigmaRules
+		if len(r.Detection.SigmaRules) > common.MaxFlowSelections {
+			logger.Warnf("ignore too length(%d) Detection.SigmaRules(must <= %d)", len(r.Detection.SigmaRules), common.MaxFlowSelections)
 			continue
 		}
 
@@ -169,8 +167,8 @@ func NewRuleList(files []string) ([]FlowRule, error) {
 		r.Detection.WinSizeTs = val
 
 		// parse match_by into Conditions object, and update fields into sigma rule 'fields'
-		r.Detection.Conditions = parseMatchByExpression(r.Detection.Selection.MatchBy)
-		sFields := extractFields(r.Detection.Conditions, r.Detection.Selection.SigmaID)
+		r.Detection.Conditions = parseMatchByExpression(r.Detection.MatchBy)
+		sFields := extractFields(r.Detection.Conditions, r.Detection.SigmaRules)
 
 		sigmaRuleFields := make(map[string][]string)
 		for sid, fields := range sFields {
@@ -218,12 +216,12 @@ func (r *Ruleset) LoadRuleCache() error {
 	// read sigma_id list form flow_rule
 	sigmaIDMap := make(map[string]any)
 	for _, fRule := range r.FlowRules {
-		if len(fRule.Detection.Selection.SigmaID) == 0 {
+		if len(fRule.Detection.SigmaRules) == 0 {
 			logger.Warnf("ignore empty sigma_id flow_rule:%s", fRule.ID)
 			continue
 		}
 
-		for _, sigmaId := range fRule.Detection.Selection.SigmaID {
+		for _, sigmaId := range fRule.Detection.SigmaRules {
 			if _, ok := sigmaIDMap[sigmaId]; ok {
 				sigmaIDMap[sigmaId] = fmt.Sprintf("%s,%s", sigmaIDMap[sigmaId], fRule.ID)
 			} else {
