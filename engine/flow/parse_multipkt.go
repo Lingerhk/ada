@@ -23,13 +23,13 @@ func (r *Ruleset) matchEventMultiPkt(ctx context.Context, fr FlowRule, flowInsta
 			continue
 		}
 
-		validSets := r.extractActivities(activities, fr.Detection.Selection.SigmaID, fr.Detection.WinSizeTs, fr.Detection.Sorted)
+		validSets := r.extractActivities(activities, fr.Detection.SigmaRules, fr.Detection.WinSizeTs, fr.Detection.Sorted)
 		if len(validSets) == 0 {
 			//logger.Debug("validSets is empty, will ignore this event!")
 			continue
 		}
 
-		matchedActivities, matched := r.matchByActivities(activities, validSets, fr.Detection.Selection.MatchBy)
+		matchedActivities, matched := r.matchByActivities(activities, validSets, fr.Detection.MatchBy)
 		if !matched {
 			continue
 		}
