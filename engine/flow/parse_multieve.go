@@ -27,7 +27,7 @@ func (r *Ruleset) matchEventMultiEve(ctx context.Context, fr FlowRule, flowInsta
 			continue
 		}
 
-		validSets := r.extractActivities(activities, fr.Detection.Selection.SigmaID, fr.Detection.WinSizeTs, fr.Detection.Sorted)
+		validSets := r.extractActivities(activities, fr.Detection.SigmaRules, fr.Detection.WinSizeTs, fr.Detection.Sorted)
 		if len(validSets) == 0 {
 			//logger.Debug("validSets is empty, will ignore this event!")
 			continue
@@ -39,7 +39,7 @@ func (r *Ruleset) matchEventMultiEve(ctx context.Context, fr FlowRule, flowInsta
 			continue
 		}
 
-		matchedActivities, matched := r.matchByActivities(activities, validSets, fr.Detection.Selection.MatchBy)
+		matchedActivities, matched := r.matchByActivities(activities, validSets, fr.Detection.MatchBy)
 		if !matched {
 			continue
 		}
@@ -71,7 +71,7 @@ func (r *Ruleset) extractActivities(activities []flowActivity, sigmaIds []string
 
 	// 分组
 	/**************************************************/
-	// 最终获取到N组(Selection.SigmaID list)已经分组后的结果(下标), S代表 sigma_id
+	// 最终获取到N组(SigmaRules list)已经分组后的结果(下标), S代表 sigma_id
 	// S1: [1,3,6]
 	// S2: [2,5,9]
 	// S3: [4,7]
