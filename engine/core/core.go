@@ -101,7 +101,7 @@ func New(env *config.Env) (*EngineWorker, error) {
 		ExtractFields:   sigmaExtFields,
 	}, nil)
 	if err != nil {
-		logger.Errorf("init sigma ruleset err %v", err)
+		logger.Errorf("init winlog ruleset err %v", err)
 		cancel()
 		return nil, err
 	}
@@ -117,7 +117,7 @@ func New(env *config.Env) (*EngineWorker, error) {
 		ExtractFields:   sigmaExtFields,
 	}, nil)
 	if err != nil {
-		logger.Errorf("init sigma ruleset err %v", err)
+		logger.Errorf("init pktlog ruleset err %v", err)
 		cancel()
 		return nil, err
 	}
