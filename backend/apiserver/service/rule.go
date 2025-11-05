@@ -113,24 +113,31 @@ func (s *ADAServiceV2) ListAlertRule(ctx context.Context, in *v2.ListAlertRuleRe
 			Relates: relates,
 		}
 
+		// Ensure uniqueFilter is never nil
+		uniqueFilter := rule.UniqueFilter
+		if uniqueFilter == nil {
+			uniqueFilter = []string{}
+		}
+
 		ruleInfo := &v2.AlertRuleInfo{
-			ID:          rule.ID,
-			Title:       rule.Title,
-			Description: rule.Description,
-			Enable:      rule.Enable,
-			Level:       rule.Level,
-			Status:      rule.Status,
-			Tags:        tags,
-			Logsource:   rule.Logsource,
-			Detection:   detectionStr,
-			Type:        rule.Type,
-			Author:      rule.Author,
-			References:  rule.References,
-			Suggestion:  rule.Suggestion,
-			AutoBlock:   rule.AutoBlock,
-			AttackFlow:  attackFlowProto,
-			CreateTm:    rule.CreateTm.Format("2006-01-02 15:04:05"),
-			UpdateTm:    rule.UpdateTm.Format("2006-01-02 15:04:05"),
+			ID:           rule.ID,
+			Title:        rule.Title,
+			Description:  rule.Description,
+			Enable:       rule.Enable,
+			Level:        rule.Level,
+			Status:       rule.Status,
+			Tags:         tags,
+			Logsource:    rule.Logsource,
+			Detection:    detectionStr,
+			Type:         rule.Type,
+			Author:       rule.Author,
+			References:   rule.References,
+			Suggestion:   rule.Suggestion,
+			AutoBlock:    rule.AutoBlock,
+			AttackFlow:   attackFlowProto,
+			UniqueFilter: uniqueFilter,
+			CreateTm:     rule.CreateTm.Format("2006-01-02 15:04:05"),
+			UpdateTm:     rule.UpdateTm.Format("2006-01-02 15:04:05"),
 		}
 		ruleInfos = append(ruleInfos, ruleInfo)
 	}
@@ -180,21 +187,22 @@ func (s *ADAServiceV2) AddAlertRule(ctx context.Context, in *v2.AddAlertRuleReq)
 	}
 
 	rule := &model.AlertRule{
-		ID:          in.ID,
-		Title:       in.Title,
-		Description: in.Description,
-		Enable:      in.Enable,
-		Level:       in.Level,
-		Status:      in.Status,
-		Tags:        in.Tags,
-		Logsource:   in.Logsource,
-		Detection:   detection,
-		Type:        in.Type,
-		References:  in.References,
-		Suggestion:  in.Suggestion,
-		Author:      in.Author,
-		AutoBlock:   in.AutoBlock,
-		AttackFlow:  attackFlow,
+		ID:           in.ID,
+		Title:        in.Title,
+		Description:  in.Description,
+		Enable:       in.Enable,
+		Level:        in.Level,
+		Status:       in.Status,
+		Tags:         in.Tags,
+		Logsource:    in.Logsource,
+		Detection:    detection,
+		Type:         in.Type,
+		References:   in.References,
+		Suggestion:   in.Suggestion,
+		Author:       in.Author,
+		AutoBlock:    in.AutoBlock,
+		AttackFlow:   attackFlow,
+		UniqueFilter: in.UniqueFilter,
 	}
 
 	err := server.AddAlertRule(s.env, rule)
@@ -287,6 +295,9 @@ func (s *ADAServiceV2) UpdateAlertRule(ctx context.Context, in *v2.UpdateAlertRu
 			Relates: in.AttackFlow.Relates,
 		}
 		updates["attack_flow"] = attackFlowModel
+	}
+	if len(in.UniqueFilter) > 0 {
+		updates["unique_filter"] = in.UniqueFilter
 	}
 
 	err := server.UpdateAlertRule(s.env, in.ID, updates)
