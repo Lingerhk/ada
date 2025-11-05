@@ -331,25 +331,26 @@ type AlertDetection struct {
 }
 
 type AlertRule struct {
-	ID           string         `bson:"_id,omitempty" yaml:"id"`                  // id
-	Title        string         `bson:"title" yaml:"title"`                       // 事件标题
-	Description  string         `bson:"description" yaml:"description"`           // 事件描述
-	Enable       bool           `bson:"enable" yaml:"enable,omitempty"`           // 启动状态
-	Level        int32          `bson:"level" yaml:"level,omitempty"`             // 威胁等级 5:critical, 4:high, 3:medium, 2:low, 1:info
-	Status       string         `bson:"status" yaml:"status"`                     // 规则状态: test|experimental|stable|deprecated
-	Tags         []string       `bson:"tags" yaml:"tags,omitempty"`               // 规则标签
-	Logsource    string         `bson:"logsource" yaml:"logsource"`               // 日志来源
-	Detection    AlertDetection `bson:"detection" yaml:"detection"`               // 检测配置
-	Type         string         `bson:"type" yaml:"type"`                         // 规则分类
-	References   []string       `bson:"references" yaml:"references,omitempty"`   // 规则参考
-	Suggestion   string         `bson:"suggestion" yaml:"suggestion,omitempty"`   // 修复建议
-	Author       string         `bson:"author" yaml:"author,omitempty"`           // 作者
-	AutoBlock    bool           `bson:"auto_block" yaml:"auto_block,omitempty"`   // 是否自动阻断
-	AttackFlow   AttackFlow     `bson:"attack_flow" yaml:"attack_flow,omitempty"` // 攻击描述图谱
-	RuleDate     string         `bson:"-" yaml:"date,omitempty"`                  // 规则创建日期(YAML only)
-	RuleModified string         `bson:"-" yaml:"modified,omitempty"`              // 规则修改日期(YAML only)
-	CreateTm     time.Time      `bson:"create_tm" yaml:"-"`                       // 创建时间
-	UpdateTm     time.Time      `bson:"update_tm" yaml:"-"`                       // 修改时间
+	ID           string         `bson:"_id,omitempty" yaml:"id"`                      // id
+	Title        string         `bson:"title" yaml:"title"`                           // 事件标题
+	Description  string         `bson:"description" yaml:"description"`               // 事件描述
+	Enable       bool           `bson:"enable" yaml:"enable,omitempty"`               // 启动状态
+	Level        int32          `bson:"level" yaml:"level,omitempty"`                 // 威胁等级 5:critical, 4:high, 3:medium, 2:low, 1:info
+	Status       string         `bson:"status" yaml:"status"`                         // 规则状态: test|experimental|stable|deprecated
+	Tags         []string       `bson:"tags" yaml:"tags,omitempty"`                   // 规则标签
+	Logsource    string         `bson:"logsource" yaml:"logsource"`                   // 日志来源
+	Detection    AlertDetection `bson:"detection" yaml:"detection"`                   // 检测配置
+	Type         string         `bson:"type" yaml:"type"`                             // 规则分类
+	References   []string       `bson:"references" yaml:"references,omitempty"`       // 规则参考
+	Suggestion   string         `bson:"suggestion" yaml:"suggestion,omitempty"`       // 修复建议
+	Author       string         `bson:"author" yaml:"author,omitempty"`               // 作者
+	AutoBlock    bool           `bson:"auto_block" yaml:"auto_block,omitempty"`       // 是否自动阻断
+	AttackFlow   AttackFlow     `bson:"attack_flow" yaml:"attack_flow,omitempty"`     // 攻击描述图谱
+	UniqueFilter []string       `bson:"unique_filter" yaml:"unique_filter,omitempty"` // 唯一性过滤器
+	RuleDate     string         `bson:"-" yaml:"date,omitempty"`                      // 规则创建日期(YAML only)
+	RuleModified string         `bson:"-" yaml:"modified,omitempty"`                  // 规则修改日期(YAML only)
+	CreateTm     time.Time      `bson:"create_tm" yaml:"-"`                           // 创建时间
+	UpdateTm     time.Time      `bson:"update_tm" yaml:"-"`                           // 修改时间
 }
 
 func (r *AlertRule) CollectName() string {

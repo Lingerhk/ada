@@ -1641,8 +1641,9 @@ message AlertRuleInfo {
   string suggestion = 13; // 处置建议
   bool autoBlock = 14; // 自动阻断
   AttackFlowReply attackFlow = 15;
-  string createTm = 16;
-  string updateTm = 17;
+  repeated string uniqueFilter = 16; // 唯一性过滤器
+  string createTm = 17;
+  string updateTm = 18;
 }
 
 message ListAlertRuleReply {
@@ -1674,6 +1675,7 @@ message AddAlertRuleReq {
   string author = 13;
   bool autoBlock = 14;
   AttackFlowReply attackFlow = 15;
+  repeated string uniqueFilter = 16; // 唯一性过滤器
 }
 
 message AddAlertRuleReply {
@@ -1697,6 +1699,7 @@ message UpdateAlertRuleReq {
   string author = 13;
   bool autoBlock = 14;
   AttackFlowReply attackFlow= 15;
+  repeated string uniqueFilter = 16; // 唯一性过滤器
 }
 
 message UpdateAlertRuleReply {

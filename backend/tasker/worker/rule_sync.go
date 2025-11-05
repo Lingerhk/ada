@@ -49,29 +49,6 @@ type RuleDescriptor struct {
 	WinLog  []RuleMetadata `json:"winlog"`
 }
 
-// yamlDetection is a helper structure for parsing complex detection fields
-type yamlDetection struct {
-	Detection  map[string]any `yaml:"detection"`
-	AttackFlow map[string]any `yaml:"attack_flow,omitempty"`
-}
-
-// AlertRuleYAML represents the YAML structure for alert/flow rules
-type AlertRuleYAML struct {
-	ID          string         `yaml:"id"`
-	Title       string         `yaml:"title"`
-	Description string         `yaml:"description,omitempty"`
-	Level       string         `yaml:"level"`
-	Status      string         `yaml:"status"`
-	Tags        []string       `yaml:"tags,omitempty"`
-	Logsource   string         `yaml:"logsource,omitempty"`
-	Detection   map[string]any `yaml:"detection"`
-	Type        string         `yaml:"type,omitempty"`
-	References  []string       `yaml:"references,omitempty"`
-	Suggestion  string         `yaml:"suggestion,omitempty"`
-	Author      string         `yaml:"author,omitempty"`
-	AutoBlock   bool           `yaml:"auto_block,omitempty"`
-}
-
 // RuleSyncTask executes rule synchronization from remote server
 func (w *Worker) RuleSyncTask() error {
 	time.Sleep(10 * time.Second) // wait 10s for case: first run at the process started(wait for other service ready)
@@ -720,16 +697,6 @@ func (w *Worker) updateActivityRule(ctx context.Context, meta RuleMetadata, rule
 		return fmt.Errorf("failed to parse YAML rule: %w", err)
 	}
 
-	// Parse detection separately (dynamic structure)
-	// var detectionFields yamlDetection
-	// if err := yaml.Unmarshal(data, &detectionFields); err != nil {
-	// 	return fmt.Errorf("failed to parse detection: %w", err)
-	// }
-	//rule.Detection = detectionFields.Detection
-
-	// Generate rdx_key for caching
-	//rule.RdxKey = fmt.Sprintf("ada:rule:%s:%s", ruleType, rule.ID)
-
 	// Parse date/modified fields from YAML
 	createTm := parseRuleDate(rule.RuleDate)
 	updateTm := parseRuleDate(rule.RuleModified)
@@ -795,52 +762,6 @@ func (w *Worker) updateFlowRule(ctx context.Context, meta RuleMetadata, rulesDir
 		return fmt.Errorf("failed to parse YAML rule: %w", err)
 	}
 
-	// // Parse detection and attack_flow separately (dynamic structures)
-	// var detectionFields yamlDetection
-	// if err := yaml.Unmarshal(data, &detectionFields); err != nil {
-	// 	return fmt.Errorf("failed to parse detection fields: %w", err)
-	// }
-
-	// Convert detection to AlertDetection structure
-	// alertDetection := model.AlertDetection{}
-	// if eventType, ok := detectionFields.Detection["event_type"].(string); ok {
-	// 	alertDetection.EventType = eventType
-	// }
-	// if winSize, ok := detectionFields.Detection["win_size"].(string); ok {
-	// 	alertDetection.WinSize = winSize
-	// }
-	// if sorted, ok := detectionFields.Detection["sorted"].(bool); ok {
-	// 	alertDetection.Sorted = sorted
-	// }
-	// if selection, ok := detectionFields.Detection["selection"].(map[string]any); ok {
-	// 	if sigmaRules, ok := selection["sigma_id"].([]any); ok {
-	// 		for _, sr := range sigmaRules {
-	// 			if id, ok := sr.(string); ok {
-	// 				alertDetection.SigmaRules = append(alertDetection.SigmaRules, id)
-	// 			}
-	// 		}
-	// 	}
-	// 	if matchBy, ok := selection["match_by"].(string); ok {
-	// 		alertDetection.MatchBy = matchBy
-	// 	}
-	// }
-
-	// Assign detection to rule
-	//rule.Detection = alertDetection
-
-	// // Parse attack_flow
-	// attackFlow := model.AttackFlow{}
-	// if detectionFields.AttackFlow != nil {
-	// 	if desc, ok := detectionFields.AttackFlow["desc"].(string); ok {
-	// 		attackFlow.Desc = desc
-	// 	}
-	// 	// Parse fields and relates if needed
-	// 	// This is a simplified version
-	// }
-
-	// Assign attack_flow to rule
-	//rule.AttackFlow = attackFlow
-
 	// Parse date/modified fields from YAML
 	createTm := parseRuleDate(rule.RuleDate)
 	updateTm := parseRuleDate(rule.RuleModified)
@@ -852,20 +773,22 @@ func (w *Worker) updateFlowRule(ctx context.Context, meta RuleMetadata, rulesDir
 	if exists {
 		// Update existing rule
 		update := bson.M{
-			"title":       rule.Title,
-			"description": rule.Description,
-			"level":       rule.Level,
-			"status":      rule.Status,
-			"tags":        rule.Tags,
-			"logsource":   rule.Logsource,
-			"detection":   rule.Detection,
-			"type":        rule.Type,
-			"references":  rule.References,
-			"suggestion":  rule.Suggestion,
-			"author":      rule.Author,
-			"auto_block":  rule.AutoBlock,
-			"attack_flow": rule.AttackFlow,
-			"update_tm":   updateTm,
+			"title":         rule.Title,
+			"description":   rule.Description,
+			"level":         rule.Level,
+			"enable":        rule.Enable,
+			"status":        rule.Status,
+			"tags":          rule.Tags,
+			"logsource":     rule.Logsource,
+			"detection":     rule.Detection,
+			"type":          rule.Type,
+			"references":    rule.References,
+			"suggestion":    rule.Suggestion,
+			"author":        rule.Author,
+			"auto_block":    rule.AutoBlock,
+			"attack_flow":   rule.AttackFlow,
+			"unique_filter": rule.UniqueFilter,
+			"update_tm":     updateTm,
 		}
 
 		if err := w.env.MongoCli.UpdateById(existingRule.CollectName(), rule.ID, update); err != nil {
