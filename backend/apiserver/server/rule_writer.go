@@ -22,8 +22,21 @@ func WriteAlertRuleToFile(rule *model.AlertRule) error {
 		return fmt.Errorf("failed to create rule directory: %v", err)
 	}
 
+	// Create a copy to avoid modifying the original rule
+	ruleCopy := *rule
+	// Clear attack_flow field to exclude it from YAML output
+	ruleCopy.AttackFlow = model.AttackFlow{}
+
+	// Convert CreateTm and UpdateTm to date/modified strings for YAML
+	if !ruleCopy.CreateTm.IsZero() {
+		ruleCopy.RuleDate = ruleCopy.CreateTm.Format("2006/01/02")
+	}
+	if !ruleCopy.UpdateTm.IsZero() {
+		ruleCopy.RuleModified = ruleCopy.UpdateTm.Format("2006/01/02")
+	}
+
 	// Marshal to YAML
-	data, err := yaml.Marshal(rule)
+	data, err := yaml.Marshal(&ruleCopy)
 	if err != nil {
 		return fmt.Errorf("failed to marshal rule to YAML: %v", err)
 	}
@@ -55,8 +68,19 @@ func WriteActivityRuleToFile(rule *model.AlertActivityRule) error {
 		return fmt.Errorf("failed to create rule directory: %v", err)
 	}
 
+	// Create a copy to avoid modifying the original rule
+	ruleCopy := *rule
+
+	// Convert CreateTm and UpdateTm to date/modified strings for YAML
+	if !ruleCopy.CreateTm.IsZero() {
+		ruleCopy.RuleDate = ruleCopy.CreateTm.Format("2006/01/02")
+	}
+	if !ruleCopy.UpdateTm.IsZero() {
+		ruleCopy.RuleModified = ruleCopy.UpdateTm.Format("2006/01/02")
+	}
+
 	// Marshal to YAML
-	data, err := yaml.Marshal(rule)
+	data, err := yaml.Marshal(&ruleCopy)
 	if err != nil {
 		return fmt.Errorf("failed to marshal rule to YAML: %v", err)
 	}
