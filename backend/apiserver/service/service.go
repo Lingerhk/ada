@@ -50,7 +50,7 @@ var (
 		"/ada.ADA/CheckMfa",
 		"/ada.ADA/Logout",
 		"/ada.ADA/GetLicence",
-		//"/ada.ADA/UpdateLicence",
+		"/ada.ADA/UpdateLicence",
 	}
 )
 

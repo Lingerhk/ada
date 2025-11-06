@@ -3,25 +3,23 @@ id: flow-0005
 status: experimental
 description: flow test description
 references:
-  - https://www.test.com
+    - https://www.test.com
 author: test
 date: 2021/12/12
 modified: 2023/02/14
 tags:
-  - TA0007
-  - attack.t2056.002
-logsource:
-  product: sigma_flow
+    - TA0007
+    - attack.t2056.002
+logsource: flow
 detection:
-  event_type: multi_eve
-  win_size: 5s
-  selection:
-    sigma_id:
-      - "winlog-0104-0001" # event_log1, this is $s1, 4624 login
+    event_type: multi_eve
+    win_size: 5s
+    sigma_rules:
+        - "winlog-0104-0001" # event_log1, this is $s1, 4624 login
     match_by: "$s1.TargetUserName in $v.cache.key_ada:engine:%s:sensitive_users($s1.TargetDomainName)" # 支持对应到domain
 unique_filter:
-  - $s1.TargetDomainName
-  - $s1.TargetUserName
-  - $s1.IpAddress
-  - ttl_0 # 如果存在ttl_xx，则设置ttl
+    - $s1.TargetDomainName
+    - $s1.TargetUserName
+    - $s1.IpAddress
+    - ttl_0 # 如果存在ttl_xx，则设置ttl
 level: medium

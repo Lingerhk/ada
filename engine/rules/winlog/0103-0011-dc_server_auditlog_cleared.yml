@@ -3,26 +3,24 @@ id: winlog-0103-0011
 status: test
 description: Detects usage of windows powershell executed
 references:
-  - https://blog.netspi.com/15-ways-to-download-a-file/#bitsadmin
+    - https://blog.netspi.com/15-ways-to-download-a-file/#bitsadmin
 author: Michael
 date: 2017/03/09
 modified: 2023/02/15
 tags:
-  - TA0005
-logsource:
-  product: windows
-  category: process_creation
+    - TA0005
+logsource: winlog
 detection:
-  selection_source:
-    Channel: "System"
-    EventID: 104
-  condition: selection_source
+    selection_source:
+        Channel: "System"
+        EventID: 104
+    condition: selection_source
 fields:
-  - 'Hostname'
-  - 'AccountName'
-  - 'UserID'
-  - 'Message'
+    - "Hostname"
+    - "AccountName"
+    - "UserID"
+    - "Message"
 unique_fields:
-  - 'Hostname'
-  - 'AccountName'
+    - "Hostname"
+    - "AccountName"
 level: high
