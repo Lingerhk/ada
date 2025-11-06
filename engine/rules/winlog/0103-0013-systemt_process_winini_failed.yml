@@ -3,24 +3,22 @@ id: winlog-0103-0013
 status: test
 description: A critical system process, %1, failed with status code %2. The machine must now be restarted. This usually happen when attacker want to Elevate privileges by using mimikatz hook lsass.exe but failed.
 references:
-  - https://blog.netspi.com/15-ways-to-download-a-file/#bitsadmin
+    - https://blog.netspi.com/15-ways-to-download-a-file/#bitsadmin
 author: Michael
 date: 2017/03/09
 modified: 2023/02/15
 tags:
-  - TA0012
-logsource:
-  product: windows
-  category: process_creation
+    - TA0012
+logsource: winlog
 detection:
-  selection_source:
-    Channel: "Application"
-    EventID: 1015
-  condition: selection_source
+    selection_source:
+        Channel: "Application"
+        EventID: 1015
+    condition: selection_source
 fields:
-  - 'Hostname'
-  - 'Message'
-  - 'SourceName'
+    - "Hostname"
+    - "Message"
+    - "SourceName"
 unique_fields:
-  - 'Hostname'
+    - "Hostname"
 level: high
