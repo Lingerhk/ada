@@ -89,6 +89,7 @@ type SystemInfo struct {
 	UpgradeRule    bool               `bson:"upgrade_rule"`    // 是否联网更新规则
 	NtpAddress     string             `bson:"ntp_address"`     // NTP服务器地址
 	SystemLanguage string             `bson:"system_language"` // 系统语言(EN/ZH)
+	SystemProxy    map[string]string  `bson:"system_proxy"`    // 系统代理: {"http_proxy":"","https_proxy":"","upgrade_proxy":"true","nodity_proxy":"false"}
 	StatsCfg       map[string]string  `bson:"stats_cfg"`       // 系统状态监控配置
 	CreateTm       time.Time          `bson:"create_tm"`       // 系统安装时间
 	UpgradeTm      time.Time          `bson:"upgrade_tm"`      // 系统上次更新时间

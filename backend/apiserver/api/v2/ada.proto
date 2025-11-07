@@ -50,6 +50,8 @@ service ADA {
   rpc GetSystemIcon(GetSystemIconReq)returns(GetSystemIconReply) {}
   rpc UpdateSystemLanguage(UpdateSystemLanguageReq)returns(UpdateSystemLanguageReply) {}
   rpc UpdateSystemCfg(UpdateSystemCfgReq) returns (UpdateSystemCfgReply) {} // 更新系统配置
+  rpc GetSystemProxy(GetSystemProxyReq) returns (GetSystemProxyReply) {} // 获取系统代理配置
+  rpc UpdateSystemProxy(UpdateSystemProxyReq) returns (UpdateSystemProxyReply) {} // 更新系统代理配置
 
   // 2.系统监控: load|cpu|mem|net_rx|net_tx
   rpc GetSystemStats(GetSystemStatsReq) returns (GetSystemStatsReply) {} //获取系统监控信息
@@ -567,6 +569,7 @@ message GetSystemInfoReply {
   string upgradeRule = 18; // 升级规则开关 "true|false"
   string currentRuleVer = 19; // 当前规则版本
   string cloudRuleVer = 20; // 云端规则版本
+  SystemProxyInfo systemProxy = 21; // 系统代理配置
 }
 
 message GetSystemIconReq {}
@@ -594,6 +597,31 @@ message UpdateSystemCfgReq{
 
 message UpdateSystemCfgReply {
   string result = 1;
+}
+
+// SystemProxy related messages
+message SystemProxyInfo {
+  string httpProxy = 1; // HTTP代理地址
+  string httpsProxy = 2; // HTTPS代理地址
+  bool upgradeProxy = 3; // 升级时使用代理
+  bool notifyProxy = 4; // 告警通知时使用代理
+}
+
+message GetSystemProxyReq {}
+
+message GetSystemProxyReply {
+  SystemProxyInfo systemProxy = 1;
+}
+
+message UpdateSystemProxyReq {
+  string httpProxy = 1 [(validator.field) = {regex: "^http://[^\\s]+|^(\\s&&[^\\f\\n\\r\\t\\v])*"}]; // HTTP代理地址，格式: http://proxy:port
+  string httpsProxy = 2 [(validator.field) = {regex: "^https://[^\\s]+|^(\\s&&[^\\f\\n\\r\\t\\v])*"}]; // HTTPS代理地址，格式: https://proxy:port
+  bool upgradeProxy = 3; // 升级时使用代理
+  bool notifyProxy = 4; // 告警通知时使用代理
+}
+
+message UpdateSystemProxyReply {
+  string result = 1; // SUCCESS||FAILED
 }
 
 message GetSystemStatsReq {

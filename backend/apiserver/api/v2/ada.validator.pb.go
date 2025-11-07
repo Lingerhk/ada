@@ -340,6 +340,11 @@ func (this *GetSystemInfoReq) Validate() error {
 }
 func (this *GetSystemInfoReply) Validate() error {
 	// Validation of proto3 map<> fields is unsupported.
+	if this.SystemProxy != nil {
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.SystemProxy); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("SystemProxy", err)
+		}
+	}
 	return nil
 }
 func (this *GetSystemIconReq) Validate() error {
@@ -364,6 +369,36 @@ func (this *UpdateSystemCfgReq) Validate() error {
 	return nil
 }
 func (this *UpdateSystemCfgReply) Validate() error {
+	return nil
+}
+func (this *SystemProxyInfo) Validate() error {
+	return nil
+}
+func (this *GetSystemProxyReq) Validate() error {
+	return nil
+}
+func (this *GetSystemProxyReply) Validate() error {
+	if this.SystemProxy != nil {
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.SystemProxy); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("SystemProxy", err)
+		}
+	}
+	return nil
+}
+
+var _regex_UpdateSystemProxyReq_HttpProxy = regexp.MustCompile(`^http://[^\s]+|^(\s&&[^\f\n\r\t\v])*`)
+var _regex_UpdateSystemProxyReq_HttpsProxy = regexp.MustCompile(`^https://[^\s]+|^(\s&&[^\f\n\r\t\v])*`)
+
+func (this *UpdateSystemProxyReq) Validate() error {
+	if !_regex_UpdateSystemProxyReq_HttpProxy.MatchString(this.HttpProxy) {
+		return github_com_mwitkow_go_proto_validators.FieldError("HttpProxy", fmt.Errorf(`value '%v' must be a string conforming to regex "^http://[^\\s]+|^(\\s&&[^\\f\\n\\r\\t\\v])*"`, this.HttpProxy))
+	}
+	if !_regex_UpdateSystemProxyReq_HttpsProxy.MatchString(this.HttpsProxy) {
+		return github_com_mwitkow_go_proto_validators.FieldError("HttpsProxy", fmt.Errorf(`value '%v' must be a string conforming to regex "^https://[^\\s]+|^(\\s&&[^\\f\\n\\r\\t\\v])*"`, this.HttpsProxy))
+	}
+	return nil
+}
+func (this *UpdateSystemProxyReply) Validate() error {
 	return nil
 }
 

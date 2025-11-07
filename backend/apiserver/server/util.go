@@ -10,3 +10,11 @@ func escaping(str string) string {
 	}
 	return str
 }
+
+// Helper function to convert bool to string
+func boolToString(b bool) string {
+	if b {
+		return "true"
+	}
+	return "false"
+}

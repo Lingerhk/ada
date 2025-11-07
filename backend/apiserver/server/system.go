@@ -99,6 +99,27 @@ func UpdateSystemCfg(e *config.Env, id primitive.ObjectID, ntp, systemIP, file, 
 	return nil
 }
 
+// UpdateSystemProxy updates system proxy configuration
+func UpdateSystemProxy(e *config.Env, httpProxy, httpsProxy string, upgradeProxy, notifyProxy bool) error {
+	var sc model.SystemInfo
+
+	// Build system proxy map
+	systemProxy := map[string]string{
+		"http_proxy":    httpProxy,
+		"https_proxy":   httpsProxy,
+		"upgrade_proxy": boolToString(upgradeProxy),
+		"notify_proxy":  boolToString(notifyProxy),
+	}
+
+	update := bson.M{"$set": bson.M{"system_proxy": systemProxy}}
+	err := e.MongoCli.UpdateRaw(sc.CollectName(), bson.M{}, &update, false)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func UpdateStatsCfg(e *config.Env, statsCfg map[string]string) error {
 	var sc model.SystemInfo
 
