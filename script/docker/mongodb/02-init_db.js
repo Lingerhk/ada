@@ -55,6 +55,12 @@ db.getCollection("tb_system_info").insert([
             cpu_percent_notify: "85",
             disk_percent_notify: "85",
         },
+        system_proxy: {
+            http_proxy: "",
+            https_proxy: "",
+            upgrade_proxy: "false",
+            notify_proxy: "false",
+        },
     },
 ]);
 

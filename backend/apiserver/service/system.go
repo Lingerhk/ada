@@ -15,6 +15,7 @@ import (
 	"io"
 	"net"
 	"net/http"
+	"net/url"
 	"os"
 	"os/exec"
 	"path"
@@ -49,23 +50,39 @@ func readCurrentRuleVersion() string {
 }
 
 // fetchCloudRuleVersion fetches the cloud rule version from remote server
-func fetchCloudRuleVersion(upgradeSrv string) string {
+// upgradeProxy: whether to use proxy for upgrade requests
+// httpProxy: HTTP proxy URL
+func fetchCloudRuleVersion(upgradeSrv string, upgradeProxy bool, httpProxy string) string {
 	if upgradeSrv == "" {
 		return ""
 	}
 
 	// Build URL
 	baseURL := strings.TrimSuffix(upgradeSrv, "/")
-	url := fmt.Sprintf("%s/rule/version/latest.json", baseURL)
+	requestURL := fmt.Sprintf("%s/rule/version/latest.json", baseURL)
 
-	// Create HTTP client with timeout
-	client := &http.Client{
-		Timeout: 5 * time.Second,
+	// Create HTTP client with timeout and proxy support
+	var client *http.Client
+	if upgradeProxy && httpProxy != "" {
+		// Use proxy if enabled
+		transport := &http.Transport{}
+		if proxyURL, err := url.Parse(httpProxy); err == nil {
+			transport.Proxy = http.ProxyURL(proxyURL)
+		}
+		client = &http.Client{
+			Timeout:   5 * time.Second,
+			Transport: transport,
+		}
+	} else {
+		// No proxy
+		client = &http.Client{
+			Timeout: 5 * time.Second,
+		}
 	}
 
-	resp, err := client.Get(url)
+	resp, err := client.Get(requestURL)
 	if err != nil {
-		logger.Warnf("Failed to fetch cloud rule version from %s: %v", url, err)
+		logger.Warnf("Failed to fetch cloud rule version from %s: %v", requestURL, err)
 		return ""
 	}
 	defer resp.Body.Close()
@@ -124,14 +141,10 @@ func (s *ADAServiceV2) GetSystemInfo(ctx context.Context, in *v2.GetSystemInfoRe
 	// Read current rule version from file
 	currentRuleVer := readCurrentRuleVersion()
 
-	// Fetch cloud rule version if upgradeRule is enabled and upgradeSrv is set
-	cloudRuleVer := ""
-	if sys.UpgradeRule && sys.UpgradeSrv != "" {
-		cloudRuleVer = fetchCloudRuleVersion(sys.UpgradeSrv)
-	}
-
 	// Parse system proxy from map to proto message
 	var systemProxy *v2.SystemProxyInfo
+	upgradeProxy := false
+	httpProxy := ""
 	if sys.SystemProxy != nil {
 		systemProxy = &v2.SystemProxyInfo{
 			HttpProxy:    sys.SystemProxy["http_proxy"],
@@ -139,6 +152,14 @@ func (s *ADAServiceV2) GetSystemInfo(ctx context.Context, in *v2.GetSystemInfoRe
 			UpgradeProxy: sys.SystemProxy["upgrade_proxy"] == "true",
 			NotifyProxy:  sys.SystemProxy["notify_proxy"] == "true",
 		}
+		upgradeProxy = sys.SystemProxy["upgrade_proxy"] == "true"
+		httpProxy = sys.SystemProxy["http_proxy"]
+	}
+
+	// Fetch cloud rule version if upgradeRule is enabled and upgradeSrv is set
+	cloudRuleVer := ""
+	if sys.UpgradeRule && sys.UpgradeSrv != "" {
+		cloudRuleVer = fetchCloudRuleVersion(sys.UpgradeSrv, upgradeProxy, httpProxy)
 	}
 
 	ret := v2.GetSystemInfoReply{

@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net"
 	"net/http"
+	"net/url"
 	"time"
 )
 
@@ -34,4 +35,34 @@ func NewHTTPClient(timeout int64) *http.Client {
 		},
 	}
 	return DefaultClient
+}
+
+// NewHTTPClientWithProxy creates an HTTP client with timeout and proxy support
+// proxyURL: HTTP proxy URL (e.g., "http://proxy.example.com:8080")
+// timeout: request timeout in seconds
+func NewHTTPClientWithProxy(proxyURL string, timeout int64) *http.Client {
+	transport := &http.Transport{
+		DialContext: func(ctx context.Context, netw, addr string) (net.Conn, error) {
+			deadline := time.Now().Add(time.Duration(timeout) * time.Second)
+			c, err := net.DialTimeout(netw, addr, time.Second*time.Duration(timeout))
+			if err != nil {
+				return nil, err
+			}
+			err = c.SetDeadline(deadline)
+			return c, err
+		},
+		ResponseHeaderTimeout: time.Second * time.Duration(timeout),
+	}
+
+	// Set proxy if provided
+	if proxyURL != "" {
+		proxy, err := url.Parse(proxyURL)
+		if err == nil {
+			transport.Proxy = http.ProxyURL(proxy)
+		}
+	}
+
+	return &http.Client{
+		Transport: transport,
+	}
 }
