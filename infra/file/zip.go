@@ -76,7 +76,7 @@ func _Compress(file *os.File, prefix string, zw *zip.Writer) error {
 func Close(c io.Closer) {
 	err := c.Close()
 	if err != nil {
-		//log.WithError(err).Error("关闭资源文件失败。")
+		// log.WithError(err).Error("Failed to close resource file.")
 	}
 }
 
@@ -111,26 +111,26 @@ func ListDir(path string) []os.FileInfo {
 }
 
 func DeCompress(srcFile *os.File, dstPath string) error {
-	// 如果保存路径不存在，创建一个
+	// If the destination path does not exist, create it
 	if !Exists(dstPath) {
 		if err := os.MkdirAll(dstPath, os.ModePerm); err != nil {
 			return err
 		}
 	}
 
-	// 读取zip文件
+	// Read zip file
 	zipFile, err := zip.OpenReader(srcFile.Name())
 	if err != nil {
 		return err
 	}
 	defer Close(zipFile)
 
-	// 遍历zip内所有文件和目录
+	// Iterate through all files and directories in the zip
 	for _, innerFile := range zipFile.File {
-		// 获取该文件数据
+		// Get file data
 		info := innerFile.FileInfo()
 
-		// 如果是目录，则创建一个
+		// If it's a directory, create it
 		if info.IsDir() {
 			err = os.MkdirAll(filepath.Join(dstPath, innerFile.Name), os.ModeDir|os.ModePerm)
 			if err != nil {
@@ -139,7 +139,7 @@ func DeCompress(srcFile *os.File, dstPath string) error {
 			continue
 		}
 
-		// 如果文件目录不存在，则创建一个
+		// If the file directory does not exist, create it
 		dirPath := filepath.Join(dstPath, filepath.Dir(innerFile.Name))
 		if !Exists(dirPath) {
 			if err = os.MkdirAll(dirPath, os.ModeDir|os.ModePerm); err != nil {
@@ -147,30 +147,30 @@ func DeCompress(srcFile *os.File, dstPath string) error {
 			}
 		}
 
-		// 打开该文件
+		// Open the file
 		srcFile, err := innerFile.Open()
 		if err != nil {
 			continue
 		}
 
-		// 创建新文件
+		// Create new file
 		newFilePath := filepath.Join(dstPath, innerFile.Name)
 		newFile, err := os.OpenFile(newFilePath, os.O_RDWR|os.O_CREATE|os.O_TRUNC, info.Mode())
 		if err != nil {
 			continue
 		}
 
-		// 拷贝该文件到新文件中
+		// Copy the file to the new file
 		if _, err := io.Copy(newFile, srcFile); err != nil {
 			return err
 		}
 
-		// 关闭该文件
+		// Close the source file
 		if err := srcFile.Close(); err != nil {
 			return err
 		}
 
-		// 关闭新文件
+		// Close the new file
 		if err := newFile.Close(); err != nil {
 			return err
 		}

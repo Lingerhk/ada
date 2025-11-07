@@ -73,7 +73,7 @@ func (l *AdaLicence) UpdateCnt(licNewCnt string) error {
 }
 
 func (l *AdaLicence) Expired() bool {
-	// 校验License是否过期
+	// Check if License has expired
 	if time.Unix(l.licInfo.EndTm, 0).Before(time.Now()) {
 		return true
 	}
@@ -81,7 +81,7 @@ func (l *AdaLicence) Expired() bool {
 }
 
 func (l *AdaLicence) DelayExpired() bool {
-	// 校验License是否过期，超过30天
+	// Check if License has expired for more than 30 days
 	if time.Unix(l.licInfo.EndTm, 0).Before(time.Now().Add(-30 * 24 * time.Hour)) {
 		return true
 	}
@@ -127,12 +127,12 @@ func (l *AdaLicence) load() error {
 	}
 
 	l.licInfo = licInfo
-	// 每次load()操作都将当前时间写入redis, sensor端会校验与DC的时间是否一致，否则sensor停止(上报数据)运行
+	// Every load() operation writes current time to redis, sensor will verify if time matches with DC, otherwise sensor stops reporting data
 	return l.rdxCli.Set(context.Background(), "ada:server:system_timestamp", time.Now().Unix(), 300*time.Second).Err()
 }
 
 func (l *AdaLicence) check(licNewCnt string) error {
-	// 校验New License是否ok
+	// Verify if new License is valid
 	oldLicCnt := l.licCnt
 	oldLicInfo := l.licInfo
 

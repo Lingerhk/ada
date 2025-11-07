@@ -7,7 +7,7 @@ import (
 	"time"
 )
 
-// md5String 生成MD5前缀,截断 length 长度.
+// MD5String generates MD5 hash and truncates it to specified length.
 func MD5String(key string, length int) string {
 	h := md5.New()
 	h.Write([]byte(key))
@@ -18,7 +18,7 @@ func MD5String(key string, length int) string {
 	return result[:length]
 }
 
-// 生成指定长度的随机字符串
+// RandString generates a random string of specified length
 // https://colobu.com/2018/09/02/generate-random-string-in-Go/
 func RandString(length int) string {
 	const (

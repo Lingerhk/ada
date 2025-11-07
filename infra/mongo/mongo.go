@@ -38,7 +38,7 @@ func (ms *MongoSession) SetPoolLimit(limit uint64) {
 	ms.session.SetPoolLimit(limit)
 }
 
-// 实际操作
+// FindOne performs actual find one operation
 func (ms *MongoSession) FindOne(name string, query, result any) (err error, exist bool) {
 	exist = true
 	err = ms.session.DB(ms.dbName).C(name).Find(query).One(result)
@@ -94,7 +94,7 @@ func (ms *MongoSession) FindWithAggregation(name string, pipeline any, result an
 	return ms.session.DB(ms.dbName).C(name).Find(nil).Pipe(pipeline, result)
 }
 
-// 删除
+// Remove deletes documents
 func (ms *MongoSession) Remove(name string, query any, multi bool) error {
 	if multi {
 		return ms.session.DB(ms.dbName).C(name).RemoveAll(query)
@@ -103,12 +103,12 @@ func (ms *MongoSession) Remove(name string, query any, multi bool) error {
 	return ms.session.DB(ms.dbName).C(name).Remove(query)
 }
 
-// 删除by ID
+// RemoveById deletes document by ID
 func (ms *MongoSession) RemoveById(name string, id any) error {
 	return ms.session.DB(ms.dbName).C(name).RemoveID(id)
 }
 
-// 插入
+// Insert inserts a document
 func (ms *MongoSession) Insert(name string, doc any) error {
 	err := ms.session.DB(ms.dbName).C(name).Insert(doc)
 	return err
@@ -120,7 +120,7 @@ func (ms *MongoSession) InsertAll(name string, docs ...any) error {
 	return err
 }
 
-// 更新
+// Update updates documents
 func (ms *MongoSession) Update(name string, query any, update any, multi bool) error {
 	value := make(bson.M)
 	value["$set"] = update
@@ -131,7 +131,7 @@ func (ms *MongoSession) Update(name string, query any, update any, multi bool) e
 	return ms.session.DB(ms.dbName).C(name).Update(query, value)
 }
 
-// 更新by ID
+// UpdateById updates document by ID
 func (ms *MongoSession) UpdateById(name string, id any, update any) error {
 	value := make(bson.M)
 	value["$set"] = update
@@ -139,7 +139,7 @@ func (ms *MongoSession) UpdateById(name string, id any, update any) error {
 	return ms.session.DB(ms.dbName).C(name).UpdateID(id, value)
 }
 
-// 支持Mongodb原始update操作，$set, $inc ...
+// UpdateRaw supports MongoDB native update operations, $set, $inc ...
 func (ms *MongoSession) UpdateRaw(name string, query any, update any, multi bool) error {
 	if multi {
 		_, err := ms.session.DB(ms.dbName).C(name).UpdateAll(query, update, true)
@@ -149,7 +149,7 @@ func (ms *MongoSession) UpdateRaw(name string, query any, update any, multi bool
 	return ms.session.DB(ms.dbName).C(name).Update(query, update, true)
 }
 
-// Int32型自增ID
+// GetNextSequence generates Int32 type auto-increment ID
 func (ms *MongoSession) GetNextSequence(name string) (int32, error) {
 	filter := bson.M{"_id": name}
 	//update := bson.D{{"$inc", bson.M{"seq": 1}}}
@@ -163,7 +163,7 @@ func (ms *MongoSession) GetNextSequence(name string) (int32, error) {
 	return seq, nil
 }
 
-// 支持Select
+// FindWithSelect supports field selection
 func (ms *MongoSession) FindWithSelect(name string, query, selection, result any, limit int64) error {
 	if limit <= 1 {
 		err := ms.session.DB(ms.dbName).C(name).Find(query).Select(selection).One(result)
@@ -184,7 +184,7 @@ func (ms *MongoSession) FindSelect(name string, query, selection, result any) er
 	return ms.session.DB(ms.dbName).C(name).Find(query).Select(selection).All(result)
 }
 
-// 综合查询，支持query, selection, sorter, limit, skip
+// FindWithMultiple performs comprehensive query, supports query, selection, sorter, limit, skip
 func (ms *MongoSession) FindWithMultiple(name string, query, selection, sorter, result any, limit, skip int64) error {
 	if limit < 0 || skip < 0 {
 		return ErrorLimit
@@ -205,7 +205,7 @@ func (ms *MongoSession) FindWithDistinct(name, distinct string, query any) ([]an
 	return result, nil
 }
 
-// Drop 直接Drop集合
+// Drop drops the collection directly
 func (ms *MongoSession) Drop(name string) error {
 	return ms.session.DB(ms.dbName).C(name).Drop()
 }

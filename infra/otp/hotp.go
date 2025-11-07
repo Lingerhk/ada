@@ -1,6 +1,6 @@
 package otp
 
-// 基于HMAC的OTP计数器
+// HOTP implements HMAC-based OTP counter
 type HOTP struct {
 	OTP
 }
@@ -11,37 +11,37 @@ func NewHOTP(secret string, digits int, hasher *Hasher) *HOTP {
 
 }
 
-// 生成默认OTP对象
+// NewDefaultHOTP creates a default OTP object
 func NewDefaultHOTP(secret string) *HOTP {
 	return NewHOTP(secret, 6, nil)
 }
 
-// 根据给定的整数生成OTP值
+// At generates OTP value based on given integer
 func (h *HOTP) At(count int) string {
 	return h.generateOTP(count)
 }
 
-// 验证OTP
+// Verify validates OTP
 /**
-参数说明：
-	otp：	待检查的OTP值
-    count：	验证OTP的HMAC计数器
-返回值：
-	bool	是否验证成功，成功返回true
+Parameters:
+	otp:    OTP value to check
+    count:  HMAC counter for OTP verification
+Returns:
+	bool    Whether verification succeeded, returns true on success
 */
 func (h *HOTP) Verify(otp string, count int) bool {
 	return otp == h.At(count)
 }
 
-// 获取需要验证OTP的URI，可以嵌入到二维码中
+// ProvisioningUri gets URI for OTP verification, can be embedded in QR code
 // https://github.com/google/google-authenticator/wiki/Key-Uri-Format
 /**
-参数说明：
-	accountName：	账号名
-    issuerName：		OTP发行人名称，这是OTP的组织标题
-    initialCount：	初始HMAC计数器值
-返回值：
-	用于验证的URI
+Parameters:
+	accountName:     Account name
+    issuerName:      OTP issuer name, this is the organization title for OTP
+    initialCount:    Initial HMAC counter value
+Returns:
+	URI for verification
 */
 func (h *HOTP) ProvisioningUri(accountName, issuerName string, initialCount int) string {
 	return BuildUri(

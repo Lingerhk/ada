@@ -16,12 +16,12 @@ type Hasher struct {
 }
 
 type OTP struct {
-	secret string  // base32编码后的Secret
-	digits int     // OTP中整数，一些应用程是6位数或者更多
-	hasher *Hasher // 在HMAC中使用的摘要（默认是sha1）
+	secret string  // Base32 encoded Secret
+	digits int     // Integer in OTP, some applications use 6 digits or more
+	hasher *Hasher // Digest used in HMAC (default is sha1)
 }
 
-// 新建OTP对象
+// NewOTP creates a new OTP object
 func NewOTP(secret string, digits int, hasher *Hasher) OTP {
 	if hasher == nil {
 		hasher = &Hasher{
@@ -36,10 +36,10 @@ func NewOTP(secret string, digits int, hasher *Hasher) OTP {
 	}
 }
 
-// 生成OTP
+// generateOTP generates OTP
 /**
-参数说明：
-	input：	用作OTP输入的HMAC计数器值，通常是计数器或Unix时间戳
+Parameters:
+	input:  HMAC counter value used as OTP input, typically a counter or Unix timestamp
 */
 func (o *OTP) generateOTP(input int) string {
 	if input < 0 {

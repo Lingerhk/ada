@@ -8,7 +8,7 @@ import (
 func TestZip(t *testing.T) {
 
 	pkgDir := "/tmp/2.dir"
-	// 打包为 zip 文件
+	// Package as zip file
 	files, err := GetFilesFromDir(pkgDir)
 	if err != nil {
 		t.Fatal(err)
