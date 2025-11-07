@@ -8,36 +8,36 @@ import (
 	"unicode"
 )
 
-// CurMSecond 当前毫秒数.
+// CurMSecond returns current time in milliseconds.
 func CurMSecond() int64 {
 	tm := time.Now()
 	return tm.UnixNano() / 1e6
 }
 
-// 当前时间 是否 +8 与之前保持一致待定.
+// CurTime returns current time, timezone handling to be determined.
 func CurTime() time.Time {
 	return time.Now()
 }
 
-// CurSecond 当前秒数.
+// CurSecond returns current time in seconds.
 func CurSecond() int64 {
 	tm := time.Now()
 	return tm.Unix()
 }
 
-// TimeToDate 返回 yyyy-mm-dd
+// TimeToDate returns yyyy-mm-dd format
 func TimeToDate() string {
 	tm := time.Now()
 	return fmt.Sprintf("%d-%02d-%02d", tm.Year(), tm.Month(), tm.Day())
 }
 
-// TimeToDBSufix 返回yyyymmdd
+// TimeToDBSufix returns yyyymmdd format
 func TimeToDBSufix() string {
 	tm := time.Now()
 	return fmt.Sprintf("%d%02d%02d", tm.Year(), tm.Month(), tm.Day())
 }
 
-// TimeToString 返回yyyy-mm-dd hh:mm:ss
+// TimeToString returns yyyy-mm-dd hh:mm:ss format
 func TimeToString() string {
 	tm := time.Now()
 	return fmt.Sprintf("%02d-%02d-%02d %02d:%02d:%02d",
@@ -49,7 +49,7 @@ func StrToTime(strTime string) (time.Time, error) {
 	return time.ParseInLocation("2006-01-02 15:04:05", strTime, time.Local)
 }
 
-// TimeToString 返回yyyy-mm-dd hh:mm:ss
+// TimeFormat returns time in specified format (default yyyy-mm-dd hh:mm:ss)
 func TimeFormat(tm time.Time, format string) string {
 	if format == "" {
 		format = "%02d-%02d-%02d %02d:%02d:%02d"
@@ -71,7 +71,7 @@ func Str2TimeStamp(str string) (error, int64) {
 	return nil, formatTime.Unix()
 }
 
-// file time 时间 转换成time.time
+// FileTime2Time converts file time to time.Time
 func FileTime2Time(input int64) time.Time {
 	t := time.Date(1601, 1, 1, 0, 0, 0, 0, time.UTC)
 	d := time.Duration(input)
@@ -81,7 +81,7 @@ func FileTime2Time(input int64) time.Time {
 	return t
 }
 
-// 将 10/30s/2h/5m 转为以秒(s)为单位的int64值
+// ConvertStrTime converts 10/30s/2h/5m to int64 value in seconds
 func ConvertStrTime(s string) (int64, error) {
 	if len(s) == 0 {
 		return 0, fmt.Errorf("empty val:%s", s)

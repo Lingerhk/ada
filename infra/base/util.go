@@ -6,13 +6,13 @@ import (
 	"strings"
 )
 
-// []string 去重
+// RemoveDuplicate removes duplicate elements from a string slice
 func RemoveDuplicate(arr []string) (newArr []string) {
 	newArr = make([]string, 0)
-	for i := 0; i < len(arr); i++ {
+	for i := range len(arr) {
 		repeat := false
-		for j := i + 1; j < len(arr); j++ {
-			if arr[i] == arr[j] {
+		for j := range len(arr) - i - 1 {
+			if arr[i] == arr[i+j+1] {
 				repeat = true
 				break
 			}
@@ -31,7 +31,7 @@ func InArray(needle any, haystack any) bool {
 	val := reflect.ValueOf(haystack)
 	switch val.Kind() {
 	case reflect.Slice, reflect.Array:
-		for i := 0; i < val.Len(); i++ {
+		for i := range val.Len() {
 			if reflect.DeepEqual(needle, val.Index(i).Interface()) {
 				return true
 			}
@@ -49,12 +49,12 @@ func InArray(needle any, haystack any) bool {
 	return false
 }
 
-// 判断obj中是否在target中，支持array/slice/map
+// Contain checks whether obj exists in target, supports array/slice/map
 func Contain(obj any, target any) (bool, error) {
 	targetValue := reflect.ValueOf(target)
 	switch reflect.TypeOf(target).Kind() {
 	case reflect.Slice, reflect.Array:
-		for i := 0; i < targetValue.Len(); i++ {
+		for i := range targetValue.Len() {
 			if targetValue.Index(i).Interface() == obj {
 				return true, nil
 			}
@@ -68,13 +68,13 @@ func Contain(obj any, target any) (bool, error) {
 	return false, errors.New("not in array")
 }
 
-// 从hostname中获取domain
+// GetDomainFromHostname extracts domain from hostname
 func GetDomainFromHostname(hostname string) string {
 	parts := strings.Split(hostname, ".")
 	if len(parts) < 2 {
 		return parts[0]
 	}
 
-	//A.B.C.D A:域控制器 B.C.D:域名
+	// A.B.C.D where A: domain controller, B.C.D: domain name
 	return strings.Join(parts[1:], ".")
 }

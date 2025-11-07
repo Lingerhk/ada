@@ -55,7 +55,7 @@ func (r *LDAPSearch) BasicSearch(filter, attributes string) (*ldap3.SearchResult
 	return Search(r.Conn, r.Dn, filter, attr)
 }
 
-// 通过SID搜索
+// LdapSearchBySid searches by SID
 func (r *LDAPSearch) LdapSearchBySid(sid, attributes string) (*ldap3.Entry, error) {
 	filter := fmt.Sprintf("(ObjectSID=%s)", sid)
 	result, err := r.BasicSearch(filter, attributes)
@@ -70,7 +70,7 @@ func (r *LDAPSearch) LdapSearchBySid(sid, attributes string) (*ldap3.Entry, erro
 	return result.Entries[0], nil
 }
 
-// 通过用户名搜索
+// LdapSearchByName searches by username
 func (r *LDAPSearch) LdapSearchByName(user, attributes string) (*ldap3.Entry, error) {
 	filter := fmt.Sprintf("(sAMAccountName=%s)", user)
 	result, err := r.BasicSearch(filter, attributes)
@@ -83,7 +83,7 @@ func (r *LDAPSearch) LdapSearchByName(user, attributes string) (*ldap3.Entry, er
 	return result.Entries[0], nil
 }
 
-// 通过CN搜索
+// LdapSearchByCN searches by CN
 func (r *LDAPSearch) LdapSearchByCN(cn, attributes string) (*ldap3.Entry, error) {
 	filter := fmt.Sprintf("(CN=%s)", cn)
 	result, err := r.BasicSearch(filter, attributes)
@@ -97,7 +97,7 @@ func (r *LDAPSearch) LdapSearchByCN(cn, attributes string) (*ldap3.Entry, error)
 	return result.Entries[0], nil
 }
 
-// 搜索 dc hostname list
+// LdapSearchDomainController searches for domain controller hostname list
 func (r *LDAPSearch) LdapSearchDomainController() ([]*ldap3.Entry, error) {
 	// First, get all domain controllers
 	filter := "(&(objectCategory=computer)(userAccountControl:1.2.840.113556.1.4.803:=8192)(operatingSystem=Windows*Server*))"

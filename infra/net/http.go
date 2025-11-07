@@ -17,7 +17,7 @@ func CheckPortOpen(ip string, port int) (bool, error) {
 	return true, nil
 }
 
-// 带有超时机制http客户端, use: NewHttpClient(2)
+// NewHTTPClient creates an HTTP client with timeout mechanism, usage: NewHTTPClient(2)
 func NewHTTPClient(timeout int64) *http.Client {
 	DefaultClient := &http.Client{
 		Transport: &http.Transport{

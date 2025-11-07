@@ -32,7 +32,7 @@ func (a *emailAuth) Next(fromServer []byte, more bool) ([]byte, error) {
 	return nil, nil
 }
 
-// 邮件发送
+// SendEmailV2 sends email
 func SendEmailV2(cnf map[string]string, subject, body string) error {
 	username, ok := cnf["username"]
 	if !ok {

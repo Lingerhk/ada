@@ -13,19 +13,19 @@ import (
 	logger "github.com/sirupsen/logrus"
 )
 
-// 判断档案是否存在
+// Exists checks if a file or directory exists
 func Exists(name string) bool {
 	_, err := os.Stat(name)
 	return err == nil && os.IsExist(err)
 }
 
-// 判断文件是否存在
+// FileExists checks if a file exists
 func FileExists(filename string) bool {
 	fi, err := os.Stat(filename)
 	return (err == nil || os.IsExist(err)) && !fi.IsDir()
 }
 
-// 判断目录是否存在
+// DirExists checks if a directory exists
 func DirExists(dirname string) bool {
 	fi, err := os.Stat(dirname)
 	return (err == nil || os.IsExist(err)) && fi.IsDir()
@@ -73,7 +73,7 @@ func WriteFile(fn string, cnt []byte) error {
 	return nil
 }
 
-// 获取cfgFile中的key相关配置
+// GetItemConfFile retrieves the configuration value for the specified key from cfgFile
 func GetItemConfFile(cfgFile, key string) (string, error) {
 	f, err := os.Open(cfgFile)
 	if err != nil {

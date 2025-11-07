@@ -12,13 +12,13 @@ var (
 	ErrUnknownType  = errors.New("error unknown type")
 )
 
-// mongodb数据库操作接口封装
+// DBAdaptor encapsulates MongoDB database operation interface
 type DBAdaptor interface {
 	Connect(uri, db string) error
 	Disconnect()
 	SetPoolLimit(limit uint64)
 
-	// 常用操作接口
+	// Common operation interfaces
 	FindOne(name string, query, result any) (err error, exist bool)
 	Find(name string, query, result any, limit int64) error
 	FindAll(name string, query, result any) error
@@ -42,7 +42,7 @@ type DBAdaptor interface {
 	InsertAll(name string, docs ...any) error
 
 	Update(name string, query, update any, multi bool) error
-	UpdateById(name string, id, update any) error // id 为_id 的原类型, eg: ObjectID, int
+	UpdateById(name string, id, update any) error // id is the original type of _id, eg: ObjectID, int
 	UpdateRaw(name string, query, update any, multi bool) error
 
 	GetNextSequence(name string) (int32, error)

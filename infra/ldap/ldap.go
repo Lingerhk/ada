@@ -16,7 +16,7 @@ var (
 	ErrEmptyResult = errors.New("empty result")
 )
 
-// 返回host对应解析的可用IP地址
+// resolveHost returns the available IP address resolved from the host
 func resolveHost(host, portStr, dns string) (string, error) {
 	// host is a domain name, resolve to IPs
 	var ips []string
@@ -43,7 +43,7 @@ func resolveHost(host, portStr, dns string) (string, error) {
 		return "", fmt.Errorf("no ips found for host %s", host)
 	}
 
-	// 4. Check reachability of resolved IPs
+	// Check reachability of resolved IPs
 	for _, ip := range ips {
 		addr := net.JoinHostPort(ip, portStr)
 		conn, err := net.DialTimeout("tcp", addr, 3*time.Second)
@@ -56,7 +56,7 @@ func resolveHost(host, portStr, dns string) (string, error) {
 	return "", fmt.Errorf("all resolved ips for %s are unable to connect", host)
 }
 
-// 创建ldap查询连接，dns为可选参数，DialURL格式为: ldap[s]://host:port(host可为ip或域名)
+// GetConn creates an LDAP query connection, dns is optional parameter, DialURL format: ldap[s]://host:port (host can be IP or domain name)
 func GetConn(DialURL, user, password, dns string) (*ldap3.Conn, error) {
 	// 1. Parse DialURL
 	u, err := url.Parse(DialURL)

@@ -65,13 +65,13 @@ func GetTrait() string {
 		return ""
 	}
 
-	// 机器ID
+	// Machine ID
 	midText := strings.TrimSpace(strings.Trim(string(mid), "\n"))
 	if midText == "" {
 		dockerEnv = true
 	}
 
-	// 机器IP
+	// Machine IPs
 	ipsText := getLocalIPText(dockerEnv)
 
 	hasher := md5.New()
