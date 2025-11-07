@@ -416,6 +416,16 @@ func AddNotify(mongoCli mongo.DBAdaptor, title, eventType, desc string, params m
 		return err
 	}
 
+	// Get proxy settings from system info
+	var sysInfo model.SystemInfo
+	notifyProxy := false
+	httpProxy := ""
+	_, exist := mongoCli.FindOne(sysInfo.CollectName(), bson.M{}, &sysInfo)
+	if exist && sysInfo.SystemProxy != nil {
+		notifyProxy = sysInfo.SystemProxy["notify_proxy"] == "true"
+		httpProxy = sysInfo.SystemProxy["http_proxy"]
+	}
+
 	for _, conf := range confList {
 		if conf.Enable == "disable" {
 			continue
@@ -431,7 +441,7 @@ func AddNotify(mongoCli mongo.DBAdaptor, title, eventType, desc string, params m
 		case "syslog":
 			err = sendSyslogNotify(string(notifyByte), conf)
 		case "webhook":
-			err = sendWebhookNotify(string(notifyByte), conf)
+			err = sendWebhookNotify(string(notifyByte), conf, notifyProxy, httpProxy)
 		default:
 			logger.Errorf("invalid notify_type(%s), will igore this nofity", conf.NotifyType)
 			return fmt.Errorf("invalid notify_type(%s), will igore this nofity", conf.NotifyType)

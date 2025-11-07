@@ -103,7 +103,15 @@ func (w *Worker) RuleSyncTask() error {
 		// Mode 2: Download from remote and check version
 		logger.Infof("Checking latest rule version from remote %s", sysInfo.UpgradeSrv)
 
-		latestVersion, err := w.checkLatestVersion(sysInfo.UpgradeSrv, latestJSONPath, currentVersionPath)
+		// Get proxy settings
+		upgradeProxy := false
+		httpProxy := ""
+		if sysInfo.SystemProxy != nil {
+			upgradeProxy = sysInfo.SystemProxy["upgrade_proxy"] == "true"
+			httpProxy = sysInfo.SystemProxy["http_proxy"]
+		}
+
+		latestVersion, err := w.checkLatestVersion(sysInfo.UpgradeSrv, latestJSONPath, currentVersionPath, upgradeProxy, httpProxy)
 		if err != nil {
 			return err
 		}
@@ -114,7 +122,7 @@ func (w *Worker) RuleSyncTask() error {
 
 		// Download latest.zip
 		logger.Infof("New version %s available, downloading rule package", latestVersion)
-		if err := w.downloadLatestZIP(sysInfo.UpgradeSrv, latestZIPPath); err != nil {
+		if err := w.downloadLatestZIP(sysInfo.UpgradeSrv, latestZIPPath, upgradeProxy, httpProxy); err != nil {
 			logger.Errorf("Failed to download latest.zip: %v", err)
 			return err
 		}
@@ -128,7 +136,16 @@ func (w *Worker) RuleSyncTask() error {
 
 	// Step 4: Rule upload - upload local-only or updated rules (after sync completed)
 	logger.Info("Step 4: Checking for local-only or updated rules to upload")
-	if err := w.uploadLocalRules(ctx, descPath, extractDir, sysInfo.UpgradeSrv, rulesPath); err != nil {
+
+	// Get proxy settings for upload
+	upgradeProxy := false
+	httpProxy := ""
+	if sysInfo.SystemProxy != nil {
+		upgradeProxy = sysInfo.SystemProxy["upgrade_proxy"] == "true"
+		httpProxy = sysInfo.SystemProxy["http_proxy"]
+	}
+
+	if err := w.uploadLocalRules(ctx, descPath, extractDir, sysInfo.UpgradeSrv, rulesPath, upgradeProxy, httpProxy); err != nil {
 		logger.Errorf("Failed to upload local rules: %v", err)
 		// Don't return error, just log it - upload is optional
 	}
@@ -137,23 +154,31 @@ func (w *Worker) RuleSyncTask() error {
 }
 
 // checkLatestVersion downloads the latest.json from remote server and check if need update
-func (w *Worker) checkLatestVersion(upgradeSrv, destPath, currentVersionPath string) (string, error) {
+func (w *Worker) checkLatestVersion(upgradeSrv, destPath, currentVersionPath string, upgradeProxy bool, httpProxy string) (string, error) {
 	// Ensure proper URL joining, handle trailing slash
-	url := fmt.Sprintf("%s/rule/version/latest.json", strings.TrimSuffix(upgradeSrv, "/"))
-	client := netutil.NewHTTPClient(10)
-	req, err := http.NewRequest("GET", url, nil)
+	requestURL := fmt.Sprintf("%s/rule/version/latest.json", strings.TrimSuffix(upgradeSrv, "/"))
+
+	// Create HTTP client with proxy support
+	var client *http.Client
+	if upgradeProxy && httpProxy != "" {
+		client = netutil.NewHTTPClientWithProxy(httpProxy, 10)
+	} else {
+		client = netutil.NewHTTPClient(10)
+	}
+
+	req, err := http.NewRequest("GET", requestURL, nil)
 	if err != nil {
-		logger.Errorf("new http request(%s) err:%v", url, err)
+		logger.Errorf("new http request(%s) err:%v", requestURL, err)
 		return "", err
 	}
 	resp, err := client.Do(req)
 	if err != nil {
-		logger.Errorf("check rule version request(%s) err:%v", url, err)
+		logger.Errorf("check rule version request(%s) err:%v", requestURL, err)
 		return "", err
 	}
 	defer resp.Body.Close()
 	if resp.StatusCode != http.StatusOK {
-		logger.Errorf("check rule version request(%s) done, but response code:%d", url, resp.StatusCode)
+		logger.Errorf("check rule version request(%s) done, but response code:%d", requestURL, resp.StatusCode)
 		return "", err
 	}
 
@@ -202,7 +227,7 @@ func (w *Worker) checkLatestVersion(upgradeSrv, destPath, currentVersionPath str
 }
 
 // downloadLatestZIP downloads the latest.zip from remote server
-func (w *Worker) downloadLatestZIP(upgradeSrv, destPath string) error {
+func (w *Worker) downloadLatestZIP(upgradeSrv, destPath string, upgradeProxy bool, httpProxy string) error {
 	// Ensure proper URL joining, handle trailing slash
 	baseURL := strings.TrimSuffix(upgradeSrv, "/")
 
@@ -220,7 +245,15 @@ func (w *Worker) downloadLatestZIP(upgradeSrv, destPath string) error {
 
 	logger.Infof("Downloading from: %s", u.String())
 
-	resp, err := http.Get(u.String())
+	// Create HTTP client with proxy support
+	var client *http.Client
+	if upgradeProxy && httpProxy != "" {
+		client = netutil.NewHTTPClientWithProxy(httpProxy, 60)
+	} else {
+		client = netutil.NewHTTPClient(60)
+	}
+
+	resp, err := client.Get(u.String())
 	if err != nil {
 		return fmt.Errorf("failed to download latest.zip: %w", err)
 	}
@@ -335,7 +368,7 @@ type RuleUploadDescriptor struct {
 }
 
 // uploadLocalRules compares local rules with remote descriptor and uploads differences
-func (w *Worker) uploadLocalRules(ctx context.Context, descPath, extractDir, upgradeSrv, rulesPath string) error {
+func (w *Worker) uploadLocalRules(ctx context.Context, descPath, extractDir, upgradeSrv, rulesPath string, upgradeProxy bool, httpProxy string) error {
 	if upgradeSrv == "" {
 		logger.Info("UpgradeSrv not configured, skipping rule upload")
 		return nil
@@ -407,7 +440,7 @@ func (w *Worker) uploadLocalRules(ctx context.Context, descPath, extractDir, upg
 	}
 
 	// Upload to remote server
-	if err := w.uploadPackageToRemote(upgradeSrv, uploadZipPath); err != nil {
+	if err := w.uploadPackageToRemote(upgradeSrv, uploadZipPath, upgradeProxy, httpProxy); err != nil {
 		return fmt.Errorf("failed to upload package: %w", err)
 	}
 
@@ -1004,10 +1037,10 @@ func riskLevelToString(level int32) string {
 }
 
 // uploadPackageToRemote uploads the ZIP package to remote server
-func (w *Worker) uploadPackageToRemote(upgradeSrv, zipPath string) error {
+func (w *Worker) uploadPackageToRemote(upgradeSrv, zipPath string, upgradeProxy bool, httpProxy string) error {
 	// Ensure proper URL joining, handle trailing slash
 	baseURL := strings.TrimSuffix(upgradeSrv, "/")
-	url := fmt.Sprintf("%s/rule/peer/upload", baseURL)
+	requestURL := fmt.Sprintf("%s/rule/peer/upload", baseURL)
 
 	// Open the ZIP file
 	file, err := os.Open(zipPath)
@@ -1026,7 +1059,7 @@ func (w *Worker) uploadPackageToRemote(upgradeSrv, zipPath string) error {
 	var requestBody io.Reader = file
 	contentType := "application/zip"
 
-	req, err := http.NewRequest("POST", url, requestBody)
+	req, err := http.NewRequest("POST", requestURL, requestBody)
 	if err != nil {
 		return fmt.Errorf("failed to create request: %w", err)
 	}
@@ -1034,12 +1067,15 @@ func (w *Worker) uploadPackageToRemote(upgradeSrv, zipPath string) error {
 	req.Header.Set("Content-Type", contentType)
 	req.ContentLength = fileInfo.Size()
 
-	// Send request
-	client := &http.Client{
-		Timeout: 5 * time.Minute,
+	// Create HTTP client with proxy support
+	var client *http.Client
+	if upgradeProxy && httpProxy != "" {
+		client = netutil.NewHTTPClientWithProxy(httpProxy, 300) // 5 minutes timeout
+	} else {
+		client = netutil.NewHTTPClient(300)
 	}
 
-	logger.Infof("Uploading rule package to %s (size: %d bytes)", url, fileInfo.Size())
+	logger.Infof("Uploading rule package to %s (size: %d bytes)", requestURL, fileInfo.Size())
 	resp, err := client.Do(req)
 	if err != nil {
 		return fmt.Errorf("failed to upload: %w", err)

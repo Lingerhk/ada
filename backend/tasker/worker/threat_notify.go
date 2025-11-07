@@ -108,6 +108,16 @@ func (w *Worker) ThreatNotifyTask() error {
 		return err
 	}
 
+	// Get proxy settings from system info
+	var sysInfo model.SystemInfo
+	notifyProxy := false
+	httpProxy := ""
+	_, exist := w.env.MongoCli.FindOne(sysInfo.CollectName(), bson.M{}, &sysInfo)
+	if exist && sysInfo.SystemProxy != nil {
+		notifyProxy = sysInfo.SystemProxy["notify_proxy"] == "true"
+		httpProxy = sysInfo.SystemProxy["http_proxy"]
+	}
+
 	for _, conf := range confList {
 		if conf.Enable == "disable" {
 			continue
@@ -140,7 +150,7 @@ func (w *Worker) ThreatNotifyTask() error {
 		case "syslog":
 			err = sendSyslogNotify(msg[1], conf)
 		case "webhook":
-			err = sendWebhookNotify(msg[1], conf)
+			err = sendWebhookNotify(msg[1], conf, notifyProxy, httpProxy)
 		default:
 			logger.Errorf("invalid notify_type(%s), will igore this nofity", conf.NotifyType)
 			return fmt.Errorf("invalid notify_type(%s), will igore this nofity", conf.NotifyType)
@@ -262,17 +272,24 @@ func sendSyslogNotify(msg string, conf model.NotifyConf) error {
 	return w.Alert(msg)
 }
 
-func sendWebhookNotify(msg string, conf model.NotifyConf) error {
+func sendWebhookNotify(msg string, conf model.NotifyConf, notifyProxy bool, httpProxy string) error {
 	appType, ok := conf.MetaData["application_type"]
 	if ok {
 		if appType == "feishu" {
 			return sendWebhookFeishuNotify(msg, conf)
 		} else if appType == "weixin" || appType == "dingtalk" {
-			return sendWebhookWeixinOrDingtalkNotify(msg, conf)
+			return sendWebhookWeixinOrDingtalkNotify(msg, conf, notifyProxy, httpProxy)
 		}
 	}
 
-	client := netutil.NewHTTPClient(10)
+	// Create HTTP client with proxy support
+	var client *http.Client
+	if notifyProxy && httpProxy != "" {
+		client = netutil.NewHTTPClientWithProxy(httpProxy, 10)
+	} else {
+		client = netutil.NewHTTPClient(10)
+	}
+
 	data := []byte(fmt.Sprintf(`"title":"ADA-System","message":"%s"}`, msg))
 	req, err := http.NewRequest("POST", conf.Endpoint, bytes.NewReader(data))
 	if err != nil {
@@ -309,8 +326,15 @@ func sendWebhookFeishuNotify(msg string, conf model.NotifyConf) error {
 	return nil
 }
 
-func sendWebhookWeixinOrDingtalkNotify(msg string, conf model.NotifyConf) error {
-	client := netutil.NewHTTPClient(10)
+func sendWebhookWeixinOrDingtalkNotify(msg string, conf model.NotifyConf, notifyProxy bool, httpProxy string) error {
+	// Create HTTP client with proxy support
+	var client *http.Client
+	if notifyProxy && httpProxy != "" {
+		client = netutil.NewHTTPClientWithProxy(httpProxy, 10)
+	} else {
+		client = netutil.NewHTTPClient(10)
+	}
+
 	data := []byte(fmt.Sprintf(`{"msgtype":"text","text":{"content": "%s"}}`, msg))
 	req, err := http.NewRequest("POST", conf.Endpoint, bytes.NewReader(data))
 	if err != nil {
