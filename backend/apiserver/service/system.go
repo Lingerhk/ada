@@ -130,6 +130,17 @@ func (s *ADAServiceV2) GetSystemInfo(ctx context.Context, in *v2.GetSystemInfoRe
 		cloudRuleVer = fetchCloudRuleVersion(sys.UpgradeSrv)
 	}
 
+	// Parse system proxy from map to proto message
+	var systemProxy *v2.SystemProxyInfo
+	if sys.SystemProxy != nil {
+		systemProxy = &v2.SystemProxyInfo{
+			HttpProxy:    sys.SystemProxy["http_proxy"],
+			HttpsProxy:   sys.SystemProxy["https_proxy"],
+			UpgradeProxy: sys.SystemProxy["upgrade_proxy"] == "true",
+			NotifyProxy:  sys.SystemProxy["notify_proxy"] == "true",
+		}
+	}
+
 	ret := v2.GetSystemInfoReply{
 		SystemIP:          sys.SystemIP,
 		SystemName:        sys.SystemName,
@@ -151,6 +162,7 @@ func (s *ADAServiceV2) GetSystemInfo(ctx context.Context, in *v2.GetSystemInfoRe
 		UpgradeRule:       upgradeRule,
 		CurrentRuleVer:    currentRuleVer,
 		CloudRuleVer:      cloudRuleVer,
+		SystemProxy:       systemProxy,
 	}
 
 	return &ret, nil
@@ -550,5 +562,55 @@ func (s *ADAServiceV2) ListSystemLogs(ctx context.Context, in *v2.ListSystemLogs
 	if (limit + offset) < int32(total) {
 		ret.Exhausted = false
 	}
+	return ret, nil
+}
+
+func (s *ADAServiceV2) GetSystemProxy(ctx context.Context, in *v2.GetSystemProxyReq) (*v2.GetSystemProxyReply, error) {
+	sys, err := server.GetSystemInfo(s.env)
+	if err != nil {
+		logger.Errorf("get system info err: %s", err)
+		return nil, status.Error(codes.Internal, s.I18n("System.GetSystemInfoFailed"))
+	}
+
+	// Parse system proxy from map to proto message
+	var systemProxy *v2.SystemProxyInfo
+	if sys.SystemProxy != nil {
+		systemProxy = &v2.SystemProxyInfo{
+			HttpProxy:    sys.SystemProxy["http_proxy"],
+			HttpsProxy:   sys.SystemProxy["https_proxy"],
+			UpgradeProxy: sys.SystemProxy["upgrade_proxy"] == "true",
+			NotifyProxy:  sys.SystemProxy["notify_proxy"] == "true",
+		}
+	} else {
+		// Return empty proxy info if not configured
+		systemProxy = &v2.SystemProxyInfo{
+			HttpProxy:    "",
+			HttpsProxy:   "",
+			UpgradeProxy: false,
+			NotifyProxy:  false,
+		}
+	}
+
+	ret := v2.GetSystemProxyReply{
+		SystemProxy: systemProxy,
+	}
+
+	return &ret, nil
+}
+
+func (s *ADAServiceV2) UpdateSystemProxy(ctx context.Context, in *v2.UpdateSystemProxyReq) (*v2.UpdateSystemProxyReply, error) {
+	ret := &v2.UpdateSystemProxyReply{
+		Result: RESP_FAILED,
+	}
+
+	// Update system proxy configuration in database
+	err := server.UpdateSystemProxy(s.env, in.HttpProxy, in.HttpsProxy, in.UpgradeProxy, in.NotifyProxy)
+	if err != nil {
+		logger.Warnf("update system proxy err:%v", err)
+		return ret, status.Error(codes.Internal, s.I18n("System.UpdateSystemProxyFailed"))
+	}
+
+	ret.Result = RESP_SUCCESS
+
 	return ret, nil
 }
