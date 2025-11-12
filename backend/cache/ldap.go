@@ -42,8 +42,12 @@ func (r *RdxCli) GetLDAPAccount(domain string) (*LDAPAccount, error) {
 	}
 
 	if account.Password != "" {
-		// decrypt account password
-		aesUtil := crypto.NewAes([]byte(base_common.RDX_CRYPT_SECRET))
+		// decrypt account password using AES-256-GCM
+		aesGCM, err := crypto.NewAesGCM([]byte(base_common.RDX_CRYPT_SECRET))
+		if err != nil {
+			logger.Errorf("create AES-GCM failed:%v, domain:%s", err, domain)
+			return nil, err
+		}
 
 		encByte, err := base64.StdEncoding.DecodeString(account.Password)
 		if err != nil {
@@ -51,9 +55,9 @@ func (r *RdxCli) GetLDAPAccount(domain string) (*LDAPAccount, error) {
 			return nil, err
 		}
 
-		pass, err := aesUtil.Decrypt(encByte)
+		pass, err := aesGCM.Decrypt(encByte)
 		if err != nil {
-			logger.Errorf("aes decrypt failed:%v, domain:%s", err, domain)
+			logger.Errorf("aes-gcm decrypt failed:%v, domain:%s", err, domain)
 			return nil, err
 		}
 		account.Password = string(pass)

@@ -139,10 +139,15 @@ func LDAPParse(ldapAddr string) (domain, domainName, dcHostName, dn string, err 
 	return
 }
 
-// ldap password encrypt
+// ldap password encrypt using secure AES-256-GCM
 func PasswordEncrypt(password string) (encrypt string, err error) {
-	aesUtil := crypto.NewAes([]byte(base_common.RDX_CRYPT_SECRET))
-	aesEncrypt, err := aesUtil.Encrypt(password)
+	// Use AES-256-GCM for secure authenticated encryption
+	aesGCM, err := crypto.NewAesGCM([]byte(base_common.RDX_CRYPT_SECRET))
+	if err != nil {
+		return "", err
+	}
+
+	aesEncrypt, err := aesGCM.Encrypt(password)
 	if err != nil {
 		return "", err
 	}
@@ -150,14 +155,20 @@ func PasswordEncrypt(password string) (encrypt string, err error) {
 	return sEnc, nil
 }
 
-// ldap password decode
+// ldap password decode using secure AES-256-GCM
 func PasswordDecode(encrypt string) (password string, err error) {
-	aesInstance := crypto.NewAes([]byte(base_common.RDX_CRYPT_SECRET))
+	// Use AES-256-GCM for secure authenticated decryption
+	aesGCM, err := crypto.NewAesGCM([]byte(base_common.RDX_CRYPT_SECRET))
+	if err != nil {
+		return "", err
+	}
+
 	encByte, err := base64.StdEncoding.DecodeString(encrypt)
 	if err != nil {
 		return "", err
 	}
-	cfgStr, err := aesInstance.Decrypt(encByte)
+
+	cfgStr, err := aesGCM.Decrypt(encByte)
 	if err != nil {
 		return "", err
 	}
