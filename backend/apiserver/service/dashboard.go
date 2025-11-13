@@ -7,6 +7,7 @@ import (
 	baseCommon "ada/backend/common"
 	"context"
 	"fmt"
+	"maps"
 	"strconv"
 	"time"
 
@@ -47,9 +48,7 @@ func (s *ADAServiceV2) DashboardStats(ctx context.Context, in *v2.DashboardStats
 	if err != nil {
 		logger.Errorf("get alert counts err:%v", err)
 	} else {
-		for level, count := range alertCounts {
-			reply.Alert[level] = count
-		}
+		maps.Copy(reply.Alert, alertCounts)
 	}
 
 	// Get baseline counts by level (from latest scan task)
@@ -57,9 +56,7 @@ func (s *ADAServiceV2) DashboardStats(ctx context.Context, in *v2.DashboardStats
 	if err != nil {
 		logger.Errorf("get baseline counts err:%v", err)
 	} else {
-		for level, count := range baselineCounts {
-			reply.Baseline[level] = count
-		}
+		maps.Copy(reply.Baseline, baselineCounts)
 	}
 
 	// Get leak/vulnerability counts by level (from latest scan task)
@@ -67,9 +64,7 @@ func (s *ADAServiceV2) DashboardStats(ctx context.Context, in *v2.DashboardStats
 	if err != nil {
 		logger.Errorf("get leak counts err:%v", err)
 	} else {
-		for level, count := range leakCounts {
-			reply.Leak[level] = count
-		}
+		maps.Copy(reply.Leak, leakCounts)
 	}
 
 	// Get weak password counts
