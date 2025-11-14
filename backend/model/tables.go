@@ -515,6 +515,8 @@ type AssetUser struct {
 	PrimaryGroupID     int64              `bson:"primaryGroupID"`
 	ObjectGUID         string             `bson:"objectGUID"`
 	UserAccountControl int64              `bson:"userAccountControl"`
+	WhenCreated        int64              `bson:"whenCreated"`
+	WhenChanged        int64              `bson:"whenChanged"`
 	SyncTm             int64              `bson:"syncTm"`
 }
 
@@ -527,16 +529,19 @@ type AssetGroup struct {
 	ID                   primitive.ObjectID `bson:"_id,omitempty"` // ID
 	SAMAccountName       string             `bson:"sAMAccountName"`
 	IsDelete             bool               `bson:"isDelete"`
-	sAMAccountType       int64              `bson:"sAMAccountType"`
 	Dn                   string             `bson:"dn"`
 	Name                 string             `bson:"name"`
 	ObjectSid            string             `bson:"objectSid"`
 	Domain               string             `bson:"domain"`
 	AdminCount           int64              `bson:"adminCount"`
+	GroupType            int64              `bson:"groupType"`            // Raw AD groupType bitmask value
+	GroupScope           string             `bson:"groupScope"`           // Global, DomainLocal, Universal, BuiltinLocal
+	GroupCategory        string             `bson:"groupCategory"`        // Security, Distribution
 	ObjectGUID           string             `bson:"objectGUID"`
 	ObjectCategory       string             `bson:"objectCategory"`
-	nTSecurityDescriptor any                `bson:"nTSecurityDescriptor"`
+	NTSecurityDescriptor string             `bson:"nTSecurityDescriptor"`
 	WhenCreated          int64              `bson:"whenCreated"`
+	WhenChanged          int64              `bson:"whenChanged"`
 	SyncTm               int64              `bson:"syncTm"`
 }
 
@@ -562,6 +567,7 @@ type AssetComputer struct {
 	IsCriticalSystemObject bool               `bson:"isCriticalSystemObject"`
 	UserAccountControl     int64              `bson:"userAccountControl"`
 	WhenCreated            int64              `bson:"whenCreated"`
+	WhenChanged            int64              `bson:"whenChanged"`
 	PrimaryGroupID         int64              `bson:"primaryGroupID"`
 	LastLogonTimestamp     int64              `bson:"lastLogonTimestamp"`
 	SyncTm                 int64              `bson:"syncTm"`
