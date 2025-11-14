@@ -36,11 +36,14 @@ func (s *ADAServiceV2) DashboardStats(ctx context.Context, in *v2.DashboardStats
 	}
 
 	reply := &v2.DashboardStatsReply{
-		Asset:    make(map[string]int32),
+		Agent:    make(map[string]int32),
 		Alert:    make(map[string]int32),
 		Baseline: make(map[string]int32),
 		Leak:     make(map[string]int32),
 		Weakpwd:  make(map[string]int32),
+		Asset:    make(map[string]int32),
+		Rule:     make(map[string]int32),
+		Event:    make(map[string]int32),
 	}
 
 	// Get alert counts by level (from AlertEventESDB collection)
@@ -75,13 +78,36 @@ func (s *ADAServiceV2) DashboardStats(ctx context.Context, in *v2.DashboardStats
 		reply.Weakpwd["total"] = weakpwdCount
 	}
 
-	// Get asset counts (total and today's new assets)
-	assetTotal, assetToday, err := server.GetAssetCounts(s.env, domains)
+	// Get agent distribution (domains, sensors, dcs)
+	agentDistribution, err := server.GetAgentDistribution(s.env)
 	if err != nil {
-		logger.Errorf("get asset counts err:%v", err)
+		logger.Errorf("get agent distribution err:%v", err)
 	} else {
-		reply.Asset["total"] = assetTotal
-		reply.Asset["today"] = assetToday
+		reply.Agent = agentDistribution
+	}
+
+	// Get asset distribution (users, computers, groups)
+	assetDistribution, err := server.GetAssetDistribution(s.env, domains)
+	if err != nil {
+		logger.Errorf("get asset distribution err:%v", err)
+	} else {
+		reply.Asset = assetDistribution
+	}
+
+	// Get rule distribution (alert rules, activity rules)
+	ruleDistribution, err := server.GetRuleDistribution(s.env)
+	if err != nil {
+		logger.Errorf("get rule distribution err:%v", err)
+	} else {
+		reply.Rule = ruleDistribution
+	}
+
+	// Get event distribution (alert events, alert activities)
+	eventDistribution, err := server.GetEventDistribution(s.env)
+	if err != nil {
+		logger.Errorf("get event distribution err:%v", err)
+	} else {
+		reply.Event = eventDistribution
 	}
 
 	return reply, nil
