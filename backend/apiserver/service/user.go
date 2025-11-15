@@ -191,10 +191,8 @@ func (s *ADAServiceV2) ListUser(ctx context.Context, in *v2.ListUserReq) (*v2.Li
 					}
 					return u.PwdUpdateTm.String()
 				}(&r),
-				RealName:   r.RealName,
-				Address:    r.Address,
 				Department: r.Department,
-				Post:       r.Post,
+				UpdateTm:   r.UpdateTm.String(),
 			})
 	}
 	ret.Page = &v2.ModelPage{PageSize: in.PageSize, PageIdx: in.PageIdx, Total: int32(total)}
@@ -237,7 +235,7 @@ func (s *ADAServiceV2) AddUser(ctx context.Context, in *v2.AddUserReq) (*v2.AddU
 	}
 
 	passStrength := util.CheckPassStrength(in.Password)
-	err = server.AddUser(s.env, in.Username, string(plainPwd), passStrength, in.Role, in.Mobile, in.Email, in.Remark, in.RealName, in.Department, in.Address, in.Post, pri)
+	err = server.AddUser(s.env, in.Username, string(plainPwd), passStrength, in.Role, in.Mobile, in.Email, in.Remark, in.Department, pri)
 	if err != nil {
 		logger.Errorf("add user err:%v", err)
 		return nil, status.Error(codes.Internal, s.I18n("User.AddUser.AddUserFailed"))
@@ -261,10 +259,8 @@ func (s *ADAServiceV2) UpdateUser(ctx context.Context, in *v2.UpdateUserReq) (*v
 	user.Mobile = in.Mobile
 	user.Email = in.Email
 	user.Remark = in.Remark
-	user.RealName = in.RealName
-	user.Post = in.Post
 	user.Department = in.Department
-	user.Address = in.Address
+	user.UpdateTm = time.Now()
 	err = server.UpdateUser(s.env, user)
 	if err != nil {
 		logger.Errorf("update user err:%v", err)
