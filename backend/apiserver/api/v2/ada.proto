@@ -28,6 +28,11 @@ service ADA {
   rpc UpdateAvatar(UpdateAvatarReq)returns (UpdateAvatarReply) {}// 更新头像
   rpc ResetPassword(ResetPasswordReq)returns (ResetPasswordReply) {}// 重置用户密码
 
+  // AccessKey API密钥管理
+  rpc ListAccessKey(ListAccessKeyReq) returns (ListAccessKeyReply) {} // 列出用户AccessKey
+  rpc GenerateAccessKey(GenerateAccessKeyReq) returns (GenerateAccessKeyReply) {} // 生成AccessKey
+  rpc DeleteAccessKey(DeleteAccessKeyReq) returns (DeleteAccessKeyReply) {} // 删除AccessKey
+
   // Domain
   rpc ListDomain(ListDomainReq) returns (ListDomainReply) {}  //域列表
   rpc AddDomain(AddDomainReq) returns (AddDomainReply) {} //添加域
@@ -345,6 +350,45 @@ message ResetPasswordReq {
 
 message ResetPasswordReply {
   string result = 2;
+}
+
+// AccessKey
+message ListAccessKeyReq {
+  string username = 1; // 用户名，留空则列出所有AccessKey（管理员权限）
+}
+
+message AccessKeyDetails {
+  string iD = 1; // ID
+  string username = 2; // 所属用户
+  string secretKey = 4; // SecretKey (masked: sk-xx*****xxx)
+  string remark = 5; // 备注
+  string status = 6; // 状态: active|disabled
+  string createTm = 7; // 创建时间
+  string updateTm = 8; // 更新时间
+}
+
+message ListAccessKeyReply {
+  repeated AccessKeyDetails list = 1;
+}
+
+message GenerateAccessKeyReq {
+  string username = 1 [(validator.field) = {length_gt: 0}]; // 用户名
+  string remark = 2; // 备注
+}
+
+message GenerateAccessKeyReply {
+  string result = 1; // success|fail
+  string secretKey = 3; // 生成的SecretKey（明文，仅此时返回）
+  string message = 4; // 错误信息
+}
+
+message DeleteAccessKeyReq {
+  string iD = 1 [(validator.field) = {length_gt: 0}]; // AccessKey ID
+}
+
+message DeleteAccessKeyReply {
+  string result = 1; // success|fail
+  string message = 2; // 错误信息
 }
 
 // Domain

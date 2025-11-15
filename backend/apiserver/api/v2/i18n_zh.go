@@ -13,6 +13,7 @@ var I18nLangZhMap = map[string]any{
 	"NotFound":        "资源不存在",
 	"DeleteFailed":    "删除失败",
 	"UpdateFailed":    "更新失败",
+	"OperationFailed": "操作失败",
 	"CommandFailed":   "命令执行失败",
 	"GetFailed":       "获取失败",
 	"LicenseExpired":  "许可证已过期",
@@ -69,6 +70,7 @@ var I18nLangZhMap = map[string]any{
 
 	// User module
 	"User": map[string]any{
+		"NotFound":            "用户不存在",
 		"LoginErrorLocked":    "登录错误锁定五分钟",
 		"UsernameExists":      "用户名已存在",
 		"PasswordLengthError": "密码长度不符合要求，请输入8位以上密码",

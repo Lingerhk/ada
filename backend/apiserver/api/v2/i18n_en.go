@@ -13,6 +13,7 @@ var I18nLangEnMap = map[string]any{
 	"NotFound":        "Resource not found",
 	"DeleteFailed":    "Delete failed",
 	"UpdateFailed":    "Update failed",
+	"OperationFailed": "Operation failed",
 	"CommandFailed":   "Command failed",
 	"GetFailed":       "Get failed",
 	"LicenseExpired":  "License expired",
@@ -69,6 +70,7 @@ var I18nLangEnMap = map[string]any{
 
 	// User module
 	"User": map[string]any{
+		"NotFound":            "User not found",
 		"LoginErrorLocked":    "Login error locked for 5 minutes",
 		"UsernameExists":      "Username already exists",
 		"PasswordLengthError": "Password length does not meet the requirements, please enter a password of at least 8 characters",

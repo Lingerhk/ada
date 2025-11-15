@@ -4,11 +4,14 @@ import (
 	"ada/backend/apiserver/config"
 	"ada/backend/model"
 	"ada/infra/base"
+	"ada/infra/crypto"
 	utime "ada/infra/time"
-	logger "github.com/sirupsen/logrus"
+	"fmt"
 	"time"
 
+	logger "github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 func FindAllUser(e *config.Env, limit, offset int32, search, username string, filterRole, filterMfaStatus, filterPassStrength []string, filterStartCreateTm, filterEndCreateTm, filterStartPassTm, filterEndPassTm string, sort int32) ([]model.User, int64, error) {
@@ -251,4 +254,96 @@ func FindUserByName(e *config.Env, username string) (*model.User, error) {
 		return nil, err
 	}
 	return &user, nil
+}
+
+// AccessKey functions
+func ListAccessKey(e *config.Env, username string) ([]model.AccessKey, error) {
+	var keys []model.AccessKey
+	tb := (&model.AccessKey{}).CollectName()
+
+	query := bson.M{}
+	if username != "" {
+		query["username"] = username
+	}
+
+	err := e.MongoCli.FindAll(tb, query, &keys)
+	if err != nil {
+		return nil, err
+	}
+
+	return keys, nil
+}
+
+func GenerateAccessKey(e *config.Env, username, remark string) (string, error) {
+	tb := (&model.AccessKey{}).CollectName()
+
+	// Generate SK
+	secretKey := fmt.Sprintf("sk-%s", crypto.RandString(25))
+
+	// Create masked display version
+	displaySK := fmt.Sprintf("sk-%s*****%s", secretKey[3:6], secretKey[25:])
+
+	// secretKey hash
+	hashedSK := crypto.MD5String(secretKey, 32)
+
+	key := model.AccessKey{
+		Username:   username,
+		SecretKey:  displaySK,
+		SecretHash: hashedSK,
+		Remark:     remark,
+		Status:     "active",
+		CreateTm:   time.Now(),
+		UpdateTm:   time.Now(),
+	}
+
+	err := e.MongoCli.Insert(tb, key)
+	if err != nil {
+		logger.Errorf("insert access key error: %v", err)
+		return "", err
+	}
+
+	// Return plain text secretKey (only returned once)
+	return secretKey, nil
+}
+
+func GetAccessKey(e *config.Env, id string) (*model.AccessKey, error) {
+	var key model.AccessKey
+	tb := (&model.AccessKey{}).CollectName()
+
+	objID, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		return nil, err
+	}
+
+	m := bson.M{"_id": objID}
+	err, _ = e.MongoCli.FindOne(tb, m, &key)
+	if err != nil {
+		return nil, err
+	}
+
+	return &key, nil
+}
+
+func DeleteAccessKey(e *config.Env, id string) error {
+	tb := (&model.AccessKey{}).CollectName()
+
+	objID, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		return err
+	}
+
+	m := bson.M{"_id": objID}
+	update := bson.M{
+		"$set": bson.M{
+			"status":    "disabled",
+			"update_tm": time.Now(),
+		},
+	}
+	err = e.MongoCli.UpdateRaw(tb, m, update, false)
+	if err != nil {
+		logger.Errorf("disable access key error: %v", err)
+		return err
+	}
+
+	return nil
 }

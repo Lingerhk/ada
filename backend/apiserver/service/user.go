@@ -488,3 +488,108 @@ func (s *ADAServiceV2) UserExists(ctx context.Context, in *v2.UserExistsReq) (*v
 		Result: false,
 	}, nil
 }
+
+// AccessKey Management
+func (s *ADAServiceV2) ListAccessKey(ctx context.Context, in *v2.ListAccessKeyReq) (*v2.ListAccessKeyReply, error) {
+	username := s.GetUser(ctx)
+
+	// 如果请求中指定了username，检查权限
+	queryUsername := in.Username
+	if queryUsername == "" {
+		queryUsername = username
+	} else if queryUsername != username && !s.IsSuper(ctx) {
+		return nil, status.Error(codes.PermissionDenied, s.I18n("NoPermission"))
+	}
+
+	keys, err := server.ListAccessKey(s.env, queryUsername)
+	if err != nil {
+		logger.Errorf("list access key error: %v", err)
+		return nil, status.Error(codes.Internal, s.I18n("QueryFailed"))
+	}
+
+	var list []*v2.AccessKeyDetails
+	for _, key := range keys {
+		list = append(list, &v2.AccessKeyDetails{
+			ID:        key.ID.Hex(),
+			Username:  key.Username,
+			SecretKey: key.SecretKey,
+			Remark:    key.Remark,
+			Status:    key.Status,
+			CreateTm:  key.CreateTm.Format("2006-01-02 15:04:05"),
+			UpdateTm:  key.UpdateTm.Format("2006-01-02 15:04:05"),
+		})
+	}
+
+	return &v2.ListAccessKeyReply{List: list}, nil
+}
+
+func (s *ADAServiceV2) GenerateAccessKey(ctx context.Context, in *v2.GenerateAccessKeyReq) (*v2.GenerateAccessKeyReply, error) {
+	username := s.GetUser(ctx)
+
+	// 如果请求中指定了username，检查权限
+	targetUsername := in.Username
+	if targetUsername != username && !s.IsSuper(ctx) {
+		return nil, status.Error(codes.PermissionDenied, s.I18n("NoPermission"))
+	}
+
+	// 检查用户是否存在
+	_, err := server.GetUser(s.env, targetUsername)
+	if err != nil {
+		logger.Errorf("user not found: %v", err)
+		return &v2.GenerateAccessKeyReply{
+			Result:  common.RESP_FAILED,
+			Message: s.I18n("User.NotFound"),
+		}, nil
+	}
+
+	secretKey, err := server.GenerateAccessKey(s.env, targetUsername, in.Remark)
+	if err != nil {
+		logger.Errorf("generate access key error: %v", err)
+		return &v2.GenerateAccessKeyReply{
+			Result:  common.RESP_FAILED,
+			Message: s.I18n("OperationFailed"),
+		}, nil
+	}
+
+	return &v2.GenerateAccessKeyReply{
+		Result:    common.RESP_SUCCESS,
+		SecretKey: secretKey,
+		Message:   "",
+	}, nil
+}
+
+func (s *ADAServiceV2) DeleteAccessKey(ctx context.Context, in *v2.DeleteAccessKeyReq) (*v2.DeleteAccessKeyReply, error) {
+	username := s.GetUser(ctx)
+
+	// 获取AccessKey详情以检查所有权
+	key, err := server.GetAccessKey(s.env, in.ID)
+	if err != nil {
+		logger.Errorf("access key not found: %v", err)
+		return &v2.DeleteAccessKeyReply{
+			Result:  common.RESP_FAILED,
+			Message: s.I18n("NotFound"),
+		}, nil
+	}
+
+	// 检查权限：只能删除自己的key或管理员可以删除所有key
+	if key.Username != username && !s.IsSuper(ctx) {
+		return &v2.DeleteAccessKeyReply{
+			Result:  common.RESP_FAILED,
+			Message: s.I18n("NoPermission"),
+		}, nil
+	}
+
+	err = server.DeleteAccessKey(s.env, in.ID)
+	if err != nil {
+		logger.Errorf("delete access key error: %v", err)
+		return &v2.DeleteAccessKeyReply{
+			Result:  common.RESP_FAILED,
+			Message: s.I18n("OperationFailed"),
+		}, nil
+	}
+
+	return &v2.DeleteAccessKeyReply{
+		Result:  common.RESP_SUCCESS,
+		Message: "",
+	}, nil
+}
