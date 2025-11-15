@@ -21,10 +21,8 @@ db.getCollection("tb_user").insert([
         mfa_status: "disable",
         avatar: "",
         pwd_update_tm: new Date(),
-        real_name: "Adaegis",
         department: "Adaegis",
-        post: "Adaegis",
-        address: "Adaegis",
+        update_tm: new Date(),
     },
 ]);
 
@@ -140,9 +138,16 @@ db.getCollection("tb_alert_whitelist").createIndex(
     { name: "_id_" },
 );
 
-/** tb_alert_desc indexes **/
-db.createCollection("tb_alert_desc");
-db.getCollection("tb_alert_desc").createIndex(
+/** tb_alert_rule indexes **/
+db.createCollection("tb_alert_rule");
+db.getCollection("tb_alert_rule").createIndex(
+    { _id: NumberInt(1) },
+    { name: "_id_" },
+);
+
+/** tb_activity_rule indexes **/
+db.createCollection("tb_activity_rule");
+db.getCollection("tb_activity_rule").createIndex(
     { _id: NumberInt(1) },
     { name: "_id_" },
 );
@@ -278,10 +283,9 @@ db.getCollection("tb_notify_conf").insert([
         metadata: {},
         remark: "该功能需要配置通知目标的邮箱地址。",
         enable: "disable",
-        update_tm: new Date(),
-        last_time: NumberInt(1),
         notify_level: [NumberInt(2), NumberInt(3), NumberInt(4), NumberInt(5)],
-        rule_list: [],
+        notify_rules: [],
+        update_tm: new Date(),
     },
     {
         _id: new ObjectId(),
@@ -291,10 +295,9 @@ db.getCollection("tb_notify_conf").insert([
         metadata: {},
         remark: "该功能需要配置syslog服务器地址，该系统会实时将每个事件内容通过json字符串的格式发送到syslog服务器；默认为UDP514端口，也可通过“IP:端口”指定其他端口。",
         enable: "disable",
-        update_tm: new Date(),
-        last_time: NumberInt(1),
         notify_level: [NumberInt(2), NumberInt(3), NumberInt(4), NumberInt(5)],
-        rule_list: [],
+        notify_rules: [],
+        update_tm: new Date(),
     },
     {
         _id: new ObjectId(),
@@ -304,10 +307,9 @@ db.getCollection("tb_notify_conf").insert([
         metadata: {},
         remark: "该功能需要配置联动的URL，该系统通过HTTP协议将攻击行为元数据通过POST形式上传到接收端进行统一分析管理，具体字段参考相关用户手册。",
         enable: "disable",
-        update_tm: new Date(),
-        last_time: NumberInt(1),
         notify_level: [NumberInt(2), NumberInt(3), NumberInt(4), NumberInt(5)],
-        rule_list: [],
+        notify_rules: [],
+        update_tm: new Date(),
     },
     {
         _id: new ObjectId(),
@@ -317,10 +319,9 @@ db.getCollection("tb_notify_conf").insert([
         metadata: {},
         remark: "该功能需要配置通知目标的邮箱地址。",
         enable: "disable",
-        update_tm: new Date(),
-        last_time: NumberInt(1),
         notify_level: [NumberInt(2), NumberInt(3), NumberInt(4)],
-        rule_list: [],
+        notify_rules: [],
+        update_tm: new Date(),
     },
     {
         _id: new ObjectId(),
@@ -330,10 +331,9 @@ db.getCollection("tb_notify_conf").insert([
         metadata: {},
         remark: "该功能需要配置syslog服务器地址，该系统会实时将每个事件内容通过json字符串的格式发送到syslog服务器；默认为UDP514端口，也可通过“IP:端口”指定其他端口。",
         enable: "disable",
-        update_tm: new Date(),
-        last_time: NumberInt(1),
         notify_level: [NumberInt(2), NumberInt(3), NumberInt(4)],
-        rule_list: [],
+        notify_rules: [],
+        update_tm: new Date(),
     },
     {
         _id: new ObjectId(),
@@ -343,10 +343,9 @@ db.getCollection("tb_notify_conf").insert([
         metadata: {},
         remark: "该功能需要配置联动的URL，该系统通过HTTP协议将攻击行为元数据通过POST形式上传到接收端进行统一分析管理，具体字段参考相关用户手册。",
         enable: "disable",
-        update_tm: new Date(),
-        last_time: NumberInt(1),
         notify_level: [NumberInt(2), NumberInt(3), NumberInt(4)],
-        rule_list: [],
+        notify_rules: [],
+        update_tm: new Date(),
     },
     {
         _id: new ObjectId(),
@@ -356,10 +355,9 @@ db.getCollection("tb_notify_conf").insert([
         metadata: {},
         remark: "该功能需要配置通知目标的邮箱地址。",
         enable: "disable",
-        update_tm: new Date(),
-        last_time: NumberInt(1),
         notify_level: [NumberInt(2), NumberInt(3), NumberInt(4)],
-        rule_list: [],
+        notify_rules: [],
+        update_tm: new Date(),
     },
     {
         _id: new ObjectId(),
@@ -369,10 +367,9 @@ db.getCollection("tb_notify_conf").insert([
         metadata: {},
         remark: "该功能需要配置syslog服务器地址，该系统会实时将每个事件内容通过json字符串的格式发送到syslog服务器；默认为UDP514端口，也可通过“IP:端口”指定其他端口。",
         enable: "disable",
-        update_tm: new Date(),
-        last_time: NumberInt(1),
         notify_level: [NumberInt(2), NumberInt(3), NumberInt(4)],
-        rule_list: [],
+        notify_rules: [],
+        update_tm: new Date(),
     },
     {
         _id: new ObjectId(),
@@ -382,10 +379,9 @@ db.getCollection("tb_notify_conf").insert([
         metadata: {},
         remark: "该功能需要配置联动的URL，该系统通过HTTP协议将攻击行为元数据通过POST形式上传到接收端进行统一分析管理，具体字段参考相关用户手册。",
         enable: "disable",
-        update_tm: new Date(),
-        last_time: NumberInt(1),
         notify_level: [NumberInt(2), NumberInt(3), NumberInt(4)],
-        rule_list: [],
+        notify_rules: [],
+        update_tm: new Date(),
     },
     {
         _id: new ObjectId(),
@@ -395,8 +391,9 @@ db.getCollection("tb_notify_conf").insert([
         metadata: {},
         remark: "该功能需要配置通知目标的邮箱地址。",
         enable: "disable",
+        notify_level: [],
+        notify_rules: [],
         update_tm: new Date(),
-        last_time: NumberInt(1),
     },
     {
         _id: new ObjectId(),
@@ -406,8 +403,9 @@ db.getCollection("tb_notify_conf").insert([
         metadata: {},
         remark: "该功能需要配置syslog服务器地址，该系统会实时将每个事件内容通过json字符串的格式发送到syslog服务器；默认为UDP514端口，也可通过“IP:端口”指定其他端口。",
         enable: "disable",
+        notify_level: [],
+        notify_rules: [],
         update_tm: new Date(),
-        last_time: NumberInt(1),
     },
     {
         _id: new ObjectId(),
@@ -417,7 +415,36 @@ db.getCollection("tb_notify_conf").insert([
         metadata: {},
         remark: "该功能需要配置联动的URL，该系统通过HTTP协议将攻击行为元数据通过POST形式上传到接收端进行统一分析管理，具体字段参考相关用户手册。",
         enable: "disable",
+        notify_level: [],
+        notify_rules: [],
         update_tm: new Date(),
-        last_time: NumberInt(1),
     },
 ]);
+
+/** tb_asset_group indexes **/
+db.createCollection("tb_asset_group");
+db.getCollection("tb_asset_group").createIndex(
+    { _id: NumberInt(1) },
+    { name: "_id_" },
+);
+
+/** tb_asset_computer indexes **/
+db.createCollection("tb_asset_computer");
+db.getCollection("tb_asset_computer").createIndex(
+    { _id: NumberInt(1) },
+    { name: "_id_" },
+);
+
+/** tb_system_logs indexes **/
+db.createCollection("tb_system_logs");
+db.getCollection("tb_system_logs").createIndex(
+    { _id: NumberInt(1) },
+    { name: "_id_" },
+);
+
+/** tb_access_key indexes **/
+db.createCollection("tb_access_key");
+db.getCollection("tb_access_key").createIndex(
+    { _id: NumberInt(1) },
+    { name: "_id_" },
+);
