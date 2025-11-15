@@ -19,13 +19,11 @@ type User struct {
 	Remark       string    `bson:"remark"`        // 备注
 	Secret       string    `bson:"secret"`        // 验证密钥
 	MfaStatus    string    `bson:"mfa_status"`    // 二次认证状态 开启enable 禁用disable
-	Avatar       string    `bson:"avatar"`        // 头像
-	PwdUpdateTm  time.Time `bson:"pwd_update_tm"` // 密码更新时间 add by xc
-	RealName     string    `bson:"real_name"`     // 真实姓名
-	Department   string    `bson:"department"`    // 部门
-	Post         string    `bson:"post"`          // 岗位
-	Address      string    `bson:"address"`       // 所在地址
-	CreateTm     time.Time `bson:"create_tm"`     // 添加时间
+	Avatar      string    `bson:"avatar"`        // 头像
+	PwdUpdateTm time.Time `bson:"pwd_update_tm"` // 密码更新时间
+	Department  string    `bson:"department"`    // 部门
+	CreateTm    time.Time `bson:"create_tm"`     // 添加时间
+	UpdateTm    time.Time `bson:"update_tm"`     // 更新时间
 }
 
 func (a *User) CollectName() string {

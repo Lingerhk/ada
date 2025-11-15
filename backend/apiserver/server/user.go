@@ -117,7 +117,7 @@ func GetUser(e *config.Env, userName string) (*model.User, error) {
 	return &u, nil
 }
 
-func AddUser(e *config.Env, userName, passHash, passStrength, role, mobile, email, remark, realName, department, address, post string, priv int32) error {
+func AddUser(e *config.Env, userName, passHash, passStrength, role, mobile, email, remark, department string, priv int32) error {
 	var u model.User
 
 	uid, err := e.MongoCli.GetNextSequence(u.CollectName())
@@ -137,10 +137,8 @@ func AddUser(e *config.Env, userName, passHash, passStrength, role, mobile, emai
 	u.CreateTm = utime.CurTime()
 	u.MfaStatus = "disable"
 	u.PwdUpdateTm = utime.CurTime()
-	u.RealName = realName
 	u.Department = department
-	u.Address = address
-	u.Post = post
+	u.UpdateTm = utime.CurTime()
 
 	err = e.MongoCli.Insert(u.CollectName(), &u)
 	if err != nil {
