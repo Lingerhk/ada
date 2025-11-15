@@ -154,6 +154,40 @@ func (this *ResetPasswordReq) Validate() error {
 func (this *ResetPasswordReply) Validate() error {
 	return nil
 }
+func (this *ListAccessKeyReq) Validate() error {
+	return nil
+}
+func (this *AccessKeyDetails) Validate() error {
+	return nil
+}
+func (this *ListAccessKeyReply) Validate() error {
+	for _, item := range this.List {
+		if item != nil {
+			if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(item); err != nil {
+				return github_com_mwitkow_go_proto_validators.FieldError("List", err)
+			}
+		}
+	}
+	return nil
+}
+func (this *GenerateAccessKeyReq) Validate() error {
+	if !(len(this.Username) > 0) {
+		return github_com_mwitkow_go_proto_validators.FieldError("Username", fmt.Errorf(`value '%v' must have a length greater than '0'`, this.Username))
+	}
+	return nil
+}
+func (this *GenerateAccessKeyReply) Validate() error {
+	return nil
+}
+func (this *DeleteAccessKeyReq) Validate() error {
+	if !(len(this.ID) > 0) {
+		return github_com_mwitkow_go_proto_validators.FieldError("ID", fmt.Errorf(`value '%v' must have a length greater than '0'`, this.ID))
+	}
+	return nil
+}
+func (this *DeleteAccessKeyReply) Validate() error {
+	return nil
+}
 func (this *ListDomainReq) Validate() error {
 	if !(this.PageIdx > 0) {
 		return github_com_mwitkow_go_proto_validators.FieldError("PageIdx", fmt.Errorf(`value '%v' must be greater than '0'`, this.PageIdx))

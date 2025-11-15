@@ -534,9 +534,9 @@ type AssetGroup struct {
 	ObjectSid            string             `bson:"objectSid"`
 	Domain               string             `bson:"domain"`
 	AdminCount           int64              `bson:"adminCount"`
-	GroupType            int64              `bson:"groupType"`            // Raw AD groupType bitmask value
-	GroupScope           string             `bson:"groupScope"`           // Global, DomainLocal, Universal, BuiltinLocal
-	GroupCategory        string             `bson:"groupCategory"`        // Security, Distribution
+	GroupType            int64              `bson:"groupType"`     // Raw AD groupType bitmask value
+	GroupScope           string             `bson:"groupScope"`    // Global, DomainLocal, Universal, BuiltinLocal
+	GroupCategory        string             `bson:"groupCategory"` // Security, Distribution
 	ObjectGUID           string             `bson:"objectGUID"`
 	ObjectCategory       string             `bson:"objectCategory"`
 	NTSecurityDescriptor string             `bson:"nTSecurityDescriptor"`
@@ -609,4 +609,20 @@ type SystemLogs struct {
 
 func (s *SystemLogs) CollectName() string {
 	return "tb_system_logs"
+}
+
+// AccessKey API密钥表
+type AccessKey struct {
+	ID         primitive.ObjectID `bson:"_id,omitempty"` // ID
+	Username   string             `bson:"username"`      // 所属用户
+	SecretKey  string             `bson:"secret_key"`    // SecretKey(masked storage: 'sk-xx*****xxx')
+	SecretHash string             `bson:"secret_hash"`   // SecretKey Hash
+	Remark     string             `bson:"remark"`        // 备注
+	Status     string             `bson:"status"`        // 状态: active|disabled
+	CreateTm   time.Time          `bson:"create_tm"`     // 创建时间
+	UpdateTm   time.Time          `bson:"update_tm"`     // 更新时间
+}
+
+func (a *AccessKey) CollectName() string {
+	return "tb_access_key"
 }
