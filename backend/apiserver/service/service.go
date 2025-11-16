@@ -2,7 +2,9 @@ package service
 
 import (
 	"ada/backend/apiserver/util"
+	"ada/backend/model"
 	"context"
+	"errors"
 	"fmt"
 	"math"
 	"net"
@@ -13,6 +15,7 @@ import (
 	"slices"
 	"strconv"
 	"strings"
+	"sync"
 	"syscall"
 	"time"
 
@@ -23,6 +26,7 @@ import (
 	bCommon "ada/backend/common"
 
 	logger "github.com/sirupsen/logrus"
+	"go.mongodb.org/mongo-driver/bson"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/keepalive"
@@ -52,6 +56,18 @@ var (
 		"/ada.ADA/GetLicence",
 		"/ada.ADA/UpdateLicence",
 	}
+
+	// accessKeyActiveTmCache tracks the last time ActiveTm was updated for each AccessKey ID
+	// to avoid updating the database on every request (throttled to 5 minutes)
+	accessKeyActiveTmCache    = make(map[string]time.Time)
+	accessKeyActiveTmMutex    sync.RWMutex
+	accessKeyActiveTmThrottle = 5 * time.Minute
+
+	// userActiveTmCache tracks the last time ActiveTm was updated for each User
+	// to avoid updating the database on every request (throttled to 5 minutes)
+	userActiveTmCache    = make(map[string]time.Time)
+	userActiveTmMutex    sync.RWMutex
+	userActiveTmThrottle = 5 * time.Minute
 )
 
 // ADA grpc service struct
@@ -70,6 +86,109 @@ type GrpcService struct {
 // getLastLoginExpireTime gets the last login expire time from Redis
 func (s *GrpcService) getLastLoginExpireTime(ctx context.Context, username string) (int64, error) {
 	return s.env.RedisCli.Get(ctx, userLoginExpireKey(username)).Int64()
+}
+
+// updateUserActiveTm updates the User's ActiveTm field with throttling
+func (s *GrpcService) updateUserActiveTm(username string) error {
+	shouldUpdate := false
+
+	userActiveTmMutex.RLock()
+	lastUpdate, exists := userActiveTmCache[username]
+	userActiveTmMutex.RUnlock()
+
+	if !exists || time.Since(lastUpdate) >= userActiveTmThrottle {
+		shouldUpdate = true
+	}
+
+	if shouldUpdate {
+		// Update the ActiveTm field in database
+		now := time.Now()
+		var u model.User
+		update := bson.M{"$set": bson.M{"active_tm": now}}
+		err := s.env.MongoCli.UpdateRaw(u.CollectName(), bson.M{"username": username}, &update, false)
+		if err != nil {
+			logger.Errorf("Failed to update user active_tm for %s: %v", username, err)
+			return err
+		}
+
+		// Update cache
+		userActiveTmMutex.Lock()
+		userActiveTmCache[username] = now
+		userActiveTmMutex.Unlock()
+	}
+
+	return nil
+}
+
+// authenticateByAccessKey authenticates user by AccessKey secret hash
+func (s *GrpcService) authenticateByAccessKey(secretHash string) (*util.UserClaim, error) {
+	var accessKey model.AccessKey
+	tb := (&model.AccessKey{}).CollectName()
+
+	// Query active AccessKey by secret hash
+	query := bson.M{
+		"secret_hash": secretHash,
+		"status":      "active",
+	}
+
+	err, exist := s.env.MongoCli.FindOne(tb, query, &accessKey)
+	if err != nil {
+		logger.Errorf("Failed to query AccessKey: %v", err)
+		return nil, fmt.Errorf("authentication failed")
+	}
+
+	if !exist {
+		return nil, fmt.Errorf("invalid access key")
+	}
+
+	username := accessKey.Username
+
+	// Update ActiveTm with throttling (only update if last update was more than 5 minutes ago)
+	accessKeyID := accessKey.ID.Hex()
+	shouldUpdate := false
+
+	accessKeyActiveTmMutex.RLock()
+	lastUpdate, exists := accessKeyActiveTmCache[accessKeyID]
+	accessKeyActiveTmMutex.RUnlock()
+
+	if !exists || time.Since(lastUpdate) >= accessKeyActiveTmThrottle {
+		shouldUpdate = true
+	}
+
+	if shouldUpdate {
+		// Update the ActiveTm field in database
+		now := time.Now()
+		accessKey.ActiveTm = now
+		err = s.env.MongoCli.UpdateById(tb, accessKey.ID, &accessKey)
+		if err != nil {
+			logger.Warnf("Failed to update AccessKey ActiveTm for %s: %v", accessKeyID, err)
+			// Don't fail authentication if we can't update the timestamp
+		} else {
+			// Update cache
+			accessKeyActiveTmMutex.Lock()
+			accessKeyActiveTmCache[accessKeyID] = now
+			accessKeyActiveTmMutex.Unlock()
+		}
+	}
+
+	// Get user info to construct UserClaim
+	var user model.User
+	err, exist = s.env.MongoCli.FindOne(user.CollectName(), bson.M{"username": username}, &user)
+	if err != nil || !exist {
+		logger.Errorf("Failed to get user info for username %s: %v", username, err)
+		return nil, fmt.Errorf("user not found")
+	}
+
+	// Construct UserClaim for AccessKey authentication
+	userClaim := &util.UserClaim{
+		User: user.UserName,
+		Role: user.Role,
+		Priv: int(user.Priv),
+		// For AccessKey, we don't check expiration, so set a far future time
+		Expired: time.Now().Add(24 * time.Hour).Unix(),
+	}
+
+	return userClaim, nil
 }
 
 // New news a GrpcService using customized configurations.
@@ -200,16 +319,30 @@ func (s *GrpcService) handle() grpc.UnaryServerInterceptor {
 			token = splits[1]
 		}
 
-		// 解析jwt-token进行认证
-		u, err := util.ParseToken(token, common.JWT_SECRET)
+		// Try to parse as JWT token first
+		var u *util.UserClaim
+		u, err = util.ParseToken(token, common.JWT_SECRET)
 		if err != nil {
-			return nil, status.Error(codes.Unauthenticated, "Login expired")
-		}
-
-		// 检测单用户登录
-		lastLoginExpireTime, err := s.getLastLoginExpireTime(ctx, u.User)
-		if err == nil && lastLoginExpireTime > u.Expired {
-			return nil, status.Error(codes.Unauthenticated, "Already logged")
+			// If it's an invalid JWT token error, try AccessKey authentication
+			if errors.Is(err, util.ErrInvalidJwtToken) {
+				u, err = s.authenticateByAccessKey(token)
+				if err != nil {
+					return nil, status.Error(codes.Unauthenticated, "Invalid credentials")
+				}
+			} else {
+				// Other JWT errors (expired, invalid signature, etc.)
+				return nil, status.Error(codes.Unauthenticated, "Login failed")
+			}
+		} else {
+			// JWT token authentication succeeded, check single user login
+			lastLoginExpireTime, err := s.getLastLoginExpireTime(ctx, u.User)
+			if err == nil && lastLoginExpireTime > u.Expired {
+				return nil, status.Error(codes.Unauthenticated, "Already logged")
+			}
+			// Update user active time (throttled to 5 minutes)
+			if err := s.updateUserActiveTm(u.User); err != nil {
+				return nil, status.Error(codes.Internal, "Login Failed")
+			}
 		}
 
 		// 接口鉴权

@@ -16,6 +16,10 @@ import (
 	"github.com/golang-jwt/jwt"
 )
 
+var (
+	ErrInvalidJwtToken = errors.New("invalid jwt token")
+)
+
 // 处理err可参考: https://godoc.org/github.com/dgrijalva/jwt-go#ex-Parse--ErrorChecking
 // 或jwt.MapClaims的Valid()
 type UserClaim struct {
@@ -62,6 +66,10 @@ func (c UserClaim) Valid() error {
 
 // 解析token获取user消息
 func ParseToken(tokenStr, authSecret string) (*UserClaim, error) {
+	if len(tokenStr) < 65 {
+		return nil, ErrInvalidJwtToken
+	}
+
 	fn := func(token *jwt.Token) (any, error) {
 		return []byte(authSecret), nil
 	}

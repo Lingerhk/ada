@@ -138,6 +138,7 @@ func AddUser(e *config.Env, userName, passHash, passStrength, role, mobile, emai
 	u.MfaStatus = "disable"
 	u.PwdUpdateTm = utime.CurTime()
 	u.Department = department
+	u.ActiveTm = utime.CurTime()
 	u.UpdateTm = utime.CurTime()
 
 	err = e.MongoCli.Insert(u.CollectName(), &u)
@@ -290,6 +291,7 @@ func GenerateAccessKey(e *config.Env, username, remark string) (string, error) {
 		SecretHash: hashedSK,
 		Remark:     remark,
 		Status:     "active",
+		ActiveTm:   time.Now(),
 		CreateTm:   time.Now(),
 		UpdateTm:   time.Now(),
 	}
