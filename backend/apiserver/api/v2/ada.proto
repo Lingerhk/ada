@@ -238,8 +238,9 @@ message ListUserReply {
     bool  hasMfa = 10; // 是否开启二次验证
     string avatar = 11; // 头像
     string pwdUpdateTm = 12; // 密码更新时间
-    string department = 15; // 部门
-    string updateTm = 17; // 更新时间
+    string department = 13; // 部门
+    string activeTm = 14; // 活跃时间
+    string updateTm = 15; // 更新时间
   }
   repeated Details List = 2;
   bool exhausted = 3; // if this is last page
@@ -357,6 +358,7 @@ message AccessKeyDetails {
   string status = 6; // 状态: active|disabled
   string createTm = 7; // 创建时间
   string updateTm = 8; // 更新时间
+  string activeTm = 9; // 最近使用时间
 }
 
 message ListAccessKeyReply {

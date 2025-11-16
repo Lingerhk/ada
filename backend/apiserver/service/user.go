@@ -192,6 +192,7 @@ func (s *ADAServiceV2) ListUser(ctx context.Context, in *v2.ListUserReq) (*v2.Li
 					return u.PwdUpdateTm.String()
 				}(&r),
 				Department: r.Department,
+				ActiveTm:   r.ActiveTm.String(),
 				UpdateTm:   r.UpdateTm.String(),
 			})
 	}
@@ -511,8 +512,9 @@ func (s *ADAServiceV2) ListAccessKey(ctx context.Context, in *v2.ListAccessKeyRe
 			SecretKey: key.SecretKey,
 			Remark:    key.Remark,
 			Status:    key.Status,
-			CreateTm:  key.CreateTm.Format("2006-01-02 15:04:05"),
-			UpdateTm:  key.UpdateTm.Format("2006-01-02 15:04:05"),
+			CreateTm:  key.CreateTm.String(),
+			UpdateTm:  key.UpdateTm.String(),
+			ActiveTm:  key.ActiveTm.String(),
 		})
 	}
 
