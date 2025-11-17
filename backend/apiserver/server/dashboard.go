@@ -69,8 +69,12 @@ func GetBaselineCountsByLevel(e *config.Env, domains []string) (map[string]int32
 		var tasks []model.ScanTasks
 		sort := bson.M{"create_tm": -1}
 		err := e.MongoCli.FindSortByLimitAndSkip((&model.ScanTasks{}).CollectName(), taskQuery, sort, &tasks, 1, 0)
-		if err != nil || len(tasks) == 0 {
+		if err != nil {
 			logger.Errorf("find baseline tasks err:%v", err)
+			continue
+		}
+		if len(tasks) == 0 {
+			logger.Debugf("no finished baseline tasks found for domain %s", domain)
 			continue
 		}
 
@@ -120,8 +124,12 @@ func GetLeakCountsByLevel(e *config.Env, domains []string) (map[string]int32, er
 		var tasks []model.ScanTasks
 		sort := bson.M{"create_tm": -1}
 		err := e.MongoCli.FindSortByLimitAndSkip((&model.ScanTasks{}).CollectName(), taskQuery, sort, &tasks, 1, 0)
-		if err != nil || len(tasks) == 0 {
+		if err != nil {
 			logger.Errorf("find leak tasks err:%v", err)
+			continue
+		}
+		if len(tasks) == 0 {
+			logger.Debugf("no finished leak tasks found for domain %s", domain)
 			continue
 		}
 
@@ -170,8 +178,12 @@ func GetWeakPwdCount(e *config.Env, domains []string) (int32, error) {
 		var tasks []model.ScanTasks
 		sort := bson.M{"create_tm": -1}
 		err := e.MongoCli.FindSortByLimitAndSkip((&model.ScanTasks{}).CollectName(), taskQuery, sort, &tasks, 1, 0)
-		if err != nil || len(tasks) == 0 {
+		if err != nil {
 			logger.Errorf("find weakpwd tasks err:%v", err)
+			continue
+		}
+		if len(tasks) == 0 {
+			logger.Debugf("no finished weakpwd tasks found for domain %s", domain)
 			continue
 		}
 
