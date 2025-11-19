@@ -27,6 +27,12 @@ type BindSrvCfg struct {
 	TaskAddr string `yaml:"TaskAddr"`
 }
 
+type KibanaCfg struct {
+	Address  string `yaml:"Address"`  // Kibana Addr
+	Username string `yaml:"Username"` // Kibana username for auto-login
+	Password string `yaml:"Password"` // Kibana password for auto-login
+}
+
 type RedisCfg struct {
 	URI         string `yaml:"URI"`
 	Active      int    `yaml:"Active"`
@@ -48,6 +54,7 @@ type Config struct {
 	BindSrv     BindSrvCfg `yaml:"BindSrv"`
 	Redis       RedisCfg   `yaml:"Redis"`
 	Mongodb     MongodbCfg `yaml:"Mongodb"`
+	Kibana      KibanaCfg  `yaml:"Kibana"`
 }
 
 type Env struct {
