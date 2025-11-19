@@ -26,4 +26,4 @@ BindSrv:
 Kibana:
   Address: http://ada_kibana:5601/kibana # Kibana URL
   Username: "elastic" # Kibana username for auto-login
-  Password: "XEl44B4p3hFurztFMo38" # Kibana password for auto-login
+  Password: "nX0ZIN0AIfFs5x=fZfuE" # Kibana password for auto-login

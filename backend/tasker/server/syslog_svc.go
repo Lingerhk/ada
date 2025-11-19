@@ -305,6 +305,9 @@ func (s *SyslogServer) stats() {
 	defer res.Body.Close()
 	if res.IsError() {
 		logger.Errorf("[%s] Error health es node", res.Status())
+		infoMap["es_check_stats"] = "red"
+		infoMap["es_error"] = res.Status()
+		_ = s.env.RedisCli.HMSet(ctx, cache.SysStatsInfoKey, infoMap).Err()
 		return
 	}
 	b, err := io.ReadAll(res.Body)
@@ -325,6 +328,7 @@ func (s *SyslogServer) stats() {
 
 	infoMap["es_check_stats"] = healths[0].Status
 	infoMap["es_active_shards"] = healths[0].ActiveShardsPercent
+	infoMap["es_error"] = "" // Clear any previous error
 
 	// curl -u"elastic:nX0ZIN0AIfFs5x=fZfuE" -XGET 'localhost:9200/_cat/nodes?format=json&h=diskAvail,diskTotal,diskUsedPercent,ramPercent,cpu,load_1m,ramCurrent,ramMax'
 	req2 := esapi.CatNodesRequest{Format: "json", H: []string{"diskAvail", "diskUsedPercent", "diskTotal", "ramPercent", "ramMax", "cpu", "load_1m"}}
@@ -336,6 +340,8 @@ func (s *SyslogServer) stats() {
 	defer res2.Body.Close()
 	if res2.IsError() {
 		logger.Errorf("[%s] Error stats es node", res2.Status())
+		infoMap["es_error"] = res2.Status()
+		_ = s.env.RedisCli.HMSet(ctx, cache.SysStatsInfoKey, infoMap).Err()
 		return
 	}
 

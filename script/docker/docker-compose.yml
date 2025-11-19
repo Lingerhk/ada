@@ -17,6 +17,15 @@ services:
       - mongodb_data:/data/db:rw
     ports:
       - "27017:27017/tcp"
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "mongosh --quiet -u root -p XEl44B4p3hFurztFMo38 --eval 'db.runCommand({ ping: 1 }).ok' || exit 1",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 30
 
   ada_redis:
     container_name: "ada_redis"
@@ -32,6 +41,15 @@ services:
     ports:
       - "9091:9091/tcp"
       - "6379:6379/tcp"
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "redis-cli -p 6379 -a 1pa2YgE3jfTbVVpn06CN ping | grep PONG || exit 1",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 30
 
   ada_elasticsearch:
     container_name: "ada_elasticsearch"
@@ -44,7 +62,7 @@ services:
           - ada_elasticsearch
     environment:
       - ES_JAVA_OPTS=-Xms2g -Xmx2g
-      - ELASTIC_PASSWORD=XEl44B4p3hFurztFMo38
+      - ELASTIC_PASSWORD=nX0ZIN0AIfFs5x=fZfuE
       - xpack.security.enabled=true
     mem_limit: 4g
     ulimits:
@@ -59,7 +77,7 @@ services:
       test:
         [
           "CMD-SHELL",
-          "curl -s -u elastic:XEl44B4p3hFurztFMo38 http://localhost:9200/_cluster/health || exit 1",
+          "curl -s -u elastic:nX0ZIN0AIfFs5x=fZfuE http://localhost:9200/_cluster/health || exit 1",
         ]
       interval: 10s
       timeout: 5s
@@ -71,7 +89,7 @@ services:
     networks:
       ada-networks:
     environment:
-      - ELASTIC_PASSWORD=XEl44B4p3hFurztFMo38
+      - ELASTIC_PASSWORD=nX0ZIN0AIfFs5x=fZfuE
       - KIBANA_PASSWORD=HszHApENsYWZXgq9mxOC
     depends_on:
       ada_elasticsearch:
@@ -98,7 +116,7 @@ services:
       test:
         [
           "CMD-SHELL",
-          "curl -s -u elastic:XEl44B4p3hFurztFMo38 http://localhost:5601/api/status || exit 1",
+          "curl -s -u elastic:nX0ZIN0AIfFs5x=fZfuE http://localhost:5601/api/status || exit 1",
         ]
       interval: 10s
       timeout: 5s
@@ -110,7 +128,7 @@ services:
     networks:
       ada-networks:
     environment:
-      - ELASTIC_PASSWORD=XEl44B4p3hFurztFMo38
+      - ELASTIC_PASSWORD=nX0ZIN0AIfFs5x=fZfuE
       - KIBANA_PASSWORD=HszHApENsYWZXgq9mxOC
       - CREATE_DATA_VIEWS=true  # This service only creates data views
       - SKIP_PASSWORD_SETUP=true  # Skip password setup (already done by ada_elasticsearch_setup)
@@ -138,9 +156,21 @@ services:
     environment:
       - GIN_MODE=release
     depends_on:
-      - ada_elasticsearch
-      - ada_redis
-      - ada_mongodb
+      ada_elasticsearch:
+        condition: service_healthy
+      ada_redis:
+        condition: service_healthy
+      ada_mongodb:
+        condition: service_healthy
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "curl -f http://localhost:8801/ping || exit 1",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 30
 
   ada_engine:
     container_name: "ada_engine"
