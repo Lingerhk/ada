@@ -18,7 +18,7 @@ require (
 	github.com/golang/protobuf v1.5.3
 	github.com/google/gopacket v1.1.19
 	github.com/google/uuid v1.6.0
-	github.com/gorilla/websocket v1.5.1
+	github.com/gorilla/websocket v1.5.3
 	github.com/gregdel/pushover v1.3.0
 	github.com/json-iterator/go v1.1.12
 	github.com/kardianos/service v1.2.2
@@ -31,11 +31,12 @@ require (
 	github.com/smartystreets/goconvey v1.8.1
 	github.com/songgao/water v0.0.0-20200317203138-2b4b6d7c09d8
 	github.com/stretchr/testify v1.10.0
+	github.com/vulcand/oxy/v2 v2.0.3
 	github.com/xuri/excelize/v2 v2.8.1
 	go.mongodb.org/mongo-driver v1.13.1
-	golang.org/x/crypto v0.24.0
-	golang.org/x/net v0.25.0
-	golang.org/x/sys v0.21.0
+	golang.org/x/crypto v0.36.0
+	golang.org/x/net v0.37.0
+	golang.org/x/sys v0.31.0
 	golang.org/x/text v0.23.0
 	google.golang.org/grpc v1.60.1
 	google.golang.org/protobuf v1.34.1
