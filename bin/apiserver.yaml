@@ -22,3 +22,8 @@ BindSrv:
   GrpcAddr: 127.0.0.1:8800 # bind grpc service: 127.0.0.1:8800
   HttpAddr: 127.0.0.1:8801 # bind http service: 127.0.0.1:8801
   TaskAddr: 127.0.0.1:8802 # connect to tasker(grpc) addr(127.0.0.1:8802)
+
+Kibana:
+  Address: http://ada_kibana:5601/kibana # Kibana URL
+  Username: "elastic" # Kibana username for auto-login
+  Password: "XEl44B4p3hFurztFMo38" # Kibana password for auto-login
