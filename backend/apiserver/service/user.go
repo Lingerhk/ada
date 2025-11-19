@@ -21,7 +21,6 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-const tokenExpired = 60 * 12 // jwt token expire time in minutes
 const fileMaxSize = 512 * 1024
 const loginErrorExpire = 60 * 5 // 5 minutes for login error tracking
 
@@ -106,7 +105,7 @@ func (s *ADAServiceV2) Login(ctx context.Context, in *v2.LoginReq) (*v2.LoginRep
 	// If the login is successful, reset the error count
 	_ = s.resetLoginErrorCount(ctx, in.Username)
 	// generate jwt-token
-	exp := time.Now().Add(time.Minute * tokenExpired).Unix()
+	exp := time.Now().Add(time.Minute * common.LoginExpired).Unix()
 	token, err := util.GenerateToken(in.Username, user.Role, user.Priv, exp)
 	// Write LastLoginExpireTime
 	_ = s.setLastLoginExpireTime(ctx, in.Username, exp)

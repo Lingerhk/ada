@@ -7,7 +7,8 @@ const (
 
 // login config
 const (
-	LoginErrorCount = 4 //登录错误次数限制
+	LoginErrorCount = 4       //登录错误次数限制
+	LoginExpired    = 60 * 12 // jwt token expire time in minutes
 )
 
 // return status
