@@ -61,6 +61,9 @@ func httpServe(env *config.Env) {
 	h.GET("/lic/info", hh.licenseHandler)
 	h.POST("/lic/update", hh.licenseHandler)
 
+	// handle health check
+	h.GET("/ping", hh.pingHandler)
+
 	// handle static file
 	//h.StaticFS("/static", http.FS(frontend)) // http.FileServer(http.FS(frontend))) // TODO: 等前端打包好后开启次route path
 
@@ -79,6 +82,10 @@ func httpServe(env *config.Env) {
 
 type httpHandle struct {
 	env *config.Env
+}
+
+func (h *httpHandle) pingHandler(c *gin.Context) {
+	c.JSON(http.StatusOK, gin.H{"code": 0, "message": "pong"})
 }
 
 func (h *httpHandle) genSession(c *gin.Context) {
