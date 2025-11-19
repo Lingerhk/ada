@@ -44,11 +44,39 @@ services:
           - ada_elasticsearch
     environment:
       - ES_JAVA_OPTS=-Xms2g -Xmx2g
+      - ELASTIC_PASSWORD=XEl44B4p3hFurztFMo38
+      - xpack.security.enabled=true
     mem_limit: 4g
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
     volumes:
-      - es_data:/bitnami/elasticsearch/data:rw
+      - es_data:/usr/share/elasticsearch/data:rw
     ports:
       - "9200:9200"
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "curl -s -u elastic:XEl44B4p3hFurztFMo38 http://localhost:9200/_cluster/health || exit 1",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+
+  ada_elasticsearch_setup:
+    container_name: "ada_elasticsearch_setup"
+    image: ada_elasticsearch_setup:2.9.1
+    networks:
+      ada-networks:
+    environment:
+      - ELASTIC_PASSWORD=XEl44B4p3hFurztFMo38
+      - KIBANA_PASSWORD=HszHApENsYWZXgq9mxOC
+    depends_on:
+      ada_elasticsearch:
+        condition: service_healthy
+    restart: "no"
 
   ada_kibana:
     container_name: "ada_kibana"
@@ -62,7 +90,34 @@ services:
     ports:
       - "5601:5601"
     depends_on:
-      - ada_elasticsearch
+      ada_elasticsearch:
+        condition: service_healthy
+      ada_elasticsearch_setup:
+        condition: service_completed_successfully
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "curl -s -u elastic:XEl44B4p3hFurztFMo38 http://localhost:5601/api/status || exit 1",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+
+  ada_kibana_setup:
+    container_name: "ada_kibana_setup"
+    image: ada_elasticsearch_setup:2.9.1
+    networks:
+      ada-networks:
+    environment:
+      - ELASTIC_PASSWORD=XEl44B4p3hFurztFMo38
+      - KIBANA_PASSWORD=HszHApENsYWZXgq9mxOC
+      - CREATE_DATA_VIEWS=true  # This service only creates data views
+      - SKIP_PASSWORD_SETUP=true  # Skip password setup (already done by ada_elasticsearch_setup)
+    depends_on:
+      ada_kibana:
+        condition: service_healthy
+    restart: "no"
 
   ada_backend:
     container_name: "ada_backend"

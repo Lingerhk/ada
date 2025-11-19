@@ -94,6 +94,13 @@ build_elasticsearch() {
     cd - || exit
 }
 
+# build elasticsearch-setup
+build_elasticsearch_setup() {
+    cd elasticsearch-setup || exit;
+    docker build --network=host -f Dockerfile -t ada_elasticsearch_setup:${version} .
+    cd - || exit
+}
+
 build_images() {
     case $1 in
     engine)
@@ -123,6 +130,9 @@ build_images() {
     elasticsearch)
         build_elasticsearch
         ;;
+    elasticsearch-setup)
+        build_elasticsearch_setup
+        ;;
     all)
         build_engine
         build_backend
@@ -132,9 +142,10 @@ build_images() {
         build_mongodb
         build_kibana
         build_elasticsearch
+        build_elasticsearch_setup
         ;;
     *)
-        echo "Usage: $0 {engine|backend|scanner|zeek|redis|mongodb|kibana|elasticsearch|all}"
+        echo "Usage: $0 {engine|backend|scanner|zeek|redis|mongodb|kibana|elasticsearch|elasticsearch-setup|all}"
         exit 1
         ;;
     esac
@@ -176,6 +187,10 @@ package_images() {
             docker save -o ada_elasticsearch_${version}.tar ada_elasticsearch:${version}
             ls -l ada_elasticsearch_${version}.tar
             ;;
+        elasticsearch-setup)
+            docker save -o ada_elasticsearch_setup_${version}.tar ada_elasticsearch_setup:${version}
+            ls -l ada_elasticsearch_setup_${version}.tar
+            ;;
         all)
             docker save -o ada_engine_${version}.tar ada_engine:${version}
             docker save -o ada_backend_${version}.tar ada_backend:${version}
@@ -185,7 +200,9 @@ package_images() {
             docker save -o ada_mongodb_${version}.tar ada_mongodb:${version}
             docker save -o ada_kibana_${version}.tar ada_kibana:${version}
             docker save -o ada_elasticsearch_${version}.tar ada_elasticsearch:${version}
+            docker save -o ada_elasticsearch_setup_${version}.tar ada_elasticsearch_setup:${version}
             ls -l ada_elasticsearch_${version}.tar
+            ls -l ada_elasticsearch_setup_${version}.tar
             ls -l ada_engine_${version}.tar
             ls -l ada_backend_${version}.tar
             ls -l ada_scanner_${version}.tar

@@ -1,14 +1,13 @@
-path:
-  data: /bitnami/kibana/data
-pid:
-  file: /opt/bitnami/kibana/tmp/kibana.pid
-server:
-  host: 0.0.0.0
-  port: 5601
-  basePath: "/kibana"
-  rewriteBasePath: true
-elasticsearch:
-  hosts: http://elasticsearch:9200
-  #username: "kibana_system"
-  #password: "nX0ZIN0AIfFs5x=fZfuE"
+# Kibana server configuration
+server.host: "0.0.0.0"
+server.port: 5601
+server.basePath: "/kibana"
+server.rewriteBasePath: true
 
+# Elasticsearch connection
+elasticsearch.hosts: ["http://elasticsearch:9200"]
+elasticsearch.username: "kibana_system"
+elasticsearch.password: "HszHApENsYWZXgq9mxOC"
+
+# Encryption key for saved objects
+xpack.encryptedSavedObjects.encryptionKey: "ada_kibana_encryption_key_min32chars_long"
