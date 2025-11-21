@@ -24,8 +24,10 @@ import (
 
 // DomainSyncTask 同步域控制器、传感器状态
 func (w *Worker) DomainSyncTask() error {
+	lang := w.GetLanguage()
+
 	// 1 同步域状态
-	isSame, err := syncDomainStatus(w)
+	isSame, err := syncDomainStatus(w, lang)
 	if err != nil {
 		logger.Warnf("sync domain status err:%v", err)
 	}
@@ -40,7 +42,7 @@ func (w *Worker) DomainSyncTask() error {
 	return nil
 }
 
-func syncDomainStatus(w *Worker) (bool, error) {
+func syncDomainStatus(w *Worker, lang string) (bool, error) {
 	isSame := true
 
 	domainStatusMap := make(map[string]string)
@@ -57,7 +59,7 @@ func syncDomainStatus(w *Worker) (bool, error) {
 		domainStatusMap[domain.Name] = domain.Status
 		go func() {
 			defer wg.Done()
-			domainStatus, errMsg, dcList := getDomainStatus(w, domain)
+			domainStatus, errMsg, dcList := getDomainStatus(w, domain, lang)
 			if errMsg != "" {
 				logger.Warnf("check domain status failed, Id: %s, error: %+v", domain.ID.Hex(), errMsg)
 			}
@@ -90,10 +92,10 @@ func syncDomainStatus(w *Worker) (bool, error) {
 				name := fmt.Sprintf("%s.%s", domain.DCHostName, domain.Name)
 				lastNotifyKey := fmt.Sprintf("ada:server:notify_ttl_domain_%s", name)
 				if w.env.RedisCli.Exists(ctx, lastNotifyKey).Val() == 0 {
-					title := fmt.Sprintf("%s:%s", common.NotifyMsgTypeDescMap[common.NotifyMsgSystem], "域控制器状态异常")
-					desc := fmt.Sprintf("域控服务器%s状态异常，最后在线时间为%s。", name, lastTm.Format("2006:01:02 15:04:05"))
+					title := fmt.Sprintf("%s:%s", getNotifyMsgTypeDesc(common.NotifyMsgSystem, lang), getI18n("domain_status_abnormal", lang))
+					desc := fmt.Sprintf(getI18n("domain_status_abnormal_desc", lang), name, lastTm.Format("2006:01:02 15:04:05"))
 					params := map[string]string{"last_online_tm": lastTm.Format("2006:01:02 15:04:05"), "dc_hostname": name}
-					err = AddNotify(w.env.MongoCli, title, "domain", desc, params)
+					err = AddNotify(w.env.MongoCli, title, "domain", desc, lang, params)
 					// update domain_last_notify_tm
 					_ = w.env.RedisCli.Set(ctx, lastNotifyKey, "1", 6*time.Hour).Err()
 				}
@@ -105,7 +107,7 @@ func syncDomainStatus(w *Worker) (bool, error) {
 }
 
 // 获取域控制器状态
-func getDomainStatus(w *Worker, domain model.Domain) (string, string, []model.DCList) {
+func getDomainStatus(w *Worker, domain model.Domain, lang string) (string, string, []model.DCList) {
 	dns := domain.LdapConf["dns"]
 	passWord, _ := util.PasswordDecode(domain.LdapConf["password"])
 	userName := domain.LdapConf["user"]
@@ -135,11 +137,11 @@ func getDomainStatus(w *Worker, domain model.Domain) (string, string, []model.DC
 					HasSensor:    false,
 					IsMaster:     false, // TODO: update me
 					FsmoRole:     "",    // TODO: update me
-					ErrMsg:       "LDAP连接失败",
+					ErrMsg:       getI18n("ldap_connect_failed", lang),
 					LastOnlineTm: time.Now(),
 				})
 			}
-			return "error", "获取域DC列表失败", dcList
+			return "error", getI18n("get_domain_dc_list_failed", lang), dcList
 		}
 	}
 
@@ -150,7 +152,7 @@ func getDomainStatus(w *Worker, domain model.Domain) (string, string, []model.DC
 		dc := &DCList[k]
 		timeOut := connDCTimeOut(*dc)
 		dialURL := fmt.Sprintf("ldap://%s.%s", dc.HostName, domain.Name)
-		errMsg := checkLdapConn(dialURL, userName, passWord, dns)
+		errMsg := checkLdapConn(dialURL, userName, passWord, dns, lang)
 		if errMsg == "" {
 			dcStatus = common.DomainStatusRunning
 		}
@@ -168,19 +170,19 @@ func getDomainStatus(w *Worker, domain model.Domain) (string, string, []model.DC
 	return domainStatus, domainErrMsg, DCList
 }
 
-func checkLdapConn(dialURL, userName, passWord, dns string) string {
+func checkLdapConn(dialURL, userName, passWord, dns, lang string) string {
 	_, err := ldap.GetConn(dialURL, userName, passWord, dns)
 	if err != nil {
 		errMsg := ""
 		switch {
 		case ldap3.IsErrorWithCode(err, ldap3.LDAPResultInvalidCredentials):
-			errMsg = "用户名或密码不正确"
+			errMsg = getI18n("invalid_username_or_password", lang)
 		case ldap3.IsErrorWithCode(err, ldap3.ErrorNetwork):
-			errMsg = "ldap地址错误"
+			errMsg = getI18n("ldap_address_error", lang)
 		case ldap3.IsErrorWithCode(err, ldap3.LDAPResultTimeout):
-			errMsg = "连接超时，请检查DNS地址是否正确"
+			errMsg = getI18n("connection_timeout_check_dns", lang)
 		default:
-			errMsg = fmt.Sprintf("未知的错误:%v", err)
+			errMsg = fmt.Sprintf(getI18n("unknown_error", lang), err)
 		}
 
 		return errMsg

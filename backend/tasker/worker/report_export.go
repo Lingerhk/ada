@@ -38,6 +38,8 @@ type weakPwdUserList struct {
 func (w *Worker) ExportReportTask(taskId, typ, params string) error {
 	logger.Debugf("export report task(task_id:%s, type:%s, params:%s) start!", taskId, typ, params)
 
+	lang := w.GetLanguage()
+
 	var fileId string
 	var err error
 	defer func() {
@@ -75,19 +77,19 @@ func (w *Worker) ExportReportTask(taskId, typ, params string) error {
 
 	switch typ {
 	case "alert_event":
-		fileId, err = exportAlertEventReport(w.env.MongoCli, startTime, endTime, domains, levels)
+		fileId, err = exportAlertEventReport(w.env.MongoCli, startTime, endTime, domains, levels, lang)
 	case "alert_activity":
-		fileId, err = exportAlertActivityReport(w.env.MongoCli, startTime, endTime, domains, levels)
+		fileId, err = exportAlertActivityReport(w.env.MongoCli, startTime, endTime, domains, levels, lang)
 	case "baseline":
-		fileId, err = exportBaselineReport(w.env.MongoCli, startTime, endTime, domains, levels)
+		fileId, err = exportBaselineReport(w.env.MongoCli, startTime, endTime, domains, levels, lang)
 	case "leak":
-		fileId, err = exportLeakReport(w.env.MongoCli, startTime, endTime, domains, levels)
+		fileId, err = exportLeakReport(w.env.MongoCli, startTime, endTime, domains, levels, lang)
 	case "weakpwd":
-		fileId, err = exportWeakPwdReport(w.env.MongoCli, startTime, endTime, domains)
+		fileId, err = exportWeakPwdReport(w.env.MongoCli, startTime, endTime, domains, lang)
 	case "audit":
-		fileId, err = exportAuditReport(w.env.MongoCli, startTime, endTime)
+		fileId, err = exportAuditReport(w.env.MongoCli, startTime, endTime, lang)
 	case "system":
-		fileId, err = exportSystemReport(w.env.MongoCli, startTime, endTime)
+		fileId, err = exportSystemReport(w.env.MongoCli, startTime, endTime, lang)
 	}
 	if err != nil {
 		logger.Errorf("export report(type:%s) err:%v", typ, err)
@@ -101,7 +103,7 @@ func (w *Worker) ExportReportTask(taskId, typ, params string) error {
 	return nil
 }
 
-func exportAlertEventReport(mongoCli mongo.DBAdaptor, startTm, endTm time.Time, domains, levels []string) (string, error) {
+func exportAlertEventReport(mongoCli mongo.DBAdaptor, startTm, endTm time.Time, domains, levels []string, lang string) (string, error) {
 	var logList []model.AlertEventESDB
 	tb := (&model.AlertEventESDB{}).CollectName()
 
@@ -148,14 +150,28 @@ func exportAlertEventReport(mongoCli mongo.DBAdaptor, startTm, endTm time.Time, 
 	f := excelize.NewFile()
 	defer f.Close()
 
-	sheet1 := "告警事件"
+	sheet1 := getI18n("report_sheet_alert_event", lang)
 	err = f.SetSheetName("Sheet1", sheet1)
 	if err != nil {
 		return "", err
 	}
 
 	// 写xlsx表头
-	head := []string{"威胁名称", "威胁描述", "所在域控", "Att&ck ID", "风险等级", "规则置信度", "标签", "关键字段", "关联行为ID", "开始时间", "结束时间", "持续时间", "检测时间"}
+	head := []string{
+		getI18n("report_threat_name", lang),
+		getI18n("report_threat_desc", lang),
+		getI18n("report_dc_location", lang),
+		getI18n("report_attck_id", lang),
+		getI18n("report_risk_level", lang),
+		getI18n("report_rule_confidence", lang),
+		getI18n("report_tags", lang),
+		getI18n("report_key_fields", lang),
+		getI18n("report_related_activity_id", lang),
+		getI18n("report_start_time", lang),
+		getI18n("report_end_time", lang),
+		getI18n("report_duration", lang),
+		getI18n("report_detect_time", lang),
+	}
 	cell, err := excelize.CoordinatesToCellName(1, 1)
 	if err != nil {
 		return "", err
@@ -215,7 +231,7 @@ func exportAlertEventReport(mongoCli mongo.DBAdaptor, startTm, endTm time.Time, 
 	return fileId, nil
 }
 
-func exportAlertActivityReport(mongoCli mongo.DBAdaptor, startTm, endTm time.Time, domains, levels []string) (string, error) {
+func exportAlertActivityReport(mongoCli mongo.DBAdaptor, startTm, endTm time.Time, domains, levels []string, lang string) (string, error) {
 	var logList []model.AlertActivityESDB
 	tb := (&model.AlertActivityESDB{}).CollectName()
 
@@ -276,14 +292,25 @@ func exportAlertActivityReport(mongoCli mongo.DBAdaptor, startTm, endTm time.Tim
 	f := excelize.NewFile()
 	defer f.Close()
 
-	sheet1 := "行为侦测事件"
+	sheet1 := getI18n("report_sheet_alert_activity", lang)
 	err = f.SetSheetName("Sheet1", sheet1)
 	if err != nil {
 		return "", err
 	}
 
 	// 写xlsx表头
-	head := []string{"威胁名称", "威胁描述", "所在域控", "Att&ck ID", "风险等级", "规则置信度", "标签", "关键字段", "检测时间", "原始日志"}
+	head := []string{
+		getI18n("report_threat_name", lang),
+		getI18n("report_threat_desc", lang),
+		getI18n("report_dc_location", lang),
+		getI18n("report_attck_id", lang),
+		getI18n("report_risk_level", lang),
+		getI18n("report_rule_confidence", lang),
+		getI18n("report_tags", lang),
+		getI18n("report_key_fields", lang),
+		getI18n("report_detect_time", lang),
+		getI18n("report_raw_log", lang),
+	}
 	cell, err := excelize.CoordinatesToCellName(1, 1)
 	if err != nil {
 		return "", err
@@ -339,7 +366,7 @@ func exportAlertActivityReport(mongoCli mongo.DBAdaptor, startTm, endTm time.Tim
 	return fileId, nil
 }
 
-func exportBaselineReport(mongoCli mongo.DBAdaptor, startTm, endTm time.Time, domains, levels []string) (string, error) {
+func exportBaselineReport(mongoCli mongo.DBAdaptor, startTm, endTm time.Time, domains, levels []string, lang string) (string, error) {
 	baseline, err := getLatestScanRiskTaskByType(mongoCli, "baseline")
 	if err != nil {
 		logger.Errorf("get latest scan risk(type:baseline) task err:%v", err)
@@ -392,14 +419,27 @@ func exportBaselineReport(mongoCli mongo.DBAdaptor, startTm, endTm time.Time, do
 	f := excelize.NewFile()
 	defer f.Close()
 
-	sheet1 := "基线事件"
+	sheet1 := getI18n("report_sheet_baseline", lang)
 	err = f.SetSheetName("Sheet1", sheet1)
 	if err != nil {
 		return "", err
 	}
 
 	// 写xlsx表头
-	head := []string{"基线名称", "显示名称", "所在域", "基线类型", "风险等级", "风险分值", "检测结果", "检测实例数", "更新时间", "描述", "验证说明", "修复建议"}
+	head := []string{
+		getI18n("report_baseline_name", lang),
+		getI18n("report_display_name", lang),
+		getI18n("report_domain", lang),
+		getI18n("report_baseline_type", lang),
+		getI18n("report_risk_level", lang),
+		getI18n("report_risk_score", lang),
+		getI18n("report_detect_result", lang),
+		getI18n("report_instance_count", lang),
+		getI18n("report_update_time", lang),
+		getI18n("report_description", lang),
+		getI18n("report_verify_desc", lang),
+		getI18n("report_suggestion", lang),
+	}
 	cell, err := excelize.CoordinatesToCellName(1, 1)
 	if err != nil {
 		return "", err
@@ -465,7 +505,7 @@ func exportBaselineReport(mongoCli mongo.DBAdaptor, startTm, endTm time.Time, do
 	return fileId, nil
 }
 
-func exportLeakReport(mongoCli mongo.DBAdaptor, startTm, endTm time.Time, domains, levels []string) (string, error) {
+func exportLeakReport(mongoCli mongo.DBAdaptor, startTm, endTm time.Time, domains, levels []string, lang string) (string, error) {
 	leak, err := getLatestScanRiskTaskByType(mongoCli, "leak")
 	if err != nil {
 		logger.Errorf("get latest scan risk(type:leak) task err:%v", err)
@@ -518,14 +558,26 @@ func exportLeakReport(mongoCli mongo.DBAdaptor, startTm, endTm time.Time, domain
 	f := excelize.NewFile()
 	defer f.Close()
 
-	sheet1 := "漏洞事件"
+	sheet1 := getI18n("report_sheet_leak", lang)
 	err = f.SetSheetName("Sheet1", sheet1)
 	if err != nil {
 		return "", err
 	}
 
 	// 写xlsx表头
-	head := []string{"漏洞名称", "显示名称", "所在域", "域控制器", "漏洞类型", "风险等级", "风险分值", "检测结果", "更新时间", "描述", "修复建议"}
+	head := []string{
+		getI18n("report_vuln_name", lang),
+		getI18n("report_display_name", lang),
+		getI18n("report_domain", lang),
+		getI18n("report_dc_name", lang),
+		getI18n("report_vuln_type", lang),
+		getI18n("report_risk_level", lang),
+		getI18n("report_risk_score", lang),
+		getI18n("report_detect_result", lang),
+		getI18n("report_update_time", lang),
+		getI18n("report_description", lang),
+		getI18n("report_suggestion", lang),
+	}
 	cell, err := excelize.CoordinatesToCellName(1, 1)
 	if err != nil {
 		return "", err
@@ -580,7 +632,7 @@ func exportLeakReport(mongoCli mongo.DBAdaptor, startTm, endTm time.Time, domain
 	return fileId, nil
 }
 
-func exportWeakPwdReport(mongoCli mongo.DBAdaptor, startTm, endTm time.Time, domains []string) (string, error) {
+func exportWeakPwdReport(mongoCli mongo.DBAdaptor, startTm, endTm time.Time, domains []string, lang string) (string, error) {
 	weakPwd, err := getLatestScanRiskTaskByType(mongoCli, "weakpwd")
 	if err != nil {
 		logger.Errorf("get latest scan risk(type:weakpwd) task err:%v", err)
@@ -621,14 +673,25 @@ func exportWeakPwdReport(mongoCli mongo.DBAdaptor, startTm, endTm time.Time, dom
 	f := excelize.NewFile()
 	defer f.Close()
 
-	sheet1 := "弱口令事件"
+	sheet1 := getI18n("report_sheet_weakpwd", lang)
 	err = f.SetSheetName("Sheet1", sheet1)
 	if err != nil {
 		return "", err
 	}
 
 	// 写xlsx表头
-	head := []string{"用户名", "SamAccountName", "密码", "密码过期时间", "密码修改时间", "所在域", "用户锁定状态", "更新时间", "描述", "修复建议"}
+	head := []string{
+		getI18n("report_username", lang),
+		"SamAccountName",
+		getI18n("report_password", lang),
+		getI18n("report_pwd_expire_time", lang),
+		getI18n("report_pwd_update_time", lang),
+		getI18n("report_domain", lang),
+		getI18n("report_user_locked", lang),
+		getI18n("report_update_time", lang),
+		getI18n("report_description", lang),
+		getI18n("report_suggestion", lang),
+	}
 	cell, err := excelize.CoordinatesToCellName(1, 1)
 	if err != nil {
 		return "", err
@@ -707,7 +770,7 @@ func exportWeakPwdReport(mongoCli mongo.DBAdaptor, startTm, endTm time.Time, dom
 	return fileId, nil
 }
 
-func exportAuditReport(mongoCli mongo.DBAdaptor, startTm, endTm time.Time) (string, error) {
+func exportAuditReport(mongoCli mongo.DBAdaptor, startTm, endTm time.Time, lang string) (string, error) {
 	var logList []model.AuditLog
 	tb := (&model.AuditLog{}).CollectName()
 
@@ -722,14 +785,21 @@ func exportAuditReport(mongoCli mongo.DBAdaptor, startTm, endTm time.Time) (stri
 	f := excelize.NewFile()
 	defer f.Close()
 
-	sheet1 := "日志审计"
+	sheet1 := getI18n("report_sheet_audit", lang)
 	err = f.SetSheetName("Sheet1", sheet1)
 	if err != nil {
 		return "", err
 	}
 
 	// 写xlsx表头
-	head := []string{"登录用户", "登录IP", "审计事件", "事件属性", "事件结果", "审计时间"}
+	head := []string{
+		getI18n("report_login_user", lang),
+		getI18n("report_login_ip", lang),
+		getI18n("report_audit_event", lang),
+		getI18n("report_event_args", lang),
+		getI18n("report_event_result", lang),
+		getI18n("report_audit_time", lang),
+	}
 	cell, err := excelize.CoordinatesToCellName(1, 1)
 	if err != nil {
 		return "", err
@@ -775,7 +845,7 @@ func exportAuditReport(mongoCli mongo.DBAdaptor, startTm, endTm time.Time) (stri
 	return fileId, nil
 }
 
-func exportSystemReport(mongoCli mongo.DBAdaptor, startTm, endTm time.Time) (string, error) {
+func exportSystemReport(mongoCli mongo.DBAdaptor, startTm, endTm time.Time, lang string) (string, error) {
 	return "", nil
 }
 

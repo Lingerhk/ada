@@ -2,7 +2,7 @@ package common
 
 // 常量定义
 const (
-	ROOT_PATH        = "/home/adadmin"    // 项目根路径
+	ROOT_PATH        = "/home/adadmin"                    // 项目根路径
 	RDX_CRYPT_SECRET = "3a43d7a31b3ca37d9f2e8b5c1a6d4e7f" // redis数据加密密钥 (32 bytes for AES-256)
 )
 
