@@ -28,24 +28,96 @@ import (
 )
 
 const emailTmpl = `<!DOCTYPE html>
-<html lang="en">
+<html lang="{{.lang}}">
 <head>
     <meta charset="UTF-8">
-    <title>{{.head}}通知</title>
+    <title>{{.head}} {{.titleSuffix}}</title>
     <style>
-        span {display: inline-block;}
-        h3 {font-size: 1.17em;font-weight: bold;}
+        body {
+            font-family: "Microsoft YaHei UI", "PingFang SC", "Helvetica Neue", Arial, sans-serif;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        .header {
+            background: linear-gradient(135deg, #1890ff 0%, #096dd9 100%);
+            color: #ffffff;
+            padding: 20px 24px;
+        }
+        .header h2 {
+            margin: 0;
+            font-size: 18px;
+            font-weight: 500;
+        }
+        .header .platform {
+            font-size: 12px;
+            opacity: 0.85;
+            margin-bottom: 8px;
+        }
+        .content {
+            padding: 24px;
+        }
+        .section-title {
+            font-size: 14px;
+            color: #333;
+            font-weight: 500;
+            margin-bottom: 16px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #e8e8e8;
+        }
+        .details-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .details-list li {
+            padding: 10px 0;
+            border-bottom: 1px solid #f0f0f0;
+            font-size: 14px;
+            color: #666;
+        }
+        .details-list li:last-child {
+            border-bottom: none;
+        }
+        .details-list li strong {
+            color: #333;
+            min-width: 80px;
+            display: inline-block;
+        }
+        .footer {
+            background-color: #fafafa;
+            padding: 16px 24px;
+            font-size: 12px;
+            color: #999;
+            text-align: center;
+            border-top: 1px solid #e8e8e8;
+        }
     </style>
 </head>
 <body>
-<font face="Microsoft YaHei UI, Tahoma">安全平台-</font>
-<span><b>{{.head}}通知</b></span>
-<ul>
-    <p>{{.head}}详情:</p>
-	{{.details}}
-    <br>
-</ul>
-<p>更多历史消息请前往消息中心页面查看。</p>
+<div class="container">
+    <div class="header">
+        <div class="platform">ADAegis - {{.platformName}}</div>
+        <h2>{{.head}} {{.titleSuffix}}</h2>
+    </div>
+    <div class="content">
+        <div class="section-title">{{.head}} {{.detailsLabel}}</div>
+        <ul class="details-list">
+            {{.details}}
+        </ul>
+    </div>
+    <div class="footer">
+        {{.footer}}
+    </div>
+</div>
 </body>
 </html>`
 
@@ -84,7 +156,8 @@ func (w *Worker) ThreatNotifyTask() error {
 		return err
 	}
 
-	notifyModule := common.NotifyMsgTypeDescMap[notifyMsg.MsgType]
+	lang := w.GetLanguage()
+	notifyModule := getNotifyMsgTypeDesc(notifyMsg.MsgType, lang)
 	title := fmt.Sprintf("%s:%s", notifyModule, notifyMsg.Title)
 
 	var n model.Notify
@@ -146,7 +219,7 @@ func (w *Worker) ThreatNotifyTask() error {
 
 		switch conf.NotifyType {
 		case "email":
-			err = sendEmailNotify(notifyMsg, conf)
+			err = sendEmailNotify(notifyMsg, conf, lang)
 		case "syslog":
 			err = sendSyslogNotify(msg[1], conf)
 		case "webhook":
@@ -160,7 +233,7 @@ func (w *Worker) ThreatNotifyTask() error {
 	return err
 }
 
-func sendEmailNotify(n notifyInfo, conf model.NotifyConf) error {
+func sendEmailNotify(n notifyInfo, conf model.NotifyConf, lang string) error {
 	host, ok := conf.MetaData["server"]
 	if !ok {
 		logger.Error("parse email.server in metadata failed")
@@ -202,13 +275,13 @@ func sendEmailNotify(n notifyInfo, conf model.NotifyConf) error {
 			delete(n.Params, "rule_id")
 		}
 
-		details += fmt.Sprintf("<li>1.威胁名称: %s</li>\n", n.Title)
-		details += fmt.Sprintf("<li>2.威胁等级: %s</li>\n", common.RiskLevelMap[level])
-		details += fmt.Sprintf("<li>3.威胁类型: %s</li>\n", eventType)
-		details += fmt.Sprintf("<li>4.影响域控: %s</li>\n", dcHostname)
-		details += fmt.Sprintf("<li>5.威胁详情: %v</li>\n", n.Params)
-		details += fmt.Sprintf("<li>6.发生时间: %s</li>\n", time.Unix(startTs, 0).Format(time.RFC3339))
-		details += fmt.Sprintf("<li>7.结束时间: %s</li>\n", time.Unix(endTs, 0).Format(time.RFC3339))
+		details += fmt.Sprintf("<li><strong>%s:</strong> %s</li>\n", getI18n("email_threat_name", lang), n.Title)
+		details += fmt.Sprintf("<li><strong>%s:</strong> %s</li>\n", getI18n("email_threat_level", lang), common.RiskLevelMap[level])
+		details += fmt.Sprintf("<li><strong>%s:</strong> %s</li>\n", getI18n("email_threat_type", lang), eventType)
+		details += fmt.Sprintf("<li><strong>%s:</strong> %s</li>\n", getI18n("email_affected_dc", lang), dcHostname)
+		details += fmt.Sprintf("<li><strong>%s:</strong> %v</li>\n", getI18n("email_threat_details", lang), n.Params)
+		details += fmt.Sprintf("<li><strong>%s:</strong> %s</li>\n", getI18n("email_start_time", lang), time.Unix(startTs, 0).Format(time.RFC3339))
+		details += fmt.Sprintf("<li><strong>%s:</strong> %s</li>\n", getI18n("email_end_time", lang), time.Unix(endTs, 0).Format(time.RFC3339))
 	case common.NotifyMsgBaseline:
 		var subType string
 		if v, ok := n.Params["sub_type"]; ok {
@@ -216,34 +289,46 @@ func sendEmailNotify(n notifyInfo, conf model.NotifyConf) error {
 			delete(n.Params, "sub_type")
 		}
 
-		details += fmt.Sprintf("<li>1.基线名称: %s</li>\n", n.Title)
-		details += fmt.Sprintf("<li>2.基线类型: %s</li>\n", n.EventType)
-		details += fmt.Sprintf("<li>3.基线子类型: %s</li>\n", subType)
-		details += fmt.Sprintf("<li>4.风险等级: %s</li>\n", common.RiskLevelMap[level])
-		details += fmt.Sprintf("<li>5.风险详情: %v</li>\n", n.Params)
-		details += fmt.Sprintf("<li>6.检测时间: %s</li>", time.Unix(n.Timestamp, 0).Format(time.RFC3339))
+		details += fmt.Sprintf("<li><strong>%s:</strong> %s</li>\n", getI18n("email_baseline_name", lang), n.Title)
+		details += fmt.Sprintf("<li><strong>%s:</strong> %s</li>\n", getI18n("email_baseline_type", lang), n.EventType)
+		details += fmt.Sprintf("<li><strong>%s:</strong> %s</li>\n", getI18n("email_baseline_subtype", lang), subType)
+		details += fmt.Sprintf("<li><strong>%s:</strong> %s</li>\n", getI18n("email_risk_level", lang), common.RiskLevelMap[level])
+		details += fmt.Sprintf("<li><strong>%s:</strong> %v</li>\n", getI18n("email_risk_details", lang), n.Params)
+		details += fmt.Sprintf("<li><strong>%s:</strong> %s</li>", getI18n("email_detect_time", lang), time.Unix(n.Timestamp, 0).Format(time.RFC3339))
 	case common.NotifyMsgLeak:
-		details += fmt.Sprintf("<li>1.漏洞名称: %s</li>\n", n.Title)
-		details += fmt.Sprintf("<li>2.漏洞类型: %s</li>\n", n.EventType)
-		details += fmt.Sprintf("<li>3.风险等级: %s</li>\n", common.RiskLevelMap[level])
-		details += fmt.Sprintf("<li>4.漏洞详情: %v</li>\n", n.Params)
-		details += fmt.Sprintf("<li>6.检测时间: %s</li>", time.Unix(n.Timestamp, 0).Format(time.RFC3339))
+		details += fmt.Sprintf("<li><strong>%s:</strong> %s</li>\n", getI18n("email_vuln_name", lang), n.Title)
+		details += fmt.Sprintf("<li><strong>%s:</strong> %s</li>\n", getI18n("email_vuln_type", lang), n.EventType)
+		details += fmt.Sprintf("<li><strong>%s:</strong> %s</li>\n", getI18n("email_risk_level", lang), common.RiskLevelMap[level])
+		details += fmt.Sprintf("<li><strong>%s:</strong> %v</li>\n", getI18n("email_vuln_details", lang), n.Params)
+		details += fmt.Sprintf("<li><strong>%s:</strong> %s</li>", getI18n("email_detect_time", lang), time.Unix(n.Timestamp, 0).Format(time.RFC3339))
 	case common.NotifyMsgSystem:
-		details += fmt.Sprintf("<li>1.消息类型: %s</li>\n", n.Title)
-		details += fmt.Sprintf("<li>2.组件类型: %s</li>\n", n.EventType)
-		details += fmt.Sprintf("<li>3.告警详情: %v</li>\n", n.Params)
-		details += fmt.Sprintf("<li>4.发生时间: %s</li>\n", time.Unix(n.Timestamp, 0).Format(time.RFC3339))
+		details += fmt.Sprintf("<li><strong>%s:</strong> %s</li>\n", getI18n("email_msg_type", lang), n.Title)
+		details += fmt.Sprintf("<li><strong>%s:</strong> %s</li>\n", getI18n("email_component_type", lang), n.EventType)
+		details += fmt.Sprintf("<li><strong>%s:</strong> %v</li>\n", getI18n("email_alert_details", lang), n.Params)
+		details += fmt.Sprintf("<li><strong>%s:</strong> %s</li>\n", getI18n("email_start_time", lang), time.Unix(n.Timestamp, 0).Format(time.RFC3339))
 	}
 
 	buf := new(bytes.Buffer)
-	head := common.NotifyMsgTypeDescMap[n.MsgType]
-	err = t.Execute(buf, map[string]any{"head": head, "details": details})
+	head := getNotifyMsgTypeDesc(n.MsgType, lang)
+	langCode := "zh"
+	if lang == common.LangEn {
+		langCode = "en"
+	}
+	err = t.Execute(buf, map[string]any{
+		"lang":         langCode,
+		"head":         head,
+		"titleSuffix":  getI18n("email_title_suffix", lang),
+		"platformName": getI18n("email_platform_name", lang),
+		"detailsLabel": getI18n("email_details_label", lang),
+		"details":      template.HTML(details),
+		"footer":       getI18n("email_footer", lang),
+	})
 	if err != nil {
 		logger.Errorf("execute email tmpl err:%v", err)
 		return err
 	}
 
-	err = email.SendEmailV2(conf.MetaData, "ADA-System", buf.String())
+	err = email.SendEmailV2(conf.MetaData, "ADAegis-System", buf.String())
 	if err != nil {
 		logger.Infof("send alarm email failed: %v", err)
 		if err.Error() == "550 too many message send today." {
@@ -262,7 +347,7 @@ func sendSyslogNotify(msg string, conf model.NotifyConf) error {
 		return err
 	}
 
-	w, err := syslog.Dial(u.Scheme, u.Host, syslog.LOG_ALERT, "ADA-System")
+	w, err := syslog.Dial(u.Scheme, u.Host, syslog.LOG_ALERT, "ADAegis-System")
 	if err != nil {
 		logger.Errorf("dial syslog err:%v", err)
 		return err
@@ -290,7 +375,7 @@ func sendWebhookNotify(msg string, conf model.NotifyConf, notifyProxy bool, http
 		client = netutil.NewHTTPClient(10)
 	}
 
-	data := []byte(fmt.Sprintf(`"title":"ADA-System","message":"%s"}`, msg))
+	data := fmt.Appendf(nil, `"title":"ADA-System","message":"%s"}`, msg)
 	req, err := http.NewRequest("POST", conf.Endpoint, bytes.NewReader(data))
 	if err != nil {
 		logger.Errorf("webhook http request(%s) err:%v", conf.Endpoint, err)
@@ -335,7 +420,7 @@ func sendWebhookWeixinOrDingtalkNotify(msg string, conf model.NotifyConf, notify
 		client = netutil.NewHTTPClient(10)
 	}
 
-	data := []byte(fmt.Sprintf(`{"msgtype":"text","text":{"content": "%s"}}`, msg))
+	data := fmt.Appendf(nil, `{"msgtype":"text","text":{"content": "%s"}}`, msg)
 	req, err := http.NewRequest("POST", conf.Endpoint, bytes.NewReader(data))
 	if err != nil {
 		logger.Errorf("webhook http request(%s) err:%v", conf.Endpoint, err)

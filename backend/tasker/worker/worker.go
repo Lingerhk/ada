@@ -1,13 +1,17 @@
 package worker
 
 import (
+	"ada/backend/common"
+	"ada/backend/model"
 	"ada/backend/tasker/config"
-	"github.com/RichardKnop/machinery/v2"
-	logger "github.com/sirupsen/logrus"
 	"os"
 	"os/signal"
 	"syscall"
 	"time"
+
+	"github.com/RichardKnop/machinery/v2"
+	logger "github.com/sirupsen/logrus"
+	"go.mongodb.org/mongo-driver/bson"
 )
 
 type Worker struct {
@@ -16,6 +20,16 @@ type Worker struct {
 
 func New(env *config.Env) *Worker {
 	return &Worker{env}
+}
+
+func (w *Worker) GetLanguage() string {
+	// get system language settings
+	var sysInfo model.SystemInfo
+	err, exist := w.env.MongoCli.FindOne(sysInfo.CollectName(), bson.M{}, &sysInfo)
+	if err != nil || !exist {
+		return common.LangEn
+	}
+	return sysInfo.SystemLanguage
 }
 
 type TaskWorker struct {
