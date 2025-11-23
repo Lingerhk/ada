@@ -649,6 +649,36 @@ func (this *TestNotifyConfReply) Validate() error {
 	return nil
 }
 
+var _regex_AddNotifyConfReq_ModuleName = regexp.MustCompile(`alert|baseline|leak|system`)
+var _regex_AddNotifyConfReq_NotifyType = regexp.MustCompile(`syslog|webhook|email`)
+var _regex_AddNotifyConfReq_Enable = regexp.MustCompile(`enable|disable`)
+
+func (this *AddNotifyConfReq) Validate() error {
+	if !_regex_AddNotifyConfReq_ModuleName.MatchString(this.ModuleName) {
+		return github_com_mwitkow_go_proto_validators.FieldError("ModuleName", fmt.Errorf(`value '%v' must be a string conforming to regex "alert|baseline|leak|system"`, this.ModuleName))
+	}
+	if !_regex_AddNotifyConfReq_NotifyType.MatchString(this.NotifyType) {
+		return github_com_mwitkow_go_proto_validators.FieldError("NotifyType", fmt.Errorf(`value '%v' must be a string conforming to regex "syslog|webhook|email"`, this.NotifyType))
+	}
+	if !_regex_AddNotifyConfReq_Enable.MatchString(this.Enable) {
+		return github_com_mwitkow_go_proto_validators.FieldError("Enable", fmt.Errorf(`value '%v' must be a string conforming to regex "enable|disable"`, this.Enable))
+	}
+	// Validation of proto3 map<> fields is unsupported.
+	return nil
+}
+func (this *AddNotifyConfReply) Validate() error {
+	return nil
+}
+func (this *DeleteNotifyConfReq) Validate() error {
+	if this.Id == "" {
+		return github_com_mwitkow_go_proto_validators.FieldError("Id", fmt.Errorf(`value '%v' must not be an empty string`, this.Id))
+	}
+	return nil
+}
+func (this *DeleteNotifyConfReply) Validate() error {
+	return nil
+}
+
 var _regex_ListExportTaskReq_Type = regexp.MustCompile(`all|alert_event|alert_activity|baseline|leak|weakpwd|system|audit`)
 var _regex_ListExportTaskReq_Status = regexp.MustCompile(`all|padding|doing|finish|failed`)
 

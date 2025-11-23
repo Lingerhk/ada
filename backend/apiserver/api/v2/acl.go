@@ -87,7 +87,9 @@ var URLEventMap = map[string]string{
 	"/" + serviceName + "/" + "DeleteAuditLog": "清空审计日志",
 
 	// 通知模块
+	"/" + serviceName + "/" + "AddNotifyConf":    "新增通知配置",
 	"/" + serviceName + "/" + "UpdateNotifyConf": "修改通知配置",
+	"/" + serviceName + "/" + "DeleteNotifyConf": "删除通知配置",
 	"/" + serviceName + "/" + "EnableNotifyConf": "开关通知配置",
 	"/" + serviceName + "/" + "TestNotifyConf":   "测试通知配置",
 	"/" + serviceName + "/" + "UpdateNotify":     "更新通知状态",
@@ -107,6 +109,7 @@ var URLEventMaskingMap = map[string][]string{
 	"/" + serviceName + "/" + "UpdateDomain":       {"password"},
 	"/" + serviceName + "/" + "TestDomain":         {"password"},
 	"/" + serviceName + "/" + "ResetPassword":      {"newPassword"},
+	"/" + serviceName + "/" + "AddNotifyConf":      {"metadata"},
 	"/" + serviceName + "/" + "UpdateNotifyConf":   {"metadata"},
 }
 
@@ -133,7 +136,7 @@ var moduleMap = map[string][]string{
 	},
 	// Notification Configuration
 	"NotifyConf": {
-		"ListNotifyConf", "UpdateNotifyConf", "EnableNotifyConf", "TestNotifyConf",
+		"ListNotifyConf", "AddNotifyConf", "UpdateNotifyConf", "DeleteNotifyConf", "EnableNotifyConf", "TestNotifyConf",
 	},
 	// Export Task Management
 	"ExportTask": {

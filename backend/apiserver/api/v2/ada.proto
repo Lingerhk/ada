@@ -71,7 +71,9 @@ service ADA {
 
   // 告警配置
   rpc ListNotifyConf(ListNotifyConfReq)returns(ListNotifyConfReply) {} // 告警配置列表页
+  rpc AddNotifyConf(AddNotifyConfReq)returns(AddNotifyConfReply) {} // 新增告警配置
   rpc UpdateNotifyConf(UpdateNotifyConfReq)returns(UpdateNotifyConfReply) {} // 编辑告警配置
+  rpc DeleteNotifyConf(DeleteNotifyConfReq)returns(DeleteNotifyConfReply) {} // 删除告警配置
   rpc EnableNotifyConf(EnableNotifyConfReq)returns(EnableNotifyConfReply){} // 开关通知配置
   rpc TestNotifyConf(TestNotifyConfReq)returns(TestNotifyConfReply){} // 测试告警配置
 
@@ -780,6 +782,7 @@ message ListNotifyConfReply{
     string enable = 6; //启用状态， 开启enable 关闭disable
     map<string, string> metadata = 7; // 告警配置信息
     string updateTm = 8; // 修改时间
+    repeated int32 level = 9; // 危险等级
   }
   repeated Details list = 1;
   ModelPage page = 2;
@@ -791,6 +794,7 @@ message UpdateNotifyConfReq {
   string endpoint = 3;
   repeated int32 level = 4; // 危险等级
   map<string, string> metadata = 5; // 都有: alert_interval: 20(str), 可选: email类型: server(str),port(str),username,password,receiver; syslog类型; webhook类型: application_type(weixin/feishu/dingtalk/common)
+  string remark = 6; // 备注
 }
 
 message UpdateNotifyConfReply {
@@ -816,6 +820,29 @@ message TestNotifyConfReq{
 message TestNotifyConfReply{
   string result = 1;// SUCCESS||FAILED
   string msg = 2;
+}
+
+message AddNotifyConfReq{
+  string moduleName = 1 [(validator.field) = {regex: "alert|baseline|leak|system"}]; // 模块类型 alert,baseline,leak,system
+  string notifyType = 2 [(validator.field) = {regex: "syslog|webhook|email"}]; // 通知类型 syslog,webhook,email
+  string endpoint = 3; // 通知目标
+  string enable = 4 [(validator.field) = {regex: "enable|disable"}]; // 启用状态， 开启enable 关闭disable
+  repeated int32 level = 5; // 危险等级
+  map<string, string> metadata = 6; // 配置参数
+  string remark = 7; // 备注
+}
+
+message AddNotifyConfReply{
+  string result = 1;// SUCCESS||FAILED
+  string id = 2; // 新增配置的ID
+}
+
+message DeleteNotifyConfReq{
+  string id = 1 [(validator.field) = {string_not_empty: true}]; // 配置ID
+}
+
+message DeleteNotifyConfReply{
+  string result = 1;// SUCCESS||FAILED
 }
 
 message ListExportTaskReq{
