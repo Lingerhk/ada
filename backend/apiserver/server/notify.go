@@ -121,3 +121,27 @@ func UpdateNotifyConf(e *config.Env, nc *model.NotifyConf) error {
 	}
 	return nil
 }
+
+func AddNotifyConf(e *config.Env, nc *model.NotifyConf) error {
+	nc.ID = primitive.NewObjectID()
+	nc.UpdateTm = time.Now()
+	err := e.MongoCli.Insert(nc.CollectName(), nc)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func DeleteNotifyConf(e *config.Env, id string) error {
+	nc := model.NotifyConf{}
+	Id, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		return err
+	}
+	query := bson.M{"_id": Id}
+	err = e.MongoCli.Remove(nc.CollectName(), &query, false)
+	if err != nil {
+		return err
+	}
+	return nil
+}

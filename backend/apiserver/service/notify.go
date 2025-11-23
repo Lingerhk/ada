@@ -3,6 +3,7 @@ package service
 import (
 	v2 "ada/backend/apiserver/api/v2"
 	"ada/backend/apiserver/server"
+	"ada/backend/model"
 	"ada/infra/email"
 	netutil "ada/infra/net"
 	"bytes"
@@ -90,6 +91,7 @@ func (s *ADAServiceV2) ListNotifyConf(ctx context.Context, in *v2.ListNotifyConf
 			Enable:     nc.Enable,
 			Metadata:   nc.MetaData,
 			UpdateTm:   nc.UpdateTm.String(),
+			Level:      nc.NotifyLevel,
 		})
 	}
 
@@ -119,6 +121,8 @@ func (s *ADAServiceV2) UpdateNotifyConf(ctx context.Context, in *v2.UpdateNotify
 	nc.Enable = in.Enable
 	nc.Endpoint = in.Endpoint
 	nc.MetaData = in.Metadata
+	nc.Remark = in.Remark
+	nc.NotifyLevel = in.Level
 	nc.UpdateTm = time.Now()
 
 	err = server.UpdateNotifyConf(s.env, nc)
@@ -149,6 +153,55 @@ func (s *ADAServiceV2) EnableNotifyConf(ctx context.Context, in *v2.EnableNotify
 	if err != nil {
 		logger.Errorf("update user err:%v", err)
 		return &ret, status.Error(codes.Internal, s.I18n("UpdateFailed"))
+	}
+
+	ret.Result = RESP_SUCCESS
+	return &ret, nil
+}
+
+func (s *ADAServiceV2) AddNotifyConf(ctx context.Context, in *v2.AddNotifyConfReq) (*v2.AddNotifyConfReply, error) {
+	if !s.IsSuper(ctx) {
+		return nil, status.Error(codes.Internal, s.I18n("NoPermission"))
+	}
+
+	ret := v2.AddNotifyConfReply{Result: RESP_FAILED}
+
+	if !checkNotifyMetadata(in.NotifyType, in.Metadata) {
+		return &ret, status.Error(codes.InvalidArgument, s.I18n("InvalidArgument"))
+	}
+
+	nc := &model.NotifyConf{
+		ModuleName:  in.ModuleName,
+		NotifyType:  in.NotifyType,
+		Endpoint:    in.Endpoint,
+		Enable:      in.Enable,
+		MetaData:    in.Metadata,
+		NotifyLevel: in.Level,
+		Remark:      in.Remark,
+	}
+
+	err := server.AddNotifyConf(s.env, nc)
+	if err != nil {
+		logger.Errorf("AddNotifyConf err:%v", err)
+		return &ret, status.Error(codes.Internal, s.I18n("AddFailed"))
+	}
+
+	ret.Result = RESP_SUCCESS
+	ret.Id = nc.ID.Hex()
+	return &ret, nil
+}
+
+func (s *ADAServiceV2) DeleteNotifyConf(ctx context.Context, in *v2.DeleteNotifyConfReq) (*v2.DeleteNotifyConfReply, error) {
+	if !s.IsSuper(ctx) {
+		return nil, status.Error(codes.Internal, s.I18n("NoPermission"))
+	}
+
+	ret := v2.DeleteNotifyConfReply{Result: RESP_FAILED}
+
+	err := server.DeleteNotifyConf(s.env, in.Id)
+	if err != nil {
+		logger.Errorf("DeleteNotifyConf err:%v", err)
+		return &ret, status.Error(codes.Internal, s.I18n("DeleteFailed"))
 	}
 
 	ret.Result = RESP_SUCCESS
