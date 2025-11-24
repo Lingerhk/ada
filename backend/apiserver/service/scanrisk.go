@@ -380,13 +380,13 @@ func (s *ADAServiceV2) GetScanTask(ctx context.Context, in *v2.GetScanTaskReq) (
 	}
 
 	ret.HeadType = task.Type
-	// 通过task.Type 定义header
+	// 通过task.Type 定义header - using i18n keys for frontend translation
 	if task.Type == "baseline" {
-		ret.HeadField = []string{"ID", "基线名称", "所在域", "基线类型", "风险等级", "影响对象数量", "检测结果", "最后检测时间"}
+		ret.HeadField = []string{"ID", "name", "domain", "subType", "level", "entries", "result", "updateTm"}
 	} else if task.Type == "leak" {
-		ret.HeadField = []string{"ID", "漏洞名称", "所在域", "域控制器", "漏洞类型", "风险等级", "检测结果", "最后检测时间"}
+		ret.HeadField = []string{"ID", "name", "domain", "dcHostname", "subType", "level", "result", "updateTm"}
 	} else if task.Type == "weakpwd" {
-		ret.HeadField = []string{"ID", "用户名", "SAM名称", "密码", "过期时间", "密码修改时间", "用户状态", "所在域", "模版名称", "最后检测时间"}
+		ret.HeadField = []string{"ID", "username", "samName", "password", "expirationTm", "lastUpdateTm", "locked", "domain", "tmplName", "updateTm"}
 	}
 
 	// 再从tb_scan_subtasks表按group_id过滤结果
