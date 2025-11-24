@@ -45,7 +45,7 @@ type RuleMetadata struct {
 type RuleDescriptor struct {
 	Version string         `json:"version"`
 	Flow    []RuleMetadata `json:"flow"`
-	PkgLog  []RuleMetadata `json:"pkglog"`
+	PktLog  []RuleMetadata `json:"pktlog"`
 	WinLog  []RuleMetadata `json:"winlog"`
 }
 
@@ -361,7 +361,7 @@ type RuleUploadInfo struct {
 type RuleUploadDescriptor struct {
 	Version       string           `json:"version"`
 	Flow          []RuleUploadInfo `json:"flow"`
-	PkgLog        []RuleUploadInfo `json:"pkglog"`
+	PktLog        []RuleUploadInfo `json:"pktlog"`
 	WinLog        []RuleUploadInfo `json:"winlog"`
 	ClientVersion string           `json:"client_version,omitempty"`
 	ClientTrait   string           `json:"client_trait,omitempty"`
@@ -390,7 +390,7 @@ func (w *Worker) uploadLocalRules(ctx context.Context, descPath, extractDir, upg
 	for _, meta := range desc.Flow {
 		remoteRules[meta.ID] = meta
 	}
-	for _, meta := range desc.PkgLog {
+	for _, meta := range desc.PktLog {
 		remoteRules[meta.ID] = meta
 	}
 	for _, meta := range desc.WinLog {
@@ -401,7 +401,7 @@ func (w *Worker) uploadLocalRules(ctx context.Context, descPath, extractDir, upg
 	uploadDesc := RuleUploadDescriptor{
 		Version:       fmt.Sprintf("%d", time.Now().Unix()),
 		Flow:          []RuleUploadInfo{},
-		PkgLog:        []RuleUploadInfo{},
+		PktLog:        []RuleUploadInfo{},
 		WinLog:        []RuleUploadInfo{},
 		ClientVersion: version.GetBuildVersion(),
 		ClientTrait:   license.GetTrait(),
@@ -415,23 +415,23 @@ func (w *Worker) uploadLocalRules(ctx context.Context, descPath, extractDir, upg
 		uploadDesc.Flow = flowRules
 	}
 
-	// Check and collect activity rules (winlog/pkglog)
-	winlogRules, pkglogRules, err := w.collectActivityRulesToUpload(ctx, remoteRules)
+	// Check and collect activity rules (winlog/pktlog)
+	winlogRules, pktlogRules, err := w.collectActivityRulesToUpload(ctx, remoteRules)
 	if err != nil {
 		logger.Errorf("Failed to collect activity rules: %v", err)
 	} else {
 		uploadDesc.WinLog = winlogRules
-		uploadDesc.PkgLog = pkglogRules
+		uploadDesc.PktLog = pktlogRules
 	}
 
-	totalRules := len(uploadDesc.Flow) + len(uploadDesc.WinLog) + len(uploadDesc.PkgLog)
+	totalRules := len(uploadDesc.Flow) + len(uploadDesc.WinLog) + len(uploadDesc.PktLog)
 	if totalRules == 0 {
 		logger.Info("No local-only or updated rules found, skipping upload")
 		return nil
 	}
 
-	logger.Infof("Found %d rules to upload (flow: %d, winlog: %d, pkglog: %d)",
-		totalRules, len(uploadDesc.Flow), len(uploadDesc.WinLog), len(uploadDesc.PkgLog))
+	logger.Infof("Found %d rules to upload (flow: %d, winlog: %d, pktlog: %d)",
+		totalRules, len(uploadDesc.Flow), len(uploadDesc.WinLog), len(uploadDesc.PktLog))
 
 	// Create upload package
 	uploadZipPath := filepath.Join(rulesPath, fmt.Sprintf("upload_%s.zip", uploadDesc.Version))
@@ -507,10 +507,10 @@ func (w *Worker) collectFlowRulesToUpload(ctx context.Context, remoteRules map[s
 	return uploadList, nil
 }
 
-// collectActivityRulesToUpload collects activity rules (winlog/pkglog) that need to be uploaded
+// collectActivityRulesToUpload collects activity rules (winlog/pktlog) that need to be uploaded
 func (w *Worker) collectActivityRulesToUpload(ctx context.Context, remoteRules map[string]RuleMetadata) ([]RuleUploadInfo, []RuleUploadInfo, error) {
 	var winlogList []RuleUploadInfo
-	var pkglogList []RuleUploadInfo
+	var pktlogList []RuleUploadInfo
 
 	// Query all activity rules from database
 	var activityRules []model.AlertActivityRule
@@ -562,12 +562,12 @@ func (w *Worker) collectActivityRulesToUpload(ctx context.Context, remoteRules m
 			if strings.Contains(rule.Logsource, "winlog") || strings.Contains(rule.Logsource, "windows") {
 				winlogList = append(winlogList, uploadInfo)
 			} else {
-				pkglogList = append(pkglogList, uploadInfo)
+				pktlogList = append(pktlogList, uploadInfo)
 			}
 		}
 	}
 
-	return winlogList, pkglogList, nil
+	return winlogList, pktlogList, nil
 }
 
 // calculateFileMD5 calculates MD5 hash of a file
@@ -658,7 +658,7 @@ func (w *Worker) extractAndValidateZIP(zipPath, rulesPath string) (string, error
 	requiredPaths := []string{
 		filepath.Join(extractDir, "desc.json"),
 		filepath.Join(extractDir, "flow"),
-		filepath.Join(extractDir, "pkglog"),
+		filepath.Join(extractDir, "pktlog"),
 		filepath.Join(extractDir, "winlog"),
 	}
 
@@ -684,11 +684,11 @@ func (w *Worker) updateRulesFromDescriptor(ctx context.Context, descPath, extrac
 		return fmt.Errorf("failed to parse desc.json: %w", err)
 	}
 
-	// Process rules in order: pkglog, winlog, flow
-	logger.Infof("Processing %d pkglog rules", len(desc.PkgLog))
-	for _, meta := range desc.PkgLog {
-		if err := w.updateActivityRule(ctx, meta, filepath.Join(extractDir, "pkglog"), common.RuleTypePktLog); err != nil {
-			logger.Errorf("Failed to update pkglog rule %s: %v", meta.ID, err)
+	// Process rules in order: pktlog, winlog, flow
+	logger.Infof("Processing %d pktlog rules", len(desc.PktLog))
+	for _, meta := range desc.PktLog {
+		if err := w.updateActivityRule(ctx, meta, filepath.Join(extractDir, "pktlog"), common.RuleTypePktLog); err != nil {
+			logger.Errorf("Failed to update pktlog rule %s: %v", meta.ID, err)
 		}
 	}
 
@@ -709,7 +709,7 @@ func (w *Worker) updateRulesFromDescriptor(ctx context.Context, descPath, extrac
 	return nil
 }
 
-// updateActivityRule updates or inserts an activity rule (winlog/pkglog)
+// updateActivityRule updates or inserts an activity rule (winlog/pktlog)
 func (w *Worker) updateActivityRule(ctx context.Context, meta RuleMetadata, rulesDir, ruleType string) error {
 	// Find the rule file
 	ruleFile, err := w.findRuleFile(meta, rulesDir)
@@ -906,11 +906,11 @@ func (w *Worker) createUploadPackage(ctx context.Context, uploadDesc *RuleUpload
 
 	// Create subdirectories
 	flowDir := filepath.Join(tmpDir, "flow")
-	pkglogDir := filepath.Join(tmpDir, "pkglog")
+	pktlogDir := filepath.Join(tmpDir, "pktlog")
 	winlogDir := filepath.Join(tmpDir, "winlog")
 
 	os.MkdirAll(flowDir, 0755)
-	os.MkdirAll(pkglogDir, 0755)
+	os.MkdirAll(pktlogDir, 0755)
 	os.MkdirAll(winlogDir, 0755)
 
 	// Export flow rules to YAML files
@@ -920,10 +920,10 @@ func (w *Worker) createUploadPackage(ctx context.Context, uploadDesc *RuleUpload
 		}
 	}
 
-	// Export pkglog rules to YAML files
-	for _, ruleInfo := range uploadDesc.PkgLog {
-		if err := w.exportActivityRuleToYAML(ctx, ruleInfo.ID, pkglogDir); err != nil {
-			logger.Errorf("Failed to export pkglog rule %s: %v", ruleInfo.ID, err)
+	// Export pktlog rules to YAML files
+	for _, ruleInfo := range uploadDesc.PktLog {
+		if err := w.exportActivityRuleToYAML(ctx, ruleInfo.ID, pktlogDir); err != nil {
+			logger.Errorf("Failed to export pktlog rule %s: %v", ruleInfo.ID, err)
 		}
 	}
 
