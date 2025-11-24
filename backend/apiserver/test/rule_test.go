@@ -556,8 +556,8 @@ func TestGetAlertTypes(t *testing.T) {
 func TestAddActivityRule(t *testing.T) {
 	Convey("Test AddActivityRule API", t, func() {
 		// Create detection JSON for winlog rule
-		detection := map[string]interface{}{
-			"selection1": map[string]interface{}{
+		detection := map[string]any{
+			"selection1": map[string]any{
 				"EventID":          4625,
 				"LogonType":        3,
 				"LogonProcessName": "NtLmSsp",
@@ -651,10 +651,10 @@ func TestDeleteActivityRule(t *testing.T) {
 func TestActivityRuleWithComplexDetection(t *testing.T) {
 	Convey("Test ActivityRule with complex detection", t, func() {
 		// Flow rule with multiple sigma rules
-		detection := map[string]interface{}{
+		detection := map[string]any{
 			"event_type": "count",
 			"win_size":   "30s",
-			"selection": map[string]interface{}{
+			"selection": map[string]any{
 				"sigma_id": []string{"winlog-0101-0002"},
 				"match_by": "$s1._count >= 5",
 			},

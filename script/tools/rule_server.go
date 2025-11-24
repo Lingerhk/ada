@@ -89,7 +89,7 @@ type Server struct {
 	packageDir     string
 	uploadDir      string           // 上传文件存储目录
 	logDir         string           // 日志文件存储目录
-	logQueue       chan interface{} // 异步日志队列
+	logQueue       chan any // 异步日志队列
 	logWg          sync.WaitGroup   // 等待日志写入完成
 	semaphore      chan struct{}    // 并发控制信号量
 	shutdownCtx    context.Context
@@ -154,7 +154,7 @@ func main() {
 		packageDir:     packageDir,
 		uploadDir:      uploadDir,
 		logDir:         logDir,
-		logQueue:       make(chan interface{}, MaxLogQueueSize),
+		logQueue:       make(chan any, MaxLogQueueSize),
 		semaphore:      make(chan struct{}, maxConcurrent),
 		shutdownCtx:    ctx,
 		shutdownCancel: cancel,
@@ -279,7 +279,7 @@ func (s *Server) asyncLogWriter() {
 		switch entry := logEntry.(type) {
 		case DownloadLog:
 			s.writeDownloadLog(entry)
-		case map[string]interface{}:
+		case map[string]any:
 			if logType, ok := entry["_log_type"].(string); ok {
 				delete(entry, "_log_type")
 				var logPath string
@@ -296,7 +296,7 @@ func (s *Server) asyncLogWriter() {
 
 // writeDownloadLog writes download log entry
 func (s *Server) writeDownloadLog(log DownloadLog) {
-	logEntry := map[string]interface{}{
+	logEntry := map[string]any{
 		"timestamp":      log.Timestamp.Format(time.RFC3339),
 		"remote_ip":      log.RemoteIP,
 		"client_version": log.ClientVersion,
@@ -309,7 +309,7 @@ func (s *Server) writeDownloadLog(log DownloadLog) {
 }
 
 // appendLogSync appends a log entry to file with mutex protection
-func (s *Server) appendLogSync(logPath string, entry map[string]interface{}) error {
+func (s *Server) appendLogSync(logPath string, entry map[string]any) error {
 	s.logFileMutex.Lock()
 	defer s.logFileMutex.Unlock()
 
@@ -501,7 +501,7 @@ func (s *Server) processUploadedPackage(zipPath, remoteAddr string) error {
 				len(uploadDesc.PkgLog))
 
 			// Queue upload log asynchronously
-			logEntry := map[string]interface{}{
+			logEntry := map[string]any{
 				"_log_type":      "upload",
 				"timestamp":      time.Now().Format(time.RFC3339),
 				"remote_ip":      remoteAddr,

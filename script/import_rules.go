@@ -5,7 +5,6 @@ import (
 	"ada/backend/apiserver/server"
 	"ada/backend/model"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"strings"
@@ -25,8 +24,8 @@ type SigmaRule struct {
 	Date         string                 `yaml:"date"`
 	Modified     string                 `yaml:"modified"`
 	Tags         []string               `yaml:"tags"`
-	Logsource    map[string]interface{} `yaml:"logsource"`
-	Detection    map[string]interface{} `yaml:"detection"`
+	Logsource    map[string]any         `yaml:"logsource"`
+	Detection    map[string]any         `yaml:"detection"`
 	Fields       []string               `yaml:"fields"`
 	UniqueFields []string               `yaml:"unique_fields"`
 	RdxKey       string                 `yaml:"rdx_key"`
@@ -50,7 +49,7 @@ func levelToInt(level string) int32 {
 	}
 }
 
-func getLogsource(logsourceMap map[string]interface{}) string {
+func getLogsource(logsourceMap map[string]any) string {
 	if logsourceMap == nil {
 		return ""
 	}
@@ -65,7 +64,7 @@ func getLogsource(logsourceMap map[string]interface{}) string {
 }
 
 func importFlowRules(env *config.Env, rulesDir string) error {
-	files, err := ioutil.ReadDir(rulesDir)
+	files, err := os.ReadDir(rulesDir)
 	if err != nil {
 		return fmt.Errorf("failed to read flow rules directory: %v", err)
 	}
@@ -77,7 +76,7 @@ func importFlowRules(env *config.Env, rulesDir string) error {
 		}
 
 		filePath := filepath.Join(rulesDir, file.Name())
-		data, err := ioutil.ReadFile(filePath)
+		data, err := os.ReadFile(filePath)
 		if err != nil {
 			fmt.Printf("Error reading %s: %v\n", file.Name(), err)
 			continue

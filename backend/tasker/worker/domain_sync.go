@@ -11,7 +11,7 @@ import (
 	"fmt"
 	"net"
 	"net/url"
-	"sort"
+	"slices"
 	"strings"
 	"sync"
 	"time"
@@ -268,17 +268,17 @@ func sliceEqual(oldList, newList []model.DCList) bool {
 	if len(oldList) != len(newList) {
 		return false
 	}
-	sort.Slice(oldList, func(i, j int) bool {
-		return oldList[i].HostName > oldList[j].HostName
+	slices.SortFunc(oldList, func(a, b model.DCList) int {
+		return strings.Compare(b.HostName, a.HostName)
 	})
 
-	sort.Slice(newList, func(i, j int) bool {
-		return newList[i].HostName > newList[j].HostName
+	slices.SortFunc(newList, func(a, b model.DCList) int {
+		return strings.Compare(b.HostName, a.HostName)
 	})
 
 	for k := range oldList {
-		sort.Strings(oldList[k].IPList)
-		sort.Strings(newList[k].IPList)
+		slices.Sort(oldList[k].IPList)
+		slices.Sort(newList[k].IPList)
 
 		oldByte, _ := jsoniter.Marshal(oldList)
 		newByte, _ := jsoniter.Marshal(newList)
@@ -397,12 +397,11 @@ func pinger(ip string) (string, error) {
 	startTime := time.Now()
 	target := fmt.Sprintf("%s:135", ip)
 	conn, err := net.DialTimeout("tcp", target, time.Second*3)
-	endTime := time.Now()
 	if err != nil {
 		return "", err
 	}
 	defer conn.Close()
-	var t = float64(endTime.Sub(startTime)) / float64(time.Millisecond)
+	var t = float64(time.Since(startTime)) / float64(time.Millisecond)
 	return fmt.Sprintf("%4.2fms", t), nil
 }
 
