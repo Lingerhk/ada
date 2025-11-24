@@ -17,28 +17,26 @@ var URLEventMap = map[string]string{
 	"/" + serviceName + "/" + "Login":  "登录",
 	"/" + serviceName + "/" + "Logout": "退出登录",
 
-	//threat威胁检测
+	// 威胁检测
 	"/" + serviceName + "/" + "ActionThreat":          "操作告警事件",
-	"/" + serviceName + "/" + "ActionThreatRule":      "修改告警规则",
-	"/" + serviceName + "/" + "UpdateThreatConf":      "更新告警配置",
 	"/" + serviceName + "/" + "AddSensitiveEntry":     "添加告警敏感条目",
 	"/" + serviceName + "/" + "DeleteSensitiveEntry":  "删除告警敏感条目",
 	"/" + serviceName + "/" + "AddThreatWhitelist":    "添加告警规则白名单",
-	"/" + serviceName + "/" + "DeleteThreatWhitelist": "删除告警规则白名单",
 	"/" + serviceName + "/" + "UpdateThreatWhitelist": "更新告警规则白名单",
+	"/" + serviceName + "/" + "DeleteThreatWhitelist": "删除告警规则白名单",
 	"/" + serviceName + "/" + "AddThreatBlock":        "添加威胁阻断",
 	"/" + serviceName + "/" + "UpdateThreatBlock":     "更新威胁阻断",
 	"/" + serviceName + "/" + "DeleteThreatBlock":     "删除威胁阻断",
 
 	// 规则管理
-	"/" + serviceName + "/" + "AddAlertRule":     "添加告警规则",
-	"/" + serviceName + "/" + "UpdateAlertRule":  "更新告警规则",
-	"/" + serviceName + "/" + "DeleteAlertRule":  "删除告警规则",
-	"/" + serviceName + "/" + "AddActivityRule":  "添加活动规则",
+	"/" + serviceName + "/" + "AddAlertRule":      "添加告警规则",
+	"/" + serviceName + "/" + "UpdateAlertRule":   "更新告警规则",
+	"/" + serviceName + "/" + "DeleteAlertRule":   "删除告警规则",
+	"/" + serviceName + "/" + "AddActivityRule":   "添加活动规则",
 	"/" + serviceName + "/" + "UpdateActivityRule": "更新活动规则",
 	"/" + serviceName + "/" + "DeleteActivityRule": "删除活动规则",
 
-	// scanrisk主动检测
+	// 主动检测
 	"/" + serviceName + "/" + "AddScanTask":     "添加扫描任务",
 	"/" + serviceName + "/" + "RecheckScanTask": "执行立即检测任务",
 	"/" + serviceName + "/" + "DeleteScanTask":  "删除扫描任务",
@@ -48,13 +46,13 @@ var URLEventMap = map[string]string{
 	"/" + serviceName + "/" + "DeleteScanTmpl":  "删除扫描模版",
 	"/" + serviceName + "/" + "AddScanTmpl":     "添加扫描模版",
 
-	// 系统管理
-	//域服务器配置
+	// 域服务器配置
 	"/" + serviceName + "/" + "AddDomain":        "添加域配置",
 	"/" + serviceName + "/" + "UpdateDomain":     "修改域配置",
 	"/" + serviceName + "/" + "TestDomain":       "测试域连接",
 	"/" + serviceName + "/" + "DeleteDomain":     "删除域配置",
 	"/" + serviceName + "/" + "UpdateDomainData": "同步域信息",
+	"/" + serviceName + "/" + "DeploySensor":     "部署传感器",
 
 	// 传感器管理
 	"/" + serviceName + "/" + "UpdateSensor":        "更新域控传感器",
@@ -66,25 +64,25 @@ var URLEventMap = map[string]string{
 	"/" + serviceName + "/" + "UpdateUserPassword": "修改密码",
 	"/" + serviceName + "/" + "UpdateUser":         "修改用户信息",
 	"/" + serviceName + "/" + "UpdateAvatar":       "上传头像",
-	"/" + serviceName + "/" + "EnableMfa":          "开启/关闭登录二次校验",
-	"/" + serviceName + "/" + "DisableMfa":         "开启/关闭登录二次校验",
+	"/" + serviceName + "/" + "EnableMfa":          "开启登录二次校验",
+	"/" + serviceName + "/" + "DisableMfa":         "关闭登录二次校验",
 
 	// 子账户管理
 	"/" + serviceName + "/" + "AddUser":       "创建账户",
 	"/" + serviceName + "/" + "DeleteUser":    "删除账户",
 	"/" + serviceName + "/" + "ResetPassword": "重置密码",
 
+	// AccessKey管理
+	"/" + serviceName + "/" + "GenerateAccessKey": "生成AccessKey",
+	"/" + serviceName + "/" + "DeleteAccessKey":   "删除AccessKey",
+
 	// 系统信息
-	"/" + serviceName + "/" + "UpdateProductIcon":    "更新产品Logo",
-	"/" + serviceName + "/" + "UpdateNtpAddress":     "更新NTP地址",
 	"/" + serviceName + "/" + "UpdateSystemLanguage": "修改系统语言",
+	"/" + serviceName + "/" + "UpdateSystemCfg":      "更新系统配置",
+	"/" + serviceName + "/" + "UpdateSystemProxy":    "更新系统代理配置",
 	"/" + serviceName + "/" + "SetSystemStatsCfg":    "更新系统监控配置",
 	"/" + serviceName + "/" + "UpdateLicense":        "更新授权许可",
 	"/" + serviceName + "/" + "NetworkDebug":         "执行网络调试",
-
-	// 日志审计
-	"/" + serviceName + "/" + "ExportAuditLog": "导出审计日志",
-	"/" + serviceName + "/" + "DeleteAuditLog": "清空审计日志",
 
 	// 通知模块
 	"/" + serviceName + "/" + "AddNotifyConf":    "新增通知配置",
@@ -94,7 +92,7 @@ var URLEventMap = map[string]string{
 	"/" + serviceName + "/" + "TestNotifyConf":   "测试通知配置",
 	"/" + serviceName + "/" + "UpdateNotify":     "更新通知状态",
 
-	// 报表报告
+	// 导出任务
 	"/" + serviceName + "/" + "AddExportTask":    "添加导出任务",
 	"/" + serviceName + "/" + "DeleteExportTask": "删除导出任务",
 }
@@ -120,9 +118,14 @@ var moduleMap = map[string][]string{
 		"DeleteUser", "UserExists", "CheckMfa", "EnableMfa", "DisableMfa", "UpdateAvatar",
 		"ResetPassword",
 	},
+	// AccessKey Management
+	"AccessKey": {
+		"ListAccessKey", "GenerateAccessKey", "DeleteAccessKey",
+	},
 	// Domain Management
 	"Domain": {
-		"ListDomain", "AddDomain", "TestDomain", "UpdateDomain", "DeleteDomain", "UpdateDomainData",
+		"ListDomain", "AddDomain", "TestDomain", "UpdateDomain", "DeleteDomain",
+		"UpdateDomainData", "DeploySensor",
 	},
 	// Sensor Management
 	"Sensor": {
@@ -130,13 +133,18 @@ var moduleMap = map[string][]string{
 	},
 	// System Management & Information
 	"System": {
-		"GetSystemInfo", "GetProductIcon", "UpdateProductIcon", "UpdateNtpAddress",
-		"UpdateSystemLanguage", "GetSystemStats", "SetSystemStatsCfg", "GetLicense",
-		"UpdateLicense", "NetworkDebug",
+		"GetSystemInfo", "GetSystemIcon", "UpdateSystemLanguage", "UpdateSystemCfg",
+		"GetSystemProxy", "UpdateSystemProxy", "GetSystemStats", "SetSystemStatsCfg",
+		"GetLicense", "UpdateLicense", "NetworkDebug",
+	},
+	// System Logs
+	"SystemLogs": {
+		"ListSystemLogs",
 	},
 	// Notification Configuration
 	"NotifyConf": {
-		"ListNotifyConf", "AddNotifyConf", "UpdateNotifyConf", "DeleteNotifyConf", "EnableNotifyConf", "TestNotifyConf",
+		"ListNotifyConf", "AddNotifyConf", "UpdateNotifyConf", "DeleteNotifyConf",
+		"EnableNotifyConf", "TestNotifyConf",
 	},
 	// Export Task Management
 	"ExportTask": {
@@ -150,17 +158,24 @@ var moduleMap = map[string][]string{
 	"AuditLog": {
 		"ListAuditLog",
 	},
-	// Threat Detection (Events, Rules, Config, Whitelists, Blocking etc.)
+	// Threat Detection (Events, Whitelists, Blocking, Sensitive Entries)
 	"Threat": {
-		"ListThreat", "GetThreatNames", "ListThreatRule", "ActionThreatRule", "GetThreat",
-		"ActionThreat", "ListActivity", "GetActivityNames", "GetActivity", "ListThreatConf",
-		"UpdateThreatConf", "ListSensitiveEntry", "AddSensitiveEntry", "ListDomainEntry",
-		"DeleteSensitiveEntry", "ListThreatWhitelist", "GetThreatWhitelistField",
+		"ListThreat", "GetThreatNames", "GetThreat", "ActionThreat",
+		"ListActivity", "GetActivityNames", "GetActivity",
+		"ListSensitiveEntry", "AddSensitiveEntry", "ListDomainEntry", "DeleteSensitiveEntry",
+		"ListThreatWhitelist", "GetThreatWhitelistField",
 		"AddThreatWhitelist", "UpdateThreatWhitelist", "DeleteThreatWhitelist",
 		"ListThreatBlock", "AddThreatBlock", "UpdateThreatBlock", "DeleteThreatBlock",
-		"ListAlertRule", "AddAlertRule", "UpdateAlertRule", "DeleteAlertRule", "GetAlertTypes", "GetAlertRuleTags",
-		"ListActivityRule", "GetActivityRule", "AddActivityRule", "UpdateActivityRule", "DeleteActivityRule",
-		"GetActivityRuleFields", "GetActivityRuleUniqueFields",
+	},
+	// Alert Rule Management
+	"AlertRule": {
+		"ListAlertRule", "AddAlertRule", "UpdateAlertRule", "DeleteAlertRule",
+		"GetAlertRuleNames", "GetAlertTypes", "GetAlertRuleTags",
+	},
+	// Activity Rule Management (Sigma Rules)
+	"ActivityRule": {
+		"ListActivityRule", "GetActivityRule", "AddActivityRule", "UpdateActivityRule",
+		"DeleteActivityRule", "GetActivityRuleNames", "GetActivityRuleUniqueFields",
 	},
 	// Threat Detection Dashboard
 	"ThreatDashboard": {
@@ -209,24 +224,27 @@ func moduleMapJoin(modules ...string) string {
 var UserACL = map[string]string{
 	// Manager has access to all modules.
 	common.RoleMgr: moduleMapJoin(
-		"User", "Domain", "Sensor", "System", "NotifyConf", "ExportTask", "Notify",
-		"AuditLog", "Threat", "ThreatDashboard", "ScanRisk", "ScanRiskDashboard",
-		"ScanTask", "ScanConf", "ScanTmpl", "Dashboard",
+		"User", "AccessKey", "Domain", "Sensor", "System", "SystemLogs",
+		"NotifyConf", "ExportTask", "Notify", "AuditLog",
+		"Threat", "AlertRule", "ActivityRule", "ThreatDashboard",
+		"ScanRisk", "ScanRiskDashboard", "ScanTask", "ScanConf", "ScanTmpl",
+		"Dashboard",
 	),
 	// Security role has access to threat/scan related modules, dashboards, audit, notifications, and limited system/user access.
 	common.RoleSec: moduleMapJoin(
-		"Threat", "ThreatDashboard", "ScanRisk", "ScanRiskDashboard", "ScanTask",
-		"ScanConf", "ScanTmpl", "Dashboard", "ExportTask", "Notify",
-		"AuditLog", "System", // System access might need further refinement (read-only?)
-		"Sensor", "Domain", // Sensor/Domain access might need refinement (read-only?)
-		"User", // Assumed personal user access + relevant read operations
+		"User", "AccessKey",
+		"Threat", "AlertRule", "ActivityRule", "ThreatDashboard",
+		"ScanRisk", "ScanRiskDashboard", "ScanTask", "ScanConf", "ScanTmpl",
+		"Dashboard", "ExportTask", "Notify", "AuditLog",
+		"System", "SystemLogs", "Sensor", "Domain",
 	),
 	// Operations role has access to system/sensor/domain management, audit, notifications, dashboard, and personal user access.
 	common.RoleOps: moduleMapJoin(
-		"Domain", "Sensor", "System", "NotifyConf", "ExportTask", "Notify",
-		"Threat", "ThreatDashboard", "ScanRisk", "ScanRiskDashboard", "ScanTask",
-		"ScanConf", "ScanTmpl", "Dashboard", "AuditLog",
-		"User", // Assumed personal user access + relevant read operations
+		"User", "AccessKey", "Domain", "Sensor", "System", "SystemLogs",
+		"NotifyConf", "ExportTask", "Notify", "AuditLog",
+		"Threat", "AlertRule", "ActivityRule", "ThreatDashboard",
+		"ScanRisk", "ScanRiskDashboard", "ScanTask", "ScanConf", "ScanTmpl",
+		"Dashboard",
 	),
 }
 
