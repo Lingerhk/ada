@@ -215,20 +215,20 @@ func (s *ADAServiceV2) TestNotifyConf(ctx context.Context, in *v2.TestNotifyConf
 	switch in.NotifyType {
 	case "syslog":
 		// endpoint: udp://192.168.1.2:514
-		parts := strings.SplitN(in.Endpoint, ":", 2)
-		if len(parts) != 2 {
+		proto, addr, found := strings.Cut(in.Endpoint, ":")
+		if !found {
 			logger.Errorf("invalid endpoint:%s", in.Endpoint)
 			return &ret, nil
 		}
-		if parts[0] != "tcp" && parts[0] != "udp" {
-			logger.Errorf("invalid proto(%s) in endpoint:%s", parts[0], in.Endpoint)
+		if proto != "tcp" && proto != "udp" {
+			logger.Errorf("invalid proto(%s) in endpoint:%s", proto, in.Endpoint)
 			return &ret, nil
 		}
-		if !strings.HasPrefix(parts[1], "//") {
-			logger.Errorf("invalid address(%s) in endpoint:%s", parts[1], in.Endpoint)
+		if !strings.HasPrefix(addr, "//") {
+			logger.Errorf("invalid address(%s) in endpoint:%s", addr, in.Endpoint)
 			return &ret, nil
 		}
-		w, err := syslog.Dial(parts[0], parts[1][2:], syslog.LOG_ALERT, "ADA-System")
+		w, err := syslog.Dial(proto, addr[2:], syslog.LOG_ALERT, "ADA-System")
 		if err != nil {
 			logger.Errorf("init syslog client err:%v", err)
 			return &ret, nil

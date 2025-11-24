@@ -29,7 +29,7 @@ func TestFindAllSystemLogs(t *testing.T) {
 	time3, _ := time.Parse(time.RFC3339, "2025-10-17T14:03:10Z")
 
 	// Insert test logs using the internal structure (time.Time for MongoDB)
-	testLogs := []interface{}{
+	testLogs := []any{
 		bson.M{
 			"time":   time1,
 			"level":  "error",
