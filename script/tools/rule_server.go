@@ -62,7 +62,7 @@ type RuleMetadata struct {
 type RuleDescriptor struct {
 	Version string         `json:"version"`
 	Flow    []RuleMetadata `json:"flow"`
-	PkgLog  []RuleMetadata `json:"pkglog"`
+	PktLog  []RuleMetadata `json:"pktlog"`
 	WinLog  []RuleMetadata `json:"winlog"`
 }
 
@@ -87,14 +87,14 @@ type Server struct {
 	port           int
 	rulesDir       string
 	packageDir     string
-	uploadDir      string           // 上传文件存储目录
-	logDir         string           // 日志文件存储目录
-	logQueue       chan any // 异步日志队列
-	logWg          sync.WaitGroup   // 等待日志写入完成
-	semaphore      chan struct{}    // 并发控制信号量
+	uploadDir      string         // 上传文件存储目录
+	logDir         string         // 日志文件存储目录
+	logQueue       chan any       // 异步日志队列
+	logWg          sync.WaitGroup // 等待日志写入完成
+	semaphore      chan struct{}  // 并发控制信号量
 	shutdownCtx    context.Context
 	shutdownCancel context.CancelFunc
-	logFileMutex   sync.Mutex // 日志文件写入锁
+	logFileMutex   sync.Mutex      // 日志文件写入锁
 	mongoCli       mongo.DBAdaptor // MongoDB client
 	mongoHost      string
 	mongoUser      string
@@ -492,13 +492,13 @@ func (s *Server) processUploadedPackage(zipPath, remoteAddr string) error {
 			}
 
 			// Log upload information
-			logger.Infof("Upload metadata: version=%s, client_version=%s, client_trait=%s, flow=%d, winlog=%d, pkglog=%d",
+			logger.Infof("Upload metadata: version=%s, client_version=%s, client_trait=%s, flow=%d, winlog=%d, pktlog=%d",
 				uploadDesc.Version,
 				uploadDesc.ClientVersion,
 				uploadDesc.ClientTrait,
 				len(uploadDesc.Flow),
 				len(uploadDesc.WinLog),
-				len(uploadDesc.PkgLog))
+				len(uploadDesc.PktLog))
 
 			// Queue upload log asynchronously
 			logEntry := map[string]any{
@@ -511,7 +511,7 @@ func (s *Server) processUploadedPackage(zipPath, remoteAddr string) error {
 				"rules_count": map[string]int{
 					"flow":   len(uploadDesc.Flow),
 					"winlog": len(uploadDesc.WinLog),
-					"pkglog": len(uploadDesc.PkgLog),
+					"pktlog": len(uploadDesc.PktLog),
 				},
 			}
 
@@ -543,29 +543,29 @@ func (s *Server) generateRulePackage() error {
 
 	// Create subdirectories
 	flowDir := filepath.Join(tmpDir, "flow")
-	pkglogDir := filepath.Join(tmpDir, "pkglog")
+	pktlogDir := filepath.Join(tmpDir, "pktlog")
 	winlogDir := filepath.Join(tmpDir, "winlog")
 
 	os.MkdirAll(flowDir, 0755)
-	os.MkdirAll(pkglogDir, 0755)
+	os.MkdirAll(pktlogDir, 0755)
 	os.MkdirAll(winlogDir, 0755)
 
 	// Initialize descriptor
 	descriptor := RuleDescriptor{
 		Version: version,
 		Flow:    make([]RuleMetadata, 0),
-		PkgLog:  make([]RuleMetadata, 0),
+		PktLog:  make([]RuleMetadata, 0),
 		WinLog:  make([]RuleMetadata, 0),
 	}
 
-	// Process flow rules from MongoDB (AlertActivityRule)
-	if err := s.processActivityRulesFromMongoDB(flowDir, &descriptor.Flow); err != nil {
-		logger.Errorf("Failed to process activity rules from MongoDB: %v", err)
+	// Process flow rules from MongoDB (AlertRule)
+	if err := s.processFlowRulesFromMongoDB(flowDir, &descriptor.Flow); err != nil {
+		logger.Errorf("Failed to process flow rules from MongoDB: %v", err)
 	}
 
-	// Process alert rules from MongoDB (AlertRule) - split by logsource
-	if err := s.processAlertRulesFromMongoDB(pkglogDir, winlogDir, &descriptor.PkgLog, &descriptor.WinLog); err != nil {
-		logger.Errorf("Failed to process alert rules from MongoDB: %v", err)
+	// Process activity rules from MongoDB (AlertActivityRule) - split by logsource
+	if err := s.processActivityRulesFromMongoDB(pktlogDir, winlogDir, &descriptor.PktLog, &descriptor.WinLog); err != nil {
+		logger.Errorf("Failed to process activity rules from MongoDB: %v", err)
 	}
 
 	// Generate desc.json
@@ -629,14 +629,14 @@ func (s *Server) generateRulePackage() error {
 	}
 
 	logger.Infof("Generated package: %s (MD5: %s)", packageName+".zip", zipMD5)
-	logger.Infof("Flow rules: %d, Winlog rules: %d, Pkglog rules: %d",
-		len(descriptor.Flow), len(descriptor.WinLog), len(descriptor.PkgLog))
+	logger.Infof("Flow rules: %d, Winlog rules: %d, Pktlog rules: %d",
+		len(descriptor.Flow), len(descriptor.WinLog), len(descriptor.PktLog))
 
 	return nil
 }
 
-// processActivityRulesFromMongoDB processes AlertActivityRule documents from MongoDB
-func (s *Server) processActivityRulesFromMongoDB(dstDir string, metaList *[]RuleMetadata) error {
+// processActivityRulesFromMongoDB processes AlertActivityRule documents from MongoDB and splits them into pktlog/winlog
+func (s *Server) processActivityRulesFromMongoDB(pktlogDir, winlogDir string, pktlogMeta, winlogMeta *[]RuleMetadata) error {
 	var activityRules []model.AlertActivityRule
 
 	// Query all enabled activity rules from MongoDB
@@ -657,6 +657,20 @@ func (s *Server) processActivityRulesFromMongoDB(dstDir string, metaList *[]Rule
 
 		// Generate filename from rule ID
 		filename := fmt.Sprintf("%s.yml", sanitizeFilename(rule.ID))
+
+		// Determine destination directory based on logsource
+		var dstDir string
+		var metaList *[]RuleMetadata
+
+		if strings.Contains(rule.Logsource, "winlog") || strings.Contains(rule.Logsource, "windows") {
+			dstDir = winlogDir
+			metaList = winlogMeta
+		} else {
+			// Default to pktlog for other sources
+			dstDir = pktlogDir
+			metaList = pktlogMeta
+		}
+
 		dstPath := filepath.Join(dstDir, filename)
 
 		// Write YAML file
@@ -684,12 +698,13 @@ func (s *Server) processActivityRulesFromMongoDB(dstDir string, metaList *[]Rule
 		*metaList = append(*metaList, metadata)
 	}
 
-	logger.Infof("Processed %d activity rules to %s", len(*metaList), dstDir)
+	logger.Infof("Processed %d activity rules (%d pktlog, %d winlog)",
+		len(activityRules), len(*pktlogMeta), len(*winlogMeta))
 	return nil
 }
 
-// processAlertRulesFromMongoDB processes AlertRule documents from MongoDB
-func (s *Server) processAlertRulesFromMongoDB(pkglogDir, winlogDir string, pkglogMeta, winlogMeta *[]RuleMetadata) error {
+// processFlowRulesFromMongoDB processes AlertRule documents from MongoDB
+func (s *Server) processFlowRulesFromMongoDB(dstDir string, metaList *[]RuleMetadata) error {
 	var alertRules []model.AlertRule
 
 	// Query all alert rules from MongoDB
@@ -710,20 +725,6 @@ func (s *Server) processAlertRulesFromMongoDB(pkglogDir, winlogDir string, pkglo
 
 		// Generate filename from rule ID
 		filename := fmt.Sprintf("%s.yml", sanitizeFilename(rule.ID))
-
-		// Determine destination directory based on logsource
-		var dstDir string
-		var metaList *[]RuleMetadata
-
-		if rule.Logsource == "windows" {
-			dstDir = winlogDir
-			metaList = winlogMeta
-		} else {
-			// Default to pkglog for other sources
-			dstDir = pkglogDir
-			metaList = pkglogMeta
-		}
-
 		dstPath := filepath.Join(dstDir, filename)
 
 		// Write YAML file
@@ -750,8 +751,7 @@ func (s *Server) processAlertRulesFromMongoDB(pkglogDir, winlogDir string, pkglo
 		*metaList = append(*metaList, metadata)
 	}
 
-	logger.Infof("Processed %d alert rules (%d pkglog, %d winlog)",
-		len(alertRules), len(*pkglogMeta), len(*winlogMeta))
+	logger.Infof("Processed %d flow rules to %s (successful: %d)", len(alertRules), dstDir, len(*metaList))
 	return nil
 }
 
