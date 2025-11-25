@@ -1,7 +1,7 @@
 db = db.getSiblingDB("db_ada");
 
 /** tb_user indexes **/
-/** default user: adaegis/adaegis **/
+/** default user: adaegis/adaegis123 **/
 db.createCollection("tb_user");
 db.getCollection("tb_user").createIndex({ _id: NumberInt(1) });
 db.getCollection("tb_user").insert([
@@ -9,7 +9,7 @@ db.getCollection("tb_user").insert([
         _id: NumberInt(1),
         username: "adaegis",
         password:
-            "$2a$04$/R7xyXXygMOk4.fv9bA11uUG.KN94IjpcOzZbhYkSYEX4pf.BQe.a",
+            "$2a$10$zc.jpq8VpnhZuH1zXsN.su/vzfPaUtJlVM1jCiVvqi0ISCa3kuIqC",
         pass_strength: "low",
         role: "mgr",
         priv: NumberInt(1),

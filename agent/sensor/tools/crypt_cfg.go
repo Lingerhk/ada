@@ -12,18 +12,26 @@ var (
 	confFile    string
 	confEncFile string
 	cfgEncKey   string
-	operation   string // "enc	" or "dec"
+	operation   string // "enc" or "dec"
 )
 
 func init() {
 	flag.StringVar(&confFile, "f", "sensor.yaml", "config file")
 	flag.StringVar(&confEncFile, "e", "sensor.cfg", "encrypted config file")
-	flag.StringVar(&cfgEncKey, "k", "adcc368715ce1bd2", "encryption key")
+	// Key must be 16, 24, or 32 bytes for AES-128, AES-192, or AES-256
+	flag.StringVar(&cfgEncKey, "k", "adcc368715ce1bd5adcc368785ce1bd2", "encryption key (32 bytes for AES-256-GCM)")
 	flag.StringVar(&operation, "crypt", "enc", "operation to perform: 'enc' or 'dec'")
 }
 
 func main() {
 	flag.Parse()
+
+	// Validate key length
+	keyLen := len(cfgEncKey)
+	if keyLen != 16 && keyLen != 24 && keyLen != 32 {
+		fmt.Printf("Error: encryption key must be 16, 24, or 32 bytes (got %d bytes)\n", keyLen)
+		os.Exit(1)
+	}
 
 	fmt.Printf("crypt: %s, confFile: %s, confEncFile: %s\n", operation, confFile, confEncFile)
 
@@ -56,8 +64,11 @@ func encryptConfig() error {
 		return fmt.Errorf("failed to read config file %s: %w", confFile, err)
 	}
 
-	aes := crypto.NewAes([]byte(cfgEncKey))
-	fileEncCnt, err := aes.Encrypt(string(fileCnt))
+	aesGCM, err := crypto.NewAesGCM([]byte(cfgEncKey))
+	if err != nil {
+		return fmt.Errorf("failed to create AES-GCM cipher: %w", err)
+	}
+	fileEncCnt, err := aesGCM.Encrypt(string(fileCnt))
 	if err != nil {
 		return fmt.Errorf("failed to encrypt data: %w", err)
 	}
@@ -81,8 +92,12 @@ func decryptConfig() error {
 	if err != nil {
 		return fmt.Errorf("failed to decode base64 data: %w", err)
 	}
-	aes := crypto.NewAes([]byte(cfgEncKey))
-	fileCnt, err := aes.Decrypt(sDec)
+
+	aesGCM, err := crypto.NewAesGCM([]byte(cfgEncKey))
+	if err != nil {
+		return fmt.Errorf("failed to create AES-GCM cipher: %w", err)
+	}
+	fileCnt, err := aesGCM.Decrypt(sDec)
 	if err != nil {
 		return fmt.Errorf("failed to decrypt data: %w", err)
 	}

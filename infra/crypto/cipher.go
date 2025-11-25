@@ -2,9 +2,9 @@ package crypto
 
 import (
 	"crypto/md5"
+	"crypto/rand"
 	"encoding/hex"
-	"math/rand"
-	"time"
+	"math/big"
 )
 
 // MD5String generates MD5 hash and truncates it to specified length.
@@ -18,30 +18,26 @@ func MD5String(key string, length int) string {
 	return result[:length]
 }
 
-// RandString generates a random string of specified length
-// https://colobu.com/2018/09/02/generate-random-string-in-Go/
+// RandString generates a cryptographically secure random string of specified length.
+// Uses crypto/rand for secure random number generation suitable for secrets,
+// API keys, and other security-sensitive operations.
+// This implementation uses rejection sampling via crypto/rand.Int to ensure
+// uniform distribution without modulo bias.
 func RandString(length int) string {
-	const (
-		letterBytes   = "1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
-		letterIdxBits = 6                    // 6 bits to represent a letter index
-		letterIdxMask = 1<<letterIdxBits - 1 // All 1-bits, as many as letterIdxBits
-		letterIdxMax  = 63 / letterIdxBits   // # of letter indices fitting in 63 bits
-	)
+	const letterBytes = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+	letterBytesLen := big.NewInt(int64(len(letterBytes)))
 
-	var src = rand.NewSource(time.Now().UnixNano())
 	b := make([]byte, length)
-
-	// A src.Int63() generates 63 random bits, enough for letterIdxMax characters!
-	for i, cache, remain := length-1, src.Int63(), letterIdxMax; i >= 0; {
-		if remain == 0 {
-			cache, remain = src.Int63(), letterIdxMax
+	for i := range length {
+		// crypto/rand.Int returns a uniform random value in [0, max)
+		// This avoids modulo bias that occurs with simple modulo operation
+		idx, err := rand.Int(rand.Reader, letterBytesLen)
+		if err != nil {
+			// This should never happen on a properly configured system
+			panic("crypto/rand.Int failed: " + err.Error())
 		}
-		if idx := int(cache & letterIdxMask); idx < len(letterBytes) {
-			b[i] = letterBytes[idx]
-			i--
-		}
-		cache >>= letterIdxBits
-		remain--
+		b[i] = letterBytes[idx.Int64()]
 	}
+
 	return string(b)
 }

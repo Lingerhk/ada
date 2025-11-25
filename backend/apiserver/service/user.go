@@ -289,7 +289,7 @@ func (s *ADAServiceV2) UpdateUserPassword(ctx context.Context, in *v2.UpdateUser
 	if len(in.NewPassword) < 8 {
 		return nil, status.Error(codes.Internal, s.I18n("User.PasswordLengthError"))
 	}
-	passwordHash, err := bcrypt.GenerateFromPassword([]byte(in.NewPassword), bcrypt.MinCost)
+	passwordHash, err := bcrypt.GenerateFromPassword([]byte(in.NewPassword), bcrypt.DefaultCost)
 	if err != nil {
 		logger.Errorf("encrypt password err:%v", err)
 		return nil, status.Error(codes.Internal, s.I18n("User.UpdateUserPassword.EncryptPasswordError"))
@@ -388,15 +388,21 @@ func (s *ADAServiceV2) EnableMfa(ctx context.Context, in *v2.EnableMfaReq) (*v2.
 }
 
 func (s *ADAServiceV2) DisableMfa(ctx context.Context, in *v2.DisableMfaReq) (*v2.DisableMfaReply, error) {
-	username := in.Username
+	targetUsername := in.Username
+	currentUser := s.GetUser(ctx)
 
-	if username == "" {
-		return nil, status.Error(codes.Unauthenticated, s.I18n("User.InvalidUsername"))
+	if targetUsername == "" {
+		return nil, status.Error(codes.InvalidArgument, s.I18n("User.InvalidUsername"))
 	}
 
-	user, err := server.GetUser(s.env, username)
+	// Authorization check: users can only disable their own MFA, or admins can disable anyone's
+	if targetUsername != currentUser && !s.IsSuper(ctx) {
+		return nil, status.Error(codes.PermissionDenied, s.I18n("NoPermission"))
+	}
+
+	user, err := server.GetUser(s.env, targetUsername)
 	if err != nil {
-		return nil, status.Error(codes.Unauthenticated, s.I18n("User.InvalidUsername"))
+		return nil, status.Error(codes.NotFound, s.I18n("User.InvalidUsername"))
 	}
 
 	err = server.DisableMfa(s.env, user)
@@ -456,7 +462,7 @@ func (s *ADAServiceV2) ResetPassword(ctx context.Context, in *v2.ResetPasswordRe
 		return nil, status.Error(codes.InvalidArgument, s.I18n("User.PasswordLengthError"))
 	}
 
-	passwordHash, err := bcrypt.GenerateFromPassword([]byte(in.NewPassword), bcrypt.MinCost)
+	passwordHash, err := bcrypt.GenerateFromPassword([]byte(in.NewPassword), bcrypt.DefaultCost)
 	if err != nil {
 		logger.Errorf("encrypt password err:%v", err)
 		return nil, status.Error(codes.Internal, s.I18n("User.UpdateUserPassword.EncryptPasswordError"))
@@ -521,11 +527,16 @@ func (s *ADAServiceV2) ListAccessKey(ctx context.Context, in *v2.ListAccessKeyRe
 }
 
 func (s *ADAServiceV2) GenerateAccessKey(ctx context.Context, in *v2.GenerateAccessKeyReq) (*v2.GenerateAccessKeyReply, error) {
-	username := s.GetUser(ctx)
+	currentUser := s.GetUser(ctx)
 
-	// 如果请求中指定了username，检查权限
+	// Determine target username - if not specified, use current user
 	targetUsername := in.Username
-	if targetUsername != username && !s.IsSuper(ctx) {
+	if targetUsername == "" {
+		targetUsername = currentUser
+	}
+
+	// Authorization check: users can only create keys for themselves, admins can create for anyone
+	if targetUsername != currentUser && !s.IsSuper(ctx) {
 		return nil, status.Error(codes.PermissionDenied, s.I18n("NoPermission"))
 	}
 

@@ -23,7 +23,8 @@ import (
 )
 
 const (
-	cfgEncKey   = "adcc368715ce1bd2"
+	// cfgEncKey must be 16, 24, or 32 bytes for AES-128, AES-192, or AES-256
+	cfgEncKey   = "adcc368715ce1bd5adcc368785ce1bd2" // 32 bytes for AES-256-GCM
 	confFile    = "sensor.yaml"
 	confEncFile = "sensor.cfg"
 )
@@ -210,10 +211,13 @@ func LoadConfig() ([]byte, error) {
 	}
 
 	if cfgEncrypted {
-		aes := crypto.NewAes([]byte(cfgEncKey))
-		fileCnt, err = aes.Decrypt(fileEncCnt)
+		aesGCM, err := crypto.NewAesGCM([]byte(cfgEncKey))
 		if err != nil {
-			return nil, err
+			return nil, fmt.Errorf("failed to create AES-GCM cipher: %w", err)
+		}
+		fileCnt, err = aesGCM.Decrypt(fileEncCnt)
+		if err != nil {
+			return nil, fmt.Errorf("failed to decrypt config: %w", err)
 		}
 		logger.Infof("load configure from %s", confEncFile)
 	} else {
@@ -231,10 +235,13 @@ func WriteConfigFile(setting *Config) error {
 
 	var fileCnt = cfgBytes
 	if cfgEncrypted {
-		aes := crypto.NewAes([]byte(cfgEncKey))
-		fileCnt, err = aes.Encrypt(string(cfgBytes))
+		aesGCM, err := crypto.NewAesGCM([]byte(cfgEncKey))
 		if err != nil {
-			return err
+			return fmt.Errorf("failed to create AES-GCM cipher: %w", err)
+		}
+		fileCnt, err = aesGCM.Encrypt(string(cfgBytes))
+		if err != nil {
+			return fmt.Errorf("failed to encrypt config: %w", err)
 		}
 		fileEncCntB64 := base64.StdEncoding.EncodeToString(fileCnt)
 		return os.WriteFile(confEncFile, []byte(fileEncCntB64), 0644)

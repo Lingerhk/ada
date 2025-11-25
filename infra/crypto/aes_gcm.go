@@ -9,6 +9,7 @@ import (
 )
 
 var (
+	ErrEmptyContent      = errors.New("encrypt plain content empty")
 	ErrInvalidCiphertext = errors.New("invalid ciphertext")
 	ErrInvalidKeySize    = errors.New("invalid key size: must be 16, 24, or 32 bytes")
 )
