@@ -416,32 +416,68 @@ func (s *ADAServiceV2) ListAuditLog(ctx context.Context, in *v2.ListAuditLogReq)
 }
 
 func (s *ADAServiceV2) NetworkDebug(ctx context.Context, in *v2.NetworkDebugReq) (*v2.NetworkDebugReply, error) {
-	//校验提交参数非法
-	// 如果存在特殊字符，抛出异常，防止系统命令执行
-	prohibitedChars := []string{" ", "|", "&", ">", ">>", ";", ",", "^", "*", "$", "%", "/", ".."}
-	if slices.ContainsFunc(prohibitedChars, func(ch string) bool {
-		return strings.Contains(in.Target, ch)
-	}) {
-		return nil, status.Error(codes.InvalidArgument, s.I18n("System.NetworkDebug.InvalidTarget"))
-	}
-	if len(in.Target) > 25 {
+	// Validate target using allowlist approach (only allow valid hostnames, IPs, or IP:port)
+	// This is more secure than blocklist approach
+
+	// Regex patterns for validation
+	// IPv4 address pattern
+	ipv4Pattern := `^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$`
+	// IPv6 address pattern (simplified)
+	ipv6Pattern := `^(?:[0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}$|^::(?:[0-9a-fA-F]{1,4}:){0,6}[0-9a-fA-F]{1,4}$|^(?:[0-9a-fA-F]{1,4}:){1,7}:$`
+	// Hostname pattern (RFC 1123 compliant)
+	hostnamePattern := `^[a-zA-Z0-9]([a-zA-Z0-9\-]{0,61}[a-zA-Z0-9])?(\.[a-zA-Z0-9]([a-zA-Z0-9\-]{0,61}[a-zA-Z0-9])?)*$`
+	// Port pattern (1-65535)
+	portPattern := `^([1-9][0-9]{0,3}|[1-5][0-9]{4}|6[0-4][0-9]{3}|65[0-4][0-9]{2}|655[0-2][0-9]|6553[0-5])$`
+
+	ipv4Regex := regexp.MustCompile(ipv4Pattern)
+	ipv6Regex := regexp.MustCompile(ipv6Pattern)
+	hostnameRegex := regexp.MustCompile(hostnamePattern)
+	portRegex := regexp.MustCompile(portPattern)
+
+	// Length limit
+	if len(in.Target) > 253 { // Max hostname length per RFC
 		return nil, status.Error(codes.InvalidArgument, s.I18n("System.NetworkDebug.TargetTooLong"))
+	}
+
+	// Validate command type
+	validTypes := []string{"ping", "nslookup", "traceroute", "nc"}
+	if !slices.Contains(validTypes, in.Type) {
+		return nil, status.Error(codes.InvalidArgument, s.I18n("System.NetworkDebug.InvalidType"))
 	}
 
 	diagCmd := &cmd.Cmd{}
 	switch in.Type {
-	case "ping":
-		diagCmd = cmd.NewCmd("ping", "-c", "5", in.Target)
-	case "nslookup":
-		diagCmd = cmd.NewCmd("nslookup", in.Target)
-	case "traceroute":
-		diagCmd = cmd.NewCmd("traceroute", "-q", "1", "-m", "10", in.Target)
+	case "ping", "nslookup", "traceroute":
+		// Validate target is a valid IP or hostname
+		if !ipv4Regex.MatchString(in.Target) && !ipv6Regex.MatchString(in.Target) && !hostnameRegex.MatchString(in.Target) {
+			return nil, status.Error(codes.InvalidArgument, s.I18n("System.NetworkDebug.InvalidTarget"))
+		}
+		switch in.Type {
+		case "ping":
+			diagCmd = cmd.NewCmd("ping", "-c", "5", in.Target)
+		case "nslookup":
+			diagCmd = cmd.NewCmd("nslookup", in.Target)
+		case "traceroute":
+			diagCmd = cmd.NewCmd("traceroute", "-q", "1", "-m", "10", in.Target)
+		}
 	case "nc":
-		parts := strings.Split(in.Target, ":")
-		if len(parts) != 2 {
+		// For nc, target must be in format host:port
+		lastColon := strings.LastIndex(in.Target, ":")
+		if lastColon == -1 {
 			return nil, status.Error(codes.InvalidArgument, s.I18n("System.NetworkDebug.NcSyntax"))
 		}
-		diagCmd = cmd.NewCmd("nc", "-vz", "-w", "10", parts[0], parts[1])
+		host := in.Target[:lastColon]
+		port := in.Target[lastColon+1:]
+
+		// Validate host
+		if !ipv4Regex.MatchString(host) && !ipv6Regex.MatchString(host) && !hostnameRegex.MatchString(host) {
+			return nil, status.Error(codes.InvalidArgument, s.I18n("System.NetworkDebug.InvalidTarget"))
+		}
+		// Validate port
+		if !portRegex.MatchString(port) {
+			return nil, status.Error(codes.InvalidArgument, s.I18n("System.NetworkDebug.InvalidPort"))
+		}
+		diagCmd = cmd.NewCmd("nc", "-vz", "-w", "10", host, port)
 	}
 
 	statusChan := diagCmd.Start()

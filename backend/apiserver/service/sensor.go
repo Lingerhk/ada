@@ -11,8 +11,10 @@ import (
 	"context"
 	"fmt"
 	"io"
+	"maps"
 	"os"
 	"path"
+	"regexp"
 	"strings"
 	"time"
 
@@ -144,12 +146,8 @@ func (s *ADAServiceV2) UpdateSensor(ctx context.Context, in *v2.UpdateSensorReq)
 
 	var cfgOpt = make(map[string]string)
 	cfgOpt["bind_net_iface"] = strings.Join(in.BindNetIface, ",")
-	for k, v := range cfgPerfLimitOpt {
-		cfgOpt[k] = v
-	}
-	for k, v := range switchOpt {
-		cfgOpt[k] = v
-	}
+	maps.Copy(cfgOpt, cfgPerfLimitOpt)
+	maps.Copy(cfgOpt, switchOpt)
 
 	err = server.UpdateSensorConf(s.env, in.ID, in.Remark, in.BindNetIface, cfgPerfLimitOpt, switchOpt)
 	if err != nil {
@@ -285,23 +283,53 @@ func (s *ADAServiceV2) CmdSensor(ctx context.Context, in *v2.CmdSensorReq) (*v2.
 }
 
 func (s *ADAServiceV2) DownloadSensor(ctx context.Context, in *v2.DownloadSensorReq) (*v2.DownloadSensorReply, error) {
+	// Validate sensor type to prevent path traversal
+	// Only allow alphanumeric characters and underscore
+	validTypePattern := regexp.MustCompile(`^[a-zA-Z0-9_]+$`)
+	if !validTypePattern.MatchString(in.Type) {
+		logger.Warnf("invalid sensor type: %s", in.Type)
+		return nil, status.Error(codes.InvalidArgument, s.I18n("InvalidArgument"))
+	}
+
 	newVer, err := s.getSensorVersion()
 	if err != nil {
 		logger.Errorf("get latest sensor version err:%v", err)
 		return nil, status.Error(codes.Internal, s.I18n("QueryFailed"))
 	}
 
+	// Validate version format to prevent path traversal
+	// Only allow alphanumeric characters, dots, and hyphens (semver format)
+	validVersionPattern := regexp.MustCompile(`^[a-zA-Z0-9.\-]+$`)
+	if !validVersionPattern.MatchString(newVer) {
+		logger.Warnf("invalid sensor version format: %s", newVer)
+		return nil, status.Error(codes.Internal, s.I18n("GetFailed"))
+	}
+
 	sensorName := fmt.Sprintf("ada_sensor_installer_%s_%s.exe", in.Type, newVer)
-	sensorPath := path.Join(common.ROOT_PATH, "download", "sensor", newVer, sensorName)
-	sensorFile, err := os.Open(sensorPath)
+
+	// Build paths and verify they're within expected directory (defense in depth)
+	baseDir := path.Join(common.ROOT_PATH, "download", "sensor")
+	sensorPath := path.Join(baseDir, newVer, sensorName)
+	newPath := path.Join(baseDir, sensorName)
+
+	// Clean paths and verify they're still within baseDir
+	cleanedSensorPath := path.Clean(sensorPath)
+	cleanedNewPath := path.Clean(newPath)
+	cleanedBaseDir := path.Clean(baseDir)
+
+	if !strings.HasPrefix(cleanedSensorPath, cleanedBaseDir) || !strings.HasPrefix(cleanedNewPath, cleanedBaseDir) {
+		logger.Warnf("path traversal attempt detected: sensorPath=%s, newPath=%s", sensorPath, newPath)
+		return nil, status.Error(codes.InvalidArgument, s.I18n("InvalidArgument"))
+	}
+
+	sensorFile, err := os.Open(cleanedSensorPath)
 	if err != nil {
 		logger.Errorf("sensor not found err:%v", err)
 		return nil, status.Error(codes.Internal, s.I18n("GetFailed"))
 	}
 	defer sensorFile.Close()
 
-	newPath := path.Join(common.ROOT_PATH, "download", "sensor", sensorName)
-	newFile, err := os.Create(newPath)
+	newFile, err := os.Create(cleanedNewPath)
 	if err != nil {
 		logger.Errorf("create file err:%v", err)
 		return nil, status.Error(codes.Internal, s.I18n("GetFailed"))
@@ -396,7 +424,7 @@ func (s *ADAServiceV2) pushCmdSensor(ctx context.Context, cmdMsg sCommon.AdaMess
 	// 同步等待 下发结果
 	taskSucc := false
 	taskKey := fmt.Sprintf("%s_%s", sCommon.SensorCmdRespKey, cmdMsg.TaskID)
-	for i := 0; i < 40; i++ {
+	for range 40 {
 		time.Sleep(1 * time.Second)
 		succ := s.env.RedisCli.HGet(ctx, taskKey, "succeed").Val()
 		if succ == "" {
