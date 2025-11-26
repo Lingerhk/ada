@@ -1523,8 +1523,6 @@ message scanConfDetail{
   string type = 3; // baseline|leak|weakpwd
   bool isEnable = 4; // 启用状态
   int32 cycleType = 5; // 1是day，2是week，3是month
-  int32 rate = 6; // 扫描速率
-  string desc = 7;
   map<string, string> plans = 8; // domain: template_id
   string createTm = 9; // 添加时间
   string updateTm = 10; // 修改时间
@@ -1534,7 +1532,6 @@ message SetScanConfReq{
   string ID = 1; // ID
   bool isEnable = 2; // 启用状态, 若无修改需将原值返回
   int32 cycleType = 3 [(validator.field) = {int_gt: 0, int_lt: 4}]; // 1是day，2是week，3是month, 若无修改需将原值返回
-  int32 rate = 4; // 若无修改需将原值返回
 }
 
 message SetScanConfReply{

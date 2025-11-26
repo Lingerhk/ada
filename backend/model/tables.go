@@ -299,8 +299,6 @@ type ScanConf struct {
 	IsEnable  bool               `bson:"is_enable"`
 	CycleType int32              `bson:"cycle_type"` // 1是day，2是week，3是month
 	RunTime   string             `bson:"run_time"`
-	Rate      int32              `bson:"rate"`
-	Desc      string             `bson:"desc"`
 	Plans     map[string]string  `bson:"plans"` // domain: template_id
 	CreateTm  time.Time          `bson:"create_tm"`
 	UpdateTm  time.Time          `bson:"update_tm"`
