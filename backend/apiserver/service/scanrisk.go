@@ -601,8 +601,6 @@ func (s *ADAServiceV2) ListScanConf(ctx context.Context, in *v2.ListScanConfReq)
 			Type:      cnf.Type,
 			IsEnable:  cnf.IsEnable,
 			CycleType: cnf.CycleType,
-			Rate:      cnf.Rate,
-			Desc:      cnf.Desc,
 			Plans:     cnf.Plans,
 			CreateTm:  cnf.CreateTm.String(),
 			UpdateTm:  cnf.UpdateTm.String(),
@@ -626,7 +624,7 @@ func (s *ADAServiceV2) SetScanConf(ctx context.Context, in *v2.SetScanConfReq) (
 
 	ret := v2.SetScanConfReply{Result: RESP_FAILED}
 
-	updater := bson.M{"is_enable": in.IsEnable, "cycle_type": in.CycleType, "rate": in.Rate, "update_tm": time.Now()}
+	updater := bson.M{"is_enable": in.IsEnable, "cycle_type": in.CycleType, "update_tm": time.Now()}
 	err := server.UpdateScanConf(s.env, in.ID, updater)
 	if err != nil {
 		logger.Errorf("update scan conf err:%v", err)
@@ -651,8 +649,6 @@ func (s *ADAServiceV2) GetScanConf(ctx context.Context, in *v2.GetScanConfReq) (
 			Type:      cnf.Type,
 			IsEnable:  cnf.IsEnable,
 			CycleType: cnf.CycleType,
-			Rate:      cnf.Rate,
-			Desc:      cnf.Desc,
 			Plans:     cnf.Plans,
 			CreateTm:  cnf.CreateTm.String(),
 			UpdateTm:  cnf.UpdateTm.String(),
