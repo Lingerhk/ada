@@ -1,8 +1,8 @@
 package mongo
 
 import (
-	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/v2/bson"
+	"go.mongodb.org/mongo-driver/v2/mongo"
 )
 
 type MongoSession struct {
@@ -173,6 +173,7 @@ func (ms *MongoSession) FindWithSelect(name string, query, selection, result any
 			}
 			return err
 		}
+		return nil
 	}
 
 	return ms.session.DB(ms.dbName).C(name).Find(query).Select(selection).Limit(limit).All(result)

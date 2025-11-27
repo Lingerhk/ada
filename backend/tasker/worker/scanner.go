@@ -9,8 +9,7 @@ import (
 	"encoding/json"
 	"fmt"
 	logger "github.com/sirupsen/logrus"
-	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/v2/bson"
 	"slices"
 )
 
@@ -36,7 +35,7 @@ func (w *Worker) ScannerBaselineTask(domainTmplMap string) error {
 		subTasksTotal := len(sTmpl.Plugins) * len(dtm)
 
 		var st model.ScanTasks
-		st.ID = primitive.NewObjectID()
+		st.ID = bson.NewObjectID()
 		st.Type = "baseline"
 		st.Trigger = "once"
 		st.Status = common.ScanTaskStatusRun
@@ -61,8 +60,8 @@ func (w *Worker) ScannerBaselineTask(domainTmplMap string) error {
 			kwargs["domain"] = dm.Name
 			kwargs["template_id"] = sTmpl.ID.Hex()
 
-			subTask.ID = primitive.NewObjectID()
-			subTask.TaskID = primitive.NewObjectID().Hex()
+			subTask.ID = bson.NewObjectID()
+			subTask.TaskID = bson.NewObjectID().Hex()
 			subTask.GroupID = st.ID.Hex()
 			subTask.Status = common.ScanTaskStatusPend
 			subTask.Params = kwargs
@@ -103,7 +102,7 @@ func (w *Worker) ScannerLeakTask(domainTmplMap string) error {
 		subTasksTotal := len(sTmpl.Plugins) * len(dtm) * len(dm.DCList)
 
 		var st model.ScanTasks
-		st.ID = primitive.NewObjectID()
+		st.ID = bson.NewObjectID()
 		st.Type = "leak"
 		st.Trigger = "once"
 		st.Status = common.ScanTaskStatusRun
@@ -130,8 +129,8 @@ func (w *Worker) ScannerLeakTask(domainTmplMap string) error {
 				kwargs["template_id"] = sTmpl.ID.Hex()
 				kwargs["hostname"] = dc.HostName
 
-				subTask.ID = primitive.NewObjectID()
-				subTask.TaskID = primitive.NewObjectID().Hex()
+				subTask.ID = bson.NewObjectID()
+				subTask.TaskID = bson.NewObjectID().Hex()
 				subTask.GroupID = st.ID.Hex()
 				subTask.Status = common.ScanTaskStatusPend
 				subTask.Params = kwargs
@@ -191,7 +190,7 @@ func (w *Worker) ScannerWeakPwdTask(domainTmplMap string) error {
 		subTasksTotal := len(sTmpl.Plugins) * len(userList)
 
 		var st model.ScanTasks
-		st.ID = primitive.NewObjectID()
+		st.ID = bson.NewObjectID()
 		st.Type = "weakpwd"
 		st.Trigger = "once"
 		st.Status = common.ScanTaskStatusRun
@@ -228,8 +227,8 @@ func (w *Worker) ScannerWeakPwdTask(domainTmplMap string) error {
 				chunk := userList[i:end]
 				kwargs["user_list"] = chunk
 
-				subTask.ID = primitive.NewObjectID()
-				subTask.TaskID = primitive.NewObjectID().Hex()
+				subTask.ID = bson.NewObjectID()
+				subTask.TaskID = bson.NewObjectID().Hex()
 				subTask.GroupID = st.ID.Hex()
 				subTask.Status = common.ScanTaskStatusPend
 				subTask.Params = kwargs
@@ -256,7 +255,7 @@ func (w *Worker) ScannerRecheckTask(scanType, subTaskId string) error {
 	var err error
 	var subTask model.ScanSubTasks
 
-	subTask.ID, err = primitive.ObjectIDFromHex(subTaskId)
+	subTask.ID, err = bson.ObjectIDFromHex(subTaskId)
 	if err != nil {
 		logger.Errorf("invalid subtask_id(%s), err:%v", subTaskId, err)
 		return err
@@ -294,7 +293,7 @@ func (w *Worker) getDomainByName(domain string) (*model.Domain, error) {
 func (w *Worker) getTemplateById(templateId string) (*model.ScanTemplate, error) {
 	var st model.ScanTemplate
 
-	Id, err := primitive.ObjectIDFromHex(templateId)
+	Id, err := bson.ObjectIDFromHex(templateId)
 	if err != nil {
 		return nil, err
 	}

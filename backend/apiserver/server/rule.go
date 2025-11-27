@@ -8,8 +8,7 @@ import (
 	"time"
 
 	logger "github.com/sirupsen/logrus"
-	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/v2/bson"
 )
 
 // Alert Rule (Flow Rules) Operations
@@ -75,7 +74,7 @@ func AddAlertRule(e *config.Env, rule *model.AlertRule) error {
 
 	// Generate ID if empty
 	if rule.ID == "" {
-		rule.ID = primitive.NewObjectID().Hex()
+		rule.ID = bson.NewObjectID().Hex()
 	}
 
 	return e.MongoCli.Insert(tb, rule)

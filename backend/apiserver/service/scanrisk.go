@@ -16,8 +16,7 @@ import (
 	"time"
 
 	logger "github.com/sirupsen/logrus"
-	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/v2/bson"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
@@ -901,7 +900,7 @@ func getPluginMetadata(md map[string]any) map[string]string {
 			metadata[k] = fmt.Sprintf("%f", typedV)
 		case []string:
 			metadata[k] = strings.Join(typedV, "\n")
-		case primitive.A:
+		case bson.A:
 			var parts []string
 			for _, item := range []any(typedV) {
 				parts = append(parts, item.(string))

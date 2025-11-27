@@ -8,7 +8,7 @@ import (
 	"encoding/json"
 	"fmt"
 	logger "github.com/sirupsen/logrus"
-	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/v2/bson"
 	"regexp"
 	"strconv"
 	"strings"
@@ -94,7 +94,7 @@ func (r *Ruleset) storeEvent(ctx context.Context, insId string, fr FlowRule, act
 
 	// 向AlertEventESDB表插入数据
 	aet := model.AlertEventESDB{
-		ID:          primitive.NewObjectID(),
+		ID:          bson.NewObjectID(),
 		Title:       fr.Title,
 		Desc:        fr.Description,
 		FlowId:      fr.ID,

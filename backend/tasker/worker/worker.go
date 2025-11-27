@@ -11,7 +11,7 @@ import (
 
 	"github.com/RichardKnop/machinery/v2"
 	logger "github.com/sirupsen/logrus"
-	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/v2/bson"
 )
 
 type Worker struct {

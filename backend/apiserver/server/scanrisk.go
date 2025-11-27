@@ -7,8 +7,7 @@ import (
 	"time"
 
 	logger "github.com/sirupsen/logrus"
-	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/v2/bson"
 )
 
 func GetLatestTaskByType(e *config.Env, typ string) (*model.ScanTasks, error) {
@@ -126,7 +125,7 @@ func FindLeakListSelect(e *config.Env, groupId string, domains, subTypes []strin
 
 func GetScanSubTaskById(e *config.Env, id string) (*model.ScanSubTasks, error) {
 	sst := model.ScanSubTasks{}
-	Id, err := primitive.ObjectIDFromHex(id)
+	Id, err := bson.ObjectIDFromHex(id)
 	if err != nil {
 		return nil, err
 	}
@@ -185,7 +184,7 @@ func FindScanTasksSelect(e *config.Env, typ, status, cycle, startTm, endTm strin
 
 func GetScanTasksById(e *config.Env, id string) (*model.ScanTasks, error) {
 	st := model.ScanTasks{}
-	Id, err := primitive.ObjectIDFromHex(id)
+	Id, err := bson.ObjectIDFromHex(id)
 	if err != nil {
 		return nil, err
 	}
@@ -210,7 +209,7 @@ func DeleteScanTasks(e *config.Env, Id string) error {
 	}
 
 	st := model.ScanTasks{}
-	objId, err := primitive.ObjectIDFromHex(Id)
+	objId, err := bson.ObjectIDFromHex(Id)
 	if err != nil {
 		return err
 	}
@@ -303,7 +302,7 @@ func FindScanTmplSelect(e *config.Env, typ string, limit, offset int64) ([]model
 
 func GetScanTmplById(e *config.Env, id string) (*model.ScanTemplate, error) {
 	st := model.ScanTemplate{}
-	Id, err := primitive.ObjectIDFromHex(id)
+	Id, err := bson.ObjectIDFromHex(id)
 	if err != nil {
 		return nil, err
 	}
@@ -344,7 +343,7 @@ func AddScanTmpl(e *config.Env, name, typ string, plugins []model.ScanPlugin) er
 
 func UpdateScanTmpl(e *config.Env, id, name string, plugins []model.ScanPlugin) error {
 	st := model.ScanTemplate{}
-	Id, err := primitive.ObjectIDFromHex(id)
+	Id, err := bson.ObjectIDFromHex(id)
 	if err != nil {
 		return err
 	}
@@ -357,7 +356,7 @@ func UpdateScanTmpl(e *config.Env, id, name string, plugins []model.ScanPlugin) 
 
 func GetScanConfById(e *config.Env, id string) (*model.ScanConf, error) {
 	sc := model.ScanConf{}
-	Id, err := primitive.ObjectIDFromHex(id)
+	Id, err := bson.ObjectIDFromHex(id)
 	if err != nil {
 		return nil, err
 	}
@@ -373,7 +372,7 @@ func GetScanConfById(e *config.Env, id string) (*model.ScanConf, error) {
 }
 
 func UpdateScanConf(e *config.Env, id string, updater bson.M) error {
-	Id, err := primitive.ObjectIDFromHex(id)
+	Id, err := bson.ObjectIDFromHex(id)
 	if err != nil {
 		logger.Errorf("obj _id(%s) err: %v", id, err)
 		return err
@@ -485,7 +484,7 @@ func UpdateScanConfByDomainV2(e *config.Env, oldDomain, domain string) error {
 func DeleteScanTmpl(e *config.Env, Id string) error {
 	var st model.ScanTemplate
 
-	objId, err := primitive.ObjectIDFromHex(Id)
+	objId, err := bson.ObjectIDFromHex(Id)
 	if err != nil {
 		return err
 	}

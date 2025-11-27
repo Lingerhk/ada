@@ -21,7 +21,7 @@ import (
 	jsoniter "github.com/json-iterator/go"
 	"github.com/redis/go-redis/v9"
 	logger "github.com/sirupsen/logrus"
-	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/v2/bson"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
@@ -508,7 +508,7 @@ func (s *ADAServiceV2) ThreatTops(ctx context.Context, in *v2.ThreatTopsReq) (*v
 
 	var ret v2.ThreatTopsReply
 	for _, item := range results {
-		// item: primitive.M{\"_id\":\"process creation via command in terminal\", \"count\":34230}
+		// item: bson.M{\"_id\":\"process creation via command in terminal\", \"count\":34230}
 		ret.List = append(ret.List, &v2.ThreatTopsReply_Details{
 			Name:  item["_id"].(string),
 			Total: item["count"].(int32),
@@ -528,7 +528,7 @@ func (s *ADAServiceV2) ThreatTrends(ctx context.Context, in *v2.ThreatTrendsReq)
 
 	var ret v2.ThreatTrendsReply
 	for _, item := range results {
-		// item: primitive.M{\"_id\":\"process creation via command in terminal\", \"count\":34230}
+		// item: bson.M{\"_id\":\"process creation via command in terminal\", \"count\":34230}
 		ret.List = append(ret.List, &v2.ThreatTrendsReply_Item{
 			Ts:    item["_id"].(int64),
 			Total: item["count"].(int32),

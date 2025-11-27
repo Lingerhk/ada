@@ -19,7 +19,7 @@ import (
 	ldap3 "github.com/go-ldap/ldap/v3"
 	jsoniter "github.com/json-iterator/go"
 	logger "github.com/sirupsen/logrus"
-	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/v2/bson"
 )
 
 // DomainSyncTask 同步域控制器、传感器状态

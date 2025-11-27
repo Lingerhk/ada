@@ -2,9 +2,9 @@ package mongo
 
 import (
 	"context"
-	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
+	"go.mongodb.org/mongo-driver/v2/bson"
+	"go.mongodb.org/mongo-driver/v2/mongo"
+	"go.mongodb.org/mongo-driver/v2/mongo/options"
 )
 
 type Collection struct {
@@ -59,10 +59,10 @@ func (c *Collection) Update(selector any, update any, upsert ...bool) error {
 
 	var err error
 
-	opt := options.Update()
+	opt := options.UpdateOne()
 	for _, arg := range upsert {
 		if arg {
-			opt.SetUpsert(arg)
+			opt = opt.SetUpsert(arg)
 		}
 	}
 
@@ -78,10 +78,10 @@ func (c *Collection) UpdateWithResult(selector any, update any, upsert ...bool) 
 		selector = bson.D{}
 	}
 
-	opt := options.Update()
+	opt := options.UpdateOne()
 	for _, arg := range upsert {
 		if arg {
-			opt.SetUpsert(arg)
+			opt = opt.SetUpsert(arg)
 		}
 	}
 
@@ -102,10 +102,10 @@ func (c *Collection) UpdateAll(selector any, update any, upsert ...bool) (*mongo
 
 	var err error
 
-	opt := options.Update()
+	opt := options.UpdateMany()
 	for _, arg := range upsert {
 		if arg {
-			opt.SetUpsert(arg)
+			opt = opt.SetUpsert(arg)
 		}
 	}
 
@@ -164,18 +164,13 @@ func (c *Collection) Drop() error {
 
 // FindAndAutoInc
 func (c *Collection) FindAndAutoInc(name string, filter, update any) (int32, error) {
-	opt := options.FindOneAndUpdateOptions{}
-	opt.SetUpsert(true)
-	opt.SetReturnDocument(options.After)
+	opt := options.FindOneAndUpdate().
+		SetUpsert(true).
+		SetReturnDocument(options.After)
 
-	result := c.collection.FindOneAndUpdate(context.TODO(), filter, update, &opt)
+	result := c.collection.FindOneAndUpdate(context.TODO(), filter, update, opt)
 	if result.Err() != nil && result.Err() != mongo.ErrNoDocuments {
 		return -1, result.Err()
-	}
-
-	data, err := result.DecodeBytes()
-	if err != nil {
-		return -1, err
 	}
 
 	type seqRecord struct {
@@ -183,7 +178,7 @@ func (c *Collection) FindAndAutoInc(name string, filter, update any) (int32, err
 		Seq int32  `bson:"seq"`
 	}
 	var doc seqRecord
-	err = bson.Unmarshal(data, &doc)
+	err := result.Decode(&doc)
 	if err != nil {
 		return -1, err
 	}

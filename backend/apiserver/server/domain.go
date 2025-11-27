@@ -9,8 +9,7 @@ import (
 	"strings"
 
 	logger "github.com/sirupsen/logrus"
-	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/v2/bson"
 )
 
 func GetDomainList(env *config.Env) ([]*model.Domain, error) {
@@ -89,7 +88,7 @@ func GetDomainByName(e *config.Env, domain string) (*model.Domain, error) {
 
 func GetDomainById(e *config.Env, id string) (*model.Domain, error) {
 	var dm model.Domain
-	Id, err := primitive.ObjectIDFromHex(id)
+	Id, err := bson.ObjectIDFromHex(id)
 	if err != nil {
 		return nil, err
 	}
@@ -124,7 +123,7 @@ func UpdateDomain(e *config.Env, id, name, dcHostName, status string, ldapConf m
 	domain.LdapConf = ldapConf
 	domain.DCList = DCList
 	domain.CreateTm = utime.CurTime()
-	Id, err := primitive.ObjectIDFromHex(id)
+	Id, err := bson.ObjectIDFromHex(id)
 	if err != nil {
 		return err
 	}
@@ -137,7 +136,7 @@ func UpdateDomain(e *config.Env, id, name, dcHostName, status string, ldapConf m
 
 func DeleteDomain(e *config.Env, Id string) error {
 	var u model.Domain
-	objId, err := primitive.ObjectIDFromHex(Id)
+	objId, err := bson.ObjectIDFromHex(Id)
 	if err != nil {
 		return err
 	}
@@ -148,7 +147,7 @@ func CheckDomain(env *config.Env, hostname, domainName string) (*model.Domain, e
 	domain := &model.Domain{}
 
 	tb := domain.CollectName()
-	query := bson.D{{Key: "name", Value: primitive.Regex{Pattern: domainName, Options: "i"}}, {Key: "dc_hostname", Value: primitive.Regex{Pattern: hostname, Options: "i"}}}
+	query := bson.D{{Key: "name", Value: bson.Regex{Pattern: domainName, Options: "i"}}, {Key: "dc_hostname", Value: bson.Regex{Pattern: hostname, Options: "i"}}}
 
 	err, _ := env.MongoCli.FindOne(tb, query, &domain)
 	if err != nil {
@@ -200,7 +199,7 @@ func UpdateDCHasSensor(e *config.Env, domainID, dcHostname string, hasSensor boo
 		return fmt.Errorf("DC hostname %s not found in domain", dcHostname)
 	}
 
-	objId, err := primitive.ObjectIDFromHex(domainID)
+	objId, err := bson.ObjectIDFromHex(domainID)
 	if err != nil {
 		return err
 	}

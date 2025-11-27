@@ -82,7 +82,7 @@ func (r *Ruleset) FlowCleaner() {
 			}
 
 			for _, z := range zs {
-				val, err := r.getActivityCache(ctx, z.Member)
+				val, err := r.getActivityCache(ctx, z.Member.(string))
 				if err != nil {
 					logger.Warnf("get instance_cache err:%v, will ignore!", err)
 					continue
@@ -96,16 +96,16 @@ func (r *Ruleset) FlowCleaner() {
 					continue
 				}
 				if currTs-int64(z.Score) > (ttl+10)*1000 {
-					logger.Debugf("clean flow instance(%s) by ttl(%d)", z.Member, ttl)
+					logger.Debugf("clean flow instance(%s) by ttl(%d)", z.Member.(string), ttl)
 
 					// delete zset member first
 					if err := r.redisCli.ZRem(ctx, instancesId, z.Member).Err(); err != nil {
-						logger.Warnf("delete flow instance's member(%s) err:%v", z.Member, err)
+						logger.Warnf("delete flow instance's member(%s) err:%v", z.Member.(string), err)
 						continue
 					}
 
-					if err := r.redisCli.Del(ctx, z.Member).Err(); err != nil {
-						logger.Warnf("delete flow instance's activity by member(%s) err:%v", z.Member, err)
+					if err := r.redisCli.Del(ctx, z.Member.(string)).Err(); err != nil {
+						logger.Warnf("delete flow instance's activity by member(%s) err:%v", z.Member.(string), err)
 						continue
 					}
 				}
@@ -170,7 +170,7 @@ func (r *Ruleset) getFlowActivitiesByWinSize(ctx context.Context, instancesId st
 
 	var activities []flowActivity
 	for _, z := range zs {
-		val, err := r.getActivityCache(ctx, z.Member)
+		val, err := r.getActivityCache(ctx, z.Member.(string))
 		if err != nil {
 			logger.Warnf("get instance_cache err:%v, will ignore!", err)
 			continue
@@ -178,7 +178,7 @@ func (r *Ruleset) getFlowActivitiesByWinSize(ctx context.Context, instancesId st
 
 		activities = append(activities, flowActivity{
 			timestamp:     int64(z.Score),
-			activityId:    z.Member,
+			activityId:    z.Member.(string),
 			activityCache: val,
 		})
 	}

@@ -3,8 +3,7 @@ package server
 import (
 	"ada/backend/apiserver/config"
 	"ada/backend/model"
-	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/v2/bson"
 	"time"
 )
 
@@ -48,7 +47,7 @@ func UpdateNotifyStatus(env *config.Env, IDs []string) error {
 	n := model.Notify{}
 	query := bson.M{}
 	for _, ID := range IDs {
-		Id, err := primitive.ObjectIDFromHex(ID)
+		Id, err := bson.ObjectIDFromHex(ID)
 		if err != nil {
 			return err
 		}
@@ -100,7 +99,7 @@ func FindAllNotifyConf(env *config.Env, moduleType, notifyType []string, target 
 func GetNotifyConf(e *config.Env, id string) (*model.NotifyConf, error) {
 	var s model.NotifyConf
 
-	Id, err := primitive.ObjectIDFromHex(id)
+	Id, err := bson.ObjectIDFromHex(id)
 	if err != nil {
 		return nil, err
 	}
@@ -123,7 +122,7 @@ func UpdateNotifyConf(e *config.Env, nc *model.NotifyConf) error {
 }
 
 func AddNotifyConf(e *config.Env, nc *model.NotifyConf) error {
-	nc.ID = primitive.NewObjectID()
+	nc.ID = bson.NewObjectID()
 	nc.UpdateTm = time.Now()
 	err := e.MongoCli.Insert(nc.CollectName(), nc)
 	if err != nil {
@@ -134,7 +133,7 @@ func AddNotifyConf(e *config.Env, nc *model.NotifyConf) error {
 
 func DeleteNotifyConf(e *config.Env, id string) error {
 	nc := model.NotifyConf{}
-	Id, err := primitive.ObjectIDFromHex(id)
+	Id, err := bson.ObjectIDFromHex(id)
 	if err != nil {
 		return err
 	}

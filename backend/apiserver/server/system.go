@@ -6,8 +6,7 @@ import (
 	utime "ada/infra/time"
 	"time"
 
-	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/v2/bson"
 )
 
 func AddAuditLog(e *config.Env, userName, clientIP, event, eventArgs, eventResult string) error {
@@ -64,7 +63,7 @@ func UpdateLanguage(e *config.Env, lang string) error {
 }
 
 // UpdateSystemCfg updates system configuration including ntp, systemIP, icon, upgradeSrv, and upgradeRule
-func UpdateSystemCfg(e *config.Env, id primitive.ObjectID, ntp, systemIP, file, upgradeSrv, upgradeRule string) error {
+func UpdateSystemCfg(e *config.Env, id bson.ObjectID, ntp, systemIP, file, upgradeSrv, upgradeRule string) error {
 	var sc model.SystemInfo
 
 	// Build update document with non-empty fields

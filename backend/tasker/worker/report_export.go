@@ -14,7 +14,7 @@ import (
 	"github.com/google/uuid"
 	logger "github.com/sirupsen/logrus"
 	"github.com/xuri/excelize/v2"
-	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/v2/bson"
 )
 
 type exportReportParams struct {

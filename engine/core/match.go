@@ -15,7 +15,7 @@ import (
 	"github.com/elastic/go-elasticsearch/v8/esapi"
 	"github.com/redis/go-redis/v9"
 	logger "github.com/sirupsen/logrus"
-	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/v2/bson"
 )
 
 // 并发执行
@@ -191,13 +191,13 @@ func (e *EngineWorker) syncElasticsearch(ctx context.Context, alertBytes []byte)
 	return "", nil
 }
 
-func (e *EngineWorker) syncMongodb(act model.AlertActivityESDB) (primitive.ObjectID, error) {
-	act.ID = primitive.NewObjectID()
+func (e *EngineWorker) syncMongodb(act model.AlertActivityESDB) (bson.ObjectID, error) {
+	act.ID = bson.NewObjectID()
 
 	// 插入单条行为
 	if err := e.mongoCli.Insert(act.CollectName(), act); err != nil {
 		logger.Warnf("insert activity err:%v", err)
-		return primitive.NilObjectID, err
+		return bson.NilObjectID, err
 	}
 
 	return act.ID, nil

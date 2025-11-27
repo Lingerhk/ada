@@ -3,7 +3,7 @@ package model
 import (
 	"time"
 
-	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/v2/bson"
 )
 
 // 用户表
@@ -33,7 +33,7 @@ func (a *User) CollectName() string {
 
 // 日志审计
 type AuditLog struct {
-	ID          primitive.ObjectID `bson:"_id,omitempty"` // ID
+	ID          bson.ObjectID `bson:"_id,omitempty"` // ID
 	Username    string             `bson:"username"`      //登录用户
 	ClientIp    string             `bson:"client_ip"`     //源ip
 	Event       string             `bson:"event"`         //事件
@@ -63,7 +63,7 @@ type DCList struct {
 }
 
 type Domain struct {
-	ID         primitive.ObjectID `bson:"_id,omitempty"` // ID
+	ID         bson.ObjectID `bson:"_id,omitempty"` // ID
 	Name       string             `bson:"name"`          // 域名
 	DCHostName string             `bson:"dc_hostname"`   // 域控DC主机名
 	Status     string             `bson:"status"`        // run|stop|init|error
@@ -79,7 +79,7 @@ func (a *Domain) CollectName() string {
 
 // 系统信息表
 type SystemInfo struct {
-	ID             primitive.ObjectID `bson:"_id,omitempty"`   // ID
+	ID             bson.ObjectID `bson:"_id,omitempty"`   // ID
 	SystemIP       string             `bson:"system_ip"`       // 系统IP
 	SystemName     string             `bson:"system_name"`     // 系统名称
 	SystemIcon     string             `bson:"system_icon"`     // 系统Logo
@@ -100,7 +100,7 @@ func (a *SystemInfo) CollectName() string {
 
 // 消息列表
 type Notify struct {
-	ID        primitive.ObjectID `bson:"_id"`        // ID
+	ID        bson.ObjectID `bson:"_id"`        // ID
 	Title     string             `bson:"title"`      // 标题
 	MsgType   string             `bson:"msg_type"`   // 消息 扫描Scanner 告警事件Alert 系统消息System
 	EventType string             `bson:"event_type"` // 事件类型
@@ -116,7 +116,7 @@ func (n *Notify) CollectName() string {
 
 // NotifyConf 通知模块配置
 type NotifyConf struct {
-	ID          primitive.ObjectID `bson:"_id,omitempty"` // 主键ID
+	ID          bson.ObjectID `bson:"_id,omitempty"` // 主键ID
 	ModuleName  string             `bson:"module_name"`   // alert,baseline,leak,system
 	NotifyType  string             `bson:"notify_type"`   // syslog,webhook,email
 	Endpoint    string             `bson:"endpoint"`      // 通知目标
@@ -212,7 +212,7 @@ func (a *ScanPlugin) CollectName() string {
 
 // ScanTemplate 原来的扫描模板
 type ScanTemplate struct {
-	ID       primitive.ObjectID `bson:"_id,omitempty"`
+	ID       bson.ObjectID `bson:"_id,omitempty"`
 	Name     string             `bson:"name"`
 	Type     string             `bson:"type"`      // baseline|leak|weakpwd
 	Plugins  []ScanPlugin       `bson:"plugins"`   //
@@ -227,7 +227,7 @@ func (a *ScanTemplate) CollectName() string {
 
 // ScanTasks 列表
 type ScanTasks struct {
-	ID            primitive.ObjectID `bson:"_id,omitempty"`
+	ID            bson.ObjectID `bson:"_id,omitempty"`
 	Type          string             `bson:"type"`    // baseline|leak|weakpwd
 	Status        string             `bson:"status"`  // PENDING|RUNNING|FINISH|FAILURE
 	Trigger       string             `bson:"trigger"` // once|cycle
@@ -275,7 +275,7 @@ type SubTaskResult struct {
 
 // ScanSubTasks 列表
 type ScanSubTasks struct {
-	ID       primitive.ObjectID `bson:"_id,omitempty"`
+	ID       bson.ObjectID `bson:"_id,omitempty"`
 	TaskID   string             `bson:"task_id"`
 	GroupID  string             `bson:"group_id"`
 	Status   string             `bson:"status"`
@@ -292,7 +292,7 @@ func (a *ScanSubTasks) CollectName() string {
 
 // ScanConf 列表
 type ScanConf struct {
-	ID        primitive.ObjectID `bson:"_id,omitempty"`
+	ID        bson.ObjectID `bson:"_id,omitempty"`
 	Name      string             `bson:"name"`
 	TaskFun   string             `bson:"task_fun"` // ScannerBaselineTask|ScannerLeakTask|ScannerWeakPwdTask
 	Type      string             `bson:"type"`     // baseline|leak|weakpwd
@@ -397,7 +397,7 @@ func (a *AlertActivityRule) CollectName() string {
 
 // AlertActivityESDB 告警行为表(该表必须保持和engine/core/types.go:AlertActivityESDB一致)
 type AlertActivityESDB struct {
-	ID         primitive.ObjectID `bson:"_id,omitempty" json:"activity_id"` // ID (AlertActivity.ID)
+	ID         bson.ObjectID `bson:"_id,omitempty" json:"activity_id"` // ID (AlertActivity.ID)
 	Title      string             `bson:"title" json:"title"`               // 告警标题(规则名称,即:RuleInfo.Name)
 	Desc       string             `bson:"desc" json:"desc"`                 // 告警描述(事件详细描述,即:RuleInfo.EventTmpl格式化)
 	RuleId     string             `bson:"rule_id" json:"rule_id"`           // sigma rule_id
@@ -420,7 +420,7 @@ func (a *AlertActivityESDB) CollectName() string {
 
 // AlertEventESDB 告警行为 索引(该表必须保持和engine/core/types.go::AlertEventESDB一致)
 type AlertEventESDB struct {
-	ID          primitive.ObjectID `bson:"_id,omitempty" json:"event_id"`    // ID (AlertEvent.ID)
+	ID          bson.ObjectID `bson:"_id,omitempty" json:"event_id"`    // ID (AlertEvent.ID)
 	Title       string             `bson:"title" json:"title"`               // 告警标题(规则名称,即:RuleInfo.Name)
 	Desc        string             `bson:"desc" json:"desc"`                 // 告警描述(事件详细描述,即:RuleInfo.EventTmpl格式化)
 	FlowId      string             `bson:"flow_id" json:"flow_id"`           // sigma flow_id
@@ -446,7 +446,7 @@ func (a *AlertEventESDB) CollectName() string {
 
 // AlertWhitelist 告警规则白名单
 type AlertWhitelist struct {
-	ID       primitive.ObjectID  `bson:"_id,omitempty"` // ID (AlertEvent.ID)
+	ID       bson.ObjectID  `bson:"_id,omitempty"` // ID (AlertEvent.ID)
 	RuleId   string              `bson:"rule_id"`       // 规则ID
 	RuleName string              `bson:"rule_name"`     // 规则名称
 	RuleType string              `bson:"rule_type"`     // 告警类型 tag[0]
@@ -464,7 +464,7 @@ func (a *AlertWhitelist) CollectName() string {
 
 // AlertBlock 威胁阻断表
 type AlertBlock struct {
-	ID        primitive.ObjectID  `bson:"_id,omitempty"` // ID
+	ID        bson.ObjectID  `bson:"_id,omitempty"` // ID
 	Name      string              `bson:"name"`          // 阻断名称
 	Domain    string              `bson:"domain"`        // Domain
 	Origin    int32               `bson:"origin"`        // 来源，分为自动和手动，0为自动，1为手动添加
@@ -484,7 +484,7 @@ func (a *AlertBlock) CollectName() string {
 
 // SensitiveEntry 敏感user/group/computer条目
 type SensitiveEntry struct {
-	ID       primitive.ObjectID `bson:"_id,omitempty"` // ID
+	ID       bson.ObjectID `bson:"_id,omitempty"` // ID
 	Domain   string             `bson:"domain"`
 	Type     string             `bson:"type"`      // user|group|computer|honeyuser
 	Content  map[string]string  `bson:"content"`   // 条目内容，如果是敏感组则包括guid,sid,name字段
@@ -499,7 +499,7 @@ func (a *SensitiveEntry) CollectName() string {
 
 // AssetUser 资产表user
 type AssetUser struct {
-	ID                 primitive.ObjectID `bson:"_id,omitempty"` // ID
+	ID                 bson.ObjectID `bson:"_id,omitempty"` // ID
 	SAMAccountName     string             `bson:"sAMAccountName"`
 	IsDelete           bool               `bson:"isDelete"`
 	Dn                 string             `bson:"dn"`
@@ -523,7 +523,7 @@ func (a *AssetUser) CollectName() string {
 
 // AssetGroup 资产表group
 type AssetGroup struct {
-	ID                   primitive.ObjectID `bson:"_id,omitempty"` // ID
+	ID                   bson.ObjectID `bson:"_id,omitempty"` // ID
 	SAMAccountName       string             `bson:"sAMAccountName"`
 	IsDelete             bool               `bson:"isDelete"`
 	Dn                   string             `bson:"dn"`
@@ -548,7 +548,7 @@ func (a *AssetGroup) CollectName() string {
 
 // AssetComputer 资产表computer
 type AssetComputer struct {
-	ID                     primitive.ObjectID `bson:"_id,omitempty"` // ID
+	ID                     bson.ObjectID `bson:"_id,omitempty"` // ID
 	SAMAccountName         string             `bson:"sAMAccountName"`
 	IsDelete               bool               `bson:"isDelete"`
 	Dn                     string             `bson:"dn"`
@@ -576,7 +576,7 @@ func (a *AssetComputer) CollectName() string {
 
 // ExportTask
 type ExportTask struct {
-	ID       primitive.ObjectID `bson:"_id,omitempty"` // 主键ID
+	ID       bson.ObjectID `bson:"_id,omitempty"` // 主键ID
 	Name     string             `bson:"name"`          // 名称
 	TaskID   string             `bson:"task_id"`       // (异步)任务ID
 	Type     string             `bson:"type"`          // alert/baseline/leak/weakpwd/system/audit
@@ -610,7 +610,7 @@ func (s *SystemLogs) CollectName() string {
 
 // AccessKey API密钥表
 type AccessKey struct {
-	ID         primitive.ObjectID `bson:"_id,omitempty"` // ID
+	ID         bson.ObjectID `bson:"_id,omitempty"` // ID
 	Username   string             `bson:"username"`      // 所属用户
 	SecretKey  string             `bson:"secret_key"`    // SecretKey(masked storage: 'sk-xx*****xxx')
 	SecretHash string             `bson:"secret_hash"`   // SecretKey Hash

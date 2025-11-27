@@ -11,14 +11,13 @@ import (
 	"strings"
 	"time"
 
-	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/v2/bson"
 
 	"ada/backend/common"
 	"ada/backend/model"
 	"ada/backend/tasker/config"
 
 	logger "github.com/sirupsen/logrus"
-	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 func (w *Worker) SystemNotifyTask() error {
@@ -387,7 +386,7 @@ func updateSensorStatus(mongoCli mongo.DBAdaptor, sensorKey, status string) erro
 
 func AddNotify(mongoCli mongo.DBAdaptor, title, eventType, desc, lang string, params map[string]string) error {
 	notify := model.Notify{
-		ID:        primitive.NewObjectID(),
+		ID:        bson.NewObjectID(),
 		Title:     title,
 		MsgType:   common.NotifyMsgSystem,
 		EventType: eventType,

@@ -13,8 +13,7 @@ import (
 
 	ldap3 "github.com/go-ldap/ldap/v3"
 	logger "github.com/sirupsen/logrus"
-	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/v2/bson"
 )
 
 // ADLdapSyncTask 进行域内铭感条目同步
@@ -334,7 +333,7 @@ func (w *Worker) syncAllUser(ls *ldap.LDAPSearch, domainName string) error {
 			}
 			err = w.env.MongoCli.UpdateById(obj.CollectName(), user.ID, &update)
 		} else {
-			obj.ID = primitive.NewObjectID()
+			obj.ID = bson.NewObjectID()
 			obj.SyncTm = time.Now().Unix()
 			err = w.env.MongoCli.Insert(obj.CollectName(), &obj)
 		}
@@ -445,7 +444,7 @@ func (w *Worker) syncAllGroup(ls *ldap.LDAPSearch, domainName string) error {
 			}
 			err = w.env.MongoCli.UpdateById(obj.CollectName(), group.ID, &update)
 		} else {
-			obj.ID = primitive.NewObjectID()
+			obj.ID = bson.NewObjectID()
 			obj.SyncTm = time.Now().Unix()
 			err = w.env.MongoCli.Insert(obj.CollectName(), &obj)
 		}
@@ -563,7 +562,7 @@ func (w *Worker) syncAllComputer(ls *ldap.LDAPSearch, domainName string) error {
 			}
 			err = w.env.MongoCli.UpdateById(obj.CollectName(), computer.ID, &update)
 		} else {
-			obj.ID = primitive.NewObjectID()
+			obj.ID = bson.NewObjectID()
 			obj.SyncTm = time.Now().Unix()
 			err = w.env.MongoCli.Insert(obj.CollectName(), &obj)
 		}

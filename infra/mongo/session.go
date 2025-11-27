@@ -7,10 +7,10 @@ import (
 	"sync"
 	"time"
 
-	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
-	"go.mongodb.org/mongo-driver/mongo/readpref"
+	"go.mongodb.org/mongo-driver/v2/bson"
+	"go.mongodb.org/mongo-driver/v2/mongo"
+	"go.mongodb.org/mongo-driver/v2/mongo/options"
+	"go.mongodb.org/mongo-driver/v2/mongo/readpref"
 )
 
 // Session mongo session
@@ -26,7 +26,6 @@ type Session struct {
 	project     any
 	skip        *int64
 	sort        any
-	distinct    any
 }
 
 // New session
@@ -79,13 +78,16 @@ func (s *Session) Connect() error {
 	opt := options.Client().ApplyURI(s.uri)
 	opt.SetMaxPoolSize(s.maxPoolSize)
 
-	client, err := mongo.NewClient(opt)
+	// v2 API: mongo.Connect() replaces mongo.NewClient() + client.Connect()
+	client, err := mongo.Connect(opt)
 	if err != nil {
 		return err
 	}
 
-	err = client.Connect(ctx)
+	// Verify connection
+	err = client.Ping(ctx, readpref.Primary())
 	if err != nil {
+		client.Disconnect(context.Background())
 		return err
 	}
 
@@ -94,9 +96,9 @@ func (s *Session) Connect() error {
 }
 
 func (s *Session) Disconnect() {
-	s.m.Lock()
-	s.client.Disconnect(context.Background())
-	s.m.Unlock()
+	if s.client != nil {
+		s.client.Disconnect(context.Background())
+	}
 }
 
 // Ping verifies that the client can connect to the topology.
@@ -156,14 +158,10 @@ func (s *Session) One(result any) error {
 	}
 
 	if s.skip != nil {
-		opt.SetProjection(*s.skip)
+		opt.SetSkip(*s.skip)
 	}
 
-	data, err := s.collection.FindOne(context.TODO(), s.filter, opt).DecodeBytes()
-	if err != nil {
-		return err
-	}
-	err = bson.Unmarshal(data, result)
+	err := s.collection.FindOne(context.TODO(), s.filter, opt).Decode(result)
 	return err
 }
 
@@ -207,10 +205,10 @@ func (s *Session) All(result any) error {
 	}
 
 	cur, err := s.collection.Find(ctx, s.filter, opt)
-	defer cur.Close(ctx)
 	if err != nil {
 		return err
 	}
+	defer cur.Close(ctx)
 	if err = cur.Err(); err != nil {
 		return err
 	}
@@ -279,7 +277,13 @@ func (s *Session) Distinct(distinct string) ([]any, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
 	defer cancel()
 
-	result, err := s.collection.Distinct(ctx, distinct, s.filter)
+	distinctResult := s.collection.Distinct(ctx, distinct, s.filter)
+	if distinctResult.Err() != nil {
+		return nil, distinctResult.Err()
+	}
+
+	var result []any
+	err := distinctResult.Decode(&result)
 	if err != nil {
 		return nil, err
 	}
