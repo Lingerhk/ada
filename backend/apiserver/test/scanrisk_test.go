@@ -176,7 +176,6 @@ func TestListScanConf(t *testing.T) {
 func TestSetScanConf(t *testing.T) {
 	req := v2.SetScanConfReq{
 		ID:        "61094609ecdcfd018b66a58d",
-		Rate:      35,
 		IsEnable:  true,
 		CycleType: 2,
 	}
