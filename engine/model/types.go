@@ -1,13 +1,13 @@
 package model
 
 import (
-	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/v2/bson"
 	"time"
 )
 
 // AlertActivityESDB 告警行为 索引(该表如有变动需同步到backend/model/tables.go:AlertActivityESDB)
 type AlertActivityESDB struct {
-	ID         primitive.ObjectID `bson:"_id,omitempty" json:"activity_id"` // ID (AlertActivity.ID)
+	ID         bson.ObjectID `bson:"_id,omitempty" json:"activity_id"` // ID (AlertActivity.ID)
 	Title      string             `bson:"title" json:"title"`               // 告警标题(规则名称,即:RuleInfo.Name)
 	Desc       string             `bson:"desc" json:"desc"`                 // 告警描述(事件详细描述,即:RuleInfo.EventTmpl格式化)
 	RuleId     string             `bson:"rule_id" json:"rule_id"`           // sigma rule_id
@@ -30,7 +30,7 @@ func (a *AlertActivityESDB) CollectName() string {
 
 // AlertEventESDB 告警行为 索引(该表如有变动需同步到backend/model/tables.go:AlertEventESDB)
 type AlertEventESDB struct {
-	ID          primitive.ObjectID `bson:"_id,omitempty" json:"event_id"`    // ID (AlertEvent.ID)
+	ID          bson.ObjectID `bson:"_id,omitempty" json:"event_id"`    // ID (AlertEvent.ID)
 	Title       string             `bson:"title" json:"title"`               // 告警标题(规则名称,即:RuleInfo.Name)
 	Desc        string             `bson:"desc" json:"desc"`                 // 告警描述(事件详细描述,即:RuleInfo.EventTmpl格式化)
 	FlowId      string             `bson:"flow_id" json:"flow_id"`           // sigma flow_id

@@ -23,8 +23,7 @@ import (
 	"github.com/go-lark/lark"
 	"github.com/redis/go-redis/v9"
 	logger "github.com/sirupsen/logrus"
-	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/v2/bson"
 )
 
 const emailTmpl = `<!DOCTYPE html>
@@ -161,7 +160,7 @@ func (w *Worker) ThreatNotifyTask() error {
 	title := fmt.Sprintf("%s:%s", notifyModule, notifyMsg.Title)
 
 	var n model.Notify
-	n.ID = primitive.NewObjectID()
+	n.ID = bson.NewObjectID()
 	n.Title = title
 	n.Status = 0
 	n.Desc = notifyMsg.Desc

@@ -13,7 +13,7 @@ import (
 
 	"github.com/go-co-op/gocron/v2"
 	logger "github.com/sirupsen/logrus"
-	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/v2/bson"
 )
 
 // Define CycleType constants based on model.ScanConf.CycleType (int32)

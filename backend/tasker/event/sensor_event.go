@@ -14,7 +14,7 @@ import (
 
 	"github.com/redis/go-redis/v9"
 	logger "github.com/sirupsen/logrus"
-	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/v2/bson"
 )
 
 type SensorEvent struct {

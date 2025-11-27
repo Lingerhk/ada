@@ -174,7 +174,7 @@ func (s *ADAServiceV2) DashboardLogStats(ctx context.Context, in *v2.DashboardLo
 		// Populate map with winlog data for this domain
 		for _, z := range winLogData {
 			ts := int64(z.Score)
-			count, _ := strconv.ParseInt(z.Member, 10, 32)
+			count, _ := strconv.ParseInt(z.Member.(string), 10, 32)
 			if _, ok := statsMap[ts]; !ok {
 				statsMap[ts] = &v2.DashboardLogStatsReplyLogStatsList{Ts: ts, WinlogCounts: int32(count), PktlogCounts: 0}
 			} else {
@@ -185,7 +185,7 @@ func (s *ADAServiceV2) DashboardLogStats(ctx context.Context, in *v2.DashboardLo
 		// Populate map with pktlog data for this domain
 		for _, z := range pktLogData {
 			ts := int64(z.Score)
-			count, _ := strconv.ParseInt(z.Member, 10, 32)
+			count, _ := strconv.ParseInt(z.Member.(string), 10, 32)
 			if _, ok := statsMap[ts]; !ok {
 				statsMap[ts] = &v2.DashboardLogStatsReplyLogStatsList{Ts: ts, WinlogCounts: 0, PktlogCounts: int32(count)}
 			} else {

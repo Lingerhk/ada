@@ -6,7 +6,7 @@ import (
 	"ada/backend/model"
 
 	logger "github.com/sirupsen/logrus"
-	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/v2/bson"
 )
 
 func GetSensorByID(e *config.Env, id string) (*model.Sensor, error) {

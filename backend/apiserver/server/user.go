@@ -10,8 +10,7 @@ import (
 	"time"
 
 	logger "github.com/sirupsen/logrus"
-	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/v2/bson"
 )
 
 func FindAllUser(e *config.Env, limit, offset int32, search, username string, filterRole, filterMfaStatus, filterPassStrength []string, filterStartCreateTm, filterEndCreateTm, filterStartPassTm, filterEndPassTm string, sort int32) ([]model.User, int64, error) {
@@ -310,7 +309,7 @@ func GetAccessKey(e *config.Env, id string) (*model.AccessKey, error) {
 	var key model.AccessKey
 	tb := (&model.AccessKey{}).CollectName()
 
-	objID, err := primitive.ObjectIDFromHex(id)
+	objID, err := bson.ObjectIDFromHex(id)
 	if err != nil {
 		return nil, err
 	}
@@ -327,7 +326,7 @@ func GetAccessKey(e *config.Env, id string) (*model.AccessKey, error) {
 func DeleteAccessKey(e *config.Env, id string) error {
 	tb := (&model.AccessKey{}).CollectName()
 
-	objID, err := primitive.ObjectIDFromHex(id)
+	objID, err := bson.ObjectIDFromHex(id)
 	if err != nil {
 		return err
 	}

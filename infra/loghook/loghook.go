@@ -8,7 +8,7 @@ import (
 
 	"github.com/redis/go-redis/v9"
 	"github.com/sirupsen/logrus"
-	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/v2/bson"
 )
 
 const (
@@ -63,6 +63,9 @@ func (r *LogrusRedis) Levels() []logrus.Level {
 
 // NewLogrusRedis creates LogrusRedis instance
 func NewLogrusRedis(client *redis.Client, key string) *LogrusRedis {
+	if key == "" {
+		key = defaultRedisQueueName
+	}
 	return &LogrusRedis{
 		ctx:       context.Background(),
 		client:    client,

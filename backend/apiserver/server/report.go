@@ -4,8 +4,7 @@ import (
 	"ada/backend/apiserver/config"
 	"ada/backend/model"
 	logger "github.com/sirupsen/logrus"
-	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/v2/bson"
 	"time"
 )
 
@@ -61,7 +60,7 @@ func FindExportTask(e *config.Env, typ, status []string, startTm, endTm string, 
 
 func GetExportTaskByID(e *config.Env, id string) (*model.ExportTask, error) {
 	report := model.ExportTask{}
-	Id, err := primitive.ObjectIDFromHex(id)
+	Id, err := bson.ObjectIDFromHex(id)
 	if err != nil {
 		return nil, err
 	}
@@ -76,7 +75,7 @@ func GetExportTaskByID(e *config.Env, id string) (*model.ExportTask, error) {
 
 func AddExportTask(e *config.Env, name, typ, taskId string, params map[string]string) error {
 	report := &model.ExportTask{
-		ID:       primitive.NewObjectID(),
+		ID:       bson.NewObjectID(),
 		Name:     name,
 		TaskID:   taskId,
 		Type:     typ,
@@ -94,7 +93,7 @@ func AddExportTask(e *config.Env, name, typ, taskId string, params map[string]st
 
 func DeleteExportTaskByID(e *config.Env, reportID string) (*model.ExportTask, error) {
 	report := &model.ExportTask{}
-	objectID, err := primitive.ObjectIDFromHex(reportID)
+	objectID, err := bson.ObjectIDFromHex(reportID)
 	if err != nil {
 		return nil, err
 	}

@@ -9,8 +9,7 @@ import (
 	"time"
 
 	logger "github.com/sirupsen/logrus"
-	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/v2/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
@@ -100,19 +99,19 @@ func AdvancedSearch(request []AdvancedSearchReq) (bson.D, error) {
 					continue
 				}
 				//value = fmt.Sprintf("^((?!%s).)*$", v.Value[0])
-				source := primitive.E{Key: "$and", Value: bson.A{
+				source := bson.E{Key: "$and", Value: bson.A{
 					bson.D{{Key: fmt.Sprintf("field_data.%s_username", v.Name), Value: bson.M{"$ne": v.Value[0]}}},
 					bson.D{{Key: fmt.Sprintf("field_data.%s_ip", v.Name), Value: bson.M{"$ne": v.Value[0]}}},
 					bson.D{{Key: fmt.Sprintf("field_data.%s_machine_username", v.Name), Value: bson.M{"$ne": v.Value[0]}}},
 					bson.D{{Key: fmt.Sprintf("field_data.%s_machine_hostname", v.Name), Value: bson.M{"$ne": v.Value[0]}}},
-					//bson.D{{fmt.Sprintf("field_data.%s_computer", v.Name), primitive.Regex{Pattern: value, Options: "i"}}},
-					//bson.D{{fmt.Sprintf("field_data.%s_username", v.Name), primitive.Regex{Pattern: value, Options: "i"}}},
-					//bson.D{{fmt.Sprintf("field_data.%s_ip", v.Name), primitive.Regex{Pattern: value, Options: "i"}}},
+					//bson.D{{fmt.Sprintf("field_data.%s_computer", v.Name), bson.Regex{Pattern: value, Options: "i"}}},
+					//bson.D{{fmt.Sprintf("field_data.%s_username", v.Name), bson.Regex{Pattern: value, Options: "i"}}},
+					//bson.D{{fmt.Sprintf("field_data.%s_ip", v.Name), bson.Regex{Pattern: value, Options: "i"}}},
 				}}
 				query = append(query, source)
 			} else {
 				//value = v.Value[0]
-				source := primitive.E{Key: "$or", Value: bson.A{
+				source := bson.E{Key: "$or", Value: bson.A{
 					bson.D{{Key: fmt.Sprintf("field_data.%s_username", v.Name), Value: v.Value[0]}},
 					bson.D{{Key: fmt.Sprintf("field_data.%s_ip", v.Name), Value: v.Value[0]}},
 					bson.D{{Key: fmt.Sprintf("field_data.%s_machine_username", v.Name), Value: v.Value[0]}},
@@ -198,7 +197,7 @@ func AdvancedSearch(request []AdvancedSearchReq) (bson.D, error) {
 func GetThreatEventByID(e *config.Env, id string) (*model.AlertEventESDB, error) {
 	ae := model.AlertEventESDB{}
 
-	Id, err := primitive.ObjectIDFromHex(id)
+	Id, err := bson.ObjectIDFromHex(id)
 	if err != nil {
 		return nil, err
 	}
@@ -263,7 +262,7 @@ func GetThreatEventNames(e *config.Env) (map[string]string, error) {
 func UpdateThreatEventStatus(e *config.Env, id string, eventStatus int32, remark string) error {
 	var ae model.AlertEventESDB
 
-	Id, err := primitive.ObjectIDFromHex(id)
+	Id, err := bson.ObjectIDFromHex(id)
 	if err != nil {
 		return err
 	}
@@ -279,7 +278,7 @@ func UpdateThreatEventStatus(e *config.Env, id string, eventStatus int32, remark
 
 func GetThreatActivityByID(e *config.Env, id string) (*model.AlertActivityESDB, error) {
 	aa := model.AlertActivityESDB{}
-	Id, err := primitive.ObjectIDFromHex(id)
+	Id, err := bson.ObjectIDFromHex(id)
 	if err != nil {
 		return nil, err
 	}
@@ -435,7 +434,7 @@ func FindSensitiveEntryList(e *config.Env, typ string, domains []string, origins
 
 func GetSensitiveEntryById(e *config.Env, id string) (*model.SensitiveEntry, error) {
 	se := model.SensitiveEntry{}
-	Id, err := primitive.ObjectIDFromHex(id)
+	Id, err := bson.ObjectIDFromHex(id)
 	if err != nil {
 		return nil, err
 	}
@@ -478,7 +477,7 @@ func AddSensitiveEntry(e *config.Env, name, sid, typ, domain string) error {
 func DeleteSensitiveEntry(e *config.Env, Id string) error {
 	var se model.SensitiveEntry
 
-	objId, err := primitive.ObjectIDFromHex(Id)
+	objId, err := bson.ObjectIDFromHex(Id)
 	if err != nil {
 		return err
 	}
@@ -493,7 +492,7 @@ func ThreatTops(e *config.Env, domain, typ string, duration int32) ([]bson.M, er
 
 	var matchStage bson.D
 	if domain != "all" {
-		matchStage = append(matchStage, bson.E{Key: "dc_hostname", Value: bson.M{"$regex": primitive.Regex{Pattern: ".*" + domain + "$", Options: "i"}}})
+		matchStage = append(matchStage, bson.E{Key: "dc_hostname", Value: bson.M{"$regex": bson.Regex{Pattern: ".*" + domain + "$", Options: "i"}}})
 	}
 
 	startTimestamp := time.Now().UnixNano()/int64(time.Millisecond) - int64(duration)*24*3600*1000
@@ -551,7 +550,7 @@ func ThreatTrends(e *config.Env, domain string, levels []int32, duration int32) 
 	}
 
 	if domain != "all" {
-		matchStage = append(matchStage, bson.E{Key: "dc_hostname", Value: bson.M{"$regex": primitive.Regex{Pattern: ".*" + domain + "$", Options: "i"}}})
+		matchStage = append(matchStage, bson.E{Key: "dc_hostname", Value: bson.M{"$regex": bson.Regex{Pattern: ".*" + domain + "$", Options: "i"}}})
 	}
 
 	if len(levels) > 0 {
@@ -626,7 +625,7 @@ func FindAllThreatWhitelist(e *config.Env, ruleId string, domains []string, orig
 func GetThreatWhitelistById(e *config.Env, wId string) (*model.AlertWhitelist, error) {
 	var aw model.AlertWhitelist
 
-	Id, err := primitive.ObjectIDFromHex(wId)
+	Id, err := bson.ObjectIDFromHex(wId)
 	if err != nil {
 		return nil, err
 	}
@@ -641,7 +640,7 @@ func GetThreatWhitelistById(e *config.Env, wId string) (*model.AlertWhitelist, e
 func AddThreatWhitelist(e *config.Env, ruleId, ruleTitle, ruleType, domain, remark string, origin int32, rules []map[string]string) (string, error) {
 	var aw model.AlertWhitelist
 
-	aw.ID = primitive.NewObjectID()
+	aw.ID = bson.NewObjectID()
 	aw.RuleId = ruleId
 	aw.RuleName = ruleTitle
 	aw.RuleType = ruleType
@@ -662,7 +661,7 @@ func AddThreatWhitelist(e *config.Env, ruleId, ruleTitle, ruleType, domain, rema
 func UpdateThreatWhitelist(e *config.Env, Id, remark string, rules []map[string]string) error {
 	var sc model.AlertWhitelist
 
-	id, err := primitive.ObjectIDFromHex(Id)
+	id, err := bson.ObjectIDFromHex(Id)
 	if err != nil {
 		return err
 	}
@@ -679,7 +678,7 @@ func UpdateThreatWhitelist(e *config.Env, Id, remark string, rules []map[string]
 func DeleteThreatWhitelist(e *config.Env, Id string) error {
 	var aw model.AlertWhitelist
 
-	objId, err := primitive.ObjectIDFromHex(Id)
+	objId, err := bson.ObjectIDFromHex(Id)
 	if err != nil {
 		return err
 	}
@@ -804,7 +803,7 @@ func FindAllThreatBlock(e *config.Env, domains []string, origin []int32, search,
 func AddThreatBlock(e *config.Env, name, domain, remark string, userBlock, ipBlock bool, userList, ipList []string, result []map[string]string) error {
 	var ab model.AlertBlock
 
-	ab.ID = primitive.NewObjectID()
+	ab.ID = bson.NewObjectID()
 	ab.Name = name
 	ab.Domain = domain
 	ab.Origin = 1 // 手动
@@ -823,7 +822,7 @@ func AddThreatBlock(e *config.Env, name, domain, remark string, userBlock, ipBlo
 func UpdateThreatBlock(e *config.Env, id, name, remark string, userBlock, ipBlock bool, userList, ipList []string, results []map[string]string) error {
 	var ab model.AlertBlock
 
-	Id, err := primitive.ObjectIDFromHex(id)
+	Id, err := bson.ObjectIDFromHex(id)
 	if err != nil {
 		return err
 	}
@@ -850,7 +849,7 @@ func UpdateThreatBlock(e *config.Env, id, name, remark string, userBlock, ipBloc
 func DeleteThreatBlock(e *config.Env, id string) error {
 	var ab model.AlertBlock
 
-	objId, err := primitive.ObjectIDFromHex(id)
+	objId, err := bson.ObjectIDFromHex(id)
 	if err != nil {
 		return err
 	}
@@ -861,7 +860,7 @@ func DeleteThreatBlock(e *config.Env, id string) error {
 func GetThreatBlock(e *config.Env, id string) (*model.AlertBlock, error) {
 	var ab model.AlertBlock
 
-	objId, err := primitive.ObjectIDFromHex(id)
+	objId, err := bson.ObjectIDFromHex(id)
 	if err != nil {
 		return nil, err
 	}
