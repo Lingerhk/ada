@@ -79,6 +79,8 @@ func (s *Session) Connect() error {
 	opt.SetMaxPoolSize(s.maxPoolSize)
 
 	// v2 API: mongo.Connect() replaces mongo.NewClient() + client.Connect()
+	serverAPI := options.ServerAPI(options.ServerAPIVersion1)
+	opt.SetServerAPIOptions(serverAPI)
 	client, err := mongo.Connect(opt)
 	if err != nil {
 		return err

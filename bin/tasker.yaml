@@ -12,6 +12,7 @@ Redis:
   IdleTimeout: 3600
 
 Mongodb:
+  Scheme: mongodb # Use "mongodb" for regular MongoDB or "mongodb+srv" for MongoDB Atlas
   Host: ada_mongodb:27017
   User: user_ada
   Passwd: XEl44B4p3hFurztFMo38
