@@ -10,7 +10,7 @@ import (
 
 	logger "github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/v2/bson"
-	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/v2/mongo"
 )
 
 // 高级检索结构
@@ -230,7 +230,7 @@ func GetThreatEventNames(e *config.Env) (map[string]string, error) {
 
 	// Use aggregation to get unique titles with their flow_ids
 	pipeline := mongo.Pipeline{
-		{{Key: "$group", Value: bson.D{
+		bson.D{{Key: "$group", Value: bson.D{
 			{Key: "_id", Value: "$flow_id"},
 			{Key: "title", Value: bson.D{{Key: "$first", Value: "$title"}}},
 		}}},
@@ -363,13 +363,13 @@ func GetThreatActivityAggNames(e *config.Env, dcHostname []string, startTm, endT
 	}
 
 	pipeline := mongo.Pipeline{
-		{{Key: "$match", Value: matchStage}},
-		{{Key: "$group", Value: bson.D{
+		bson.D{{Key: "$match", Value: matchStage}},
+		bson.D{{Key: "$group", Value: bson.D{
 			{Key: "_id", Value: "$title"},
 			{Key: "count", Value: bson.D{{Key: "$sum", Value: 1}}},
 		}}},
-		{{Key: "$sort", Value: bson.D{{Key: "count", Value: -1}}}},
-		{{Key: "$limit", Value: 2000}}, // 限制2000条,足够了
+		bson.D{{Key: "$sort", Value: bson.D{{Key: "count", Value: -1}}}},
+		bson.D{{Key: "$limit", Value: 2000}}, // 限制2000条,足够了
 	}
 
 	var results []bson.M
@@ -505,13 +505,13 @@ func ThreatTops(e *config.Env, domain, typ string, duration int32) ([]bson.M, er
 		matchStage = append(matchStage, bson.E{Key: "timestamp", Value: bson.M{"$gte": startTimestamp}})
 
 		pipeline = mongo.Pipeline{
-			{{Key: "$match", Value: matchStage}},
-			{{Key: "$group", Value: bson.D{
+			bson.D{{Key: "$match", Value: matchStage}},
+			bson.D{{Key: "$group", Value: bson.D{
 				{Key: "_id", Value: "$title"},
 				{Key: "count", Value: bson.D{{Key: "$sum", Value: 1}}},
 			}}},
-			{{Key: "$sort", Value: bson.D{{Key: "count", Value: -1}}}},
-			{{Key: "$limit", Value: 10}},
+			bson.D{{Key: "$sort", Value: bson.D{{Key: "count", Value: -1}}}},
+			bson.D{{Key: "$limit", Value: 10}},
 		}
 	} else {
 		// 事件威胁top
@@ -519,13 +519,13 @@ func ThreatTops(e *config.Env, domain, typ string, duration int32) ([]bson.M, er
 		matchStage = append(matchStage, bson.E{Key: "start_ts", Value: bson.M{"$gte": startTimestamp}})
 
 		pipeline = mongo.Pipeline{
-			{{Key: "$match", Value: matchStage}},
-			{{Key: "$group", Value: bson.D{
+			bson.D{{Key: "$match", Value: matchStage}},
+			bson.D{{Key: "$group", Value: bson.D{
 				{Key: "_id", Value: "$title"},
 				{Key: "count", Value: bson.D{{Key: "$sum", Value: 1}}},
 			}}},
-			{{Key: "$sort", Value: bson.D{{Key: "count", Value: -1}}}},
-			{{Key: "$limit", Value: 10}},
+			bson.D{{Key: "$sort", Value: bson.D{{Key: "count", Value: -1}}}},
+			bson.D{{Key: "$limit", Value: 10}},
 		}
 	}
 
@@ -559,8 +559,8 @@ func ThreatTrends(e *config.Env, domain string, levels []int32, duration int32) 
 
 	tb := (&model.AlertActivityESDB{}).CollectName()
 	pipeline := mongo.Pipeline{
-		{{Key: "$match", Value: matchStage}},
-		{{Key: "$group", Value: bson.D{
+		bson.D{{Key: "$match", Value: matchStage}},
+		bson.D{{Key: "$group", Value: bson.D{
 			{Key: "_id", Value: bson.M{
 				"$subtract": []any{
 					"$timestamp",
@@ -569,7 +569,7 @@ func ThreatTrends(e *config.Env, domain string, levels []int32, duration int32) 
 			}},
 			{Key: "count", Value: bson.D{{Key: "$sum", Value: 1}}},
 		}}},
-		{{Key: "$sort", Value: bson.D{{Key: "_id", Value: 1}}}},
+		bson.D{{Key: "$sort", Value: bson.D{{Key: "_id", Value: 1}}}},
 	}
 
 	var results []bson.M

@@ -20,6 +20,7 @@ import (
 
 	"github.com/google/uuid"
 	jsoniter "github.com/json-iterator/go"
+	"github.com/redis/go-redis/v9"
 	logger "github.com/sirupsen/logrus"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -396,6 +397,9 @@ func (s *ADAServiceV2) UpdateSensorVersion(ctx context.Context, in *v2.UpdateSen
 func (s *ADAServiceV2) getSensorVersion() (string, error) {
 	newVer, err := s.env.RedisCli.Get(context.Background(), sCommon.SensorLatestVersionKey).Result()
 	if err != nil {
+		if err == redis.Nil {
+			return "", nil
+		}
 		logger.Errorf("redis get err:%v", err)
 		return "", err
 	}
