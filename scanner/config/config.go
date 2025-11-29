@@ -29,6 +29,7 @@ type RedisCfg struct {
 }
 
 type MongodbCfg struct {
+	Scheme    string `yaml:"Scheme"`
 	Host      string `yaml:"Host"`
 	User      string `yaml:"User"`
 	Passwd    string `yaml:"Passwd"`
@@ -104,11 +105,25 @@ func InitRedisClient(setting *Config) (*redis.Client, error) {
 }
 
 func InitMongoClient(setting *Config) (mongo.DBAdaptor, error) {
+	var mongoURI string
 	mongoCli := mongo.NewMongoSession()
-	MongoURL := fmt.Sprintf("mongodb://%s:%s@%s/%s?authSource=%s",
-		setting.Mongodb.User, setting.Mongodb.Passwd, setting.Mongodb.Host, setting.Mongodb.DbName, setting.Mongodb.DbName)
 
-	err := mongoCli.Connect(MongoURL, setting.Mongodb.DbName)
+	// Default to "mongodb" if scheme is not specified
+	scheme := setting.Mongodb.Scheme
+	if scheme == "" {
+		scheme = "mongodb"
+	}
+
+	// Build MongoDB connection URI
+	if scheme == "mongodb+srv" {
+		mongoURI = fmt.Sprintf("%s://%s:%s@%s/?appName=adaegis-poc",
+			scheme, setting.Mongodb.User, setting.Mongodb.Passwd, setting.Mongodb.Host)
+	} else {
+		mongoURI = fmt.Sprintf("%s://%s:%s@%s/?authSource=%s",
+			scheme, setting.Mongodb.User, setting.Mongodb.Passwd, setting.Mongodb.Host, setting.Mongodb.DbName)
+	}
+
+	err := mongoCli.Connect(mongoURI, setting.Mongodb.DbName)
 	if err != nil {
 		return nil, err
 	}

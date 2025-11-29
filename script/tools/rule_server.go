@@ -19,7 +19,7 @@ import (
 	"time"
 
 	logger "github.com/sirupsen/logrus"
-	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/v2/bson"
 	"gopkg.in/yaml.v3"
 )
 
@@ -244,8 +244,8 @@ func main() {
 // initMongoDB initializes the MongoDB connection
 func (s *Server) initMongoDB() error {
 	mongoCli := mongo.NewMongoSession()
-	MongoURL := fmt.Sprintf("mongodb://%s:%s@%s/%s?authSource=%s",
-		s.mongoUser, s.mongoPasswd, s.mongoHost, s.mongoDbName, s.mongoDbName)
+	MongoURL := fmt.Sprintf("mongodb://%s:%s@%s/?authSource=%s",
+		s.mongoUser, s.mongoPasswd, s.mongoHost, s.mongoDbName)
 
 	err := mongoCli.Connect(MongoURL, s.mongoDbName)
 	if err != nil {
