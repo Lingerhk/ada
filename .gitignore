@@ -37,3 +37,11 @@ scanner/worker/venv_enc.tar.gz
 scanner/worker/.sc
 scanner/worker/.venv
 
+script/poc/ada-service/adaegis.zip
+script/poc/ada-service/install-adaegis.ps1
+script/poc/ada-service/uninstall-adaegis.ps1
+script/poc/ada-service/apiserver
+script/poc/ada-service/task_server
+script/poc/ada-service/task_worker
+script/poc/ada-service/engine
+script/poc/ada-service/static
