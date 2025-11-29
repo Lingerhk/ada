@@ -1,0 +1,131 @@
+name: "adaegis-poc"
+
+services:
+  # MongoDB and Redis are not needed - using cloud services
+  # MongoDB Atlas: adaegis-poc.eoej2ce.mongodb.net
+  # Redis Labs: redis-18933.c292.ap-southeast-1-1.ec2.cloud.redislabs.com:18933
+
+  ada_elasticsearch:
+    container_name: "ada_elasticsearch"
+    image: ada_elasticsearch:2.9.1
+    restart: unless-stopped
+    networks:
+      ada-networks:
+        aliases:
+          - elasticsearch
+          - ada_elasticsearch
+    environment:
+      - ES_JAVA_OPTS=-Xms1g -Xmx1g
+      - ELASTIC_PASSWORD=nf6ZIN3AIfFs5ufZf9E
+      - xpack.security.enabled=true
+    mem_limit: 3g
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - es_data:/usr/share/elasticsearch/data:rw
+    ports:
+      - "9200:9200"
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "curl -s -u elastic:nf6ZIN3AIfFs5ufZf9E http://localhost:9200/_cluster/health || exit 1",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+
+  ada_elasticsearch_setup:
+    container_name: "ada_elasticsearch_setup"
+    image: ada_elasticsearch_setup:2.9.1
+    networks:
+      ada-networks:
+    environment:
+      - ELASTIC_PASSWORD=nf6ZIN3AIfFs5ufZf9E
+      - KIBANA_PASSWORD=HszHApENsYWZXgq9mxOC
+    depends_on:
+      ada_elasticsearch:
+        condition: service_healthy
+    restart: "no"
+
+  ada_kibana:
+    container_name: "ada_kibana"
+    image: ada_kibana:2.9.1
+    restart: unless-stopped
+    networks:
+      ada-networks:
+        aliases:
+          - kibana
+          - ada_kibana
+    ports:
+      - "5601:5601"
+    depends_on:
+      ada_elasticsearch:
+        condition: service_healthy
+      ada_elasticsearch_setup:
+        condition: service_completed_successfully
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "curl -s -u elastic:nf6ZIN3AIfFs5ufZf9E http://localhost:5601/api/status || exit 1",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+
+  ada_kibana_setup:
+    container_name: "ada_kibana_setup"
+    image: ada_elasticsearch_setup:2.9.1
+    networks:
+      ada-networks:
+    environment:
+      - ELASTIC_PASSWORD=nf6ZIN3AIfFs5ufZf9E
+      - KIBANA_PASSWORD=HszHApENsYWZXgq9mxOC
+      - CREATE_DATA_VIEWS=true  # This service only creates data views
+      - SKIP_PASSWORD_SETUP=true  # Skip password setup (already done by ada_elasticsearch_setup)
+    depends_on:
+      ada_kibana:
+        condition: service_healthy
+    restart: "no"
+
+  # ada_zeek:
+  #   container_name: "ada_zeek"
+  #   image: ada_zeek:2.9.1
+  #   restart: unless-stopped
+  #   networks:
+  #     ada-networks:
+  #       aliases:
+  #         - zeek
+  #         - ada_zeek
+  #   ports:
+  #     - "9093:9093/udp"
+  #   depends_on:
+  #     - ada_elasticsearch
+
+  ada_scanner:
+    container_name: "ada_scanner"
+    image: ada_scanner:2.9.1
+    restart: unless-stopped
+    networks:
+      ada-networks:
+        aliases:
+          - scanner
+          - ada_scanner
+    volumes:
+      - scanner_data:/home/adadmin/logs:rw
+
+# define docker network
+networks:
+  ada-networks:
+    driver: bridge
+
+volumes:
+  es_data:
+    driver: local
+  scanner_data:
+    driver: local
+  frpc_logs:
+    driver: local
