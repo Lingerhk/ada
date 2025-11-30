@@ -5,6 +5,9 @@ ENV TASKER_CONF_PATH=/home/adadmin/conf/tasker.yaml
 ENV APISERVER_CONF_PATH=/home/adadmin/conf/apiserver.yaml
 ENV ENGINE_CONF_PATH=/home/adadmin/conf/engine.yaml
 
+# Temporary solution for test/uat/poc
+ENV TEST_TRAIT=8e9bc696dd9f5c2c522ed50dadd206b3
+
 LABEL maintainer="dev@ada"
 LABEL version=2.9.1
 LABEL description="Docker image for ada system all-in-one service (backend + engine)"
@@ -14,13 +17,17 @@ ENV DEBIAN_FRONTEND=noninteractive
 RUN set -x \
     && apt-get update \
     && apt-get install -y --no-install-recommends \
-        iputils-ping \
+        iputils-ping curl wget net-tools \
         dnsutils \
         traceroute \
         netcat-openbsd \
         nginx \
         supervisor \
+        ca-certificates \
     && rm -rf /var/lib/apt/lists/*
+
+# Update CA certificates
+RUN update-ca-certificates
 
 # Create user
 RUN useradd -rm -d /home/adadmin -s /bin/bash -g root -G sudo -u 1001 adadmin
