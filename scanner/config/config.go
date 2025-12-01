@@ -4,7 +4,6 @@ import (
 	"ada/infra/loghook"
 	"ada/infra/mongo"
 	"context"
-	"fmt"
 	"os"
 	"path"
 	"time"
@@ -12,6 +11,7 @@ import (
 	"github.com/natefinch/lumberjack"
 	"github.com/redis/go-redis/v9"
 	"github.com/sirupsen/logrus"
+	"go.mongodb.org/mongo-driver/v2/x/mongo/driver/connstring"
 	"gopkg.in/yaml.v3"
 )
 
@@ -29,11 +29,7 @@ type RedisCfg struct {
 }
 
 type MongodbCfg struct {
-	Scheme    string `yaml:"Scheme"`
-	Host      string `yaml:"Host"`
-	User      string `yaml:"User"`
-	Passwd    string `yaml:"Passwd"`
-	DbName    string `yaml:"DbName"`
+	URI       string `yaml:"URI"`
 	PoolLimit uint64 `yaml:"PoolLimit"`
 }
 
@@ -105,25 +101,14 @@ func InitRedisClient(setting *Config) (*redis.Client, error) {
 }
 
 func InitMongoClient(setting *Config) (mongo.DBAdaptor, error) {
-	var mongoURI string
 	mongoCli := mongo.NewMongoSession()
 
-	// Default to "mongodb" if scheme is not specified
-	scheme := setting.Mongodb.Scheme
-	if scheme == "" {
-		scheme = "mongodb"
+	cs, err := connstring.Parse(setting.Mongodb.URI)
+	if err != nil {
+		return nil, err
 	}
 
-	// Build MongoDB connection URI
-	if scheme == "mongodb+srv" {
-		mongoURI = fmt.Sprintf("%s://%s:%s@%s/?appName=adaegis-poc",
-			scheme, setting.Mongodb.User, setting.Mongodb.Passwd, setting.Mongodb.Host)
-	} else {
-		mongoURI = fmt.Sprintf("%s://%s:%s@%s/?authSource=%s",
-			scheme, setting.Mongodb.User, setting.Mongodb.Passwd, setting.Mongodb.Host, setting.Mongodb.DbName)
-	}
-
-	err := mongoCli.Connect(mongoURI, setting.Mongodb.DbName)
+	err = mongoCli.Connect(setting.Mongodb.URI, cs.Database)
 	if err != nil {
 		return nil, err
 	}
