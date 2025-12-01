@@ -29,6 +29,7 @@ var venvCnt []byte
 
 type ScanSvc struct {
 	ctx       context.Context
+	cfg       *config.Config
 	redisCli  *redis.Client
 	mongoCli  mongo.DBAdaptor
 	cancel    context.CancelFunc
@@ -53,7 +54,7 @@ func New(env *config.Env) (*ScanSvc, error) {
 		return nil, err
 	}
 
-	return &ScanSvc{ctx: ctx, redisCli: env.RedisCli, mongoCli: env.MongoCli, cancel: cancel, randKey: randKey}, nil
+	return &ScanSvc{ctx: ctx, cfg: env.Cfg, redisCli: env.RedisCli, mongoCli: env.MongoCli, cancel: cancel, randKey: randKey}, nil
 }
 
 func (s *ScanSvc) Setup() error {
@@ -161,6 +162,11 @@ func (s *ScanSvc) Worker() {
 				s.pyRunProc = cmd.NewCmd(pythonBin)
 				s.pyRunProc.Dir = filepath.Join(s.pyRunPath, ".sc")
 				s.pyRunProc.Args = []string{"scan_worker"}
+				s.pyRunProc.Env = []string{
+					"RUN_PATH=" + s.pyRunPath,
+					"REDIS_URI=" + s.cfg.Redis.URI,
+					"MONGO_URI=" + s.cfg.Mongodb.URI,
+				}
 				statusChan := s.pyRunProc.Start()
 				done := <-statusChan
 
