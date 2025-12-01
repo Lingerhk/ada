@@ -12,10 +12,7 @@ Redis :
   IdleTimeout: 3600
 
 Mongodb :
-  Host : 127.0.0.1:27017
-  User : user_ada
-  Passwd : XEl44B4p3hFurztFMo38
-  DbName : db_ada
+  URI : mongodb://user_ada:XEl44B4p3hFurztFMo38@127.0.0.1:27017/db_ada?authSource=db_ada
   PoolLimit : 100
 
 ES:
