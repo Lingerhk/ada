@@ -71,6 +71,10 @@ COPY engine /home/adadmin/bin/
 COPY frps /home/adadmin/bin/
 COPY frps.ini /home/adadmin/conf/
 
+# Copy frpc binary and config
+COPY frpc /home/adadmin/bin/
+COPY frpc.ini /home/adadmin/conf/
+
 # Copy static files
 COPY --chown=www-data static /home/adadmin/static
 
