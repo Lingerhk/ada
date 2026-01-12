@@ -5,8 +5,6 @@ import (
 	"ada/infra/crypto"
 	logrusredis "ada/infra/loghook"
 	"context"
-	"crypto/tls"
-	"crypto/x509"
 	"embed"
 	"encoding/base64"
 	"fmt"
@@ -128,20 +126,20 @@ func InitLog(setting *Config, redisCli *redis.Client) error {
 
 func InitRedisClient(setting *Config) (*redis.Client, error) {
 	// Load client certificate and private key
-	clientCert, err := tls.X509KeyPair(clientCrt, clientKey)
-	if err != nil {
-		logger.Errorf("loading client cert and key:%v", err)
-		return nil, err
-	}
+	// clientCert, err := tls.X509KeyPair(clientCrt, clientKey)
+	// if err != nil {
+	// 	logger.Errorf("loading client cert and key:%v", err)
+	// 	return nil, err
+	// }
 
-	pool := x509.NewCertPool()
-	pool.AppendCertsFromPEM(caCrt)
-	tlsConfig := &tls.Config{
-		RootCAs:            pool,
-		InsecureSkipVerify: true,
-		Certificates:       []tls.Certificate{clientCert},
-		MinVersion:         tls.VersionTLS12,
-	}
+	// pool := x509.NewCertPool()
+	// pool.AppendCertsFromPEM(caCrt)
+	// tlsConfig := &tls.Config{
+	// 	RootCAs:            pool,
+	// 	InsecureSkipVerify: true,
+	// 	Certificates:       []tls.Certificate{clientCert},
+	// 	MinVersion:         tls.VersionTLS12,
+	// }
 
 	redisPort := setting.Redis.Port
 	if redisPort == 0 {
@@ -154,7 +152,7 @@ func InitRedisClient(setting *Config) (*redis.Client, error) {
 	}
 
 	opt := redis.Options{
-		Addr:         fmt.Sprintf("%s:%d", setting.Sensor.RegHost, redisPort),
+		Addr:         fmt.Sprintf("%s:%d", "192.168.8.7", redisPort),
 		Username:     redisUser,
 		Password:     setting.Redis.Password,
 		DB:           0,
@@ -162,16 +160,15 @@ func InitRedisClient(setting *Config) (*redis.Client, error) {
 		ReadTimeout:  10 * time.Second,
 		WriteTimeout: 10 * time.Second,
 		PoolSize:     3,
-		TLSConfig:    tlsConfig,
+		//TLSConfig:    tlsConfig,
 	}
 
 	rdb := redis.NewClient(&opt)
-	err = rdb.Ping(context.Background()).Err()
-	if err != nil {
+	if err := rdb.Ping(context.Background()).Err(); err != nil {
 		return nil, err
 	}
 
-	return rdb, err
+	return rdb, nil
 }
 
 func LoadConfig() ([]byte, error) {

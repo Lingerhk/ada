@@ -7,19 +7,35 @@ import (
 	"ada/agent/sensor/winevt/operator/output/syslog"
 	"fmt"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/sirupsen/logrus"
 	logger "github.com/sirupsen/logrus"
 )
 
-var (
-	defaultChannels = []string{"Application", "System", "Security", "Directory Service", "Microsoft-Windows-PowerShell/Operational", "Microsoft-Windows-TaskScheduler/Operational", "Microsoft-Windows-WMI-Activity/Operational", "Microsoft-Windows-SMBClient/Security", "Microsoft-Windows-TerminalServices-RDPClient/Operational", "Microsoft-Windows-TerminalServices-LocalSessionManager/Operational", "Microsoft-Windows-TerminalServices-RemoteConnectionManager/Operational"}
-	rpcFwChannel    = "RPCFW"
-	ldapFwChannel   = "LDAPFW"
+// defaultChannels is the base list of channels - do NOT modify directly
+var defaultChannelsList = []string{
+	"Application",
+	"System",
+	"Security",
+	"Directory Service",
+	"Microsoft-Windows-PowerShell/Operational",
+	"Microsoft-Windows-TaskScheduler/Operational",
+	"Microsoft-Windows-WMI-Activity/Operational",
+	"Microsoft-Windows-SMBClient/Security",
+	"Microsoft-Windows-TerminalServices-RDPClient/Operational",
+	"Microsoft-Windows-TerminalServices-LocalSessionManager/Operational",
+	"Microsoft-Windows-TerminalServices-RemoteConnectionManager/Operational",
+}
+
+const (
+	rpcFwChannel  = "RPCFW"
+	ldapFwChannel = "LDAPFW"
 )
 
 type evtPlugin struct {
+	mu            sync.RWMutex // Protects inputs, EventFilter
 	Channels      []string
 	PollInterval  time.Duration
 	SyslogAddress string
@@ -34,24 +50,29 @@ type evtPlugin struct {
 }
 
 func NewEvtPlugin(adaHost string, evtSrvPort int) (*evtPlugin, error) {
-	logger := logrus.New()
+	log := logrus.New()
 
+	// Create a local copy of the default channels to avoid mutating the global
+	channels := make([]string, len(defaultChannelsList))
+	copy(channels, defaultChannelsList)
+
+	// Append optional channels based on installed plugins
 	if isRpcFwInstalled() {
-		defaultChannels = append(defaultChannels, rpcFwChannel)
+		channels = append(channels, rpcFwChannel)
 	}
 	if isLdapFwInstalled() {
-		defaultChannels = append(defaultChannels, ldapFwChannel)
+		channels = append(channels, ldapFwChannel)
 	}
 
 	// TODO: 检查syslogAddress是否合法
 
 	return &evtPlugin{
-		Channels:      defaultChannels,
+		Channels:      channels,
 		PollInterval:  1 * time.Second,
 		SyslogNetwork: "udp",
 		SyslogAddress: fmt.Sprintf("%s:%d", adaHost, evtSrvPort),
 		SyslogTag:     "ADASensor",
-		settings:      operator.BaseSettings{Logger: logger},
+		settings:      operator.BaseSettings{Logger: log},
 		persister:     operator.NewScopedPersister("ada", &operator.NoopPersister{}),
 		inputs:        make([]operator.Operator, 0),
 	}, nil
@@ -84,6 +105,9 @@ func (e *evtPlugin) createChannelInput(channel string) (operator.Operator, error
 }
 
 func (e *evtPlugin) Start() error {
+	e.mu.Lock()
+	defer e.mu.Unlock()
+
 	// Create syslog output configuration
 	syslogConfig := syslog.NewConfig("syslog")
 	syslogConfig.Network = e.SyslogNetwork
@@ -109,7 +133,7 @@ func (e *evtPlugin) Start() error {
 				logger.Warnf("ignore to create input channel %s as it does not exist!", channel)
 				continue
 			}
-			e.Stop() // Clean up any started inputs
+			e.stopInternal() // Clean up any started inputs (without lock)
 			return fmt.Errorf("failed to create input for channel %s: %v, will stop all channels", channel, err)
 		}
 
@@ -121,7 +145,8 @@ func (e *evtPlugin) Start() error {
 	return nil
 }
 
-func (e *evtPlugin) Stop() error {
+// stopInternal stops the plugin without acquiring the lock (caller must hold lock)
+func (e *evtPlugin) stopInternal() error {
 	var errs []error
 
 	// Stop all inputs
@@ -149,11 +174,31 @@ func (e *evtPlugin) Stop() error {
 	return nil
 }
 
+func (e *evtPlugin) Stop() error {
+	e.mu.Lock()
+	defer e.mu.Unlock()
+	return e.stopInternal()
+}
+
 func (e *evtPlugin) Set(channels []string, syslogNetwork, syslogAddress string, pollInterval time.Duration) {
+	e.mu.Lock()
+	defer e.mu.Unlock()
 	e.Channels = channels
 	e.SyslogNetwork = syslogNetwork
 	e.SyslogAddress = syslogAddress
 	e.PollInterval = pollInterval
+}
+
+func (e *evtPlugin) GetEventFilter() string {
+	e.mu.RLock()
+	defer e.mu.RUnlock()
+	return e.EventFilter
+}
+
+func (e *evtPlugin) SetEventFilter(filter string) {
+	e.mu.Lock()
+	defer e.mu.Unlock()
+	e.EventFilter = filter
 }
 
 func (e *evtPlugin) Reload() error {
@@ -169,5 +214,7 @@ func (e *evtPlugin) Reload() error {
 }
 
 func (e *evtPlugin) IsRunning() bool {
+	e.mu.RLock()
+	defer e.mu.RUnlock()
 	return len(e.inputs) > 0
 }
