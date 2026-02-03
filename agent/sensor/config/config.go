@@ -5,6 +5,7 @@ import (
 	"ada/infra/crypto"
 	logrusredis "ada/infra/loghook"
 	"context"
+	"crypto/aes"
 	"crypto/tls"
 	"crypto/x509"
 	"embed"
@@ -224,16 +225,13 @@ func LoadConfig() ([]byte, error) {
 		fileCnt, err = aesGCM.Decrypt(fileEncCnt)
 		if err != nil {
 			// Backward compatibility: some old deployments still have sensor.cfg encrypted
-			// with the legacy key.
-			legacyAesGCM, lerr := crypto.NewAesGCM([]byte(legacyCfgEncKey))
+			// with the legacy AES-ECB implementation (pre security-fix).
+			var lerr error
+			fileCnt, lerr = legacyAesECBDecrypt(fileEncCnt, []byte(legacyCfgEncKey))
 			if lerr != nil {
 				return nil, fmt.Errorf("failed to decrypt config: %w", err)
 			}
-			fileCnt, lerr = legacyAesGCM.Decrypt(fileEncCnt)
-			if lerr != nil {
-				return nil, fmt.Errorf("failed to decrypt config: %w", err)
-			}
-			logger.Warnf("load configure from %s using legacy cfgEncKey", confEncFile)
+			logger.Warnf("load configure from %s using legacy AES-ECB cfgEncKey", confEncFile)
 		} else {
 			logger.Infof("load configure from %s", confEncFile)
 		}
@@ -242,6 +240,28 @@ func LoadConfig() ([]byte, error) {
 	}
 
 	return fileCnt, err
+}
+
+func legacyAesECBDecrypt(crypted, key []byte) ([]byte, error) {
+	block, err := aes.NewCipher(key)
+	if err != nil {
+		return nil, err
+	}
+	bs := block.BlockSize()
+	if len(crypted)%bs != 0 {
+		return nil, fmt.Errorf("legacy aes-ecb decrypt: input not full blocks")
+	}
+	orig := make([]byte, len(crypted))
+	for i := 0; i < len(crypted); i += bs {
+		block.Decrypt(orig[i:i+bs], crypted[i:i+bs])
+	}
+	// legacy padding: zero padding
+	for i := len(orig) - 1; i >= 0; i-- {
+		if orig[i] != 0 {
+			return orig[:i+1], nil
+		}
+	}
+	return []byte{}, nil
 }
 
 func WriteConfigFile(setting *Config) error {
