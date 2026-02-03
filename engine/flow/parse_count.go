@@ -18,40 +18,45 @@ import (
 // 匹配器: count类型
 func (r *Ruleset) matchEventCount(ctx context.Context, fr FlowRule, flowInstances []string) {
 	for _, insId := range flowInstances {
-		logger.Debugf("11----handle EventTypeCount instance_id %s", insId)
+		func() {
+			insCtx, cancel := context.WithTimeout(ctx, 2*time.Second)
+			defer cancel()
 
-		stop := time.Now().UnixNano() / 1e6
+			logger.Debugf("11----handle EventTypeCount instance_id %s", insId)
 
-		// 取最新winSize内的所有事件
-		activities, err := r.getFlowActivitiesByWinSize(ctx, insId, fr.Detection.WinSizeTs, stop)
-		if err != nil {
-			logger.Warnf("get flow events by win_size err:%v, will ignore this event!", err)
-			continue
-		}
+			stop := time.Now().UnixNano() / 1e6
 
-		logger.Debugf("22----handle EventTypeCount activities %#v", activities)
-
-		// match_by: "$s1._count == 3"
-		matchBy := fr.Detection.MatchBy
-		_, v, err := parseExpression(matchBy)
-		if err != nil {
-			logger.Warnf("parse matchBy err:%v, will ignore this flow instance!", err)
-			continue
-		}
-
-		if len(activities) >= v {
-			// count超过阈值，生成告警（多）事件
-			if err := r.storeEvent(ctx, insId, fr, activities); err != nil {
-				logger.Warnf("store event(multi-count) err:%v, will ignore this flow event!", err)
-			}
-
-			// 将该flow instance中的activity从redis(zset)删除，start从new开始算(ts<now的删除)
-			err := r.redisCli.ZRemRangeByScore(ctx, insId, strconv.FormatInt(stop-common.MaxFlowWinSize, 10), strconv.FormatInt(stop, 10)).Err()
+			// 取最新winSize内的所有事件
+			activities, err := r.getFlowActivitiesByWinSize(insCtx, insId, fr.Detection.WinSizeTs, stop)
 			if err != nil {
-				logger.Warnf("delete alerted event from zset err:%v", err)
+				logger.Warnf("get flow events by win_size err:%v, will ignore this event!", err)
+				return
 			}
-			continue
-		}
+
+			logger.Debugf("22----handle EventTypeCount activities %#v", activities)
+
+			// match_by: "$s1._count == 3"
+			matchBy := fr.Detection.MatchBy
+			_, v, err := parseExpression(matchBy)
+			if err != nil {
+				logger.Warnf("parse matchBy err:%v, will ignore this flow instance!", err)
+				return
+			}
+
+			if len(activities) >= v {
+				// count超过阈值，生成告警（多）事件
+				if err := r.storeEvent(insCtx, insId, fr, activities); err != nil {
+					logger.Warnf("store event(multi-count) err:%v, will ignore this flow event!", err)
+				}
+
+				// 将该flow instance中的activity从redis(zset)删除，start从new开始算(ts<now的删除)
+				err := r.redisCli.ZRemRangeByScore(insCtx, insId, strconv.FormatInt(stop-common.MaxFlowWinSize, 10), strconv.FormatInt(stop, 10)).Err()
+				if err != nil {
+					logger.Warnf("delete alerted event from zset err:%v", err)
+				}
+				return
+			}
+		}()
 	}
 }
 
