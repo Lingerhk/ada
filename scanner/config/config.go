@@ -4,6 +4,7 @@ import (
 	"ada/infra/loghook"
 	"ada/infra/mongo"
 	"context"
+	"fmt"
 	"os"
 	"path"
 	"time"
@@ -128,6 +129,23 @@ func Init(confPath string) (*Env, error) {
 	err = yaml.Unmarshal(content, &setting)
 	if err != nil {
 		return nil, err
+	}
+
+	// Fallback: allow env override when YAML fields are empty (common in containerized deployments)
+	if setting.Redis.URI == "" {
+		setting.Redis.URI = os.Getenv("REDIS_URI")
+	}
+	if setting.Mongodb.URI == "" {
+		setting.Mongodb.URI = os.Getenv("MONGO_URI")
+		if setting.Mongodb.URI == "" {
+			setting.Mongodb.URI = os.Getenv("MONGODB_URI")
+		}
+	}
+	if setting.Redis.URI == "" {
+		return nil, fmt.Errorf("empty Redis.URI in config: %s", confPath)
+	}
+	if setting.Mongodb.URI == "" {
+		return nil, fmt.Errorf("empty Mongodb.URI in config: %s", confPath)
 	}
 
 	redisCli, err := InitRedisClient(&setting)
