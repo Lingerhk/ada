@@ -29,7 +29,7 @@ func (r *Ruleset) matchEventMultiPkt(ctx context.Context, fr FlowRule, flowInsta
 			continue
 		}
 
-		matchedActivities, matched := r.matchByActivities(activities, validSets, fr.Detection.MatchBy)
+		matchedActivities, matched := r.matchByActivities(ctx, activities, validSets, fr.Detection.MatchBy)
 		if !matched {
 			continue
 		}
