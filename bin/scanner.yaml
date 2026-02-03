@@ -5,12 +5,12 @@ Log:
   LogLevel: debug
   IsStdOut: false
 
-Redis :
+Redis:
   URI: redis://:1pa2YgE3jfTbVVpn06CN@redis:6379/0
   Active: 120
   Idle: 15
   IdleTimeout: 3600
 
-Mongodb :
+Mongodb:
   URI: mongodb://user_ada:XEl44B4p3hFurztFMo38@mongodb:27017/db_ada?authSource=db_ada
   PoolLimit: 100
