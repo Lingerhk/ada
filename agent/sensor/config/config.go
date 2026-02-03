@@ -5,7 +5,6 @@ import (
 	"ada/infra/crypto"
 	logrusredis "ada/infra/loghook"
 	"context"
-	"crypto/aes"
 	"crypto/tls"
 	"crypto/x509"
 	"embed"
@@ -26,10 +25,6 @@ import (
 const (
 	// cfgEncKey must be 16, 24, or 32 bytes for AES-128, AES-192, or AES-256
 	cfgEncKey = "adcc368715ce1bd5adcc368785ce1bd2" // 32 bytes for AES-256-GCM
-
-	// legacyCfgEncKey is the pre-2025 key used by old sensor packages.
-	// Keep it to maintain backward compatibility for existing deployed sensor.cfg.
-	legacyCfgEncKey = "adcc368715ce1bd2"
 
 	confFile    = "sensor.yaml"
 	confEncFile = "sensor.cfg"
@@ -224,17 +219,9 @@ func LoadConfig() ([]byte, error) {
 		}
 		fileCnt, err = aesGCM.Decrypt(fileEncCnt)
 		if err != nil {
-			// Backward compatibility: some old deployments still have sensor.cfg encrypted
-			// with the legacy AES-ECB implementation (pre security-fix).
-			var lerr error
-			fileCnt, lerr = legacyAesECBDecrypt(fileEncCnt, []byte(legacyCfgEncKey))
-			if lerr != nil {
-				return nil, fmt.Errorf("failed to decrypt config: %w", err)
-			}
-			logger.Warnf("load configure from %s using legacy AES-ECB cfgEncKey", confEncFile)
-		} else {
-			logger.Infof("load configure from %s", confEncFile)
+			return nil, fmt.Errorf("failed to decrypt config: %w", err)
 		}
+		logger.Infof("load configure from %s", confEncFile)
 	} else {
 		logger.Infof("load configure from %s", confFile)
 	}
@@ -242,27 +229,7 @@ func LoadConfig() ([]byte, error) {
 	return fileCnt, err
 }
 
-func legacyAesECBDecrypt(crypted, key []byte) ([]byte, error) {
-	block, err := aes.NewCipher(key)
-	if err != nil {
-		return nil, err
-	}
-	bs := block.BlockSize()
-	if len(crypted)%bs != 0 {
-		return nil, fmt.Errorf("legacy aes-ecb decrypt: input not full blocks")
-	}
-	orig := make([]byte, len(crypted))
-	for i := 0; i < len(crypted); i += bs {
-		block.Decrypt(orig[i:i+bs], crypted[i:i+bs])
-	}
-	// legacy padding: zero padding
-	for i := len(orig) - 1; i >= 0; i-- {
-		if orig[i] != 0 {
-			return orig[:i+1], nil
-		}
-	}
-	return []byte{}, nil
-}
+// legacy decrypt removed: sensor.cfg is now always AES-GCM encrypted.
 
 func WriteConfigFile(setting *Config) error {
 	cfgBytes, err := yaml.Marshal(&setting)
