@@ -82,31 +82,29 @@ func New(ctx context.Context, rdxCli *redis.Client, sensorId string, sensorCfg c
 func (p *Plugin) Event(wg *sync.WaitGroup) {
 	defer wg.Done()
 
-	plugTicker := time.NewTicker(time.Minute)
-	defer plugTicker.Stop()
+	// NOTE:
+	// Previously this code only polled PubSub once per minute, which can easily cause
+	// Portal-triggered operations (that wait ~40s) to time out.
+	// Consume the channel continuously.
 
-	pubsub := p.rdxCli.PSubscribe(p.ctx, common.SensorCmdChannel)
+	pubsub := p.rdxCli.Subscribe(p.ctx, common.SensorCmdChannel)
 	defer pubsub.Close()
 
+	ch := pubsub.Channel(redis.WithChannelSize(256))
 	for {
 		select {
 		case <-p.ctx.Done():
 			return
-		case <-plugTicker.C:
-			{
-				msg, err := pubsub.ReceiveTimeout(p.ctx, 3*time.Second)
-				if err != nil {
-					if err := pubsub.Ping(p.ctx); err != nil {
-						logger.Errorf("PubSub failure:%s", err.Error())
-					}
-					continue
+		case msg, ok := <-ch:
+			if !ok {
+				// connection closed; try a light ping for logging then exit
+				if err := pubsub.Ping(p.ctx); err != nil {
+					logger.Errorf("PubSub closed/ping failed: %s", err.Error())
 				}
-				switch msg := msg.(type) {
-				case *redis.Message:
-					logger.Infof("channel: %s received:%s, ", msg.Channel, msg.Payload)
-					go p.cmdSync(msg.Payload) // 并发执行，防止卡住导致stop等指令无法执行
-				}
+				return
 			}
+			logger.Infof("channel: %s received:%s", msg.Channel, msg.Payload)
+			go p.cmdSync(msg.Payload) // 并发执行，防止卡住导致stop等指令无法执行
 		}
 	}
 }
