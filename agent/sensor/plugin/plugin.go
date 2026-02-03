@@ -87,7 +87,8 @@ func (p *Plugin) Event(wg *sync.WaitGroup) {
 	// Portal-triggered operations (that wait ~40s) to time out.
 	// Consume the channel continuously.
 
-	pubsub := p.rdxCli.Subscribe(p.ctx, common.SensorCmdChannel)
+	// Use PSUBSCRIBE because Redis ACL user `ada_sensor` is granted +psubscribe (not +subscribe).
+	pubsub := p.rdxCli.PSubscribe(p.ctx, common.SensorCmdChannel)
 	defer pubsub.Close()
 
 	ch := pubsub.Channel(redis.WithChannelSize(256))

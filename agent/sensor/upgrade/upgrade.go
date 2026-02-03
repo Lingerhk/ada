@@ -8,6 +8,8 @@ import (
 	"context"
 	"crypto"
 	"encoding/hex"
+	"os"
+
 	"github.com/redis/go-redis/v9"
 	logger "github.com/sirupsen/logrus"
 	"sync"
@@ -126,6 +128,13 @@ func (u *Upgrade) executeUpdate(newVersion string) error {
 	}
 
 	logger.Infof("finished self-update sensor to %s", newVersion)
+
+	// The running process is still the old binary. Exit so the Windows service manager
+	// can restart and load the new executable (required to pick up functional changes).
+	go func() {
+		time.Sleep(2 * time.Second)
+		os.Exit(0)
+	}()
 
 	return nil
 }
