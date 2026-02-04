@@ -45,3 +45,4 @@ script/poc/ada-service/task_server
 script/poc/ada-service/task_worker
 script/poc/ada-service/engine
 script/poc/ada-service/static
+script/poc/ada-service/pkg
