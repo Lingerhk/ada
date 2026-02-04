@@ -1,0 +1,85 @@
+FROM ubuntu:24.04
+
+ENV SERVICE_NAME=ada_portal
+ENV TASKER_CONF_PATH=/home/adadmin/conf/tasker.yaml
+ENV APISERVER_CONF_PATH=/home/adadmin/conf/apiserver.yaml
+ENV ENGINE_CONF_PATH=/home/adadmin/conf/engine.yaml
+
+# Temporary solution for test/uat/poc
+ENV TEST_TRAIT=8e9bc696dd9f5c2c522ed50dadd206b3
+
+LABEL maintainer="dev@ada"
+LABEL version=2.9.1
+LABEL description="Docker image for ada portal service (nginx + apiserver + tunnel)"
+
+# Install dependencies
+ENV DEBIAN_FRONTEND=noninteractive
+RUN set -x \
+    && apt-get update \
+    && apt-get install -y --no-install-recommends \
+        iputils-ping curl wget net-tools \
+        dnsutils \
+        traceroute \
+        netcat-openbsd \
+        nginx \
+        libnginx-mod-stream \
+        supervisor \
+        ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
+
+# Update CA certificates
+RUN update-ca-certificates
+
+# Create user
+RUN useradd -rm -d /home/adadmin -s /bin/bash -g root -G sudo -u 1001 adadmin
+
+# Create directories
+RUN set -x \
+    && mkdir -p /home/adadmin/logs \
+    && mkdir -p /home/adadmin/bin \
+    && mkdir -p /home/adadmin/conf \
+    && mkdir -p /home/adadmin/download \
+    && mkdir -p /home/adadmin/download/report \
+    && mkdir -p /home/adadmin/download/sensor \
+    && chmod 755 /home/adadmin \
+    && chown -R adadmin:root /home/adadmin/logs \
+    && chown -R adadmin:root /home/adadmin/download \
+    && chown -R adadmin:root /home/adadmin/conf \
+    && sed -i 's/worker_processes auto;/worker_processes 2;/' /etc/nginx/nginx.conf \
+    && sed -i '/^load_module modules\/ngx_stream_module\.so;/d' /etc/nginx/nginx.conf \
+    && sed -i '/^events {/i include /etc/nginx/stream.d/*.conf;' /etc/nginx/nginx.conf \
+    && mkdir -p /etc/nginx/stream.d
+
+# Copy sensor files
+COPY adaegis.zip /home/adadmin/download/sensor/adaegis.zip
+COPY install-adaegis.ps1 /home/adadmin/download/sensor/install-adaegis.ps1
+COPY uninstall-adaegis.ps1 /home/adadmin/download/sensor/uninstall-adaegis.ps1
+
+# Copy nginx and supervisor config
+COPY conf/nginx.portal.conf /etc/nginx/sites-available/default
+COPY conf/nginx.stream.conf /etc/nginx/stream.d/stream.conf
+COPY conf/supervisord.portal.conf /etc/supervisor/supervisord.conf
+
+# Copy apiserver binary only (portal doesn't need engine/tasker)
+COPY apiserver /home/adadmin/bin/
+
+# Copy easytier binary and config
+COPY easytier-core /home/adadmin/bin/
+COPY easytier.portal.toml /home/adadmin/conf/easytier.toml
+
+# Copy static files
+COPY --chown=www-data static /home/adadmin/static
+
+# Copy config files
+COPY apiserver.portal.yaml /home/adadmin/conf/apiserver.yaml
+
+# Copy entrypoint script
+COPY entrypoint.sh /home/adadmin/bin/
+RUN chmod +x /home/adadmin/bin/entrypoint.sh
+
+USER root
+WORKDIR /home/adadmin
+
+EXPOSE 80/tcp 8090/tcp 6379/tcp 27017/tcp
+
+ENTRYPOINT ["/home/adadmin/bin/entrypoint.sh"]

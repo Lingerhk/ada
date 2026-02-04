@@ -19,6 +19,8 @@ poc_remote_path="/home/adadmin/ada-poc"
 # Docker registry configuration
 registry_url="docker.adaegis.net"
 registry_user="adaegis"
+image_variant="service"
+dockerfile="Dockerfile"
 registry_image="${registry_url}/ada_service:${version}"
 
 # Colors for output
@@ -37,6 +39,25 @@ log_warn() {
 
 log_error() {
     echo -e "${RED}[ERROR]${NC} $1"
+}
+
+select_image_variant() {
+    case "$1" in
+        ""|service)
+            image_variant="service"
+            dockerfile="Dockerfile"
+            registry_image="${registry_url}/ada_service:${version}"
+            ;;
+        portal)
+            image_variant="portal"
+            dockerfile="Dockerfile.portal"
+            registry_image="${registry_url}/ada_portal:${version}"
+            ;;
+        *)
+            log_error "Unknown image variant: $1 (use 'service' or 'portal')"
+            exit 1
+            ;;
+    esac
 }
 
 # Build frontend
@@ -78,21 +99,21 @@ prepare_ada_service() {
 
 # Build ada_service Docker image
 build_ada_service() {
-    log_info "Building ada_service Docker image..."
+    log_info "Building ${image_variant} Docker image..."
     cd ${poc_service_path} || exit
 
     # Ensure IPv4 forwarding is enabled
     sudo sysctl net.ipv4.ip_forward=1 >/dev/null 2>&1 || true
 
     # Build with host network for DNS resolution
-    DOCKER_BUILDKIT=0 docker build --network=host -t ${registry_image} .
+    DOCKER_BUILDKIT=0 docker build --network=host -f ${dockerfile} -t ${registry_image} .
 
     log_info "Docker image built successfully: ${registry_image}"
 }
 
 # Push ada_service to registry
 push_ada_service() {
-    log_info "Pushing ada_service to registry..."
+    log_info "Pushing ${image_variant} image to registry..."
 
     # Login to registry
     echo "Please ensure you're logged in to ${registry_url}"
@@ -174,18 +195,24 @@ usage() {
 Usage: $0 <command> [options]
 
 Commands:
-    build               Build frontend, backend, and Docker image
-    push                Push Docker image to registry
+    build [variant]     Build frontend, backend, and Docker image
+    push [variant]      Push Docker image to registry
     deploy              Deploy docker-compose to POC server
-    full                Build, push, and deploy (full deployment)
-    status              Show deployment status
+    full [variant]      Build, push, and deploy (full deployment)
+    status [variant]    Show deployment status
+
+Variants:
+    service             Build ada_service image (default)
+    portal              Build ada_portal image
 
 Examples:
-    $0 build                                    # Build everything
-    $0 push                                     # Push to registry
+    $0 build                                    # Build ada_service
+    $0 build portal                             # Build ada_portal
+    $0 push portal                              # Push ada_portal
     $0 deploy                                   # Deploy to POC server
-    $0 full                                     # Complete deployment
-    $0 status                                   # Show status
+    $0 full                                     # Complete deployment (ada_service)
+    $0 full portal                              # Complete deployment (ada_portal)
+    $0 status portal                            # Show status (ada_portal)
 
 EOF
 }
@@ -194,6 +221,7 @@ EOF
 main() {
     case $1 in
         build)
+            select_image_variant "$2"
             build_frontend
             build_backend
             prepare_ada_service
@@ -201,6 +229,7 @@ main() {
             log_info "Build completed successfully!"
             ;;
         push)
+            select_image_variant "$2"
             push_ada_service
             log_info "Push completed successfully!"
             ;;
@@ -209,6 +238,7 @@ main() {
             log_info "Deployment completed successfully!"
             ;;
         full)
+            select_image_variant "$2"
             build_frontend
             build_backend
             prepare_ada_service
@@ -219,6 +249,7 @@ main() {
             show_status
             ;;
         status)
+            select_image_variant "$2"
             show_status
             ;;
         *)
