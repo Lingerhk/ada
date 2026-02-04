@@ -1,0 +1,16 @@
+instance_name = "adaegis-portal"
+hostname = "adaegis-portal"
+ipv4 = "192.168.9.2/24"
+listeners = [
+    "tcp://0.0.0.0:8090",
+]
+peer = []
+
+[network_identity]
+network_name = "adaegis-poc1"
+network_secret = "bYK2EgvVOeW#MnGbP"
+
+[flags]
+disable_udp_hole_punching = true
+enable_ipv6 = false
+private_mode = true
