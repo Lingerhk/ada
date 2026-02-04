@@ -558,13 +558,19 @@ func (s *SyslogServer) collectLogStats(logType string, hostname string, now time
 	statsCacheKey := fmt.Sprintf("%s:%d", statsKey, minuteTs)
 
 	// count the logs in the current minute
+	// NOTE: DashboardLogStats reads stats from Redis, so we must upsert the *current minute* into Redis.
+	// The old implementation only flushed the previous minute when a new minute arrived, which can leave
+	// gaps (e.g., no events in the next minute → previous minute never flushed → dashboard shows 0).
 	counts, exist := s.logStats.LoadOrStore(statsCacheKey, int64(1))
+	var currentMinuteCount int64 = 1
 	if exist {
-		if currentCount, ok := counts.(int64); ok {
-			s.logStats.Store(statsCacheKey, currentCount+1)
+		if cur, ok := counts.(int64); ok {
+			currentMinuteCount = cur + 1
+			s.logStats.Store(statsCacheKey, currentMinuteCount)
 		} else {
 			logger.Errorf("Type assertion failed for counts in statsCacheKey: %s. Expected int64, got %T", statsCacheKey, counts)
-			s.logStats.Store(statsCacheKey, int64(1))
+			currentMinuteCount = 1
+			s.logStats.Store(statsCacheKey, currentMinuteCount)
 		}
 	} else {
 		// if the stats info not exist, it means a new stats cycle, save the old stats info to redis and delete it
@@ -581,8 +587,6 @@ func (s *SyslogServer) collectLogStats(logType string, hostname string, now time
 				count, err := s.env.RedisCli.ZCard(s.ctx, statsKey).Result()
 				if err == nil && count > statsListMaxLen {
 					// Remove the oldest entries beyond the max length
-					// ZREMRANGEBYRANK removes elements in the range [start, stop]
-					// To keep the newest 'statsListMaxLen' items, we remove from index 0 up to 'count - statsListMaxLen - 1'
 					remCount := count - statsListMaxLen
 					if remCount > 0 {
 						s.env.RedisCli.ZRemRangeByRank(s.ctx, statsKey, 0, remCount-1)
@@ -594,6 +598,15 @@ func (s *SyslogServer) collectLogStats(logType string, hostname string, now time
 			}
 		}
 	}
+
+	// Upsert current minute into Redis so dashboard can see near-real-time stats.
+	// Ensure we keep only a single entry per minuteTs (score) by removing any existing elements
+	// with that score before adding the new value.
+	minuteTsStr := strconv.FormatInt(minuteTs, 10)
+	pipe := s.env.RedisCli.Pipeline()
+	pipe.ZRemRangeByScore(s.ctx, statsKey, minuteTsStr, minuteTsStr)
+	pipe.ZAdd(s.ctx, statsKey, redis.Z{Score: float64(minuteTs), Member: strconv.FormatInt(currentMinuteCount, 10)})
+	_, _ = pipe.Exec(s.ctx)
 
 	return nil
 }
