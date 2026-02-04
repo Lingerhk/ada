@@ -18,12 +18,14 @@ const (
 )
 
 type pktPlugin struct {
+	parentCtx  context.Context // Parent context for cancellation chain
 	ctx        context.Context
 	bpfFilter  string
 	IfaceNames []string
 	remoteHost string
 	remoteAddr string
 
+	mu      sync.RWMutex // Protects handles, IfaceNames, bpfFilter
 	handles map[string]*pcap.Handle
 	wg      sync.WaitGroup
 	cancel  context.CancelFunc
@@ -34,7 +36,7 @@ func NewPktPlugin(ctx context.Context, adaHost string, pktSrvPort int) (*pktPlug
 	bpfFilter := fmt.Sprintf(common.DefaultBpfFilter, adaHost) // TODO: adaHost为域名的话，需要解析为ip
 
 	return &pktPlugin{
-		ctx:        ctx,
+		parentCtx:  ctx, // Store parent context for cancellation chain
 		remoteHost: adaHost,
 		remoteAddr: fmt.Sprintf("%s:%d", adaHost, pktSrvPort),
 		bpfFilter:  bpfFilter,
@@ -86,9 +88,16 @@ func (p *pktPlugin) SetBpfFilter(bpfFilter string) error {
 	}
 
 	if !p.IsRunning() {
-		logger.Infof("pkt plugin not running, skip setting bpf filter")
+		// Store the filter for later use when plugin starts
+		p.mu.Lock()
+		p.bpfFilter = newBpfFilter
+		p.mu.Unlock()
+		logger.Infof("pkt plugin not running, stored bpf filter for later use")
 		return nil
 	}
+
+	p.mu.Lock()
+	defer p.mu.Unlock()
 
 	if newBpfFilter == p.bpfFilter {
 		logger.Debugf("bpf filter not changed, skip setting")
@@ -101,10 +110,9 @@ func (p *pktPlugin) SetBpfFilter(bpfFilter string) error {
 			logger.Errorf("setting BPF filter '%s' on device %s err:%v", p.bpfFilter, iface, err)
 			continue
 		}
-
-		p.bpfFilter = newBpfFilter
 	}
 
+	p.bpfFilter = newBpfFilter
 	logger.Infof("set bpf filter(%s) success", p.bpfFilter)
 
 	return nil
@@ -144,7 +152,11 @@ func (p *pktPlugin) capturePackets(handle *pcap.Handle, iface string) {
 }
 
 func (p *pktPlugin) Start() error {
-	p.ctx, p.cancel = context.WithCancel(context.Background())
+	p.mu.Lock()
+	defer p.mu.Unlock()
+
+	// Use parent context for proper cancellation chain
+	p.ctx, p.cancel = context.WithCancel(p.parentCtx)
 
 	if len(p.IfaceNames) == 0 {
 		return fmt.Errorf("no interfaces specified")
@@ -156,11 +168,16 @@ func (p *pktPlugin) Start() error {
 
 	err := p.createConn()
 	if err != nil {
-		logger.Errorf("failed to create UDP socket: %w", err)
+		logger.Errorf("failed to create UDP socket: %v", err)
 		return err
 	}
 
-	for _, ifaceName := range p.IfaceNames {
+	// Make a copy of IfaceNames to iterate safely
+	ifaceNames := make([]string, len(p.IfaceNames))
+	copy(ifaceNames, p.IfaceNames)
+	bpfFilter := p.bpfFilter
+
+	for _, ifaceName := range ifaceNames {
 		iface, err := p.getInterfaces(ifaceName)
 		if err != nil {
 			logger.Errorf("Error getting interface %s: %v", ifaceName, err)
@@ -175,10 +192,10 @@ func (p *pktPlugin) Start() error {
 			continue
 		}
 
-		if p.bpfFilter != "" {
-			err = handle.SetBPFFilter(p.bpfFilter)
+		if bpfFilter != "" {
+			err = handle.SetBPFFilter(bpfFilter)
 			if err != nil {
-				logger.Errorf("Error setting BPF filter '%s' on device %s: %v", p.bpfFilter, iface, err)
+				logger.Errorf("Error setting BPF filter '%s' on device %s: %v", bpfFilter, iface, err)
 				handle.Close()
 				continue
 			}
@@ -192,7 +209,14 @@ func (p *pktPlugin) Start() error {
 
 	if len(p.handles) == 0 {
 		logger.Error("Failed to start capture on any interface.")
-		//p.cancel() // Cancel the context if no handles were successfully opened
+		if p.cancel != nil {
+			p.cancel()
+			p.cancel = nil
+		}
+		if p.sock != nil {
+			p.sock.Close()
+			p.sock = nil
+		}
 		return fmt.Errorf("failed to open any specified interfaces")
 	}
 
@@ -200,22 +224,31 @@ func (p *pktPlugin) Start() error {
 }
 
 func (p *pktPlugin) Stop() error {
-	if p.cancel != nil {
+	p.mu.Lock()
+	cancel := p.cancel
+	p.mu.Unlock()
+
+	if cancel != nil {
 		logger.Info("packet plugin: stopping packet capture goroutines...")
-		p.cancel()
+		cancel()
 	} else {
 		// If not running (no cancel func), still ensure socket is closed if it exists
+		p.mu.Lock()
 		if p.sock != nil {
 			logger.Info("packet plugin: collector not running, ensuring UDP socket is closed.")
 			p.sock.Close()
 			p.sock = nil
 		}
+		p.mu.Unlock()
 
 		logger.Info("packet plugin: packet collector not running.")
 		return nil
 	}
 
 	p.wg.Wait() // Wait for all capture goroutines to finish
+
+	p.mu.Lock()
+	defer p.mu.Unlock()
 
 	logger.Info("packet plugin: all packet capture goroutines stopped.")
 	p.handles = make(map[string]*pcap.Handle) // Clear handles
@@ -232,9 +265,25 @@ func (p *pktPlugin) Stop() error {
 }
 
 func (p *pktPlugin) Set(remoteAddr, bpfFilter string, ifaceNames []string) {
+	p.mu.Lock()
+	defer p.mu.Unlock()
 	p.remoteAddr = remoteAddr
 	p.bpfFilter = bpfFilter
 	p.IfaceNames = ifaceNames
+}
+
+func (p *pktPlugin) SetIfaceNames(ifaceNames []string) {
+	p.mu.Lock()
+	defer p.mu.Unlock()
+	p.IfaceNames = ifaceNames
+}
+
+func (p *pktPlugin) GetIfaceNames() []string {
+	p.mu.RLock()
+	defer p.mu.RUnlock()
+	result := make([]string, len(p.IfaceNames))
+	copy(result, p.IfaceNames)
+	return result
 }
 
 func (p *pktPlugin) Reload() error {
@@ -249,6 +298,8 @@ func (p *pktPlugin) Reload() error {
 	return p.Start()
 }
 
-func (e *pktPlugin) IsRunning() bool {
-	return len(e.handles) > 0
+func (p *pktPlugin) IsRunning() bool {
+	p.mu.RLock()
+	defer p.mu.RUnlock()
+	return len(p.handles) > 0
 }
