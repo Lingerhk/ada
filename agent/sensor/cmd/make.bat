@@ -2,7 +2,7 @@
 echo ADA Sensor Build Script
 echo ==========================================
 set BuildName=ADA@sensor
-set Version=2.6.5
+set Version=2.6.11
 for /f "tokens=1* delims==" %%a in ('wmic os get LocalDateTime /value') do if "%%a"=="LocalDateTime" set datetime=%%b
 set BuildTime=%datetime:~0,8%_%datetime:~8,6%
 set VersionPath=ada/infra/version

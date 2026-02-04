@@ -153,11 +153,16 @@ func launch(ctx context.Context, env *config.Env) {
 	wg := &sync.WaitGroup{}
 	wg.Add(5)
 
+	// NOTE:
+	// Do NOT run upgrade check synchronously during service startup.
+	// Windows SCM will mark the service as failed if Start does not return quickly (e.g. 30s timeout).
+	// Run the first check after a short delay, then keep polling.
 	u := upgrade.New(ctx, env.RedisCli)
-	if u.Once() {
-		// TODO: how to restart self service????
-		os.Exit(0)
-	}
+	go func() {
+		// give SCM enough time to consider the service started
+		time.Sleep(45 * time.Second)
+		_ = u.Once()
+	}()
 	go u.Serve(wg) // 监听升级
 
 	p, err := plugin.New(ctx, env.RedisCli, env.SensorId, env.Cfg.Sensor)

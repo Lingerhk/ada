@@ -53,7 +53,15 @@ func (e *EngineWorker) sigmaRuleMatcher(ctx context.Context, channel, payload st
 		return
 	}
 
-	results, ok := e.ruleset[ruleType].EvalAll(obj)
+	e.mu.RLock()
+	rs := e.ruleset[ruleType]
+	e.mu.RUnlock()
+	if rs == nil {
+		logger.Errorf("missing ruleset for type %s", ruleType)
+		return
+	}
+
+	results, ok := rs.EvalAll(obj)
 	if ok && len(results) > 0 {
 		logger.Debugf("found %d results(%s):%v", len(results), dcHostname, results)
 
@@ -94,7 +102,14 @@ func (e *EngineWorker) syncAlert(ctx context.Context, ruleType, rawLog, dcHostna
 	for _, result := range results {
 		logger.Debugf("[+++++] found result: id:%s, title: %s, dcHostname:%s, unique_id:%s, fields:%#v", result.ID, result.Title, dcHostname, result.UniqueId, result.Fields)
 
-		rule := e.ruleset[ruleType].GetRule(result.ID)
+		e.mu.RLock()
+		rs := e.ruleset[ruleType]
+		e.mu.RUnlock()
+		if rs == nil {
+			logger.Errorf("missing ruleset for type %s", ruleType)
+			continue
+		}
+		rule := rs.GetRule(result.ID)
 		if rule == nil {
 			logger.Errorf("get rule by id %s failed, will ignore this alert!!!", result.ID)
 			continue
@@ -138,11 +153,10 @@ func (e *EngineWorker) syncAlert(ctx context.Context, ruleType, rawLog, dcHostna
 			continue
 		}
 
-		// 将告警存入elasticsearch
-		eId, err := e.syncElasticsearch(ctx, alertByte)
-		if err != nil {
-			logger.Errorf("sync alert to es err:%v", err)
-			continue
+		// 将告警存入elasticsearch（批量写入）
+		eId := mId.Hex() // use mongo id as ES doc id
+		if e.esIndexer != nil {
+			e.esIndexer.EnqueueBytes(eId, alertByte)
 		}
 
 		// 将告警关联信息存入flow engine cache zset
@@ -164,7 +178,8 @@ func (e *EngineWorker) syncElasticsearch(ctx context.Context, alertBytes []byte)
 	req := esapi.IndexRequest{
 		Index:   common.AlertActivityIndexKey,
 		Body:    bytes.NewReader(alertBytes),
-		Refresh: "true",
+		// NOTE: avoid per-doc refresh; bulk writer handles visibility
+		Refresh: "false",
 	}
 
 	res, err := req.Do(ctx, e.esCli)
@@ -266,6 +281,13 @@ func (e *EngineWorker) syncFlowEngine(ctx context.Context, eId, mId, dcHostname 
 			logger.Warnf("set zset expire err:%v", err)
 			continue
 		}
+
+		// track active instances to avoid KEYS scan
+		activeKey := fmt.Sprintf("%s:%s", common.FlowActiveSetPrefixKey, flowId)
+		if err := e.redisCli.SAdd(ctx, activeKey, zsetKey).Err(); err != nil {
+			logger.Warnf("sadd active instance err:%v", err)
+		}
+		_ = e.redisCli.Expire(ctx, activeKey, (common.MaxFlowWinSize+3600)*time.Second).Err()
 	}
 
 	return nil

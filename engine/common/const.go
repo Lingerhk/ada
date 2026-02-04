@@ -14,6 +14,7 @@ const (
 	FlowWhitelistPrefixKey = "ada:engine:flow_whitelist"
 
 	FlowInstancePrefixKey = "ada:engine:instance"
+	FlowActiveSetPrefixKey = "ada:engine:active" // SADD记录每个flow_id的活跃instance(zsetKey)
 
 	EveLogQueueKey = "ada:evelog_queue" // same with task_server module
 	PktLogQueueKey = "ada:pktlog_queue" // same with task_server module

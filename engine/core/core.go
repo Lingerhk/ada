@@ -10,6 +10,7 @@ import (
 	"ada/infra/mongo"
 	"context"
 	"path/filepath"
+	"runtime"
 	"strings"
 	"sync"
 	"time"
@@ -35,16 +36,23 @@ const activityIndexMapping = `{
 }`
 
 type EngineWorker struct {
-	ctx        context.Context
-	redisCli   *redis.Client
-	mongoCli   mongo.DBAdaptor
-	esCli      *elasticsearch.Client
-	ruleset    map[string]*sigma.Ruleset
-	Flowset    *flow.Ruleset
-	cancel     context.CancelFunc
-	workerStop bool
-	mu         sync.RWMutex // 读写锁，用于保护pending
-	pending    bool         // 如果license校验不过，该值为true(engine处于不处理数据状态)
+	ctx      context.Context
+	redisCli *redis.Client
+	mongoCli mongo.DBAdaptor
+	esCli    *elasticsearch.Client
+
+	esIndexer *ESIndexer
+
+	ruleset map[string]*sigma.Ruleset
+	Flowset *flow.Ruleset
+	cancel  context.CancelFunc
+
+	mu      sync.RWMutex // protects ruleset/Flowset and state
+	pending bool         // 如果license校验不过，该值为true(engine处于不处理数据状态)
+	stopped bool
+
+	sigmaWorkers int
+	sigmaTimeout time.Duration
 }
 
 func New(env *config.Env) (*EngineWorker, error) {
@@ -132,7 +140,21 @@ func New(env *config.Env) (*EngineWorker, error) {
 		}
 	}
 
-	return &EngineWorker{ctx: ctx, redisCli: env.RedisCli, mongoCli: env.MongoCli, esCli: env.ESCli, ruleset: ruleset, Flowset: flowset, cancel: cancel}, nil
+	w := &EngineWorker{
+		ctx:          ctx,
+		redisCli:     env.RedisCli,
+		mongoCli:     env.MongoCli,
+		esCli:        env.ESCli,
+		ruleset:      ruleset,
+		Flowset:      flowset,
+		cancel:       cancel,
+		sigmaWorkers: 8 * runtime.NumCPU(),
+		sigmaTimeout: 8 * time.Second,
+	}
+	if w.esCli != nil {
+		w.esIndexer = NewESIndexer(w.ctx, w.esCli, common.AlertActivityIndexKey, 200, 3*time.Second)
+	}
+	return w, nil
 }
 
 func (e *EngineWorker) Setup() error {
@@ -218,7 +240,9 @@ func (e *EngineWorker) Setup() error {
 
 func (e *EngineWorker) Stop() {
 	e.cancel()
-	e.workerStop = true
+	e.mu.Lock()
+	e.stopped = true
+	e.mu.Unlock()
 }
 
 // Reload reloads all rule files from disk without stopping the engine
@@ -347,16 +371,25 @@ func (e *EngineWorker) FlowMatcher() {
 	for {
 		time.Sleep(1 * time.Second)
 
-		if e.pending {
+		e.mu.RLock()
+		pending := e.pending
+		stopped := e.stopped
+		flowset := e.Flowset
+		e.mu.RUnlock()
+
+		if pending {
 			continue
 		}
-
-		if e.workerStop {
+		if stopped {
 			return
 		}
 
 		start := time.Now().Unix()
-		e.Flowset.FlowMatcher() // TODO: 串行执行（不要并发），如何防止卡住？？
+
+		// 每轮兜底超时: 5min；避免FlowMatcher永久卡死
+		ctx, cancel := context.WithTimeout(e.ctx, 5*time.Minute)
+		flowset.FlowMatcher(ctx)
+		cancel()
 
 		// 计算执行一次FlowMatcher()所使用时间，如果超出默认最大值(240s)
 		if time.Now().Unix()-start > 240 {
@@ -377,7 +410,12 @@ func (e *EngineWorker) FlowCleaner() {
 			return
 		case <-ticker.C:
 			{
-				e.Flowset.FlowCleaner() // 串行执行（无需并发）
+				e.mu.RLock()
+				flowset := e.Flowset
+				e.mu.RUnlock()
+				ctx, cancel := context.WithTimeout(e.ctx, 2*time.Minute)
+				flowset.FlowCleaner(ctx) // 串行执行（无需并发）
+				cancel()
 			}
 		}
 	}
@@ -385,31 +423,58 @@ func (e *EngineWorker) FlowCleaner() {
 
 func (e *EngineWorker) SigmaMatcher() {
 	// run as serve to match eventlog and packetlog by sigma rule
-	ctx := context.Background()
+	ctx := e.ctx
+
+	type job struct {
+		channel string
+		payload string
+	}
+
+	jobs := make(chan job, 4096)
+
+	// fixed worker pool (avoid unbounded goroutines)
+	for i := 0; i < e.sigmaWorkers; i++ {
+		go func() {
+			for j := range jobs {
+				jctx, cancel := context.WithTimeout(ctx, e.sigmaTimeout)
+				e.sigmaRuleMatcher(jctx, j.channel, j.payload)
+				cancel()
+			}
+		}()
+	}
 
 	for {
-		if e.workerStop {
-			ctx.Done()
+		e.mu.RLock()
+		stopped := e.stopped
+		e.mu.RUnlock()
+		if stopped {
+			close(jobs)
 			return
 		}
+
 		msg, err := e.redisCli.BRPop(ctx, 3*time.Second, common.EveLogQueueKey, common.PktLogQueueKey).Result()
 		if err != nil {
 			if er := e.redisCli.Ping(ctx).Err(); er != nil {
 				logger.Errorf("redis ping failure:%v", er)
-				e.workerStop = true // 通知其他goroutine也退出
+				e.Stop()
+				close(jobs)
 				return
 			}
 			continue
 		}
+
 		// msg format: []string{"ada:evelog_queue", "json_message"}
 		if len(msg) != 2 {
 			logger.Warnf("ignore invalid length msg:%v", msg)
 			continue
 		}
 
-		//logger.Debugf("channel: %s received:%s", msg[0], msg[1])
-
-		go e.sigmaRuleMatcher(ctx, msg[0], msg[1])
+		select {
+		case jobs <- job{channel: msg[0], payload: msg[1]}:
+		case <-ctx.Done():
+			close(jobs)
+			return
+		}
 	}
 }
 
@@ -467,20 +532,19 @@ func (e *EngineWorker) RuleReloader() {
 }
 
 func (e *EngineWorker) expired() bool {
+	e.mu.Lock()
 	defer e.mu.Unlock()
+
 	lic, err := license.NewAdaLicense(e.redisCli)
 	if err != nil {
 		//logger.Errorf("init license err:%v", err) // TODO: 在release版本开启
-		e.mu.Lock()
 		e.pending = true
 		return false
 	}
 
-	if lic.Expired() == false {
-		e.mu.Lock()
+	if !lic.Expired() {
 		e.pending = false
 	} else {
-		e.mu.Lock()
 		e.pending = true
 	}
 

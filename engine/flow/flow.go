@@ -56,18 +56,15 @@ func NewRuleset(redisCli *redis.Client, mongoCli mongo.DBAdaptor, flowRuleDir st
 }
 
 // FlowCleaner 执行flow event, 产生多事件关联告警
-func (r *Ruleset) FlowCleaner() {
+func (r *Ruleset) FlowCleaner(ctx context.Context) {
 	// 遍历每个flow_rule, 按win_size最大值 进行清理
 	// 遍历所有flow event(zset)暂存数据, 如果有过期的,执行清理
 	// 1.zset 数据较多并且 last(300 member) timestamp超过12h未更新的, 删除超过18h的数据
 	// 2.zset max(timestamp) member超过12h未更新, 整个zset删除
 	// 3.涉及到的其他（如raw log）删除
 
-	ctx := context.Background()
-
 	for _, fr := range r.FlowRules {
-		// get all flow_instance by the prefix: flow_id
-		flowInstances := r.redisCli.Keys(ctx, fmt.Sprintf("%s:%s_*", common.FlowInstancePrefixKey, fr.ID)).Val()
+		flowInstances := r.getFlowInstances(ctx, fr.ID)
 		if len(flowInstances) == 0 {
 			continue
 		}
@@ -115,13 +112,10 @@ func (r *Ruleset) FlowCleaner() {
 }
 
 // FlowMatcher 执行flow event匹配, 产生多事件关联告警
-func (r *Ruleset) FlowMatcher() {
+func (r *Ruleset) FlowMatcher(ctx context.Context) {
 	// 遍历所有flow event(zset), 如果有满足多事件条件的，产生关联告警
-	ctx := context.Background()
-
 	for _, fr := range r.FlowRules {
-		// get all flow_instance by the prefix: flow_id
-		flowInstances := r.redisCli.Keys(ctx, fmt.Sprintf("%s:%s_*", common.FlowInstancePrefixKey, fr.ID)).Val()
+		flowInstances := r.getFlowInstances(ctx, fr.ID)
 		if len(flowInstances) == 0 {
 			//logger.Debugf("ignore empty instance for flow:%s", fr.ID)
 			continue
@@ -137,9 +131,26 @@ func (r *Ruleset) FlowMatcher() {
 		case common.EventTypeMultiPkt:
 			r.matchEventMultiPkt(ctx, fr, flowInstances)
 		case common.EventTypeMultiEvePkt:
-			r.matchEventMultiPkt(ctx, fr, flowInstances)
+			r.matchEventMultiEvePkt(ctx, fr, flowInstances)
 		}
 	}
+}
+
+func (r *Ruleset) getFlowInstances(ctx context.Context, flowId string) []string {
+	activeKey := fmt.Sprintf("%s:%s", common.FlowActiveSetPrefixKey, flowId)
+	instances, err := r.redisCli.SMembers(ctx, activeKey).Result()
+	if err == nil && len(instances) > 0 {
+		// prune dead instance keys (best-effort)
+		for _, k := range instances {
+			if r.redisCli.Exists(ctx, k).Val() == 0 {
+				_ = r.redisCli.SRem(ctx, activeKey, k).Err()
+			}
+		}
+		return instances
+	}
+
+	// fallback (compat): old deployments might not have active set yet
+	return r.redisCli.Keys(ctx, fmt.Sprintf("%s:%s_*", common.FlowInstancePrefixKey, flowId)).Val()
 }
 
 func (r *Ruleset) getActivityCache(ctx context.Context, instancesId string) (map[string]string, error) {
