@@ -24,7 +24,8 @@ import (
 
 const (
 	// cfgEncKey must be 16, 24, or 32 bytes for AES-128, AES-192, or AES-256
-	cfgEncKey   = "adcc368715ce1bd5adcc368785ce1bd2" // 32 bytes for AES-256-GCM
+	cfgEncKey = "adcc368715ce1bd5adcc368785ce1bd2" // 32 bytes for AES-256-GCM
+
 	confFile    = "sensor.yaml"
 	confEncFile = "sensor.cfg"
 )
@@ -211,6 +212,7 @@ func LoadConfig() ([]byte, error) {
 	}
 
 	if cfgEncrypted {
+		// Try current key first.
 		aesGCM, err := crypto.NewAesGCM([]byte(cfgEncKey))
 		if err != nil {
 			return nil, fmt.Errorf("failed to create AES-GCM cipher: %w", err)
@@ -227,6 +229,8 @@ func LoadConfig() ([]byte, error) {
 	return fileCnt, err
 }
 
+// legacy decrypt removed: sensor.cfg is now always AES-GCM encrypted.
+
 func WriteConfigFile(setting *Config) error {
 	cfgBytes, err := yaml.Marshal(&setting)
 	if err != nil {
@@ -235,6 +239,7 @@ func WriteConfigFile(setting *Config) error {
 
 	var fileCnt = cfgBytes
 	if cfgEncrypted {
+		// Always write using the current key.
 		aesGCM, err := crypto.NewAesGCM([]byte(cfgEncKey))
 		if err != nil {
 			return fmt.Errorf("failed to create AES-GCM cipher: %w", err)

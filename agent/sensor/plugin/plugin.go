@@ -83,30 +83,30 @@ func New(ctx context.Context, rdxCli *redis.Client, sensorId string, sensorCfg c
 func (p *Plugin) Event(wg *sync.WaitGroup) {
 	defer wg.Done()
 
+	// NOTE:
+	// Previously this code only polled PubSub once per minute, which can easily cause
+	// Portal-triggered operations (that wait ~40s) to time out.
+	// Consume the channel continuously.
+
+	// Use PSUBSCRIBE because Redis ACL user `ada_sensor` is granted +psubscribe (not +subscribe).
 	pubsub := p.rdxCli.PSubscribe(p.ctx, common.SensorCmdChannel)
 	defer pubsub.Close()
 
-	// Get the message channel for non-blocking receive
-	msgChan := pubsub.Channel()
-
-	// Ticker for periodic health check of pubsub connection
-	healthTicker := time.NewTicker(30 * time.Second)
-	defer healthTicker.Stop()
-
+	ch := pubsub.Channel(redis.WithChannelSize(256))
 	for {
 		select {
 		case <-p.ctx.Done():
 			return
-		case msg := <-msgChan:
-			if msg != nil {
-				logger.Infof("channel: %s received:%s", msg.Channel, msg.Payload)
-				go p.cmdSync(msg.Payload) // 并发执行，防止卡住导致stop等指令无法执行
+		case msg, ok := <-ch:
+			if !ok {
+				// connection closed; try a light ping for logging then exit
+				if err := pubsub.Ping(p.ctx); err != nil {
+					logger.Errorf("PubSub closed/ping failed: %s", err.Error())
+				}
+				return
 			}
-		case <-healthTicker.C:
-			// Periodic health check
-			if err := pubsub.Ping(p.ctx); err != nil {
-				logger.Errorf("PubSub health check failure: %s", err.Error())
-			}
+			logger.Infof("channel: %s received:%s", msg.Channel, msg.Payload)
+			go p.cmdSync(msg.Payload) // 并发执行，防止卡住导致stop等指令无法执行
 		}
 	}
 }

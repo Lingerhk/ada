@@ -12,53 +12,56 @@ import (
 // 匹配器: 多条winlog类型
 func (r *Ruleset) matchEventMultiEve(ctx context.Context, fr FlowRule, flowInstances []string) {
 	for _, insId := range flowInstances {
-		stop := time.Now().UnixNano() / 1e6
+		func() {
+			insCtx, cancel := context.WithTimeout(ctx, 2*time.Second)
+			defer cancel()
 
-		logger.Debugf("11----handle matchEventMultiEve instance_id %s", insId)
+			stop := time.Now().UnixNano() / 1e6
 
-		// 取最新winSize内的所有事件, 默认去当前时间4分钟内的所有事件活动
-		activities, err := r.getFlowActivitiesByWinSize(ctx, insId, fr.Detection.WinSizeTs, stop)
-		if err != nil {
-			logger.Warnf("get flow events by win_size err:%v, will ignore this event!", err)
-			continue
-		}
-		if len(activities) == 0 {
-			//logger.Debug("get flow events by win_size is empty, will ignore this event!")
-			continue
-		}
+			logger.Debugf("11----handle matchEventMultiEve instance_id %s", insId)
 
-		validSets := r.extractActivities(activities, fr.Detection.SigmaRules, fr.Detection.WinSizeTs, fr.Detection.Sorted)
-		if len(validSets) == 0 {
-			//logger.Debug("validSets is empty, will ignore this event!")
-			continue
-		}
+			// 取最新winSize内的所有事件
+			activities, err := r.getFlowActivitiesByWinSize(insCtx, insId, fr.Detection.WinSizeTs, stop)
+			if err != nil {
+				logger.Warnf("get flow events by win_size err:%v, will ignore this event!", err)
+				return
+			}
+			if len(activities) == 0 {
+				return
+			}
 
-		// 对flow事件进行unique_filter过滤
-		if r.checkUniqueFilter(ctx, fr.ID, fr.UniqueFilter, activities) {
-			logger.Debugf("ignore flow instance(%s) by matched unique_filter:%s", insId, fr.UniqueFilter)
-			continue
-		}
+			validSets := r.extractActivities(activities, fr.Detection.SigmaRules, fr.Detection.WinSizeTs, fr.Detection.Sorted)
+			if len(validSets) == 0 {
+				return
+			}
 
-		matchedActivities, matched := r.matchByActivities(activities, validSets, fr.Detection.MatchBy)
-		if !matched {
-			continue
-		}
+			// 对flow事件进行unique_filter过滤
+			if r.checkUniqueFilter(insCtx, fr.ID, fr.UniqueFilter, activities) {
+				logger.Debugf("ignore flow instance(%s) by matched unique_filter:%s", insId, fr.UniqueFilter)
+				return
+			}
 
-		// 匹配到flow告警
-		logger.Debugf("matched flow from activities: %v", matchedActivities)
+			matchedActivities, matched := r.matchByActivities(insCtx, activities, validSets, fr.Detection.MatchBy)
+			if !matched {
+				return
+			}
 
-		if err := r.storeEvent(ctx, insId, fr, matchedActivities); err != nil {
-			logger.Warnf("store event(multi-eve) err:%v, will ignore this flow instance!", err)
-		}
+			// 匹配到flow告警
+			logger.Debugf("matched flow from activities: %v", matchedActivities)
 
-		// 如果存在unique_filter，则添加到redis cache中
-		if err := r.addUniqueFilter(ctx, fr.ID, fr.UniqueFilter, activities); err != nil {
-			logger.Warnf("add unique_filter(flow_insId:%s,filter: %s) err:%v", insId, fr.UniqueFilter, err)
-		}
+			if err := r.storeEvent(insCtx, insId, fr, matchedActivities); err != nil {
+				logger.Warnf("store event(multi-eve) err:%v, will ignore this flow instance!", err)
+			}
 
-		if err := r.redisCli.Del(ctx, insId).Err(); err != nil {
-			logger.Warnf("delete flow instance(multi-pkt) err:%v", err)
-		}
+			// 如果存在unique_filter，则添加到redis cache中
+			if err := r.addUniqueFilter(insCtx, fr.ID, fr.UniqueFilter, activities); err != nil {
+				logger.Warnf("add unique_filter(flow_insId:%s,filter: %s) err:%v", insId, fr.UniqueFilter, err)
+			}
+
+			if err := r.redisCli.Del(insCtx, insId).Err(); err != nil {
+				logger.Warnf("delete flow instance(multi-eve) err:%v", err)
+			}
+		}()
 	}
 }
 
@@ -150,7 +153,7 @@ func (r *Ruleset) extractActivities(activities []flowActivity, sigmaIds []string
 	return validSet
 }
 
-func (r *Ruleset) matchByActivities(activities []flowActivity, validSets [][]int64, matchBy string) ([]flowActivity, bool) {
+func (r *Ruleset) matchByActivities(ctx context.Context, activities []flowActivity, validSets [][]int64, matchBy string) ([]flowActivity, bool) {
 	conditions := parseMatchByExpression(matchBy)
 	activityCount := int64(len(activities))
 
@@ -164,7 +167,7 @@ func (r *Ruleset) matchByActivities(activities []flowActivity, validSets [][]int
 			actList = append(actList, activities[actIdx])
 		}
 
-		matched := r.match(conditions, actList...)
+		matched := r.match(ctx, conditions, actList...)
 		if matched {
 			// TODO：如果match多条，这里就只取第一条了。。。
 			return actList, true
@@ -174,7 +177,7 @@ func (r *Ruleset) matchByActivities(activities []flowActivity, validSets [][]int
 	return nil, false
 }
 
-func (r *Ruleset) match(conditions []Condition, activity ...flowActivity) bool {
+func (r *Ruleset) match(ctx context.Context, conditions []Condition, activity ...flowActivity) bool {
 	// 遍历表达式中的每个子句
 	for _, c := range conditions {
 		v1 := getFieldVal(c.fieldOneVal, activity[c.fieldOneIdx])
@@ -193,7 +196,7 @@ func (r *Ruleset) match(conditions []Condition, activity ...flowActivity) bool {
 					return false
 				}
 			case "cache":
-				v2 := getFieldRdxVal(r.redisCli, c.fieldTwoVal, activity)
+				v2 := getFieldRdxVal(ctx, r.redisCli, c.fieldTwoVal, activity)
 				inSlice := false
 				for _, v := range v2 {
 					if strings.ToLower(v1) == strings.ToLower(v) {
@@ -244,7 +247,7 @@ func getFieldVal(field string, act flowActivity) string {
 	return v
 }
 
-func getFieldRdxVal(redisCli *redis.Client, field2 string, acts []flowActivity) []string {
+func getFieldRdxVal(ctx context.Context, redisCli *redis.Client, field2 string, acts []flowActivity) []string {
 	// 从redis中获取key_xxxx($s1.TargetDomainName), 并转为string.Join(",")形式字符串
 	// key_xxxx 可带参数，如: `key_ada:engine:user:%s:sensitive_users($s1.TargetDomainName)`，也可留空
 	cacheKey := field2
@@ -278,7 +281,7 @@ func getFieldRdxVal(redisCli *redis.Client, field2 string, acts []flowActivity) 
 		cacheKey = fmt.Sprintf(keyPrefix, paramVals...)
 	}
 
-	items, err := redisCli.SMembers(context.Background(), cacheKey).Result()
+	items, err := redisCli.SMembers(ctx, cacheKey).Result()
 	if err != nil {
 		logger.Warnf("5-invalid condition(redis get field2: %s err:%v", field2, err)
 		return []string{}

@@ -42,7 +42,7 @@ func TestMain(m *testing.M) {
 	go e.SigmaMatcher()
 
 	// start flow matcher
-	e.Flowset.FlowMatcher()
+	e.Flowset.FlowMatcher(context.Background())
 
 	os.Exit(m.Run())
 }
