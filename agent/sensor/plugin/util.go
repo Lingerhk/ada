@@ -37,7 +37,7 @@ func (p *Plugin) getPluginStatus() (map[string]bool, error) {
 
 	var s *mgr.Service
 	var svcFindName string
-	for svcName, _ := range statusMap {
+	for svcName := range statusMap {
 		switch svcName {
 		case common.SensorSvcName:
 			svcFindName = common.SensorSvcName
@@ -49,7 +49,10 @@ func (p *Plugin) getPluginStatus() (map[string]bool, error) {
 			svcFindName = svcName
 		}
 
-		p.PlugProcessMap[svcName] = 0 // 先将进程名
+		// Reset process ID with lock
+		p.mu.Lock()
+		p.PlugProcessMap[svcName] = 0
+		p.mu.Unlock()
 
 		s, err = m.OpenService(svcFindName)
 		if err != nil {
@@ -59,7 +62,9 @@ func (p *Plugin) getPluginStatus() (map[string]bool, error) {
 
 				// get self process id
 				pid := os.Getpid()
+				p.mu.Lock()
 				p.PlugProcessMap[svcName] = uint32(pid)
+				p.mu.Unlock()
 				continue
 			}
 
@@ -70,11 +75,14 @@ func (p *Plugin) getPluginStatus() (map[string]bool, error) {
 		statusCode, err := s.Query()
 		if err != nil {
 			logger.Warnf("query service %s err:%v", svcName, err)
+			s.Close()
 			continue
 		}
 		if statusCode.State == svc.Running {
 			statusMap[svcName] = true
+			p.mu.Lock()
 			p.PlugProcessMap[svcName] = statusCode.ProcessId
+			p.mu.Unlock()
 		}
 		s.Close()
 	}
@@ -93,22 +101,26 @@ func isRpcFwInstalled() bool {
 
 func startRpcFwPlugin(restart bool) error {
 	if restart {
+		// Wait for stop to complete before starting
 		cmd := exec.Command(rpcFwBinPath, "/stop")
-		_ = cmd.Start()
+		if err := cmd.Run(); err != nil {
+			logger.Warnf("stop rpcfw before restart err: %v", err)
+			// Continue with start anyway
+		}
 	}
 
 	cmd := exec.Command(rpcFwBinPath, "/start")
-	return cmd.Start()
+	return cmd.Run()
 }
 
 func stopRpcFwPlugin() error {
 	cmd := exec.Command(rpcFwBinPath, "/stop")
-	return cmd.Start()
+	return cmd.Run()
 }
 
 func reloadRpcFwPlugin() error {
 	cmd := exec.Command(rpcFwBinPath, "/update")
-	return cmd.Start()
+	return cmd.Run()
 }
 
 func isLdapFwInstalled() bool {
@@ -122,25 +134,26 @@ func isLdapFwInstalled() bool {
 
 func startLdapFwPlugin(restart bool) error {
 	if restart {
-		err := stopLdapFwPlugin()
-		if err != nil {
-			return err
+		// Wait for stop to complete before starting
+		if err := stopLdapFwPlugin(); err != nil {
+			logger.Warnf("stop ldapfw before restart err: %v", err)
+			// Continue with start anyway
 		}
 	}
 
 	cmd := exec.Command("powershell.exe", "-Command", "Start-Service", "-Name", `"LDAP Firewall"`)
-	return cmd.Start()
+	return cmd.Run()
 }
 
 func stopLdapFwPlugin() error {
-	// 	powershell exec: Stop-Service -name "LDAP Firewall"
+	// powershell exec: Stop-Service -name "LDAP Firewall"
 	cmd := exec.Command("powershell.exe", "-Command", "Stop-Service", "-Name", `"LDAP Firewall"`)
-	return cmd.Start()
+	return cmd.Run()
 }
 
 func reloadLdapFwPlugin() error {
 	cmd := exec.Command(ldapFwBinPath, "/update")
-	return cmd.Start()
+	return cmd.Run()
 }
 
 func (p *Plugin) sensorConfUpdate(data map[string]string) error {
@@ -154,12 +167,14 @@ func (p *Plugin) sensorConfUpdate(data map[string]string) error {
 		return fmt.Errorf("check file(sensor.cfg) sum(%s) failed", data["sensor.cfg.sha256"])
 	}
 
-	if err := os.WriteFile("sensor.cfg", []byte(sensorCfg), 0644); err != nil {
+	// Use absolute path to ensure config file is written to correct location
+	cfgFilePath := filepath.Join(common.SensorDir, "sensor.cfg")
+	if err := os.WriteFile(cfgFilePath, []byte(sensorCfg), 0644); err != nil {
 		logger.Errorf("write sensor.cfg file err:%v", err)
 		return err
 	}
 
-	// TODO: how to restart self service????
+	// Restart self service - use Start() here since we want to exit before restart completes
 	cmd := exec.Command("powershell.exe", "-Command", "Restart-Service", "-Name", common.SensorSvcName)
 	return cmd.Start()
 }
