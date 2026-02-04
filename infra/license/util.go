@@ -52,6 +52,11 @@ func fromB64String(obj any, s string) error {
 }
 
 func GetTrait() string {
+	//  Temporary solution for testing
+	if os.Getenv("TEST_TRAIT") != "" {
+		return os.Getenv("TEST_TRAIT")
+	}
+
 	var dockerEnv bool
 	mid, err := os.ReadFile("/etc/machine-id") // machine server, none-root required
 	if err != nil {
