@@ -52,6 +52,7 @@ build_backend() {
 build_scanner() {
     cd scanner || exit;
     cp ${ada_path}/bin/scanner ./
+    cp ${ada_path}/bin/scanner ./scanner
     cp ${ada_path}/bin/scanner.yaml ./
     sed -i "s/version=.*/version=${version}/g" Dockerfile
     docker build --network=host -f Dockerfile -t ada_scanner:${version} .

@@ -1,4 +1,4 @@
-FROM python:3.7.10-slim
+FROM ubuntu:24.04
 ENV PYTHON_VERSION=3.7.10
 
 ENV SERVICE_NAME=ada_scanner
@@ -12,16 +12,13 @@ LABEL version=2.9.1
 LABEL description="Docker image for ada system scanner service"
 
 ENV DEBIAN_FRONTEND=noninteractive
-RUN sed -i 's|deb.debian.org/debian|archive.debian.org/debian|g' /etc/apt/sources.list \
-    && sed -i 's|security.debian.org/debian-security|archive.debian.org/debian-security|g' /etc/apt/sources.list \
-    && sed -i '/buster-updates/d' /etc/apt/sources.list \
-    && echo 'Acquire::Check-Valid-Until "false";' > /etc/apt/apt.conf.d/99no-check-valid
-
 RUN apt-get update && apt-get install -y --no-install-recommends \
+    wget \
     curl \
-    ca-certificates \
+    build-essential \
     libssl-dev \
     zlib1g-dev \
+    libncurses-dev \
     libbz2-dev \
     libreadline-dev \
     libsqlite3-dev \
@@ -30,10 +27,27 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     tk-dev \
     uuid-dev \
     xz-utils \
+    ca-certificates \
+    make \
     && rm -rf /var/lib/apt/lists/*
 
+WORKDIR /usr/src
+RUN wget https://www.python.org/ftp/python/3.7.10/Python-3.7.10.tgz && \
+    tar xzf Python-3.7.10.tgz && \
+    rm Python-3.7.10.tgz
+
+# 编译并安装 Python 3.7 (optimized for faster build - no PGO)
+WORKDIR /usr/src/Python-3.7.10
+RUN ./configure --with-ensurepip=install && \
+    make -j"$(nproc)" && \
+    make install
+
+
+
+# 验证 Python 安装版本
 RUN python3.7 --version
 
+# 设置默认 Python 版本（可选）
 RUN ln -s /usr/local/bin/python3.7 /usr/bin/python && \
     ln -s /usr/local/bin/pip3.7 /usr/bin/pip
 
