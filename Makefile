@@ -12,6 +12,7 @@ BUILD_PATH_SCANNER=scanner/cmd
 BUILD_PATH_INFRA=ada/infra
 BUILD_API_PROTO_PATH=${BUILD_BASE_PATH}/backend/apiserver/api/v2
 BUILD_RPC_PROTO_PATH=${BUILD_BASE_PATH}/backend/tasker/api
+PROTOC ?= ${HOME}/go/bin/protoc
 
 
 .PHONY: all gen_proto apiserver task_worker task_server engine scanner clean
@@ -19,8 +20,8 @@ BUILD_RPC_PROTO_PATH=${BUILD_BASE_PATH}/backend/tasker/api
 all: gen_proto apiserver task_worker task_server engine scanner
 
 gen_proto:
-	protoc -I=${GOPATH}/src:${BUILD_API_PROTO_PATH} --govalidators_out=:${BUILD_API_PROTO_PATH} --go_out=plugins=grpc:${BUILD_API_PROTO_PATH} ${BUILD_API_PROTO_PATH}/ada.proto
-	protoc -I=${BUILD_RPC_PROTO_PATH} --govalidators_out=:${BUILD_RPC_PROTO_PATH} --go_out=plugins=grpc:${BUILD_RPC_PROTO_PATH} ${BUILD_RPC_PROTO_PATH}/ada_task.proto
+	${PROTOC} -I=${GOPATH}/src:${BUILD_API_PROTO_PATH} --govalidators_out=:${BUILD_API_PROTO_PATH} --go_out=plugins=grpc:${BUILD_API_PROTO_PATH} ${BUILD_API_PROTO_PATH}/ada.proto
+	${PROTOC} -I=${BUILD_RPC_PROTO_PATH} --govalidators_out=:${BUILD_RPC_PROTO_PATH} --go_out=plugins=grpc:${BUILD_RPC_PROTO_PATH} ${BUILD_RPC_PROTO_PATH}/ada_task.proto
 
 apiserver: gen_proto
 	/usr/local/go/bin/go build -ldflags \
