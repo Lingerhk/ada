@@ -35,6 +35,7 @@ scanner/scan_bussis.md
 scanner/worker/sc_enc.tar.gz
 scanner/worker/venv_enc.tar.gz
 scanner/worker/.sc
+scanner/sc
 scanner/worker/.venv
 
 script/poc/ada-service/adaegis.zip
