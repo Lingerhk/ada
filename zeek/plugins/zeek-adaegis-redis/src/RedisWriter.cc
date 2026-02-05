@@ -42,7 +42,7 @@ RedisWriter::RedisWriter(zeek::logging::WriterFrontend *frontend) : zeek::loggin
   // json_timestamps
   zeek::ODesc tsfmt;
   zeek::BifConst::Redis::json_timestamps->Describe(&tsfmt);
-  json_timestamps.assign((const char *)tsfmt.Bytes(), tsfmt.Size());
+  json_timestamps.assign((const char *)tsfmt.Bytes(), tsfmt.Len());
 
   // Initialize queue size
   const int MAX_QUEUE_SIZE = 1024 * 64; // 64KB
