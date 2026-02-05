@@ -3,6 +3,7 @@ package worker
 import (
 	"ada/infra/license"
 	"ada/infra/mongo"
+	"ada/scanner/common"
 	"ada/scanner/config"
 	"context"
 	"crypto/rand"
@@ -16,7 +17,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/go-cmd/cmd"
+	"ada/scanner/scgo"
+
 	"github.com/redis/go-redis/v9"
 	logger "github.com/sirupsen/logrus"
 )
@@ -33,7 +35,6 @@ type ScanSvc struct {
 	redisCli  *redis.Client
 	mongoCli  mongo.DBAdaptor
 	cancel    context.CancelFunc
-	pyRunProc *cmd.Cmd
 	pyRunPath string
 	randKey   string
 	svcStop   bool
@@ -48,7 +49,7 @@ func New(env *config.Env) (*ScanSvc, error) {
 	b := make([]byte, 16)
 	n, _ := rand.Read(b)
 	randKey := base64.StdEncoding.EncodeToString(b[:n])
-	err := env.RedisCli.Set(ctx, "ada:rand_key", randKey, 30*time.Second).Err()
+	err := env.RedisCli.Set(ctx, common.ScannerRedisRandKey, randKey, 30*time.Second).Err()
 	if err != nil {
 		cancel()
 		return nil, err
@@ -107,7 +108,7 @@ func (s *ScanSvc) Setup() error {
 
 	// 4.更新 s.pyRunPath
 	//s.pyRunPath = filepath.Join(common.GetCurrentPath(), "sc")
-	s.pyRunPath = "/var/lib/scada" //filepath.Join("", "sc")
+	s.pyRunPath = common.ScannerRunPath //filepath.Join("", "sc")
 
 	return nil
 }
@@ -115,7 +116,6 @@ func (s *ScanSvc) Setup() error {
 func (s *ScanSvc) Stop() {
 	defer s.clean()
 
-	s.pyRunProc.Stop()
 	s.cancel()
 	s.svcStop = true
 }
@@ -145,42 +145,20 @@ func (s *ScanSvc) RuntimeCheck() {
 func (s *ScanSvc) Worker() {
 	defer s.clean()
 
-	pythonBin := filepath.Join(s.pyRunPath, ".venv/bin/python")
-
-	for {
-		time.Sleep(1 * time.Second)
-
-		if s.pending {
-			continue
-		}
-
-		select {
-		case <-s.ctx.Done():
-			return
-		default:
-			{
-				s.pyRunProc = cmd.NewCmd(pythonBin)
-				s.pyRunProc.Dir = filepath.Join(s.pyRunPath, ".sc")
-				s.pyRunProc.Args = []string{"scan_worker"}
-				s.pyRunProc.Env = []string{
-					"RUN_PATH=" + s.pyRunPath,
-					"REDIS_URI=" + s.cfg.Redis.URI,
-					"MONGO_URI=" + s.cfg.Mongodb.URI,
-				}
-				statusChan := s.pyRunProc.Start()
-				done := <-statusChan
-
-				if done.Complete {
-					// by killed
-					s.Stop()
-					return
-				}
-
-				logger.Infof("scanner worker stopped(history_pid:%d) exit_code:%d", done.PID, done.Exit)
-			}
-		}
+	// Default implementation: Go celery worker + Python plugin runtime (.so)
+	env := &config.Env{Cfg: s.cfg, RedisCli: s.redisCli, MongoCli: s.mongoCli}
+	svc, err := scgo.NewService(env, s.pyRunPath)
+	if err != nil {
+		logger.Errorf("init scgo service err:%v", err)
+		s.Stop()
+		return
 	}
 
+	if err := svc.Start(s.ctx); err != nil {
+		logger.Errorf("scgo service stopped with err:%v", err)
+		s.Stop()
+		return
+	}
 }
 
 // 执行具体的runtime check逻辑
@@ -197,7 +175,7 @@ func (s *ScanSvc) expired() bool {
 		return false
 	}
 
-	k, err := s.redisCli.Get(s.ctx, "ada:rand_key").Result()
+	k, err := s.redisCli.Get(s.ctx, common.ScannerRedisRandKey).Result()
 	if err != nil {
 		//logger.Errorf("redis get rand key err:%v", err)
 		s.mu.Lock()
@@ -244,10 +222,8 @@ func (s *ScanSvc) clean() {
 }
 
 func (s *ScanSvc) tar(pkgFile string) error {
-	// TODO: 1.计算aes key:
-	aesKey := "G0pRA3dhZcdQDF1S"
-
-	cmdStr := fmt.Sprintf("/usr/bin/openssl des3 -d -k %s -salt -in %s | tar -C /var/lib/scada -xzf -", aesKey, pkgFile)
+	cmdStr := fmt.Sprintf("/usr/bin/openssl des3 -d -k %s -salt -in %s | tar -C %s -xzf -",
+		common.ScannerPkgDecryptKey, pkgFile, common.ScannerRunPath)
 	c := exec.Command("/bin/bash", "-c", cmdStr)
 	_, err := c.CombinedOutput()
 	if err != nil {

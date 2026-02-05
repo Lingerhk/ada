@@ -54,7 +54,8 @@ func (cb *RedisCeleryBroker) SendCeleryMessage(message *CeleryMessage) error {
 
 // GetCeleryMessage retrieves celery message from redis queue
 func (cb *RedisCeleryBroker) GetCeleryMessage() (*CeleryMessage, error) {
-	messageInfo, err := cb.redisCli.BRPop(cb.ctx, 1, cb.QueueName).Result()
+	// Use a real second value; go-redis treats small durations (like 1ns) as invalid.
+	messageInfo, err := cb.redisCli.BRPop(cb.ctx, 1*time.Second, cb.QueueName).Result()
 	if err != nil {
 		return nil, err
 	}

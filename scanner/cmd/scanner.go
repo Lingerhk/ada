@@ -3,6 +3,7 @@ package main
 import (
 	"ada/infra/license"
 	_ "ada/infra/version"
+	"ada/scanner/common"
 	"ada/scanner/config"
 	"ada/scanner/worker"
 	logger "github.com/sirupsen/logrus"
@@ -13,9 +14,9 @@ import (
 
 func main() {
 	logger.Info("starting ada_scanner for ADA")
-	confPath := os.Getenv("SCANNER_CONF_PATH")
+	confPath := os.Getenv(common.ScannerConfPathEnv)
 	if confPath == "" {
-		confPath = "./scanner.yaml"
+		confPath = common.ScannerDefaultConfPath
 	}
 
 	logger.Infof("load configure from %s", confPath)
