@@ -131,9 +131,22 @@ func (w *CeleryWorker) RunTask(message *TaskMessage) (*ResultMessage, error) {
 		return nil, fmt.Errorf("task %s is not registered", message.Task)
 	}
 
+	// Support registering a factory: func() CeleryTask.
+	// This avoids data races when tasks store parsed kwargs on the receiver.
+	if factory, ok := task.(func() CeleryTask); ok {
+		task = factory()
+	}
+
 	// convert to task interface
 	taskInterface, ok := task.(CeleryTask)
 	if ok {
+		// Celery kwargs do not include task_id by default; inject it for task handlers.
+		if message.Kwargs == nil {
+			message.Kwargs = map[string]any{}
+		}
+		message.Kwargs["_task_id"] = message.TaskID
+		message.Kwargs["_task_name"] = message.Task
+
 		if err := taskInterface.ParseKwargs(message.Kwargs); err != nil {
 			return nil, err
 		}

@@ -3,6 +3,7 @@ package config
 import (
 	"ada/infra/loghook"
 	"ada/infra/mongo"
+	"ada/scanner/common"
 	"context"
 	"fmt"
 	"os"
@@ -131,16 +132,16 @@ func Init(confPath string) (*Env, error) {
 		return nil, err
 	}
 
-	// Fallback: allow env override when YAML fields are empty (common in containerized deployments)
-	if setting.Redis.URI == "" {
-		setting.Redis.URI = os.Getenv("REDIS_URI")
+	// Allow env override (common in containerized deployments)
+	if v := os.Getenv(common.ScannerEnvRedisURI); v != "" {
+		setting.Redis.URI = v
 	}
-	if setting.Mongodb.URI == "" {
-		setting.Mongodb.URI = os.Getenv("MONGO_URI")
-		if setting.Mongodb.URI == "" {
-			setting.Mongodb.URI = os.Getenv("MONGODB_URI")
-		}
+	if v := os.Getenv(common.ScannerEnvMongoURI); v != "" {
+		setting.Mongodb.URI = v
+	} else if v := os.Getenv(common.ScannerEnvMongoDBURI); v != "" {
+		setting.Mongodb.URI = v
 	}
+
 	if setting.Redis.URI == "" {
 		return nil, fmt.Errorf("empty Redis.URI in config: %s", confPath)
 	}
