@@ -38,12 +38,12 @@ scanner/worker/.sc
 scanner/sc
 scanner/worker/.venv
 
-script/poc/ada-service/adaegis.zip
-script/poc/ada-service/install-adaegis.ps1
-script/poc/ada-service/uninstall-adaegis.ps1
-script/poc/ada-service/apiserver
-script/poc/ada-service/task_server
-script/poc/ada-service/task_worker
-script/poc/ada-service/engine
-script/poc/ada-service/static
-script/poc/ada-service/pkg
+script/docker-poc/ada-service/adaegis.zip
+script/docker-poc/ada-service/install-adaegis.ps1
+script/docker-poc/ada-service/uninstall-adaegis.ps1
+script/docker-poc/ada-service/apiserver
+script/docker-poc/ada-service/task_server
+script/docker-poc/ada-service/task_worker
+script/docker-poc/ada-service/engine
+script/docker-poc/ada-service/static
+script/docker-poc/ada-service/pkg

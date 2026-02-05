@@ -1,0 +1,16 @@
+ProjectName: scanner
+
+Log:
+  LogPath: /home/adadmin/logs
+  LogLevel: debug
+  IsStdOut: false
+
+Redis:
+  URI: redis://default:rlsd2pnq@192.168.9.2:6379/0
+  Active: 120
+  Idle: 15
+  IdleTimeout: 3600
+
+Mongodb:
+  URI: mongodb://root:tkzqtcjr@192.168.9.2:27017/db_ada?authSource=admin
+  PoolLimit: 100
