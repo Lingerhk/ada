@@ -5,9 +5,6 @@ ENV TASKER_CONF_PATH=/home/adadmin/conf/tasker.yaml
 ENV APISERVER_CONF_PATH=/home/adadmin/conf/apiserver.yaml
 ENV ENGINE_CONF_PATH=/home/adadmin/conf/engine.yaml
 
-# Temporary solution for test/uat/poc
-ENV TEST_TRAIT=8e9bc696dd9f5c2c522ed50dadd206b3
-
 LABEL maintainer="dev@ada"
 LABEL version=2.9.1
 LABEL description="Docker image for ada portal service (nginx + apiserver + tunnel)"
