@@ -12,7 +12,7 @@ Redis:
   IdleTimeout: 3600
 
 Mongodb:
-  URI: mongodb://root:tkzqtcjr@192.168.9.2:27017/db_ada?authSource=admin
+  URI: mongodb://root:tkzqtcjr@192.168.9.2:27017/db_ada?authSource=admin&directConnection=true
   PoolLimit: 100
 
 ES:

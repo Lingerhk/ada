@@ -110,6 +110,7 @@ services:
       - ./ada-service/tasker.yaml:/home/adadmin/conf/tasker.yaml:ro
     environment:
       - GIN_MODE=release
+      - TEST_TRAIT=c6dd002b714181fd7c273ee7fdda5d16
     depends_on:
       ada_elasticsearch:
         condition: service_healthy
