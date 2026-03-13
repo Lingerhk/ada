@@ -32,9 +32,13 @@ func NewRedisBroker(ctx context.Context, conn *redis.Client) *RedisCeleryBroker 
 // Deprecated: NewRedisCeleryBroker exists for historical compatibility
 // and should not be used. Use NewRedisBroker instead to create new RedisCeleryBroker.
 func NewRedisCeleryBroker(ctx context.Context, uri, queueName string) *RedisCeleryBroker {
+	redisCli, err := NewRedisClientE(ctx, uri)
+	if err != nil {
+		return nil
+	}
 	return &RedisCeleryBroker{
 		ctx:       ctx,
-		redisCli:  NewRedisClient(ctx, uri),
+		redisCli:  redisCli,
 		QueueName: queueName,
 	}
 }
@@ -84,9 +88,17 @@ func (cb *RedisCeleryBroker) GetTaskMessage() (*TaskMessage, error) {
 }
 
 func NewRedisClient(ctx context.Context, uri string) *redis.Client {
+	redisClient, err := NewRedisClientE(ctx, uri)
+	if err != nil {
+		return nil
+	}
+	return redisClient
+}
+
+func NewRedisClientE(ctx context.Context, uri string) (*redis.Client, error) {
 	opt, err := redis.ParseURL(uri)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 
 	opt.DialTimeout = 15 * time.Second
@@ -97,8 +109,8 @@ func NewRedisClient(ctx context.Context, uri string) *redis.Client {
 	redisClient := redis.NewClient(opt)
 	_, err = redisClient.Ping(ctx).Result()
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 
-	return redisClient
+	return redisClient, nil
 }

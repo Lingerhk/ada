@@ -28,9 +28,13 @@ func NewRedisBackend(ctx context.Context, rdxCli *redis.Client) *RedisCeleryBack
 // Deprecated: NewRedisCeleryBackend exists for historical compatibility
 // and should not be used. Pool should be initialized outside of gocelery package.
 func NewRedisCeleryBackend(ctx context.Context, uri string) *RedisCeleryBackend {
+	redisClient, err := NewRedisClientE(ctx, uri)
+	if err != nil {
+		return nil
+	}
 	return &RedisCeleryBackend{
 		ctx:         ctx,
-		redisClient: NewRedisClient(ctx, uri),
+		redisClient: redisClient,
 	}
 }
 

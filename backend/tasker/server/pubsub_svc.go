@@ -65,7 +65,12 @@ func (p *PubsubServer) PubsubSensorEvent(wg *sync.WaitGroup) {
 			return
 		default:
 			time.Sleep(1 * time.Second)
-			if p.env.RedisCli.LLen(p.ctx, sCommon.SensorStateQueue).Val() == 0 {
+			queueLen, err := p.env.RedisCli.LLen(p.ctx, sCommon.SensorStateQueue).Result()
+			if err != nil {
+				logger.Errorf("redis llen %s err:%v", sCommon.SensorStateQueue, err)
+				continue
+			}
+			if queueLen == 0 {
 				continue
 			}
 

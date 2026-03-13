@@ -1,6 +1,7 @@
 package otp
 
 import (
+	"errors"
 	"fmt"
 	"math/rand"
 	"net/url"
@@ -12,6 +13,8 @@ const (
 	OtpTypeTotp = "totp"
 	OtpTypeHotp = "hotp"
 )
+
+var ErrInvalidOTPType = errors.New("invalid otp type")
 
 // BuildUri generates URI for OTP verification (applicable to both TOTP and HOTP)
 // https://github.com/google/google-authenticator/wiki/Key-Uri-Format
@@ -28,9 +31,9 @@ Parameters:
 Returns:
 	URI for OTP verification
 */
-func BuildUri(otpType, secret, accountName, issuerName, algorithm string, initialCount, digits, period int) string {
+func BuildURI(otpType, secret, accountName, issuerName, algorithm string, initialCount, digits, period int) (string, error) {
 	if otpType != OtpTypeHotp && otpType != OtpTypeTotp {
-		panic("otp type error, got " + otpType)
+		return "", fmt.Errorf("%w: %s", ErrInvalidOTPType, otpType)
 	}
 
 	urlParams := make([]string, 0)
@@ -53,7 +56,15 @@ func BuildUri(otpType, secret, accountName, issuerName, algorithm string, initia
 	if period != 0 && period != 30 {
 		urlParams = append(urlParams, fmt.Sprintf("period=%d", period))
 	}
-	return fmt.Sprintf("otpauth://%s/%s?%s", otpType, label, strings.Join(urlParams, "&"))
+	return fmt.Sprintf("otpauth://%s/%s?%s", otpType, label, strings.Join(urlParams, "&")), nil
+}
+
+func BuildUri(otpType, secret, accountName, issuerName, algorithm string, initialCount, digits, period int) string {
+	uri, err := BuildURI(otpType, secret, accountName, issuerName, algorithm, initialCount, digits, period)
+	if err != nil {
+		return ""
+	}
+	return uri
 }
 
 // CurrentTimestamp gets current timestamp

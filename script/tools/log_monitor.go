@@ -1,3 +1,5 @@
+//go:build tools
+
 package main
 
 // env GOOS=linux GOARCH=amd64 go build log_monitor.go

@@ -39,8 +39,14 @@ func (r *LogrusRedis) Fire(entry *logrus.Entry) error {
 	}
 
 	// if queue too long, we need delete some old logs first.
-	if r.client.LLen(r.ctx, r.key).Val() > defaultMaxLogsSize {
-		r.client.LTrim(r.ctx, r.key, 100, -1)
+	queueLen, err := r.client.LLen(r.ctx, r.key).Result()
+	if err != nil {
+		return err
+	}
+	if queueLen > defaultMaxLogsSize {
+		if err := r.client.LTrim(r.ctx, r.key, 100, -1).Err(); err != nil {
+			return err
+		}
 	}
 
 	err = r.client.LPush(r.ctx, r.key, body).Err()

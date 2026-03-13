@@ -48,13 +48,13 @@ func (p *pktPlugin) createConn() error {
 	var err error
 	udpAddr, err := net.ResolveUDPAddr("udp", p.remoteAddr)
 	if err != nil {
-		logger.Errorf("failed to resolve remote UDP address '%s': %w", p.remoteAddr, err)
+			logger.Errorf("failed to resolve remote UDP address '%s': %v", p.remoteAddr, err)
 		return err
 	}
 
 	p.sock, err = net.DialUDP("udp", nil, udpAddr)
 	if err != nil {
-		logger.Errorf("failed to dial UDP socket to %s: %w", p.remoteAddr, err)
+		logger.Errorf("failed to dial UDP socket to %s: %v", p.remoteAddr, err)
 		return err
 	}
 

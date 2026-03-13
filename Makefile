@@ -5,7 +5,8 @@ COMMIT_TIME=$(shell git log -1 --format="%ci" | cut -d' ' -f1,2)
 
 BUILD_BASE_PATH=$(shell pwd)
 BUILD_PATH_APISERVER=backend/apiserver/cmd
-BUILD_PATH_TASK=backend/tasker/cmd
+BUILD_PATH_TASK_SERVER=backend/tasker/cmd/server
+BUILD_PATH_TASK_WORKER=backend/tasker/cmd/worker
 BUILD_PATH_RECEIVER=backend/recevier/cmd
 BUILD_PATH_ENGINE=engine/cmd
 BUILD_PATH_SCANNER=scanner/cmd
@@ -39,7 +40,7 @@ task_worker:
         -X '${BUILD_PATH_INFRA}/version.BuildName=ADA@task_worker'\
         -X '${BUILD_PATH_INFRA}/version.CommitTime=${COMMIT_TIME}'\
         -X '${BUILD_PATH_INFRA}/version.CommitVersion=${COMMIT_VERSION}'"\
-        -o ${BUILD_BASE_PATH}/bin/task_worker ${BUILD_PATH_TASK}/worker.go
+        -o ${BUILD_BASE_PATH}/bin/task_worker ${BUILD_PATH_TASK_WORKER}
 
 task_server:
 	/usr/local/go/bin/go build -ldflags \
@@ -48,7 +49,7 @@ task_server:
         -X '${BUILD_PATH_INFRA}/version.BuildName=ADA@task_server'\
         -X '${BUILD_PATH_INFRA}/version.CommitTime=${COMMIT_TIME}'\
         -X '${BUILD_PATH_INFRA}/version.CommitVersion=${COMMIT_VERSION}'"\
-        -o ${BUILD_BASE_PATH}/bin/task_server ${BUILD_PATH_TASK}/server.go
+        -o ${BUILD_BASE_PATH}/bin/task_server ${BUILD_PATH_TASK_SERVER}
 
 engine:
 	/usr/local/go/bin/go build -ldflags \

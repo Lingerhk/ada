@@ -14,13 +14,14 @@ func CheckPortOpen(ip string, port int) (bool, error) {
 	if err != nil {
 		return false, err
 	}
-	conn.Close()
+	defer conn.Close()
 	return true, nil
 }
 
 // NewHTTPClient creates an HTTP client with timeout mechanism, usage: NewHTTPClient(2)
 func NewHTTPClient(timeout int64) *http.Client {
-	DefaultClient := &http.Client{
+	client := &http.Client{
+		Timeout: time.Duration(timeout) * time.Second,
 		Transport: &http.Transport{
 			DialContext: func(ctx context.Context, netw, addr string) (net.Conn, error) {
 				deadline := time.Now().Add(time.Duration(timeout) * time.Second)
@@ -34,7 +35,7 @@ func NewHTTPClient(timeout int64) *http.Client {
 			ResponseHeaderTimeout: time.Second * time.Duration(timeout),
 		},
 	}
-	return DefaultClient
+	return client
 }
 
 // NewHTTPClientWithProxy creates an HTTP client with timeout and proxy support
@@ -63,6 +64,7 @@ func NewHTTPClientWithProxy(proxyURL string, timeout int64) *http.Client {
 	}
 
 	return &http.Client{
+		Timeout:   time.Duration(timeout) * time.Second,
 		Transport: transport,
 	}
 }

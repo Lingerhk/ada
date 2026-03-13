@@ -84,9 +84,13 @@ func tarDir(srcBase, srcRelative string, tw *tar.Writer, fi os.FileInfo) (err er
 		}
 
 		if info.IsDir() {
-			_ = tarDir(srcBase, srcRelative+info.Name(), tw, info)
+			if er = tarDir(srcBase, srcRelative+info.Name(), tw, info); er != nil {
+				return er
+			}
 		} else {
-			_ = tarFile(srcBase, srcRelative+info.Name(), tw, info)
+			if er = tarFile(srcBase, srcRelative+info.Name(), tw, info); er != nil {
+				return er
+			}
 		}
 	}
 

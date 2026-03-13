@@ -2,12 +2,16 @@ package file
 
 import (
 	"os"
+	"path/filepath"
 	"testing"
 )
 
 func TestZip(t *testing.T) {
-
-	pkgDir := "/tmp/2.dir"
+	pkgDir := t.TempDir()
+	testFile := filepath.Join(pkgDir, "sample.txt")
+	if err := os.WriteFile(testFile, []byte("sample"), 0644); err != nil {
+		t.Fatal(err)
+	}
 	// Package as zip file
 	files, err := GetFilesFromDir(pkgDir)
 	if err != nil {
@@ -20,11 +24,25 @@ func TestZip(t *testing.T) {
 }
 
 func TestDeCompress(t *testing.T) {
-	file, err := os.OpenFile("/Users/test/1.zip", os.O_CREATE|os.O_RDWR, os.ModePerm)
+	srcDir := t.TempDir()
+	srcFile := filepath.Join(srcDir, "sample.txt")
+	if err := os.WriteFile(srcFile, []byte("sample"), 0644); err != nil {
+		t.Fatal(err)
+	}
+	files, err := GetFilesFromDir(srcDir)
 	if err != nil {
 		t.Fatal(err)
 	}
-	if err := DeCompress(file, "./zip"); err != nil {
+	zipPath := filepath.Join(t.TempDir(), "sample.zip")
+	if err := Compress(files, zipPath); err != nil {
+		t.Fatal(err)
+	}
+	file, err := os.OpenFile(zipPath, os.O_RDONLY, os.ModePerm)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer file.Close()
+	if err := DeCompress(file, filepath.Join(t.TempDir(), "zip")); err != nil {
 		t.Fatal(err)
 	}
 }

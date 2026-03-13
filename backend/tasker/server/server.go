@@ -226,7 +226,15 @@ func rpcInterceptor(ctx context.Context, req any,
 func rpcUse(handlers ...grpc.UnaryServerInterceptor) {
 	finalSize := len(rpcHandlers) + len(handlers)
 	if finalSize >= int(_abortIndex) {
-		panic("grep service: server use too many handlers")
+		remaining := int(_abortIndex) - len(rpcHandlers)
+		if remaining <= 0 {
+			logger.Errorf("task grpc service: interceptor limit reached (%d), ignoring %d handlers", _abortIndex, len(handlers))
+			return
+		}
+
+		logger.Errorf("task grpc service: interceptor limit reached (%d), truncating %d handlers to %d", _abortIndex, len(handlers), remaining)
+		handlers = handlers[:remaining]
+		finalSize = len(rpcHandlers) + len(handlers)
 	}
 	mergedHandlers := make([]grpc.UnaryServerInterceptor, finalSize)
 	copy(mergedHandlers, rpcHandlers)

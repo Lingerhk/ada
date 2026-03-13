@@ -17,6 +17,7 @@ import (
 type Session struct {
 	client      *mongo.Client
 	collection  *mongo.Collection
+	ctx         context.Context
 	maxPoolSize uint64
 	db          string
 	uri         string
@@ -37,6 +38,13 @@ func New(uri string) *Session {
 		uri: uri,
 	}
 	return session
+}
+
+// WithContext clones the session with an operation context.
+func (s *Session) WithContext(ctx context.Context) *Session {
+	clone := *s
+	clone.ctx = ctx
+	return &clone
 }
 
 // SetDB set db
@@ -73,7 +81,12 @@ func (s *Session) SetPoolLimit(limit uint64) {
 
 // Connect mongo client
 func (s *Session) Connect() error {
-	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
+	return s.ConnectContext(context.Background())
+}
+
+// ConnectContext connects the client with the provided parent context.
+func (s *Session) ConnectContext(ctx context.Context) error {
+	ctx, cancel := withTimeout(ctx, 20*time.Second)
 	defer cancel()
 	opt := options.Client().ApplyURI(s.uri)
 	opt.SetMaxPoolSize(s.maxPoolSize)
@@ -98,8 +111,13 @@ func (s *Session) Connect() error {
 }
 
 func (s *Session) Disconnect() {
+	s.DisconnectContext(context.Background())
+}
+
+// DisconnectContext disconnects the client with the provided context.
+func (s *Session) DisconnectContext(ctx context.Context) {
 	if s.client != nil {
-		s.client.Disconnect(context.Background())
+		_ = s.client.Disconnect(ctx)
 	}
 }
 
@@ -107,7 +125,12 @@ func (s *Session) Disconnect() {
 // If readPreference is nil then will use the client's default read
 // preference.
 func (s *Session) Ping() error {
-	return s.client.Ping(context.TODO(), readpref.Primary())
+	return s.PingContext(context.Background())
+}
+
+// PingContext verifies connectivity with the provided context.
+func (s *Session) PingContext(ctx context.Context) error {
+	return s.client.Ping(ctx, readpref.Primary())
 }
 
 // Client return mongo Client
@@ -149,6 +172,11 @@ func (s *Session) Select(projection any) *Session {
 
 // One returns one document
 func (s *Session) One(result any) error {
+	return s.OneContext(s.opContext(), result)
+}
+
+// OneContext returns one document with the provided context.
+func (s *Session) OneContext(ctx context.Context, result any) error {
 	opt := options.FindOne()
 
 	if s.sort != nil {
@@ -163,12 +191,19 @@ func (s *Session) One(result any) error {
 		opt.SetSkip(*s.skip)
 	}
 
-	err := s.collection.FindOne(context.TODO(), s.filter, opt).Decode(result)
+	err := s.collection.FindOne(ctx, s.filter, opt).Decode(result)
 	return err
 }
 
 // All find all
 func (s *Session) All(result any) error {
+	ctx, cancel := withTimeout(s.opContext(), 10*time.Second)
+	defer cancel()
+	return s.AllContext(ctx, result)
+}
+
+// AllContext finds all documents with the provided context.
+func (s *Session) AllContext(ctx context.Context, result any) error {
 	resultv := reflect.ValueOf(result)
 	if resultv.Kind() != reflect.Ptr {
 		return fmt.Errorf("results argument must be a pointer to a slice, but was a %s", resultv.Kind())
@@ -184,9 +219,6 @@ func (s *Session) All(result any) error {
 
 	slicev = slicev.Slice(0, slicev.Cap())
 	elemt := slicev.Type().Elem()
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
-	var err error
 
 	opt := options.Find()
 
@@ -229,9 +261,16 @@ func (s *Session) All(result any) error {
 
 // Pipe find all
 func (s *Session) Pipe(pipeline, result any) error {
+	ctx, cancel := withTimeout(s.opContext(), 20*time.Second)
+	defer cancel()
+	return s.PipeContext(ctx, pipeline, result)
+}
+
+// PipeContext runs an aggregation pipeline with the provided context.
+func (s *Session) PipeContext(ctx context.Context, pipeline, result any) error {
 	resultv := reflect.ValueOf(result)
 	if resultv.Kind() != reflect.Ptr {
-		panic("result argument must be a slice address")
+		return fmt.Errorf("result argument must be a pointer to a slice, but was a %s", resultv.Kind())
 	}
 	slicev := resultv.Elem()
 
@@ -239,14 +278,11 @@ func (s *Session) Pipe(pipeline, result any) error {
 		slicev = slicev.Elem()
 	}
 	if slicev.Kind() != reflect.Slice {
-		panic("result argument must be a slice address")
+		return fmt.Errorf("result argument must be a pointer to a slice, but was a pointer to %s", slicev.Kind())
 	}
 
 	slicev = slicev.Slice(0, slicev.Cap())
 	elemt := slicev.Type().Elem()
-
-	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
-	defer cancel()
 
 	opts := options.Aggregate()
 	opts.SetAllowDiskUse(true)
@@ -275,10 +311,13 @@ func (s *Session) Pipe(pipeline, result any) error {
 }
 
 func (s *Session) Distinct(distinct string) ([]any, error) {
-
-	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
+	ctx, cancel := withTimeout(s.opContext(), 20*time.Second)
 	defer cancel()
+	return s.DistinctContext(ctx, distinct)
+}
 
+// DistinctContext returns distinct values with the provided context.
+func (s *Session) DistinctContext(ctx context.Context, distinct string) ([]any, error) {
 	distinctResult := s.collection.Distinct(ctx, distinct, s.filter)
 	if distinctResult.Err() != nil {
 		return nil, distinctResult.Err()
@@ -291,4 +330,18 @@ func (s *Session) Distinct(distinct string) ([]any, error) {
 	}
 
 	return result, nil
+}
+
+func (s *Session) opContext() context.Context {
+	if s.ctx != nil {
+		return s.ctx
+	}
+	return context.Background()
+}
+
+func withTimeout(ctx context.Context, timeout time.Duration) (context.Context, context.CancelFunc) {
+	if ctx == nil {
+		ctx = context.Background()
+	}
+	return context.WithTimeout(ctx, timeout)
 }

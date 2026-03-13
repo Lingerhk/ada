@@ -107,9 +107,9 @@ func (t *TransformerOperator) HandleEntryError(ctx context.Context, entry *entry
 	}
 
 	if t.OnError == SendOnErrorQuiet || t.OnError == DropOnErrorQuiet {
-		t.Logger().Debugf("Failed to process entry, error: %v, action: %s, timestamp: %s, attributes: %v", err, t.OnError, entry.Timestamp, entry.Attributes)
+		t.Logger().Debugf("Failed to process entry, error: %v, action: %s, timestamp: %d, attributes: %v", err, t.OnError, entry.Timestamp, entry.Attributes)
 	} else {
-		t.Logger().Errorf("Failed to process entry, error: %v, action: %s, timestamp: %s, attributes: %v", err, t.OnError, entry.Timestamp, entry.Attributes)
+		t.Logger().Errorf("Failed to process entry, error: %v, action: %s, timestamp: %d, attributes: %v", err, t.OnError, entry.Timestamp, entry.Attributes)
 	}
 	if t.OnError == SendOnError || t.OnError == SendOnErrorQuiet {
 		writeErr := t.Write(ctx, entry)

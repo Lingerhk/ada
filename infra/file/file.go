@@ -16,19 +16,19 @@ import (
 // Exists checks if a file or directory exists
 func Exists(name string) bool {
 	_, err := os.Stat(name)
-	return err == nil && os.IsExist(err)
+	return err == nil
 }
 
 // FileExists checks if a file exists
 func FileExists(filename string) bool {
 	fi, err := os.Stat(filename)
-	return (err == nil || os.IsExist(err)) && !fi.IsDir()
+	return err == nil && !fi.IsDir()
 }
 
 // DirExists checks if a directory exists
 func DirExists(dirname string) bool {
 	fi, err := os.Stat(dirname)
-	return (err == nil || os.IsExist(err)) && fi.IsDir()
+	return err == nil && fi.IsDir()
 }
 
 // check file or path exist
@@ -64,11 +64,11 @@ func WriteFile(fn string, cnt []byte) error {
 	if err != nil {
 		return err
 	}
+	defer f.Close()
 	_, err = f.Write(cnt)
 	if err != nil {
 		return err
 	}
-	defer f.Close()
 
 	return nil
 }
@@ -88,10 +88,13 @@ func GetItemConfFile(cfgFile, key string) (string, error) {
 			continue
 		}
 		line = strings.TrimSpace(line)
-		if strings.HasPrefix(line, key) {
-			parts := strings.SplitN(line, "=", 2)
-			return strings.TrimSpace(parts[1]), nil
+			if strings.HasPrefix(line, key) {
+				parts := strings.SplitN(line, "=", 2)
+				return strings.TrimSpace(parts[1]), nil
+			}
 		}
+	if err := bs.Err(); err != nil {
+		return "", err
 	}
 
 	return "", fmt.Errorf("not found")

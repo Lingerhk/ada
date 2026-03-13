@@ -19,6 +19,9 @@ func TestDashboardStats(t *testing.T) {
 		Convey("Check for gRPC errors", func() {
 			So(err, ShouldBeNil)
 		})
+		if err != nil || resp == nil {
+			return
+		}
 
 		Convey("Check response validity", func() {
 			So(resp, ShouldNotBeNil)
@@ -87,6 +90,9 @@ func TestDashboardLogStats(t *testing.T) {
 		Convey("Check for gRPC errors", func() {
 			So(err, ShouldBeNil)
 		})
+		if err != nil || resp == nil {
+			return
+		}
 
 		Convey("Check response validity", func() {
 			So(resp, ShouldNotBeNil)

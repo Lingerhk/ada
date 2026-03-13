@@ -140,7 +140,7 @@ func InitElasticsearch(setting *Config) (*elasticsearch.Client, error) {
 	}
 	esCli, err := elasticsearch.NewClient(cfg)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 	return esCli, nil
 }

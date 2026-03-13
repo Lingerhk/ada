@@ -18,17 +18,20 @@ func main() {
 	logger.Infof("load configure from %s", confPath)
 	env, err := config.Init(confPath, "server")
 	if err != nil {
-		panic(err)
+		logger.Errorf("init tasker server config failed: %v", err)
+		os.Exit(1)
 	}
 
 	s, err := server.New(env)
 	if err != nil {
-		panic(err)
+		logger.Errorf("init tasker server failed: %v", err)
+		os.Exit(1)
 	}
 
 	go s.SignalHandler()
 
 	if err := s.Start(); err != nil {
-		panic(err)
+		logger.Errorf("start tasker server failed: %v", err)
+		os.Exit(1)
 	}
 }
