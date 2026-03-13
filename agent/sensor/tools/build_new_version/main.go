@@ -1,3 +1,5 @@
+//go:build tools
+
 package main
 
 import (
@@ -40,27 +42,17 @@ func main() {
 		fmt.Println("Error reading file:", err)
 		return
 	}
-	err = rdx.Set(ctx, common.SensorLatestBinFileKey, binBytes, 0).Err()
-	if err != nil {
-		fmt.Println("redis set binfile err:", err)
-		return
+
+	sha256sum := sha256.Sum256(binBytes)
+	sum := fmt.Sprintf("%x", sha256sum)
+	fmt.Printf("sha256sum:%s\n", sum)
+
+	ctxData := map[string]string{
+		"bin_file":   string(binBytes),
+		"version":    NewVersion,
+		"sha256_sum": sum,
 	}
-
-	hash := sha256.New()
-	hash.Write(binBytes)
-	sumStr := fmt.Sprintf("%x", hash.Sum(nil))
-
-	err = rdx.Set(ctx, common.SensorLatestBinSumKey, sumStr, 0).Err()
-	if err != nil {
-		fmt.Println("redis set binsum err:", err)
-		return
+	if err := rdx.HSet(ctx, common.SensorBinVerPrefix, ctxData).Err(); err != nil {
+		panic(err)
 	}
-
-	err = rdx.Set(ctx, common.SensorLatestVersionKey, NewVersion, 0).Err()
-	if err != nil {
-		fmt.Println("redis set latest version err:", err)
-		return
-	}
-
-	fmt.Printf("finished push new version:%s, checksum:%x\n", NewVersion, sumStr)
 }

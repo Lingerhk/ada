@@ -2,13 +2,17 @@ package file
 
 import (
 	"archive/zip"
+	"fmt"
 	"io"
 	"os"
 	"path/filepath"
 )
 
 func Compress(files []*os.File, dest string) error {
-	d, _ := os.Create(dest)
+	d, err := os.Create(dest)
+	if err != nil {
+		return err
+	}
 	defer Close(d)
 	w := zip.NewWriter(d)
 	defer Close(w)
@@ -21,7 +25,10 @@ func Compress(files []*os.File, dest string) error {
 }
 
 func CompressOne(file *os.File, dest string) error {
-	d, _ := os.Create(dest)
+	d, err := os.Create(dest)
+	if err != nil {
+		return err
+	}
 	defer Close(d)
 	w := zip.NewWriter(d)
 	defer Close(w)
@@ -51,6 +58,7 @@ func _Compress(file *os.File, prefix string, zw *zip.Writer) error {
 			}
 			err = _Compress(f, prefix, zw)
 			if err != nil {
+				Close(f)
 				return err
 			}
 		}
@@ -150,14 +158,15 @@ func DeCompress(srcFile *os.File, dstPath string) error {
 		// Open the file
 		srcFile, err := innerFile.Open()
 		if err != nil {
-			continue
+			return fmt.Errorf("open zip entry %s: %w", innerFile.Name, err)
 		}
 
 		// Create new file
 		newFilePath := filepath.Join(dstPath, innerFile.Name)
 		newFile, err := os.OpenFile(newFilePath, os.O_RDWR|os.O_CREATE|os.O_TRUNC, info.Mode())
 		if err != nil {
-			continue
+			_ = srcFile.Close()
+			return fmt.Errorf("create extracted file %s: %w", newFilePath, err)
 		}
 
 		// Copy the file to the new file

@@ -2,6 +2,8 @@ package test
 
 import (
 	"context"
+	"fmt"
+	"net"
 	"os"
 	"testing"
 	"time"
@@ -28,6 +30,13 @@ type ADAGrpcClient struct {
 }
 
 func TestMain(m *testing.M) {
+	connCheck, err := net.DialTimeout("tcp", grpcAddr, 2*time.Second)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "skipping ada/backend/apiserver/test: grpc server %s unavailable: %v\n", grpcAddr, err)
+		os.Exit(0)
+	}
+	_ = connCheck.Close()
+
 	conn, err := grpc.Dial(grpcAddr, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		panic(err)

@@ -4,11 +4,14 @@ import (
 	"crypto/hmac"
 	"crypto/sha1"
 	"encoding/base32"
+	"errors"
 	"fmt"
 	"hash"
 	"math"
 	"strings"
 )
+
+var ErrInvalidOTPInput = errors.New("otp input must be positive integer")
 
 type Hasher struct {
 	HashName string
@@ -42,10 +45,22 @@ Parameters:
 	input:  HMAC counter value used as OTP input, typically a counter or Unix timestamp
 */
 func (o *OTP) generateOTP(input int) string {
-	if input < 0 {
-		panic("input must be positive integer")
+	code, err := o.GenerateOTP(input)
+	if err != nil {
+		return ""
 	}
-	hasher := hmac.New(o.hasher.Digest, o.byteSecret())
+	return code
+}
+
+func (o *OTP) GenerateOTP(input int) (string, error) {
+	if input < 0 {
+		return "", ErrInvalidOTPInput
+	}
+	secret, err := o.byteSecret()
+	if err != nil {
+		return "", err
+	}
+	hasher := hmac.New(o.hasher.Digest, secret)
 	hasher.Write(Itob(input))
 	hmacHash := hasher.Sum(nil)
 
@@ -56,10 +71,10 @@ func (o *OTP) generateOTP(input int) string {
 		(int(hmacHash[offset+3]) & 0xff)
 
 	code = code % int(math.Pow10(o.digits))
-	return fmt.Sprintf(fmt.Sprintf("%%0%dd", o.digits), code)
+	return fmt.Sprintf(fmt.Sprintf("%%0%dd", o.digits), code), nil
 }
 
-func (o *OTP) byteSecret() []byte {
+func (o *OTP) byteSecret() ([]byte, error) {
 	missingPadding := len(o.secret) % 8
 	if missingPadding != 0 {
 		o.secret = o.secret + strings.Repeat("=", 8-missingPadding)
@@ -67,8 +82,7 @@ func (o *OTP) byteSecret() []byte {
 	//ciphertext := strings.Replace(o.secret, " ", "", -1)
 	bytes, err := base32.StdEncoding.DecodeString(o.secret)
 	if err != nil {
-		panic(err)
-		//return []byte("decode secret failed")
+		return nil, err
 	}
-	return bytes
+	return bytes, nil
 }

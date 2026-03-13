@@ -80,6 +80,9 @@ func (s *ScanSvc) Setup() error {
 
 	scFile := filepath.Join(tmpDir, "sc_enc.tar.gz")
 	venvFile := filepath.Join(tmpDir, "venv_enc.tar.gz")
+	if len(scCnt) < 1024 {
+		return errors.New("embedded scanner package sc_enc.tar.gz is not bundled")
+	}
 	if err := os.WriteFile(scFile, scCnt, 0644); err != nil {
 		logger.Errorf("write enc file err:%v", err)
 		return err

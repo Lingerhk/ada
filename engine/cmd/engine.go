@@ -21,16 +21,19 @@ func main() {
 	logger.Infof("load configure from %s", confPath)
 	env, err := config.Init(confPath)
 	if err != nil {
-		panic(err)
+		logger.Errorf("init engine config failed: %v", err)
+		os.Exit(1)
 	}
 
 	e, err := core.New(env)
 	if err != nil {
-		panic(err)
+		logger.Errorf("init engine worker failed: %v", err)
+		os.Exit(1)
 	}
 
 	if err := e.Setup(); err != nil {
-		panic(err)
+		logger.Errorf("setup engine worker failed: %v", err)
+		os.Exit(1)
 	}
 
 	go e.RuntimeCheck() // license check

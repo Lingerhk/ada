@@ -24,6 +24,15 @@ func MD5String(key string, length int) string {
 // This implementation uses rejection sampling via crypto/rand.Int to ensure
 // uniform distribution without modulo bias.
 func RandString(length int) string {
+	s, err := RandStringE(length)
+	if err != nil {
+		return ""
+	}
+	return s
+}
+
+// RandStringE generates a cryptographically secure random string and returns an error on entropy failure.
+func RandStringE(length int) (string, error) {
 	const letterBytes = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
 	letterBytesLen := big.NewInt(int64(len(letterBytes)))
 
@@ -33,11 +42,10 @@ func RandString(length int) string {
 		// This avoids modulo bias that occurs with simple modulo operation
 		idx, err := rand.Int(rand.Reader, letterBytesLen)
 		if err != nil {
-			// This should never happen on a properly configured system
-			panic("crypto/rand.Int failed: " + err.Error())
+			return "", err
 		}
 		b[i] = letterBytes[idx.Int64()]
 	}
 
-	return string(b)
+	return string(b), nil
 }

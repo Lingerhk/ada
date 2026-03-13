@@ -111,7 +111,7 @@ func (w *Worker) RuleSyncTask() error {
 			httpProxy = sysInfo.SystemProxy["http_proxy"]
 		}
 
-		latestVersion, err := w.checkLatestVersion(sysInfo.UpgradeSrv, latestJSONPath, currentVersionPath, upgradeProxy, httpProxy)
+		latestVersion, err := w.checkLatestVersion(ctx, sysInfo.UpgradeSrv, latestJSONPath, currentVersionPath, upgradeProxy, httpProxy)
 		if err != nil {
 			return err
 		}
@@ -122,7 +122,7 @@ func (w *Worker) RuleSyncTask() error {
 
 		// Download latest.zip
 		logger.Infof("New version %s available, downloading rule package", latestVersion)
-		if err := w.downloadLatestZIP(sysInfo.UpgradeSrv, latestZIPPath, upgradeProxy, httpProxy); err != nil {
+		if err := w.downloadLatestZIP(ctx, sysInfo.UpgradeSrv, latestZIPPath, upgradeProxy, httpProxy); err != nil {
 			logger.Errorf("Failed to download latest.zip: %v", err)
 			return err
 		}
@@ -154,7 +154,7 @@ func (w *Worker) RuleSyncTask() error {
 }
 
 // checkLatestVersion downloads the latest.json from remote server and check if need update
-func (w *Worker) checkLatestVersion(upgradeSrv, destPath, currentVersionPath string, upgradeProxy bool, httpProxy string) (string, error) {
+func (w *Worker) checkLatestVersion(ctx context.Context, upgradeSrv, destPath, currentVersionPath string, upgradeProxy bool, httpProxy string) (string, error) {
 	// Ensure proper URL joining, handle trailing slash
 	requestURL := fmt.Sprintf("%s/rule/version/latest.json", strings.TrimSuffix(upgradeSrv, "/"))
 
@@ -166,7 +166,7 @@ func (w *Worker) checkLatestVersion(upgradeSrv, destPath, currentVersionPath str
 		client = netutil.NewHTTPClient(10)
 	}
 
-	req, err := http.NewRequest("GET", requestURL, nil)
+	req, err := http.NewRequestWithContext(ctx, "GET", requestURL, nil)
 	if err != nil {
 		logger.Errorf("new http request(%s) err:%v", requestURL, err)
 		return "", err
@@ -178,8 +178,7 @@ func (w *Worker) checkLatestVersion(upgradeSrv, destPath, currentVersionPath str
 	}
 	defer resp.Body.Close()
 	if resp.StatusCode != http.StatusOK {
-		logger.Errorf("check rule version request(%s) done, but response code:%d", requestURL, resp.StatusCode)
-		return "", err
+		return "", httpStatusError("check rule version", requestURL, resp)
 	}
 
 	// Read response body
@@ -227,7 +226,7 @@ func (w *Worker) checkLatestVersion(upgradeSrv, destPath, currentVersionPath str
 }
 
 // downloadLatestZIP downloads the latest.zip from remote server
-func (w *Worker) downloadLatestZIP(upgradeSrv, destPath string, upgradeProxy bool, httpProxy string) error {
+func (w *Worker) downloadLatestZIP(ctx context.Context, upgradeSrv, destPath string, upgradeProxy bool, httpProxy string) error {
 	// Ensure proper URL joining, handle trailing slash
 	baseURL := strings.TrimSuffix(upgradeSrv, "/")
 
@@ -253,14 +252,19 @@ func (w *Worker) downloadLatestZIP(upgradeSrv, destPath string, upgradeProxy boo
 		client = netutil.NewHTTPClient(60)
 	}
 
-	resp, err := client.Get(u.String())
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, u.String(), nil)
+	if err != nil {
+		return fmt.Errorf("failed to create download request: %w", err)
+	}
+
+	resp, err := client.Do(req)
 	if err != nil {
 		return fmt.Errorf("failed to download latest.zip: %w", err)
 	}
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		return fmt.Errorf("failed to download latest.zip: status %d", resp.StatusCode)
+		return httpStatusError("download latest.zip", u.String(), resp)
 	}
 
 	// Create output file
@@ -440,7 +444,7 @@ func (w *Worker) uploadLocalRules(ctx context.Context, descPath, extractDir, upg
 	}
 
 	// Upload to remote server
-	if err := w.uploadPackageToRemote(upgradeSrv, uploadZipPath, upgradeProxy, httpProxy); err != nil {
+	if err := w.uploadPackageToRemote(ctx, upgradeSrv, uploadZipPath, upgradeProxy, httpProxy); err != nil {
 		return fmt.Errorf("failed to upload package: %w", err)
 	}
 
@@ -1037,7 +1041,7 @@ func riskLevelToString(level int32) string {
 }
 
 // uploadPackageToRemote uploads the ZIP package to remote server
-func (w *Worker) uploadPackageToRemote(upgradeSrv, zipPath string, upgradeProxy bool, httpProxy string) error {
+func (w *Worker) uploadPackageToRemote(ctx context.Context, upgradeSrv, zipPath string, upgradeProxy bool, httpProxy string) error {
 	// Ensure proper URL joining, handle trailing slash
 	baseURL := strings.TrimSuffix(upgradeSrv, "/")
 	requestURL := fmt.Sprintf("%s/rule/peer/upload", baseURL)
@@ -1059,7 +1063,7 @@ func (w *Worker) uploadPackageToRemote(upgradeSrv, zipPath string, upgradeProxy 
 	var requestBody io.Reader = file
 	contentType := "application/zip"
 
-	req, err := http.NewRequest("POST", requestURL, requestBody)
+	req, err := http.NewRequestWithContext(ctx, "POST", requestURL, requestBody)
 	if err != nil {
 		return fmt.Errorf("failed to create request: %w", err)
 	}
@@ -1083,12 +1087,25 @@ func (w *Worker) uploadPackageToRemote(upgradeSrv, zipPath string, upgradeProxy 
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK && resp.StatusCode != http.StatusCreated {
-		body, _ := io.ReadAll(resp.Body)
-		return fmt.Errorf("upload failed with status %d: %s", resp.StatusCode, string(body))
+		return httpStatusError("upload rules", requestURL, resp)
 	}
 
 	logger.Info("Rule package uploaded successfully")
 	return nil
+}
+
+func httpStatusError(action, requestURL string, resp *http.Response) error {
+	body, err := io.ReadAll(io.LimitReader(resp.Body, 2048))
+	if err != nil {
+		return fmt.Errorf("%s request(%s) failed with status %d and unreadable body: %w", action, requestURL, resp.StatusCode, err)
+	}
+
+	msg := strings.TrimSpace(string(body))
+	if msg == "" {
+		return fmt.Errorf("%s request(%s) failed with status %d", action, requestURL, resp.StatusCode)
+	}
+
+	return fmt.Errorf("%s request(%s) failed with status %d: %s", action, requestURL, resp.StatusCode, msg)
 }
 
 // writeAlertRuleToFile writes an AlertRule to a YAML file

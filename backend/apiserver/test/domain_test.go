@@ -22,7 +22,7 @@ func TestListDomainList(t *testing.T) {
 	}
 	resp, err := ADACli.cli.ListDomain(ADACli.ctx, &req)
 	if err != nil {
-		t.Error(err.Error())
+		t.Fatal(err.Error())
 	}
 
 	for _, domain := range resp.List {
@@ -43,7 +43,7 @@ func TestAddDomain(t *testing.T) {
 
 	resp, err := ADACli.cli.AddDomain(ADACli.ctx, &req)
 	if err != nil {
-		t.Error(err.Error())
+		t.Fatal(err.Error())
 	}
 	Convey("Test API AddDomain", t, func() {
 		Convey("Test response status", func() {
@@ -63,7 +63,7 @@ func TestUpdateDomain(t *testing.T) {
 
 	resp, err := ADACli.cli.UpdateDomain(ADACli.ctx, &req)
 	if err != nil {
-		t.Error(err.Error())
+		t.Fatal(err.Error())
 	}
 	Convey("Test API UpdateDomain", t, func() {
 		Convey("Test response status", func() {
@@ -81,7 +81,7 @@ func TestTestDomain(t *testing.T) {
 	}
 	resp, err := ADACli.cli.TestDomain(ADACli.ctx, &req)
 	if err != nil {
-		t.Error(err.Error())
+		t.Fatal(err.Error())
 	}
 
 	t.Logf("%#v", resp)
@@ -95,7 +95,7 @@ func TestLdapConn(t *testing.T) {
 
 	resp, err := ldap.GetConn(ldapAddr, username, password, dns)
 	if err != nil {
-		t.Error(err.Error())
+		t.Fatal(err.Error())
 	}
 
 	t.Logf("ldap conn ok:%#v", resp)
@@ -109,7 +109,7 @@ func TestDeploySensor(t *testing.T) {
 
 	resp, err := ADACli.cli.DeploySensor(ADACli.ctx, &req)
 	if err != nil {
-		t.Error(err.Error())
+		t.Fatal(err.Error())
 	}
 
 	t.Logf("deploy sensor resp:%#v", resp)

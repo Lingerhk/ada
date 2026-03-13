@@ -1,3 +1,5 @@
+//go:build tools
+
 package main
 
 // GOOS=linux GOARCH=amd64 go build syslog_svc.go

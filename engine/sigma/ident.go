@@ -42,6 +42,8 @@ func checkIdentType(name string, data any) identType {
 
 func reflectIdentKind(data any) identType {
 	switch v := data.(type) {
+	case Detection:
+		return identSelection
 	case map[string]any, map[any]any:
 		return identSelection
 	case []any:
@@ -371,6 +373,8 @@ func NewSelectionBranch(expr any, noCollapseWS bool) (Branch, error) {
 			selections = append(selections, b)
 		}
 		return NodeSimpleOr(selections).Reduce(), nil
+	case Detection:
+		return newSelectionFromMap(map[string]any(v), noCollapseWS)
 	case map[string]any:
 		return newSelectionFromMap(v, noCollapseWS)
 	case map[any]any:

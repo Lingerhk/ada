@@ -276,7 +276,12 @@ func GenerateAccessKey(e *config.Env, username, remark string) (string, error) {
 	tb := (&model.AccessKey{}).CollectName()
 
 	// Generate SK
-	secretKey := fmt.Sprintf("sk-%s", crypto.RandString(25))
+	randomPart, err := crypto.RandStringE(25)
+	if err != nil {
+		logger.Errorf("generate access key random string error: %v", err)
+		return "", err
+	}
+	secretKey := fmt.Sprintf("sk-%s", randomPart)
 
 	// Create masked display version
 	displaySK := fmt.Sprintf("sk-%s*****%s", secretKey[3:6], secretKey[25:])
@@ -295,7 +300,7 @@ func GenerateAccessKey(e *config.Env, username, remark string) (string, error) {
 		UpdateTm:   time.Now(),
 	}
 
-	err := e.MongoCli.Insert(tb, key)
+	err = e.MongoCli.Insert(tb, key)
 	if err != nil {
 		logger.Errorf("insert access key error: %v", err)
 		return "", err

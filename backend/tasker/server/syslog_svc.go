@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"runtime"
 	"strconv"
 	"strings"
 	"sync"
@@ -29,6 +30,7 @@ const (
 	pktLogIndexPrefix = "ada-packetlog"
 	pktLogChannel     = "ada:pktlog_channel" // receive pktlog from zeek-redis
 	statsListMaxLen   = 60 * 24              // Max length for stats lists (24 hours of minutely data)
+	syslogWorkerQueue = 4096
 )
 
 const (
@@ -112,6 +114,7 @@ type SyslogServer struct {
 	eveLogIndexName string    // 当前evelog日志index的日期,用于缓存
 	pktLogIndexName string    // 当前pktlog日志index的日期,用于缓存
 	logStats        *sync.Map // map[domain]count - Added for pktlog stats
+	workQueue       chan map[string]any
 }
 
 func NewSyslogServer(env *config.Env) (*SyslogServer, error) {
@@ -145,13 +148,14 @@ func NewSyslogServer(env *config.Env) (*SyslogServer, error) {
 	ctx, cancel := context.WithCancel(context.Background())
 
 	return &SyslogServer{
-		ctx:      ctx,
-		env:      env,
-		cancel:   cancel,
-		esBulker: bi,
-		channel:  channel,
-		server:   server,
-		logStats: new(sync.Map), // Initialize the map
+		ctx:       ctx,
+		env:       env,
+		cancel:    cancel,
+		esBulker:  bi,
+		channel:   channel,
+		server:    server,
+		logStats:  new(sync.Map), // Initialize the map
+		workQueue: make(chan map[string]any, syslogWorkerQueue),
 	}, nil
 }
 
@@ -163,9 +167,23 @@ func (s *SyslogServer) SyslogServe() {
 		go s.monitor()
 	}
 
+	s.startSyslogWorkers()
+
 	go func(channel syslog.LogPartsChannel) {
-		for logParts := range s.channel {
-			go s.syslogSync(logParts)
+		for {
+			select {
+			case <-s.ctx.Done():
+				return
+			case logParts, ok := <-channel:
+				if !ok {
+					return
+				}
+				select {
+				case s.workQueue <- logParts:
+				default:
+					logger.Warnf("syslog worker queue is full, dropping message")
+				}
+			}
 		}
 	}(s.channel)
 
@@ -211,7 +229,12 @@ func (s *SyslogServer) syslogSync(event map[string]any) {
 	}
 
 	rdxDomainKey := cache.DomainIPRelateDCKey(parts[1])
-	if s.env.RedisCli.Exists(s.ctx, rdxDomainKey).Val() == 0 {
+	exists, err := s.env.RedisCli.Exists(s.ctx, rdxDomainKey).Result()
+	if err != nil {
+		logger.Errorf("check domain key %s in redis failed: %v", rdxDomainKey, err)
+		return
+	}
+	if exists == 0 {
 		logger.Warnf("ignore invalid syslog from hostname:%s, please add domain first!", hostname)
 		return
 	}
@@ -219,12 +242,19 @@ func (s *SyslogServer) syslogSync(event map[string]any) {
 	// 记录当前dc的timestamp到SensorCollectStatusKey中，task_worker会check是否异常
 	now := time.Now()
 	if now.Unix()%4 == 0 {
-		_ = s.env.RedisCli.HSet(s.ctx, cache.SensorCollectStatusKey, "winlog_"+hostname, now.Unix()).Err()
+		if err := s.env.RedisCli.HSet(s.ctx, cache.SensorCollectStatusKey, "winlog_"+hostname, now.Unix()).Err(); err != nil {
+			logger.Warnf("update winlog sensor collect status failed for %s: %v", hostname, err)
+		}
 
 		// 如果queue超过52.4W条（约650M），则清除部分旧数据。实测20W条约占redis内存：250M
-		if s.env.RedisCli.LLen(s.ctx, eveLogQueueKey).Val() > maxLogQueueLen {
+		queueLen, err := s.env.RedisCli.LLen(s.ctx, eveLogQueueKey).Result()
+		if err != nil {
+			logger.Warnf("get queue length for %s failed: %v", eveLogQueueKey, err)
+		} else if queueLen > maxLogQueueLen {
 			logger.Warnf("queue %s is full, will remove some old eventlog", eveLogQueueKey)
-			s.env.RedisCli.LTrim(s.ctx, eveLogQueueKey, 1024*10, -1)
+			if err := s.env.RedisCli.LTrim(s.ctx, eveLogQueueKey, 1024*10, -1).Err(); err != nil {
+				logger.Warnf("trim queue %s failed: %v", eveLogQueueKey, err)
+			}
 		}
 	}
 
@@ -235,7 +265,7 @@ func (s *SyslogServer) syslogSync(event map[string]any) {
 	}
 
 	// 记录stats
-	err := s.collectLogStats("winlog", hostname, now)
+	err = s.collectLogStats("winlog", hostname, now)
 	if err != nil {
 		logger.Warnf("collect evelog stats err:%v", err)
 	}
@@ -268,6 +298,26 @@ func (s *SyslogServer) syslogSync(event map[string]any) {
 	}
 
 	logger.Debugf("sotred syslog(hostname:%s) into es succed", hostname)
+}
+
+func (s *SyslogServer) startSyslogWorkers() {
+	workerCount := runtime.NumCPU() * 2
+	if workerCount < 4 {
+		workerCount = 4
+	}
+
+	for i := 0; i < workerCount; i++ {
+		go func() {
+			for {
+				select {
+				case <-s.ctx.Done():
+					return
+				case event := <-s.workQueue:
+					s.syslogSync(event)
+				}
+			}
+		}()
+	}
 }
 
 func (s *SyslogServer) monitor() {
@@ -491,11 +541,18 @@ func (s *SyslogServer) pktlogSync(ctx context.Context, event string) {
 	// 如果queue超过52.4W条（约200M），则清除部分旧数据。
 	now := time.Now()
 	if now.Unix()%4 == 0 {
-		_ = s.env.RedisCli.HSet(s.ctx, cache.SensorCollectStatusKey, "pktlog_"+pktlog[0], now.Unix()).Err()
+		if err := s.env.RedisCli.HSet(s.ctx, cache.SensorCollectStatusKey, "pktlog_"+pktlog[0], now.Unix()).Err(); err != nil {
+			logger.Warnf("update pktlog sensor collect status failed for %s: %v", pktlog[0], err)
+		}
 
-		if s.env.RedisCli.LLen(ctx, pktLogQueueKey).Val() > maxLogQueueLen {
+		queueLen, err := s.env.RedisCli.LLen(ctx, pktLogQueueKey).Result()
+		if err != nil {
+			logger.Warnf("get queue length for %s failed: %v", pktLogQueueKey, err)
+		} else if queueLen > maxLogQueueLen {
 			logger.Warnf("queue %s is full, will remove some old packetlog", pktLogQueueKey)
-			s.env.RedisCli.LTrim(ctx, pktLogQueueKey, 1024*10, -1)
+			if err := s.env.RedisCli.LTrim(ctx, pktLogQueueKey, 1024*10, -1).Err(); err != nil {
+				logger.Warnf("trim queue %s failed: %v", pktLogQueueKey, err)
+			}
 		}
 	}
 

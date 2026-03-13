@@ -22,18 +22,21 @@ func main() {
 	logger.Infof("load configure from %s", confPath)
 	env, err := config.Init(confPath)
 	if err != nil {
-		panic(err)
+		logger.Errorf("init scanner config failed: %v", err)
+		os.Exit(1)
 	}
 
 	logger.Debugf("trait: %s", license.GetTrait())
 
 	w, err := worker.New(env)
 	if err != nil {
-		panic(err)
+		logger.Errorf("init scanner worker failed: %v", err)
+		os.Exit(1)
 	}
 
 	if err = w.Setup(); err != nil {
-		panic(err)
+		logger.Errorf("setup scanner worker failed: %v", err)
+		os.Exit(1)
 	}
 
 	// signal handler: exit

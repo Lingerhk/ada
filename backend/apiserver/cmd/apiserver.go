@@ -37,7 +37,8 @@ func main() {
 	logger.Infof("load configure from %s", confPath)
 	env, err := config.Init(confPath)
 	if err != nil {
-		panic(err)
+		logger.Errorf("init apiserver config failed: %v", err)
+		os.Exit(1)
 	}
 
 	go httpServe(env) // 启动http server,处理静态文件和本地curl请求(license相关操作)
@@ -47,7 +48,8 @@ func main() {
 	go s.SignalHandler()
 
 	if err := s.Start(env.Cfg.BindSrv.GrpcAddr); err != nil {
-		logger.Panic(err)
+		logger.Errorf("start apiserver grpc service failed: %v", err)
+		os.Exit(1)
 	}
 }
 

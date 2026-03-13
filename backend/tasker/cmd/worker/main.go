@@ -19,12 +19,14 @@ func main() {
 	logger.Infof("load configure from %s", confPath)
 	env, err := config.Init(confPath, "worker")
 	if err != nil {
-		panic(err)
+		logger.Errorf("init tasker worker config failed: %v", err)
+		os.Exit(1)
 	}
 
 	machineryServer, err := server.MachineryServer(env, "ada:tasker:task_queue")
 	if err != nil {
-		panic(err)
+		logger.Errorf("init tasker worker machinery server failed: %v", err)
+		os.Exit(1)
 	}
 
 	w := worker.NewTaskWorker(env, machineryServer)
@@ -32,6 +34,7 @@ func main() {
 	go w.SignalHandler()
 
 	if err := w.Start(); err != nil {
-		panic(err)
+		logger.Errorf("start tasker worker failed: %v", err)
+		os.Exit(1)
 	}
 }

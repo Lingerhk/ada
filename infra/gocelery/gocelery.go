@@ -119,6 +119,7 @@ type AsyncResult struct {
 // It blocks for period of time set by timeout and returns error if unavailable
 func (ar *AsyncResult) Get(timeout time.Duration) (any, error) {
 	ticker := time.NewTicker(50 * time.Millisecond)
+	defer ticker.Stop()
 	timeoutChan := time.After(timeout)
 	for {
 		select {
@@ -141,14 +142,14 @@ func (ar *AsyncResult) AsyncGet() (any, error) {
 		return ar.result.Result, nil
 	}
 	val, err := ar.backend.GetResult(ar.TaskID)
-	if err != nil {
-		return nil, err
-	}
-	if val == nil {
-		return nil, err
-	}
-	if val.Status != "SUCCESS" {
-		return nil, fmt.Errorf("error response status %v", val)
+		if err != nil {
+			return nil, err
+		}
+		if val == nil {
+			return nil, nil
+		}
+		if val.Status != "SUCCESS" {
+			return nil, fmt.Errorf("error response status %v", val)
 	}
 	ar.result = val
 	return val.Result, nil
