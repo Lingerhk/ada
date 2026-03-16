@@ -4,6 +4,7 @@ import (
 	"ada/backend/model"
 	"ada/backend/tasker/common"
 	"ada/backend/tasker/tasks"
+	"context"
 	"fmt"
 	"reflect"
 	"runtime/debug"
@@ -29,6 +30,7 @@ type CronScheduler struct {
 	Tasker       *TaskServer
 	CjIdMap      map[string]gocron.Job
 	CjVersionMap map[string]time.Time
+	cancel       context.CancelFunc
 }
 
 // NewCronScheduler creates a new cron scheduler
@@ -39,11 +41,14 @@ func NewCronScheduler(ts *TaskServer) (*CronScheduler, error) {
 		return nil, err
 	}
 
+	ctx, cancel := context.WithCancel(context.Background())
+
 	return &CronScheduler{
 		Server:       s,
-		Tasker:       ts,
+		Tasker:       ts.withContext(ctx),
 		CjIdMap:      make(map[string]gocron.Job),
 		CjVersionMap: make(map[string]time.Time),
+		cancel:       cancel,
 	}, nil
 }
 
@@ -111,6 +116,9 @@ func (cs *CronScheduler) CronTaskServe() {
 
 // Stop stops the cron scheduler
 func (cs *CronScheduler) Stop() {
+	if cs.cancel != nil {
+		cs.cancel()
+	}
 	cs.Server.Shutdown()
 }
 

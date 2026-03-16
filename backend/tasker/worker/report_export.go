@@ -5,6 +5,7 @@ import (
 	"ada/backend/model"
 	"ada/infra/base"
 	"ada/infra/mongo"
+	"context"
 	"encoding/json"
 	"fmt"
 	"path"
@@ -35,7 +36,8 @@ type weakPwdUserList struct {
 	Locked       int32  `json:"is_lock"`
 }
 
-func (w *Worker) ExportReportTask(taskId, typ, params string) error {
+func (w *Worker) ExportReportTask(ctx context.Context, taskId, typ, params string) error {
+	w = w.withContext(ctx)
 	logger.Debugf("export report task(task_id:%s, type:%s, params:%s) start!", taskId, typ, params)
 
 	lang := w.GetLanguage()

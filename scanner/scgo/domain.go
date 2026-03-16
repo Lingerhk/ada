@@ -10,11 +10,11 @@ import (
 )
 
 type DCInfo struct {
-	HostName  string
-	Platform  string
-	IPList    []string
-	Status    string
-	ErrMsg    string
+	HostName   string
+	Platform   string
+	IPList     []string
+	Status     string
+	ErrMsg     string
 	LastOnline any
 }
 

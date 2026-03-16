@@ -10,17 +10,17 @@ import (
 	"strings"
 	"time"
 
-	"go.mongodb.org/mongo-driver/v2/bson"
 	logger "github.com/sirupsen/logrus"
+	"go.mongodb.org/mongo-driver/v2/bson"
 )
 
 type PluginEntry struct {
-	ID           int32
-	Category     string
-	PluginDir    string
-	Module       string // e.g. plugins.baseline.plugin_1001.main
-	PackagePath  string // .../package.json
-	PackageDoc   map[string]any
+	ID          int32
+	Category    string
+	PluginDir   string
+	Module      string // e.g. plugins.baseline.plugin_1001.main
+	PackagePath string // .../package.json
+	PackageDoc  map[string]any
 }
 
 type PluginIndex struct {

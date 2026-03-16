@@ -130,8 +130,8 @@ type notifyInfo struct {
 }
 
 // ThreatNotifyTask 威胁检测风险/扫描风险 通知
-func (w *Worker) ThreatNotifyTask() error {
-	ctx := context.Background()
+func (w *Worker) ThreatNotifyTask(ctx context.Context) error {
+	w = w.withContext(ctx)
 	msg, err := w.env.RedisCli.BRPop(ctx, 10*time.Second, cache.AlertNotifyQueueKey).Result()
 	if err != nil {
 		if err == redis.Nil {

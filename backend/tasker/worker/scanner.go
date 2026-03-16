@@ -13,7 +13,8 @@ import (
 	"slices"
 )
 
-func (w *Worker) ScannerBaselineTask(domainTmplMap string) error {
+func (w *Worker) ScannerBaselineTask(ctx context.Context, domainTmplMap string) error {
+	w = w.withContext(ctx)
 	var dtm map[string]string
 	_ = json.Unmarshal([]byte(domainTmplMap), &dtm)
 
@@ -80,7 +81,8 @@ func (w *Worker) ScannerBaselineTask(domainTmplMap string) error {
 	return nil
 }
 
-func (w *Worker) ScannerLeakTask(domainTmplMap string) error {
+func (w *Worker) ScannerLeakTask(ctx context.Context, domainTmplMap string) error {
+	w = w.withContext(ctx)
 	var dtm map[string]string
 	_ = json.Unmarshal([]byte(domainTmplMap), &dtm)
 
@@ -150,7 +152,8 @@ func (w *Worker) ScannerLeakTask(domainTmplMap string) error {
 	return nil
 }
 
-func (w *Worker) ScannerWeakPwdTask(domainTmplMap string) error {
+func (w *Worker) ScannerWeakPwdTask(ctx context.Context, domainTmplMap string) error {
+	w = w.withContext(ctx)
 	var dtm map[string]string
 	_ = json.Unmarshal([]byte(domainTmplMap), &dtm)
 
@@ -249,7 +252,8 @@ func (w *Worker) ScannerWeakPwdTask(domainTmplMap string) error {
 	return nil
 }
 
-func (w *Worker) ScannerRecheckTask(scanType, subTaskId string) error {
+func (w *Worker) ScannerRecheckTask(ctx context.Context, scanType, subTaskId string) error {
+	w = w.withContext(ctx)
 	logger.Debugf("start ScannerRecheckTask, scan_type:%s, subtask_id:%s", scanType, subTaskId)
 
 	var err error
