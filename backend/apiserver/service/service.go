@@ -85,6 +85,7 @@ type GrpcService struct {
 
 // getLastLoginExpireTime gets the last login expire time from Redis
 func (s *GrpcService) getLastLoginExpireTime(ctx context.Context, username string) (int64, error) {
+	s = s.withContext(ctx)
 	return s.env.RedisCli.Get(ctx, userLoginExpireKey(username)).Int64()
 }
 
@@ -306,6 +307,7 @@ func (s *GrpcService) recovery() grpc.UnaryServerInterceptor {
 func (s *GrpcService) handle() grpc.UnaryServerInterceptor {
 	return func(ctx context.Context, req any, args *grpc.UnaryServerInfo,
 		handler grpc.UnaryHandler) (resp any, err error) {
+		s = s.withContext(ctx)
 		// Check if grpc FullMethod is in the whitelist first
 		if slices.Contains(_whitelist, args.FullMethod) {
 			return handler(ctx, req) // Pass original context for whitelisted methods
@@ -377,6 +379,7 @@ func (s *GrpcService) handle() grpc.UnaryServerInterceptor {
 func (s *GrpcService) logging() grpc.UnaryServerInterceptor {
 	return func(ctx context.Context, req any, args *grpc.UnaryServerInfo,
 		handler grpc.UnaryHandler) (any, error) {
+		s = s.withContext(ctx)
 		startTime := time.Now()
 		var addr, remoteIP string
 		if peerInfo, ok := peer.FromContext(ctx); ok {

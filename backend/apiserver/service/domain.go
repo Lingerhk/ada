@@ -24,6 +24,7 @@ import (
 )
 
 func (s *ADAServiceV2) ListDomain(ctx context.Context, in *v2.ListDomainReq) (*v2.ListDomainReply, error) {
+	s = s.withContext(ctx)
 	// 1、MongoDB 查询(分页)
 	var limit, offset = in.PageSize, in.PageSize * (in.PageIdx - 1)
 	res, total, err := server.FindAllDomain(s.env, int64(limit), int64(offset), in.FilterDomain, in.FilterStatus, in.FilterKeyword)
@@ -81,6 +82,7 @@ func (s *ADAServiceV2) ListDomain(ctx context.Context, in *v2.ListDomainReq) (*v
 }
 
 func (s *ADAServiceV2) AddDomain(ctx context.Context, in *v2.AddDomainReq) (*v2.AddDomainReply, error) {
+	s = s.withContext(ctx)
 	// 1、 is super and domain not exist
 	if !s.IsSuper(ctx) {
 		return nil, status.Error(codes.PermissionDenied, s.I18n("NoPermission"))
@@ -169,6 +171,7 @@ func (s *ADAServiceV2) AddDomain(ctx context.Context, in *v2.AddDomainReq) (*v2.
 }
 
 func (s *ADAServiceV2) UpdateDomainData(ctx context.Context, in *v2.UpdateDomainDataReq) (*v2.UpdateDomainDataReply, error) {
+	s = s.withContext(ctx)
 	ret := &v2.UpdateDomainDataReply{
 		Result: aCommon.RESP_FAILED,
 	}
@@ -210,6 +213,7 @@ func (s *ADAServiceV2) UpdateDomainData(ctx context.Context, in *v2.UpdateDomain
 }
 
 func (s *ADAServiceV2) TestDomain(ctx context.Context, in *v2.TestDomainReq) (*v2.TestDomainReply, error) {
+	s = s.withContext(ctx)
 	//1、域服务器连接测试
 	ret := &v2.TestDomainReply{Status: 0}
 	// 如果前端没有传递密码，则从数据库解析密码
@@ -260,6 +264,7 @@ func (s *ADAServiceV2) TestDomain(ctx context.Context, in *v2.TestDomainReq) (*v
 }
 
 func (s *ADAServiceV2) UpdateDomain(ctx context.Context, in *v2.UpdateDomainReq) (*v2.UpdateDomainReply, error) {
+	s = s.withContext(ctx)
 	//1、 is super
 	if !s.IsSuper(ctx) {
 		return nil, status.Error(codes.PermissionDenied, s.I18n("NoPermission"))
@@ -382,6 +387,7 @@ func (s *ADAServiceV2) UpdateDomain(ctx context.Context, in *v2.UpdateDomainReq)
 }
 
 func (s *ADAServiceV2) DeleteDomain(ctx context.Context, in *v2.DeleteDomainReq) (*v2.DeleteDomainReply, error) {
+	s = s.withContext(ctx)
 	//1、 is super
 	if !s.IsSuper(ctx) {
 		return nil, status.Error(codes.PermissionDenied, s.I18n("NoPermission"))
@@ -447,6 +453,7 @@ func (s *ADAServiceV2) DeleteDomain(ctx context.Context, in *v2.DeleteDomainReq)
 
 // DeploySensor deploy sensor to domain dc server automatically(using winrm protocol)
 func (s *ADAServiceV2) DeploySensor(ctx context.Context, in *v2.DeploySensorReq) (*v2.DeploySensorReply, error) {
+	s = s.withContext(ctx)
 	//1、is super
 	if !s.IsSuper(ctx) {
 		return nil, status.Error(codes.PermissionDenied, s.I18n("NoPermission"))

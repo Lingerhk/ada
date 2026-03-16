@@ -21,6 +21,7 @@ import (
 )
 
 func (s *ADAServiceV2) ListNotify(ctx context.Context, in *v2.ListNotifyReq) (*v2.ListNotifyReply, error) {
+	s = s.withContext(ctx)
 	ret := &v2.ListNotifyReply{
 		Page:      &v2.ModelPage{PageSize: in.PageSize, PageIdx: in.PageIdx, Total: 0},
 		Exhausted: true,
@@ -54,6 +55,7 @@ func (s *ADAServiceV2) ListNotify(ctx context.Context, in *v2.ListNotifyReq) (*v
 }
 
 func (s *ADAServiceV2) UpdateNotify(ctx context.Context, in *v2.UpdateNotifyReq) (*v2.UpdateNotifyReply, error) {
+	s = s.withContext(ctx)
 	ret := v2.UpdateNotifyReply{Result: RESP_FAILED}
 
 	err := server.UpdateNotifyStatus(s.env, in.IDs)
@@ -67,11 +69,13 @@ func (s *ADAServiceV2) UpdateNotify(ctx context.Context, in *v2.UpdateNotifyReq)
 }
 
 func (s *ADAServiceV2) StatsNotify(ctx context.Context, in *v2.StatsNotifyReq) (*v2.StatsNotifyReply, error) {
+	s = s.withContext(ctx)
 
 	return nil, nil
 }
 
 func (s *ADAServiceV2) ListNotifyConf(ctx context.Context, in *v2.ListNotifyConfReq) (*v2.ListNotifyConfReply, error) {
+	s = s.withContext(ctx)
 	var limit, offset = in.PageSize, in.PageSize * (in.PageIdx - 1)
 
 	notifyConfList, count, err := server.FindAllNotifyConf(s.env, in.ModuleName, in.NotifyType, in.Endpoint, in.Enable, in.SortTime, limit, offset)
@@ -104,6 +108,7 @@ func (s *ADAServiceV2) ListNotifyConf(ctx context.Context, in *v2.ListNotifyConf
 }
 
 func (s *ADAServiceV2) UpdateNotifyConf(ctx context.Context, in *v2.UpdateNotifyConfReq) (*v2.UpdateNotifyConfReply, error) {
+	s = s.withContext(ctx)
 	ret := v2.UpdateNotifyConfReply{
 		Result: RESP_FAILED,
 	}
@@ -136,6 +141,7 @@ func (s *ADAServiceV2) UpdateNotifyConf(ctx context.Context, in *v2.UpdateNotify
 }
 
 func (s *ADAServiceV2) EnableNotifyConf(ctx context.Context, in *v2.EnableNotifyConfReq) (*v2.EnableNotifyConfReply, error) {
+	s = s.withContext(ctx)
 	if !s.IsSuper(ctx) {
 		return nil, status.Error(codes.Internal, s.I18n("NoPermission"))
 	}
@@ -160,6 +166,7 @@ func (s *ADAServiceV2) EnableNotifyConf(ctx context.Context, in *v2.EnableNotify
 }
 
 func (s *ADAServiceV2) AddNotifyConf(ctx context.Context, in *v2.AddNotifyConfReq) (*v2.AddNotifyConfReply, error) {
+	s = s.withContext(ctx)
 	if !s.IsSuper(ctx) {
 		return nil, status.Error(codes.Internal, s.I18n("NoPermission"))
 	}
@@ -192,6 +199,7 @@ func (s *ADAServiceV2) AddNotifyConf(ctx context.Context, in *v2.AddNotifyConfRe
 }
 
 func (s *ADAServiceV2) DeleteNotifyConf(ctx context.Context, in *v2.DeleteNotifyConfReq) (*v2.DeleteNotifyConfReply, error) {
+	s = s.withContext(ctx)
 	if !s.IsSuper(ctx) {
 		return nil, status.Error(codes.Internal, s.I18n("NoPermission"))
 	}
@@ -209,6 +217,7 @@ func (s *ADAServiceV2) DeleteNotifyConf(ctx context.Context, in *v2.DeleteNotify
 }
 
 func (s *ADAServiceV2) TestNotifyConf(ctx context.Context, in *v2.TestNotifyConfReq) (*v2.TestNotifyConfReply, error) {
+	s = s.withContext(ctx)
 	ret := v2.TestNotifyConfReply{Result: RESP_FAILED}
 	testMessage := "ADA-System notify test message"
 

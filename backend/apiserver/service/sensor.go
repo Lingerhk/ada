@@ -27,6 +27,7 @@ import (
 )
 
 func (s *ADAServiceV2) ListSensor(ctx context.Context, in *v2.ListSensorReq) (*v2.ListSensorReply, error) {
+	s = s.withContext(ctx)
 	var limit, offset = in.PageSize, in.PageSize * (in.PageIdx - 1)
 	sensorList, total, err := server.FindAllSensor(s.env, in.Keyword, in.Status, in.Domain, int64(limit), int64(offset), in.TmSort)
 	if err != nil {
@@ -108,6 +109,7 @@ func (s *ADAServiceV2) ListSensor(ctx context.Context, in *v2.ListSensorReq) (*v
 }
 
 func (s *ADAServiceV2) UpdateSensor(ctx context.Context, in *v2.UpdateSensorReq) (*v2.UpdateSensorReply, error) {
+	s = s.withContext(ctx)
 	sensor, err := server.GetSensorByID(s.env, in.ID)
 	if err != nil {
 		logger.Errorf("get sensor err:%v", err)
@@ -166,6 +168,7 @@ func (s *ADAServiceV2) UpdateSensor(ctx context.Context, in *v2.UpdateSensorReq)
 }
 
 func (s *ADAServiceV2) CmdSensor(ctx context.Context, in *v2.CmdSensorReq) (*v2.CmdSensorReply, error) {
+	s = s.withContext(ctx)
 	defer s.syncDomainStatus(ctx)
 
 	// get system info
@@ -284,6 +287,7 @@ func (s *ADAServiceV2) CmdSensor(ctx context.Context, in *v2.CmdSensorReq) (*v2.
 }
 
 func (s *ADAServiceV2) DownloadSensor(ctx context.Context, in *v2.DownloadSensorReq) (*v2.DownloadSensorReply, error) {
+	s = s.withContext(ctx)
 	// Validate sensor type to prevent path traversal
 	// Only allow alphanumeric characters and underscore
 	validTypePattern := regexp.MustCompile(`^[a-zA-Z0-9_]+$`)
@@ -347,6 +351,7 @@ func (s *ADAServiceV2) DownloadSensor(ctx context.Context, in *v2.DownloadSensor
 }
 
 func (s *ADAServiceV2) UpdateSensorVersion(ctx context.Context, in *v2.UpdateSensorVersionReq) (*v2.UpdateSensorVersionReply, error) {
+	s = s.withContext(ctx)
 	ret := &v2.UpdateSensorVersionReply{}
 	ret.Result = aCommon.RESP_FAILED
 
@@ -408,6 +413,7 @@ func (s *ADAServiceV2) getSensorVersion() (string, error) {
 }
 
 func (s *ADAServiceV2) pushCmdSensor(ctx context.Context, cmdMsg sCommon.AdaMessage, sync bool) error {
+	s = s.withContext(ctx)
 	cmdStr, err := jsoniter.MarshalToString(cmdMsg)
 	if err != nil {
 		logger.Errorf("json marshal failed: %v", err)
@@ -450,6 +456,7 @@ func (s *ADAServiceV2) pushCmdSensor(ctx context.Context, cmdMsg sCommon.AdaMess
 }
 
 func (s *ADAServiceV2) updateSensorCache(ctx context.Context, sensorId string, Info map[string]string) error {
+	s = s.withContext(ctx)
 	err := s.env.RedisCli.HMSet(ctx, sensorId, Info).Err()
 	if err != nil {
 		logger.Errorf("redis public err:%v", err)

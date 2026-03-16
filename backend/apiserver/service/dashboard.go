@@ -18,6 +18,7 @@ import (
 )
 
 func (s *ADAServiceV2) DashboardStats(ctx context.Context, in *v2.DashboardStatsReq) (*v2.DashboardStatsReply, error) {
+	s = s.withContext(ctx)
 	var domains []string
 	if in.Domain == "all" {
 		domainList, err := server.GetDomainList(s.env)
@@ -114,10 +115,12 @@ func (s *ADAServiceV2) DashboardStats(ctx context.Context, in *v2.DashboardStats
 }
 
 func (s *ADAServiceV2) DashboardTrends(ctx context.Context, in *v2.DashboardTrendsReq) (*v2.DashboardTrendsReply, error) {
+	s = s.withContext(ctx)
 	return nil, nil
 }
 
 func (s *ADAServiceV2) DashboardLogStats(ctx context.Context, in *v2.DashboardLogStatsReq) (*v2.DashboardLogStatsReply, error) {
+	s = s.withContext(ctx)
 	var domains []string
 	if in.Domain == "all" {
 		domainList, err := server.GetDomainList(s.env)

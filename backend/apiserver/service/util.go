@@ -16,6 +16,7 @@ import (
 )
 
 func (s *ADAServiceV2) syncDomainStatus(ctx context.Context) (string, error) {
+	s = s.withContext(ctx)
 	// after uninstall sensor, need to sync domain
 	client, err := rpc.NewClient(ctx, s.env.Cfg.BindSrv.TaskAddr)
 	if err != nil {
@@ -85,6 +86,7 @@ func getValidDCServerIP(dcIPList []string) string {
 }
 
 func (s *ADAServiceV2) winRMInstallSensor(ctx context.Context, dcIPs []string, adaServerIP, username, password string) (string, error) {
+	s = s.withContext(ctx)
 	dcIP := getValidDCServerIP(dcIPs)
 
 	winrmClient, err := getWinRMClient(ctx, dcIP, username, password)
@@ -144,6 +146,7 @@ func (s *ADAServiceV2) winRMInstallSensor(ctx context.Context, dcIPs []string, a
 }
 
 func (s *ADAServiceV2) winRMUninstallSensor(ctx context.Context, dcIPs []string, adaServerIP, username, password string) (string, error) {
+	s = s.withContext(ctx)
 	dcIP := getValidDCServerIP(dcIPs)
 
 	winrmClient, err := getWinRMClient(ctx, dcIP, username, password)
