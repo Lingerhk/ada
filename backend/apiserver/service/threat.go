@@ -63,6 +63,7 @@ func getAttackFlow(env *config.Env, flowId string, fieldData map[string]string) 
 
 // ListThreat 威胁事件列表
 func (s *ADAServiceV2) ListThreat(ctx context.Context, in *v2.ListThreatReq) (*v2.ListThreatReply, error) {
+	s = s.withContext(ctx)
 	// page
 	var limit, offset = in.PageSize, in.PageSize * (in.PageIdx - 1)
 
@@ -134,6 +135,7 @@ func (s *ADAServiceV2) ListThreat(ctx context.Context, in *v2.ListThreatReq) (*v
 
 // GetThreat 威胁事件详情
 func (s *ADAServiceV2) GetThreat(ctx context.Context, in *v2.GetThreatReq) (*v2.GetThreatReply, error) {
+	s = s.withContext(ctx)
 	if len(in.ID) != 24 {
 		return nil, status.Error(codes.InvalidArgument, s.I18n("Threat.InvalidID"))
 	}
@@ -202,6 +204,7 @@ func (s *ADAServiceV2) GetThreat(ctx context.Context, in *v2.GetThreatReq) (*v2.
 
 // ActionThreat 威胁事件操作: ignore/finish
 func (s *ADAServiceV2) ActionThreat(ctx context.Context, in *v2.ActionThreatReq) (*v2.ActionThreatReply, error) {
+	s = s.withContext(ctx)
 	if len(in.ID) != 24 {
 		return nil, status.Error(codes.InvalidArgument, s.I18n("Threat.InvalidID"))
 	}
@@ -226,6 +229,7 @@ func (s *ADAServiceV2) ActionThreat(ctx context.Context, in *v2.ActionThreatReq)
 
 // ListActivity 威胁行为列表
 func (s *ADAServiceV2) ListActivity(ctx context.Context, in *v2.ListActivityReq) (*v2.ListActivityReply, error) {
+	s = s.withContext(ctx)
 	ret := &v2.ListActivityReply{
 		Page:      &v2.ModelPage{PageSize: in.PageSize, PageIdx: in.PageIdx, Total: 1},
 		Exhausted: true,
@@ -299,6 +303,7 @@ func (s *ADAServiceV2) ListActivity(ctx context.Context, in *v2.ListActivityReq)
 
 // GetActivityNames 威胁行为名称title list
 func (s *ADAServiceV2) GetActivityNames(ctx context.Context, in *v2.GetActivityNamesReq) (*v2.GetActivityNamesReply, error) {
+	s = s.withContext(ctx)
 	names, err := server.GetThreatActivityAggNames(s.env, in.DcHostname, in.StartTm, in.EndTm)
 	if err != nil {
 		logger.Errorf("get threat activity names err:%v", err)
@@ -310,6 +315,7 @@ func (s *ADAServiceV2) GetActivityNames(ctx context.Context, in *v2.GetActivityN
 
 // GetActivity 威胁行为详情
 func (s *ADAServiceV2) GetActivity(ctx context.Context, in *v2.GetActivityReq) (*v2.GetActivityReply, error) {
+	s = s.withContext(ctx)
 	if len(in.ID) != 24 {
 		return nil, status.Error(codes.InvalidArgument, s.I18n("Threat.InvalidID"))
 	}
@@ -343,6 +349,7 @@ func (s *ADAServiceV2) GetActivity(ctx context.Context, in *v2.GetActivityReq) (
 
 // GetThreatNames 返回威胁名称与ruleId的map列表
 func (s *ADAServiceV2) GetThreatNames(ctx context.Context, in *v2.GetThreatNamesReq) (*v2.GetThreatNamesReply, error) {
+	s = s.withContext(ctx)
 	var nameMap = make(map[string]string)
 
 	if in.FlowId != "" {
@@ -369,6 +376,7 @@ func (s *ADAServiceV2) GetThreatNames(ctx context.Context, in *v2.GetThreatNames
 
 // ListSensitiveEntry 敏感条目列表
 func (s *ADAServiceV2) ListSensitiveEntry(ctx context.Context, in *v2.ListSensitiveEntryReq) (*v2.ListSensitiveEntryReply, error) {
+	s = s.withContext(ctx)
 	limit, offset := in.PageSize, (in.PageIdx-1)*in.PageSize
 	entries, total, err := server.FindSensitiveEntryList(s.env, in.Type, in.Domain, in.Origin, in.StartTm, in.EndTm, in.OrderCreateTm, in.OrderUpdateTm, limit, offset)
 	if err != nil {
@@ -408,6 +416,7 @@ func (s *ADAServiceV2) ListSensitiveEntry(ctx context.Context, in *v2.ListSensit
 
 // AddSensitiveEntry 增加敏感条目
 func (s *ADAServiceV2) AddSensitiveEntry(ctx context.Context, in *v2.AddSensitiveEntryReq) (*v2.AddSensitiveEntryReply, error) {
+	s = s.withContext(ctx)
 	if !s.IsSuper(ctx) {
 		return nil, status.Error(codes.PermissionDenied, s.I18n("NoPermission"))
 	}
@@ -441,6 +450,7 @@ func (s *ADAServiceV2) AddSensitiveEntry(ctx context.Context, in *v2.AddSensitiv
 }
 
 func (s *ADAServiceV2) ListDomainEntry(ctx context.Context, in *v2.ListDomainEntryReq) (*v2.ListDomainEntryReply, error) {
+	s = s.withContext(ctx)
 	if in.Type != "user" {
 		return nil, status.Error(codes.InvalidArgument, s.I18n("Threat.SensitiveEntry.TypeInvalid"))
 	}
@@ -467,6 +477,7 @@ func (s *ADAServiceV2) ListDomainEntry(ctx context.Context, in *v2.ListDomainEnt
 
 // DeleteSensitiveEntry 删除敏感条目
 func (s *ADAServiceV2) DeleteSensitiveEntry(ctx context.Context, in *v2.DeleteSensitiveEntryReq) (*v2.DeleteSensitiveEntryReply, error) {
+	s = s.withContext(ctx)
 	ret := v2.DeleteSensitiveEntryReply{Result: RESP_FAILED}
 
 	if !s.IsSuper(ctx) {
@@ -500,6 +511,7 @@ func (s *ADAServiceV2) DeleteSensitiveEntry(ctx context.Context, in *v2.DeleteSe
 
 // ThreatTops 威胁Top: 告警事件/告警行为top10
 func (s *ADAServiceV2) ThreatTops(ctx context.Context, in *v2.ThreatTopsReq) (*v2.ThreatTopsReply, error) {
+	s = s.withContext(ctx)
 	results, err := server.ThreatTops(s.env, in.Domain, in.Type, in.Duration)
 	if err != nil {
 		logger.Errorf("get threat tops err:%v", err)
@@ -520,6 +532,7 @@ func (s *ADAServiceV2) ThreatTops(ctx context.Context, in *v2.ThreatTopsReq) (*v
 
 // ThreatTops 告警行为趋势
 func (s *ADAServiceV2) ThreatTrends(ctx context.Context, in *v2.ThreatTrendsReq) (*v2.ThreatTrendsReply, error) {
+	s = s.withContext(ctx)
 	results, err := server.ThreatTrends(s.env, in.Domain, in.Level, in.Duration)
 	if err != nil {
 		logger.Errorf("get threat trends err:%v", err)
@@ -540,6 +553,7 @@ func (s *ADAServiceV2) ThreatTrends(ctx context.Context, in *v2.ThreatTrendsReq)
 
 // ListThreatWhitelist 威胁白名单列表
 func (s *ADAServiceV2) ListThreatWhitelist(ctx context.Context, in *v2.ListThreatWhitelistReq) (*v2.ListThreatWhitelistReply, error) {
+	s = s.withContext(ctx)
 	var limit, offset = in.PageSize, in.PageSize * (in.PageIdx - 1)
 
 	whitelist, total, err := server.FindAllThreatWhitelist(s.env, in.RuleId, in.Domain, in.Origin, in.Search, in.StartTm, in.EndTm, in.OrderUpdateTm, int64(limit), int64(offset))
@@ -585,6 +599,7 @@ func (s *ADAServiceV2) ListThreatWhitelist(ctx context.Context, in *v2.ListThrea
 }
 
 func (s *ADAServiceV2) GetThreatWhitelistField(ctx context.Context, in *v2.GetThreatWhitelistFieldReq) (*v2.GetThreatWhitelistFieldReply, error) {
+	s = s.withContext(ctx)
 	_, err := server.GetThreatRuleByID(s.env, in.RuleId)
 	if err != nil {
 		logger.Errorf("get threat desc by id(%s) err:%v", in.RuleId, err)
@@ -601,6 +616,7 @@ func (s *ADAServiceV2) GetThreatWhitelistField(ctx context.Context, in *v2.GetTh
 }
 
 func (s *ADAServiceV2) AddThreatWhitelist(ctx context.Context, in *v2.AddThreatWhitelistReq) (*v2.AddThreatWhitelistReply, error) {
+	s = s.withContext(ctx)
 	if !s.IsSuper(ctx) {
 		return nil, status.Error(codes.PermissionDenied, s.I18n("NoPermission"))
 	}
@@ -660,6 +676,7 @@ func (s *ADAServiceV2) AddThreatWhitelist(ctx context.Context, in *v2.AddThreatW
 }
 
 func (s *ADAServiceV2) UpdateThreatWhitelist(ctx context.Context, in *v2.UpdateThreatWhitelistReq) (*v2.UpdateThreatWhitelistReply, error) {
+	s = s.withContext(ctx)
 	if !s.IsSuper(ctx) {
 		return nil, status.Error(codes.PermissionDenied, s.I18n("NoPermission"))
 	}
@@ -720,6 +737,7 @@ func (s *ADAServiceV2) UpdateThreatWhitelist(ctx context.Context, in *v2.UpdateT
 }
 
 func (s *ADAServiceV2) DeleteThreatWhitelist(ctx context.Context, in *v2.DeleteThreatWhitelistReq) (*v2.DeleteThreatWhitelistReply, error) {
+	s = s.withContext(ctx)
 	if !s.IsSuper(ctx) {
 		return nil, status.Error(codes.PermissionDenied, s.I18n("NoPermission"))
 	}
@@ -846,6 +864,7 @@ func checkThreatWhitelistFields(ruleInfo map[string]string, fields []string) (bo
 
 // 阻断策略
 func (s *ADAServiceV2) ListThreatBlock(ctx context.Context, in *v2.ListThreatBlockReq) (*v2.ListThreatBlockReply, error) {
+	s = s.withContext(ctx)
 	var limit, offset = in.PageSize, in.PageSize * (in.PageIdx - 1)
 
 	policies, total, err := server.FindAllThreatBlock(s.env, in.Domain, in.Origin, in.Search, in.StartTm, in.EndTm, int64(limit), int64(offset))
@@ -892,6 +911,7 @@ func (s *ADAServiceV2) ListThreatBlock(ctx context.Context, in *v2.ListThreatBlo
 }
 
 func (s *ADAServiceV2) AddThreatBlock(ctx context.Context, in *v2.AddThreatBlockReq) (*v2.AddThreatBlockReply, error) {
+	s = s.withContext(ctx)
 	if !s.IsSuper(ctx) {
 		return nil, status.Error(codes.PermissionDenied, s.I18n("NoPermission"))
 	}
@@ -969,6 +989,7 @@ func (s *ADAServiceV2) AddThreatBlock(ctx context.Context, in *v2.AddThreatBlock
 }
 
 func (s *ADAServiceV2) UpdateThreatBlock(ctx context.Context, in *v2.UpdateThreatBlockReq) (*v2.UpdateThreatBlockReply, error) {
+	s = s.withContext(ctx)
 	if !s.IsSuper(ctx) {
 		return nil, status.Error(codes.PermissionDenied, s.I18n("NoPermission"))
 	}
@@ -1117,6 +1138,7 @@ func (s *ADAServiceV2) UpdateThreatBlock(ctx context.Context, in *v2.UpdateThrea
 }
 
 func (s *ADAServiceV2) DeleteThreatBlock(ctx context.Context, in *v2.DeleteThreatBlockReq) (*v2.DeleteThreatBlockReply, error) {
+	s = s.withContext(ctx)
 	if !s.IsSuper(ctx) {
 		return nil, status.Error(codes.PermissionDenied, s.I18n("NoPermission"))
 	}

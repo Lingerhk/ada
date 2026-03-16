@@ -17,6 +17,7 @@ import (
 )
 
 func (s *ADAServiceV2) ListExportTask(ctx context.Context, in *v2.ListExportTaskReq) (*v2.ListExportTaskReply, error) {
+	s = s.withContext(ctx)
 	limit, offset := in.PageSize, (in.PageIdx-1)*in.PageSize
 	tasks, total, err := server.FindExportTask(s.env, in.Type, in.Status, in.StartTm, in.EndTm, in.SortTime, limit, offset)
 	if err != nil {
@@ -51,6 +52,7 @@ func (s *ADAServiceV2) ListExportTask(ctx context.Context, in *v2.ListExportTask
 }
 
 func (s *ADAServiceV2) AddExportTask(ctx context.Context, in *v2.AddExportTaskReq) (*v2.AddExportTaskReply, error) {
+	s = s.withContext(ctx)
 	if !s.IsSuper(ctx) {
 		return nil, status.Error(codes.PermissionDenied, s.I18n("NoPermission"))
 	}
@@ -84,6 +86,7 @@ func (s *ADAServiceV2) AddExportTask(ctx context.Context, in *v2.AddExportTaskRe
 }
 
 func (s *ADAServiceV2) DeleteExportTask(ctx context.Context, in *v2.DeleteExportTaskReq) (*v2.DeleteExportTaskReply, error) {
+	s = s.withContext(ctx)
 	if !s.IsSuper(ctx) {
 		return nil, status.Error(codes.PermissionDenied, s.I18n("NoPermission"))
 	}
