@@ -61,6 +61,16 @@ func NewTaskServer(env *config.Env, ts *machinery.Server) *TaskServer {
 	}
 }
 
+func (s *TaskServer) withContext(ctx context.Context) *TaskServer {
+	if s == nil {
+		return nil
+	}
+
+	clone := *s
+	clone.env = s.env.WithMongoContext(ctx)
+	return &clone
+}
+
 func MachineryServer(env *config.Env, taskQueue string) (*machinery.Server, error) {
 	cnf := &mconfig.Config{
 		DefaultQueue:    taskQueue,

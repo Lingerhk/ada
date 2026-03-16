@@ -23,7 +23,8 @@ import (
 )
 
 // DomainSyncTask 同步域控制器、传感器状态
-func (w *Worker) DomainSyncTask() error {
+func (w *Worker) DomainSyncTask(ctx context.Context) error {
+	w = w.withContext(ctx)
 	lang := w.GetLanguage()
 
 	// 1 同步域状态

@@ -7,8 +7,8 @@ import (
 	"time"
 
 	"github.com/redis/go-redis/v9"
-	"go.mongodb.org/mongo-driver/v2/bson"
 	logger "github.com/sirupsen/logrus"
+	"go.mongodb.org/mongo-driver/v2/bson"
 )
 
 func nowUTC() time.Time { return time.Now().UTC() }

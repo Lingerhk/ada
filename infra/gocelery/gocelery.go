@@ -108,6 +108,11 @@ type CeleryTask interface {
 	RunTask() (any, error)
 }
 
+// ContextTask can bind a task-specific context before ParseKwargs/RunTask.
+type ContextTask interface {
+	WithContext(ctx context.Context) CeleryTask
+}
+
 // AsyncResult represents pending result
 type AsyncResult struct {
 	TaskID  string
