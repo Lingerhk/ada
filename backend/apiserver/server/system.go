@@ -18,7 +18,7 @@ func AddAuditLog(e *config.Env, userName, clientIP, event, eventArgs, eventResul
 	al.EventResult = eventResult
 	al.CreateTm = utime.CurTime()
 
-	err := e.MongoCli.Insert(al.CollectName(), &al)
+	err := e.MongoCli.Insert(e.MongoContext(), al.CollectName(), &al)
 	if err != nil {
 		return err
 	}
@@ -29,11 +29,11 @@ func AddAuditLog(e *config.Env, userName, clientIP, event, eventArgs, eventResul
 func FindAllAuditLog(e *config.Env, query bson.D, sort bson.M, limit, offset int32) ([]model.AuditLog, int64, error) {
 	var al []model.AuditLog
 	tb := (&model.AuditLog{}).CollectName()
-	total, err := e.MongoCli.FindCount(tb, query)
+	total, err := e.MongoCli.FindCount(e.MongoContext(), tb, query)
 	if err != nil {
 		return nil, 0, err
 	}
-	err = e.MongoCli.FindWithMultiple(tb, query, nil, sort, &al, int64(limit), int64(offset))
+	err = e.MongoCli.FindWithMultiple(e.MongoContext(), tb, query, nil, sort, &al, int64(limit), int64(offset))
 	if err != nil {
 		return nil, total, err
 	}
@@ -42,7 +42,7 @@ func FindAllAuditLog(e *config.Env, query bson.D, sort bson.M, limit, offset int
 
 func GetSystemInfo(e *config.Env) (*model.SystemInfo, error) {
 	var s model.SystemInfo
-	err, exist := e.MongoCli.FindOne(s.CollectName(), bson.M{}, &s)
+	err, exist := e.MongoCli.FindOne(e.MongoContext(), s.CollectName(), bson.M{}, &s)
 	if err != nil || !exist {
 		return nil, err
 	}
@@ -54,7 +54,7 @@ func UpdateLanguage(e *config.Env, lang string) error {
 	var sc model.SystemInfo
 
 	update := bson.M{"$set": bson.M{"system_language": lang}}
-	err := e.MongoCli.UpdateRaw(sc.CollectName(), bson.M{}, &update, false)
+	err := e.MongoCli.UpdateRaw(e.MongoContext(), sc.CollectName(), bson.M{}, &update, false)
 	if err != nil {
 		return err
 	}
@@ -90,7 +90,7 @@ func UpdateSystemCfg(e *config.Env, id bson.ObjectID, ntp, systemIP, file, upgra
 	}
 
 	update := bson.M{"$set": updateFields}
-	err := e.MongoCli.UpdateRaw(sc.CollectName(), bson.M{}, &update, false)
+	err := e.MongoCli.UpdateRaw(e.MongoContext(), sc.CollectName(), bson.M{}, &update, false)
 	if err != nil {
 		return err
 	}
@@ -111,7 +111,7 @@ func UpdateSystemProxy(e *config.Env, httpProxy, httpsProxy string, upgradeProxy
 	}
 
 	update := bson.M{"$set": bson.M{"system_proxy": systemProxy}}
-	err := e.MongoCli.UpdateRaw(sc.CollectName(), bson.M{}, &update, false)
+	err := e.MongoCli.UpdateRaw(e.MongoContext(), sc.CollectName(), bson.M{}, &update, false)
 	if err != nil {
 		return err
 	}
@@ -123,7 +123,7 @@ func UpdateStatsCfg(e *config.Env, statsCfg map[string]string) error {
 	var sc model.SystemInfo
 
 	update := bson.M{"$set": bson.M{"stats_cfg": statsCfg}}
-	err := e.MongoCli.UpdateRaw(sc.CollectName(), bson.M{}, &update, false)
+	err := e.MongoCli.UpdateRaw(e.MongoContext(), sc.CollectName(), bson.M{}, &update, false)
 	if err != nil {
 		return err
 	}
@@ -180,7 +180,7 @@ func FindAllSystemLogs(env *config.Env, levels []string, modules []string, searc
 
 	var mongoLogs []mongoSystemLog
 	tb := (&model.SystemLogs{}).CollectName()
-	err := env.MongoCli.FindSortByLimitAndSkip(
+	err := env.MongoCli.FindSortByLimitAndSkip(env.MongoContext(),
 		tb,
 		filter,
 		bson.M{"time": sortOrder},
@@ -193,7 +193,7 @@ func FindAllSystemLogs(env *config.Env, levels []string, modules []string, searc
 	}
 
 	// Get total count
-	total, err := env.MongoCli.FindCount(tb, filter)
+	total, err := env.MongoCli.FindCount(env.MongoContext(), tb, filter)
 	if err != nil {
 		return nil, 0, err
 	}

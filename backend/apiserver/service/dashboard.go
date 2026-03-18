@@ -116,7 +116,7 @@ func (s *ADAServiceV2) DashboardStats(ctx context.Context, in *v2.DashboardStats
 
 func (s *ADAServiceV2) DashboardTrends(ctx context.Context, in *v2.DashboardTrendsReq) (*v2.DashboardTrendsReply, error) {
 	s = s.withContext(ctx)
-	return nil, nil
+	return &v2.DashboardTrendsReply{}, nil
 }
 
 func (s *ADAServiceV2) DashboardLogStats(ctx context.Context, in *v2.DashboardLogStatsReq) (*v2.DashboardLogStatsReply, error) {

@@ -45,12 +45,12 @@ func FindExportTask(e *config.Env, typ, status []string, startTm, endTm string, 
 		sorter["create_tm"] = sortTm
 	}
 
-	count, err := e.MongoCli.FindCount(tb, query)
+	count, err := e.MongoCli.FindCount(e.MongoContext(), tb, query)
 	if err != nil {
 		return nil, 0, err
 	}
 
-	err = e.MongoCli.FindSortByLimitAndSkip(tb, query, sorter, &taskList, int64(limit), int64(skip))
+	err = e.MongoCli.FindSortByLimitAndSkip(e.MongoContext(), tb, query, sorter, &taskList, int64(limit), int64(skip))
 	if err != nil {
 		return nil, 0, err
 	}
@@ -65,7 +65,7 @@ func GetExportTaskByID(e *config.Env, id string) (*model.ExportTask, error) {
 		return nil, err
 	}
 
-	err, _ = e.MongoCli.FindOne(report.CollectName(), bson.M{"_id": Id}, &report)
+	err, _ = e.MongoCli.FindOne(e.MongoContext(), report.CollectName(), bson.M{"_id": Id}, &report)
 	if err != nil {
 		return nil, err
 	}
@@ -88,7 +88,7 @@ func AddExportTask(e *config.Env, name, typ, taskId string, params map[string]st
 		UpdateTm: time.Now(),
 	}
 
-	return e.MongoCli.Insert(report.CollectName(), report)
+	return e.MongoCli.Insert(e.MongoContext(), report.CollectName(), report)
 }
 
 func DeleteExportTaskByID(e *config.Env, reportID string) (*model.ExportTask, error) {
@@ -98,12 +98,12 @@ func DeleteExportTaskByID(e *config.Env, reportID string) (*model.ExportTask, er
 		return nil, err
 	}
 
-	err, _ = e.MongoCli.FindOne(report.CollectName(), bson.M{"_id": objectID}, &report)
+	err, _ = e.MongoCli.FindOne(e.MongoContext(), report.CollectName(), bson.M{"_id": objectID}, &report)
 	if err != nil {
 		return nil, err
 	}
 
-	err = e.MongoCli.RemoveById(report.CollectName(), objectID)
+	err = e.MongoCli.RemoveById(e.MongoContext(), report.CollectName(), objectID)
 	if err != nil {
 		return report, err
 	}

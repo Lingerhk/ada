@@ -6,155 +6,95 @@ import (
 )
 
 type stubMongoAdaptor struct {
-	findOneContextCalled bool
-	findOneCalled        bool
-	gotCtx               context.Context
+	gotCtx context.Context
 }
 
-func (s *stubMongoAdaptor) Connect(uri, db string) error { return nil }
+func (s *stubMongoAdaptor) Connect(ctx context.Context, uri, db string) error { return nil }
 
-func (s *stubMongoAdaptor) Disconnect() {}
+func (s *stubMongoAdaptor) Disconnect(ctx context.Context) {}
 
 func (s *stubMongoAdaptor) SetPoolLimit(limit uint64) {}
 
-func (s *stubMongoAdaptor) FindOne(name string, query, result any) (err error, exist bool) {
-	s.findOneCalled = true
-	return nil, true
-}
-
-func (s *stubMongoAdaptor) Find(name string, query, result any, limit int64) error { return nil }
-
-func (s *stubMongoAdaptor) FindAll(name string, query, result any) error { return nil }
-
-func (s *stubMongoAdaptor) FindByLimitAndSkip(name string, query, result any, limit, skip int64) error {
-	return nil
-}
-
-func (s *stubMongoAdaptor) FindWithSelect(name string, query, selection, result any, limit int64) error {
-	return nil
-}
-
-func (s *stubMongoAdaptor) FindSelect(name string, query, selection, result any) error { return nil }
-
-func (s *stubMongoAdaptor) FindWithMultiple(name string, query, selection, sorter, result any, limit, skip int64) error {
-	return nil
-}
-
-func (s *stubMongoAdaptor) FindCount(name string, query any) (c int64, err error) { return 0, nil }
-
-func (s *stubMongoAdaptor) FindSortByLimitAndSkip(name string, query, sorter, result any, limit, skip int64) error {
-	return nil
-}
-
-func (s *stubMongoAdaptor) FindWithAggregation(name string, pipeline, result any) error { return nil }
-
-func (s *stubMongoAdaptor) Remove(name string, query any, multi bool) error { return nil }
-
-func (s *stubMongoAdaptor) RemoveById(name string, id any) error { return nil }
-
-func (s *stubMongoAdaptor) Drop(name string) error { return nil }
-
-func (s *stubMongoAdaptor) Insert(name string, doc any) error { return nil }
-
-func (s *stubMongoAdaptor) InsertAll(name string, docs ...any) error { return nil }
-
-func (s *stubMongoAdaptor) Update(name string, query, update any, multi bool) error { return nil }
-
-func (s *stubMongoAdaptor) UpdateById(name string, id, update any) error { return nil }
-
-func (s *stubMongoAdaptor) UpdateRaw(name string, query, update any, multi bool) error { return nil }
-
-func (s *stubMongoAdaptor) GetNextSequence(name string) (int32, error) { return 0, nil }
-
-func (s *stubMongoAdaptor) FindWithDistinct(name, distinct string, query any) ([]any, error) {
-	return nil, nil
-}
-
-func (s *stubMongoAdaptor) ConnectContext(ctx context.Context, uri, db string) error { return nil }
-
-func (s *stubMongoAdaptor) DisconnectContext(ctx context.Context) {}
-
-func (s *stubMongoAdaptor) FindOneContext(ctx context.Context, name string, query, result any) (err error, exist bool) {
-	s.findOneContextCalled = true
+func (s *stubMongoAdaptor) FindOne(ctx context.Context, name string, query, result any) (err error, exist bool) {
 	s.gotCtx = ctx
 	return nil, true
 }
 
-func (s *stubMongoAdaptor) FindContext(ctx context.Context, name string, query, result any, limit int64) error {
+func (s *stubMongoAdaptor) Find(ctx context.Context, name string, query, result any, limit int64) error {
 	return nil
 }
 
-func (s *stubMongoAdaptor) FindAllContext(ctx context.Context, name string, query, result any) error {
+func (s *stubMongoAdaptor) FindAll(ctx context.Context, name string, query, result any) error {
 	return nil
 }
 
-func (s *stubMongoAdaptor) FindByLimitAndSkipContext(ctx context.Context, name string, query, result any, limit, skip int64) error {
+func (s *stubMongoAdaptor) FindByLimitAndSkip(ctx context.Context, name string, query, result any, limit, skip int64) error {
 	return nil
 }
 
-func (s *stubMongoAdaptor) FindWithSelectContext(ctx context.Context, name string, query, selection, result any, limit int64) error {
+func (s *stubMongoAdaptor) FindWithSelect(ctx context.Context, name string, query, selection, result any, limit int64) error {
 	return nil
 }
 
-func (s *stubMongoAdaptor) FindSelectContext(ctx context.Context, name string, query, selection, result any) error {
+func (s *stubMongoAdaptor) FindSelect(ctx context.Context, name string, query, selection, result any) error {
 	return nil
 }
 
-func (s *stubMongoAdaptor) FindWithMultipleContext(ctx context.Context, name string, query, selection, sorter, result any, limit, skip int64) error {
+func (s *stubMongoAdaptor) FindWithMultiple(ctx context.Context, name string, query, selection, sorter, result any, limit, skip int64) error {
 	return nil
 }
 
-func (s *stubMongoAdaptor) FindCountContext(ctx context.Context, name string, query any) (c int64, err error) {
+func (s *stubMongoAdaptor) FindCount(ctx context.Context, name string, query any) (c int64, err error) {
 	return 0, nil
 }
 
-func (s *stubMongoAdaptor) FindSortByLimitAndSkipContext(ctx context.Context, name string, query any, sorter, result any, limit, skip int64) error {
+func (s *stubMongoAdaptor) FindSortByLimitAndSkip(ctx context.Context, name string, query any, sorter, result any, limit, skip int64) error {
 	return nil
 }
 
-func (s *stubMongoAdaptor) FindWithAggregationContext(ctx context.Context, name string, pipeline, result any) error {
+func (s *stubMongoAdaptor) FindWithAggregation(ctx context.Context, name string, pipeline, result any) error {
 	return nil
 }
 
-func (s *stubMongoAdaptor) RemoveContext(ctx context.Context, name string, query any, multi bool) error {
+func (s *stubMongoAdaptor) Remove(ctx context.Context, name string, query any, multi bool) error {
 	return nil
 }
 
-func (s *stubMongoAdaptor) RemoveByIdContext(ctx context.Context, name string, id any) error {
+func (s *stubMongoAdaptor) RemoveById(ctx context.Context, name string, id any) error {
 	return nil
 }
 
-func (s *stubMongoAdaptor) DropContext(ctx context.Context, name string) error { return nil }
+func (s *stubMongoAdaptor) Drop(ctx context.Context, name string) error { return nil }
 
-func (s *stubMongoAdaptor) InsertContext(ctx context.Context, name string, doc any) error { return nil }
+func (s *stubMongoAdaptor) Insert(ctx context.Context, name string, doc any) error { return nil }
 
-func (s *stubMongoAdaptor) InsertAllContext(ctx context.Context, name string, docs ...any) error {
+func (s *stubMongoAdaptor) InsertAll(ctx context.Context, name string, docs ...any) error {
 	return nil
 }
 
-func (s *stubMongoAdaptor) UpdateContext(ctx context.Context, name string, query, update any, multi bool) error {
+func (s *stubMongoAdaptor) Update(ctx context.Context, name string, query, update any, multi bool) error {
 	return nil
 }
 
-func (s *stubMongoAdaptor) UpdateByIdContext(ctx context.Context, name string, id, update any) error {
+func (s *stubMongoAdaptor) UpdateById(ctx context.Context, name string, id, update any) error {
 	return nil
 }
 
-func (s *stubMongoAdaptor) UpdateRawContext(ctx context.Context, name string, query, update any, multi bool) error {
+func (s *stubMongoAdaptor) UpdateRaw(ctx context.Context, name string, query, update any, multi bool) error {
 	return nil
 }
 
-func (s *stubMongoAdaptor) GetNextSequenceContext(ctx context.Context, name string) (int32, error) {
+func (s *stubMongoAdaptor) GetNextSequence(ctx context.Context, name string) (int32, error) {
 	return 0, nil
 }
 
-func (s *stubMongoAdaptor) FindWithDistinctContext(ctx context.Context, name, distinct string, query any) ([]any, error) {
+func (s *stubMongoAdaptor) FindWithDistinct(ctx context.Context, name, distinct string, query any) ([]any, error) {
 	return nil, nil
 }
 
-func TestEnvWithMongoContextUsesContextAwareMethods(t *testing.T) {
+func TestEnvWithMongoContextClonesEnvAndStoresContext(t *testing.T) {
 	base := &stubMongoAdaptor{}
-	env := &Env{MongoCli: base}
+	env := &Env{MongoCli: base, ctx: context.Background()}
 	ctx := context.WithValue(context.Background(), "request-id", "ctx-test")
 
 	bound := env.WithMongoContext(ctx)
@@ -162,19 +102,14 @@ func TestEnvWithMongoContextUsesContextAwareMethods(t *testing.T) {
 		t.Fatalf("expected WithMongoContext to clone env")
 	}
 
-	var result struct{}
-	if _, ok := bound.MongoCli.FindOne("tb_users", nil, &result); !ok {
-		t.Fatalf("expected find to report success")
+	if bound.MongoContext() != ctx {
+		t.Fatalf("expected bound context to be stored")
 	}
 
-	if !base.findOneContextCalled {
-		t.Fatalf("expected FindOneContext to be used")
-	}
-	if base.findOneCalled {
-		t.Fatalf("expected FindOne fallback to remain unused")
-	}
+	var result struct{}
+	_, _ = bound.MongoCli.FindOne(bound.MongoContext(), "tb_users", nil, &result)
 	if base.gotCtx != ctx {
-		t.Fatalf("expected bound context to be forwarded")
+		t.Fatalf("expected stored context to be forwarded")
 	}
 }
 
