@@ -46,7 +46,7 @@ func (w *Worker) ScannerBaselineTask(ctx context.Context, domainTmplMap string) 
 		st.SubTasksFin = 0
 		st.CreateTm = utime.CurTime()
 		st.UpdateTm = utime.CurTime()
-		err = w.env.MongoCli.Insert(st.CollectName(), &st)
+		err = w.env.MongoCli.Insert(w.env.MongoContext(), st.CollectName(), &st)
 		if err != nil {
 			logger.Errorf("insert scan_task err:%v", err)
 			return err
@@ -68,7 +68,7 @@ func (w *Worker) ScannerBaselineTask(ctx context.Context, domainTmplMap string) 
 			subTask.Params = kwargs
 			subTask.CreateTm = utime.CurTime()
 			subTask.UpdateTm = utime.CurTime()
-			err = w.env.MongoCli.Insert(subTask.CollectName(), &subTask)
+			err = w.env.MongoCli.Insert(w.env.MongoContext(), subTask.CollectName(), &subTask)
 			if err != nil {
 				logger.Errorf("insert scan_sub_task err:%v", err)
 				continue
@@ -114,7 +114,7 @@ func (w *Worker) ScannerLeakTask(ctx context.Context, domainTmplMap string) erro
 		st.SubTasksFin = 0
 		st.CreateTm = utime.CurTime()
 		st.UpdateTm = utime.CurTime()
-		err = w.env.MongoCli.Insert(st.CollectName(), &st)
+		err = w.env.MongoCli.Insert(w.env.MongoContext(), st.CollectName(), &st)
 		if err != nil {
 			logger.Errorf("insert scan_task err:%v", err)
 			return err
@@ -138,7 +138,7 @@ func (w *Worker) ScannerLeakTask(ctx context.Context, domainTmplMap string) erro
 				subTask.Params = kwargs
 				subTask.CreateTm = utime.CurTime()
 				subTask.UpdateTm = utime.CurTime()
-				err = w.env.MongoCli.Insert(subTask.CollectName(), &subTask)
+				err = w.env.MongoCli.Insert(w.env.MongoContext(), subTask.CollectName(), &subTask)
 				if err != nil {
 					logger.Errorf("insert scan_sub_task err:%v", err)
 					continue
@@ -180,7 +180,7 @@ func (w *Worker) ScannerWeakPwdTask(ctx context.Context, domainTmplMap string) e
 
 		// 判断扫描类型: 当存在tb_domain_xxx_hash表时，表明该域user hash已经缓存在本地，可执行增量扫描，否则全量扫描
 		tb := fmt.Sprintf("tb_domain_%s_hash", domainName)
-		total, err := w.env.MongoCli.FindCount(tb, bson.M{})
+		total, err := w.env.MongoCli.FindCount(w.env.MongoContext(), tb, bson.M{})
 		if err != nil {
 			logger.Errorf("count ad user hash table err:%v", err)
 			continue
@@ -203,7 +203,7 @@ func (w *Worker) ScannerWeakPwdTask(ctx context.Context, domainTmplMap string) e
 		st.SubTasksFin = 0
 		st.CreateTm = utime.CurTime()
 		st.UpdateTm = utime.CurTime()
-		err = w.env.MongoCli.Insert(st.CollectName(), &st)
+		err = w.env.MongoCli.Insert(w.env.MongoContext(), st.CollectName(), &st)
 		if err != nil {
 			logger.Errorf("insert scan_task err:%v", err)
 			continue
@@ -237,7 +237,7 @@ func (w *Worker) ScannerWeakPwdTask(ctx context.Context, domainTmplMap string) e
 				subTask.Params = kwargs
 				subTask.CreateTm = utime.CurTime()
 				subTask.UpdateTm = utime.CurTime()
-				err = w.env.MongoCli.Insert(subTask.CollectName(), &subTask)
+				err = w.env.MongoCli.Insert(w.env.MongoContext(), subTask.CollectName(), &subTask)
 				if err != nil {
 					logger.Errorf("insert scan_sub_task err:%v", err)
 					continue
@@ -265,13 +265,13 @@ func (w *Worker) ScannerRecheckTask(ctx context.Context, scanType, subTaskId str
 		return err
 	}
 
-	err, exist := w.env.MongoCli.FindOne(subTask.CollectName(), bson.M{"_id": subTask.ID}, &subTask)
+	err, exist := w.env.MongoCli.FindOne(w.env.MongoContext(), subTask.CollectName(), bson.M{"_id": subTask.ID}, &subTask)
 	if err != nil || !exist {
 		return err
 	}
 
 	subTask.Status = common.ScanTaskStatusPend
-	err = w.env.MongoCli.UpdateById(subTask.CollectName(), subTask.ID, &subTask)
+	err = w.env.MongoCli.UpdateById(w.env.MongoContext(), subTask.CollectName(), subTask.ID, &subTask)
 	if err != nil {
 		logger.Errorf("insert scan_sub_task err:%v", err)
 		return err
@@ -286,7 +286,7 @@ func (w *Worker) ScannerRecheckTask(ctx context.Context, scanType, subTaskId str
 
 func (w *Worker) getDomainByName(domain string) (*model.Domain, error) {
 	var dm model.Domain
-	err, exist := w.env.MongoCli.FindOne(dm.CollectName(), bson.M{"name": domain}, &dm)
+	err, exist := w.env.MongoCli.FindOne(w.env.MongoContext(), dm.CollectName(), bson.M{"name": domain}, &dm)
 	if err != nil || !exist {
 		return nil, err
 	}
@@ -302,7 +302,7 @@ func (w *Worker) getTemplateById(templateId string) (*model.ScanTemplate, error)
 		return nil, err
 	}
 
-	err, exist := w.env.MongoCli.FindOne(st.CollectName(), bson.M{"_id": Id}, &st)
+	err, exist := w.env.MongoCli.FindOne(w.env.MongoContext(), st.CollectName(), bson.M{"_id": Id}, &st)
 	if err != nil || !exist {
 		return nil, err
 	}
@@ -315,7 +315,7 @@ func (w *Worker) getAssetUserNameList(domain string) ([]string, error) {
 
 	var userList []model.AssetUser
 	tb := (&model.AssetUser{}).CollectName()
-	if err := w.env.MongoCli.FindSelect(tb, bson.M{"domain": domain, "isDelete": false}, bson.M{"sAMAccountName": 1}, &userList); err != nil {
+	if err := w.env.MongoCli.FindSelect(w.env.MongoContext(), tb, bson.M{"domain": domain, "isDelete": false}, bson.M{"sAMAccountName": 1}, &userList); err != nil {
 		return nil, err
 	}
 

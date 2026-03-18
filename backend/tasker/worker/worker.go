@@ -30,7 +30,7 @@ func (w *Worker) WithContext(ctx context.Context) *Worker {
 func (w *Worker) GetLanguage() string {
 	// get system language settings
 	var sysInfo model.SystemInfo
-	err, exist := w.env.MongoCli.FindOne(sysInfo.CollectName(), bson.M{}, &sysInfo)
+	err, exist := w.env.MongoCli.FindOne(w.env.MongoContext(), sysInfo.CollectName(), bson.M{}, &sysInfo)
 	if err != nil || !exist {
 		return common.LangEn
 	}

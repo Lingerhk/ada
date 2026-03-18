@@ -31,12 +31,12 @@ func FindAllNotify(env *config.Env, msgType []string, status []int32, startTm, e
 		sort["create_tm"] = sortTime
 	}
 
-	count, err := env.MongoCli.FindCount(tb, query)
+	count, err := env.MongoCli.FindCount(env.MongoContext(), tb, query)
 	if err != nil {
 		return nil, 0, err
 	}
 
-	err = env.MongoCli.FindSortByLimitAndSkip(tb, query, sort, &notifyList, int64(limit), int64(skip))
+	err = env.MongoCli.FindSortByLimitAndSkip(env.MongoContext(), tb, query, sort, &notifyList, int64(limit), int64(skip))
 	if err != nil {
 		return nil, 0, err
 	}
@@ -53,7 +53,7 @@ func UpdateNotifyStatus(env *config.Env, IDs []string) error {
 		}
 		query["_id"] = Id
 		updateM := bson.M{"$set": bson.M{"status": 1}}
-		err = env.MongoCli.UpdateRaw(n.CollectName(), &query, &updateM, false)
+		err = env.MongoCli.UpdateRaw(env.MongoContext(), n.CollectName(), &query, &updateM, false)
 		if err != nil {
 			return err
 		}
@@ -84,12 +84,12 @@ func FindAllNotifyConf(env *config.Env, moduleType, notifyType []string, target 
 		sort["update_tm"] = sortTime
 	}
 
-	count, err := env.MongoCli.FindCount(tb, query)
+	count, err := env.MongoCli.FindCount(env.MongoContext(), tb, query)
 	if err != nil {
 		return nil, 0, err
 	}
 
-	err = env.MongoCli.FindSortByLimitAndSkip(tb, query, sort, &confList, int64(limit), int64(skip))
+	err = env.MongoCli.FindSortByLimitAndSkip(env.MongoContext(), tb, query, sort, &confList, int64(limit), int64(skip))
 	if err != nil {
 		return nil, 0, err
 	}
@@ -104,7 +104,7 @@ func GetNotifyConf(e *config.Env, id string) (*model.NotifyConf, error) {
 		return nil, err
 	}
 
-	err, exist := e.MongoCli.FindOne(s.CollectName(), bson.M{"_id": Id}, &s)
+	err, exist := e.MongoCli.FindOne(e.MongoContext(), s.CollectName(), bson.M{"_id": Id}, &s)
 	if err != nil || !exist {
 		return nil, err
 	}
@@ -114,7 +114,7 @@ func GetNotifyConf(e *config.Env, id string) (*model.NotifyConf, error) {
 
 func UpdateNotifyConf(e *config.Env, nc *model.NotifyConf) error {
 	query := bson.M{"_id": nc.ID}
-	err := e.MongoCli.Update(nc.CollectName(), &query, &nc, false)
+	err := e.MongoCli.Update(e.MongoContext(), nc.CollectName(), &query, &nc, false)
 	if err != nil {
 		return err
 	}
@@ -124,7 +124,7 @@ func UpdateNotifyConf(e *config.Env, nc *model.NotifyConf) error {
 func AddNotifyConf(e *config.Env, nc *model.NotifyConf) error {
 	nc.ID = bson.NewObjectID()
 	nc.UpdateTm = time.Now()
-	err := e.MongoCli.Insert(nc.CollectName(), nc)
+	err := e.MongoCli.Insert(e.MongoContext(), nc.CollectName(), nc)
 	if err != nil {
 		return err
 	}
@@ -138,7 +138,7 @@ func DeleteNotifyConf(e *config.Env, id string) error {
 		return err
 	}
 	query := bson.M{"_id": Id}
-	err = e.MongoCli.Remove(nc.CollectName(), &query, false)
+	err = e.MongoCli.Remove(e.MongoContext(), nc.CollectName(), &query, false)
 	if err != nil {
 		return err
 	}

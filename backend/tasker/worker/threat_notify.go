@@ -168,13 +168,13 @@ func (w *Worker) ThreatNotifyTask(ctx context.Context) error {
 	n.EventType = notifyMsg.EventType
 	n.Params = notifyMsg.Params
 	n.CreateTm = time.Unix(notifyMsg.Timestamp, 0)
-	err = w.env.MongoCli.Insert(n.CollectName(), &n)
+	err = w.env.MongoCli.Insert(w.env.MongoContext(), n.CollectName(), &n)
 	if err != nil {
 		logger.Errorf("insert notify err:%v", err)
 		return err
 	}
 
-	confList, err := getNotifyConfs(w.env.MongoCli, notifyModule)
+	confList, err := getNotifyConfs(w.env.MongoContext(), w.env.MongoCli, notifyModule)
 	if err != nil {
 		logger.Errorf("get notify conf(%s) err:%v", notifyModule, err)
 		return err
@@ -184,7 +184,7 @@ func (w *Worker) ThreatNotifyTask(ctx context.Context) error {
 	var sysInfo model.SystemInfo
 	notifyProxy := false
 	httpProxy := ""
-	_, exist := w.env.MongoCli.FindOne(sysInfo.CollectName(), bson.M{}, &sysInfo)
+	_, exist := w.env.MongoCli.FindOne(w.env.MongoContext(), sysInfo.CollectName(), bson.M{}, &sysInfo)
 	if exist && sysInfo.SystemProxy != nil {
 		notifyProxy = sysInfo.SystemProxy["notify_proxy"] == "true"
 		httpProxy = sysInfo.SystemProxy["http_proxy"]
@@ -442,11 +442,11 @@ func sendWebhookWeixinOrDingtalkNotify(msg string, conf model.NotifyConf, notify
 	return nil
 }
 
-func getNotifyConfs(m mongo.DBAdaptor, moduleName string) ([]model.NotifyConf, error) {
+func getNotifyConfs(ctx context.Context, m mongo.DBAdaptor, moduleName string) ([]model.NotifyConf, error) {
 	var nc []model.NotifyConf
 	tb := (&model.NotifyConf{}).CollectName()
 
-	if err := m.FindAll(tb, bson.M{"module_name": moduleName}, &nc); err != nil {
+	if err := m.FindAll(ctx, tb, bson.M{"module_name": moduleName}, &nc); err != nil {
 		return nil, err
 	}
 

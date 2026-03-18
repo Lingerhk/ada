@@ -51,10 +51,10 @@ func (w *Worker) ExportReportTask(ctx context.Context, taskId, typ, params strin
 			msg = err.Error()
 			result = "failed"
 		}
-		_ = updateExportTaskStatus(w.env.MongoCli, taskId, result, msg, fileId)
+		_ = updateExportTaskStatus(w.env.MongoContext(), w.env.MongoCli, taskId, result, msg, fileId)
 	}()
 
-	_ = updateExportTaskStatus(w.env.MongoCli, taskId, "doing", "", "")
+	_ = updateExportTaskStatus(w.env.MongoContext(), w.env.MongoCli, taskId, "doing", "", "")
 
 	var p exportReportParams
 	err = json.Unmarshal([]byte(params), &p)
@@ -79,19 +79,19 @@ func (w *Worker) ExportReportTask(ctx context.Context, taskId, typ, params strin
 
 	switch typ {
 	case "alert_event":
-		fileId, err = exportAlertEventReport(w.env.MongoCli, startTime, endTime, domains, levels, lang)
+		fileId, err = exportAlertEventReport(w.env.MongoContext(), w.env.MongoCli, startTime, endTime, domains, levels, lang)
 	case "alert_activity":
-		fileId, err = exportAlertActivityReport(w.env.MongoCli, startTime, endTime, domains, levels, lang)
+		fileId, err = exportAlertActivityReport(w.env.MongoContext(), w.env.MongoCli, startTime, endTime, domains, levels, lang)
 	case "baseline":
-		fileId, err = exportBaselineReport(w.env.MongoCli, startTime, endTime, domains, levels, lang)
+		fileId, err = exportBaselineReport(w.env.MongoContext(), w.env.MongoCli, startTime, endTime, domains, levels, lang)
 	case "leak":
-		fileId, err = exportLeakReport(w.env.MongoCli, startTime, endTime, domains, levels, lang)
+		fileId, err = exportLeakReport(w.env.MongoContext(), w.env.MongoCli, startTime, endTime, domains, levels, lang)
 	case "weakpwd":
-		fileId, err = exportWeakPwdReport(w.env.MongoCli, startTime, endTime, domains, lang)
+		fileId, err = exportWeakPwdReport(w.env.MongoContext(), w.env.MongoCli, startTime, endTime, domains, lang)
 	case "audit":
-		fileId, err = exportAuditReport(w.env.MongoCli, startTime, endTime, lang)
+		fileId, err = exportAuditReport(w.env.MongoContext(), w.env.MongoCli, startTime, endTime, lang)
 	case "system":
-		fileId, err = exportSystemReport(w.env.MongoCli, startTime, endTime, lang)
+		fileId, err = exportSystemReport(w.env.MongoContext(), w.env.MongoCli, startTime, endTime, lang)
 	}
 	if err != nil {
 		logger.Errorf("export report(type:%s) err:%v", typ, err)
@@ -105,13 +105,13 @@ func (w *Worker) ExportReportTask(ctx context.Context, taskId, typ, params strin
 	return nil
 }
 
-func exportAlertEventReport(mongoCli mongo.DBAdaptor, startTm, endTm time.Time, domains, levels []string, lang string) (string, error) {
+func exportAlertEventReport(ctx context.Context, mongoCli mongo.DBAdaptor, startTm, endTm time.Time, domains, levels []string, lang string) (string, error) {
 	var logList []model.AlertEventESDB
 	tb := (&model.AlertEventESDB{}).CollectName()
 
 	query := bson.D{}
 	if len(domains) > 0 {
-		dcHostnames, err := getAllDcHostnames(mongoCli, domains)
+		dcHostnames, err := getAllDcHostnames(ctx, mongoCli, domains)
 		if err != nil {
 			logger.Errorf("get all dc hostnames err:%v", err)
 			return "", err
@@ -143,7 +143,7 @@ func exportAlertEventReport(mongoCli mongo.DBAdaptor, startTm, endTm time.Time, 
 	query = append(query, bson.E{Key: "create_tm", Value: bson.M{"$gte": startTm, "$lte": endTm}})
 
 	sort := bson.M{"create_tm": -1}
-	err := mongoCli.FindSortByLimitAndSkip(tb, query, sort, &logList, int64(500000), int64(0))
+	err := mongoCli.FindSortByLimitAndSkip(ctx, tb, query, sort, &logList, int64(500000), int64(0))
 	if err != nil {
 		return "", err
 	}
@@ -233,13 +233,13 @@ func exportAlertEventReport(mongoCli mongo.DBAdaptor, startTm, endTm time.Time, 
 	return fileId, nil
 }
 
-func exportAlertActivityReport(mongoCli mongo.DBAdaptor, startTm, endTm time.Time, domains, levels []string, lang string) (string, error) {
+func exportAlertActivityReport(ctx context.Context, mongoCli mongo.DBAdaptor, startTm, endTm time.Time, domains, levels []string, lang string) (string, error) {
 	var logList []model.AlertActivityESDB
 	tb := (&model.AlertActivityESDB{}).CollectName()
 
 	query := bson.D{}
 	if len(domains) > 0 {
-		dcHostnames, err := getAllDcHostnames(mongoCli, domains)
+		dcHostnames, err := getAllDcHostnames(ctx, mongoCli, domains)
 		if err != nil {
 			logger.Errorf("get all dc hostnames err:%v", err)
 			return "", err
@@ -279,7 +279,7 @@ func exportAlertActivityReport(mongoCli mongo.DBAdaptor, startTm, endTm time.Tim
 	logger.Debugf("%#v", query)
 
 	sort := bson.M{"create_tm": -1}
-	err := mongoCli.FindSortByLimitAndSkip(tb, query, sort, &logList, int64(500000), int64(0))
+	err := mongoCli.FindSortByLimitAndSkip(ctx, tb, query, sort, &logList, int64(500000), int64(0))
 	if err != nil {
 		logger.Errorf("find alert activity err:%v", err)
 		return "", err
@@ -368,8 +368,8 @@ func exportAlertActivityReport(mongoCli mongo.DBAdaptor, startTm, endTm time.Tim
 	return fileId, nil
 }
 
-func exportBaselineReport(mongoCli mongo.DBAdaptor, startTm, endTm time.Time, domains, levels []string, lang string) (string, error) {
-	baseline, err := getLatestScanRiskTaskByType(mongoCli, "baseline")
+func exportBaselineReport(ctx context.Context, mongoCli mongo.DBAdaptor, startTm, endTm time.Time, domains, levels []string, lang string) (string, error) {
+	baseline, err := getLatestScanRiskTaskByType(ctx, mongoCli, "baseline")
 	if err != nil {
 		logger.Errorf("get latest scan risk(type:baseline) task err:%v", err)
 		return "", err
@@ -412,7 +412,7 @@ func exportBaselineReport(mongoCli mongo.DBAdaptor, startTm, endTm time.Time, do
 	query = append(query, bson.E{Key: "update_tm", Value: bson.M{"$gte": startTm, "$lte": endTm}})
 
 	sort := bson.M{"update_tm": -1}
-	err = mongoCli.FindSortByLimitAndSkip(tb, query, sort, &logList, int64(10000), int64(0))
+	err = mongoCli.FindSortByLimitAndSkip(ctx, tb, query, sort, &logList, int64(10000), int64(0))
 	if err != nil {
 		return "", err
 	}
@@ -507,8 +507,8 @@ func exportBaselineReport(mongoCli mongo.DBAdaptor, startTm, endTm time.Time, do
 	return fileId, nil
 }
 
-func exportLeakReport(mongoCli mongo.DBAdaptor, startTm, endTm time.Time, domains, levels []string, lang string) (string, error) {
-	leak, err := getLatestScanRiskTaskByType(mongoCli, "leak")
+func exportLeakReport(ctx context.Context, mongoCli mongo.DBAdaptor, startTm, endTm time.Time, domains, levels []string, lang string) (string, error) {
+	leak, err := getLatestScanRiskTaskByType(ctx, mongoCli, "leak")
 	if err != nil {
 		logger.Errorf("get latest scan risk(type:leak) task err:%v", err)
 		return "", err
@@ -551,7 +551,7 @@ func exportLeakReport(mongoCli mongo.DBAdaptor, startTm, endTm time.Time, domain
 	query = append(query, bson.E{Key: "update_tm", Value: bson.M{"$gte": startTm, "$lte": endTm}})
 
 	sort := bson.M{"update_tm": -1}
-	err = mongoCli.FindSortByLimitAndSkip(tb, query, sort, &logList, int64(10000), int64(0))
+	err = mongoCli.FindSortByLimitAndSkip(ctx, tb, query, sort, &logList, int64(10000), int64(0))
 	if err != nil {
 		return "", err
 	}
@@ -634,8 +634,8 @@ func exportLeakReport(mongoCli mongo.DBAdaptor, startTm, endTm time.Time, domain
 	return fileId, nil
 }
 
-func exportWeakPwdReport(mongoCli mongo.DBAdaptor, startTm, endTm time.Time, domains []string, lang string) (string, error) {
-	weakPwd, err := getLatestScanRiskTaskByType(mongoCli, "weakpwd")
+func exportWeakPwdReport(ctx context.Context, mongoCli mongo.DBAdaptor, startTm, endTm time.Time, domains []string, lang string) (string, error) {
+	weakPwd, err := getLatestScanRiskTaskByType(ctx, mongoCli, "weakpwd")
 	if err != nil {
 		logger.Errorf("get latest scan risk(type:weakpwd) task err:%v", err)
 		return "", err
@@ -664,7 +664,7 @@ func exportWeakPwdReport(mongoCli mongo.DBAdaptor, startTm, endTm time.Time, dom
 	query = append(query, bson.E{Key: "update_tm", Value: bson.M{"$gte": startTm, "$lte": endTm}})
 
 	sort := bson.M{"update_tm": -1}
-	err = mongoCli.FindSortByLimitAndSkip(tb, query, sort, &logList, int64(10000), int64(0))
+	err = mongoCli.FindSortByLimitAndSkip(ctx, tb, query, sort, &logList, int64(10000), int64(0))
 	if err != nil {
 		return "", err
 	}
@@ -772,14 +772,14 @@ func exportWeakPwdReport(mongoCli mongo.DBAdaptor, startTm, endTm time.Time, dom
 	return fileId, nil
 }
 
-func exportAuditReport(mongoCli mongo.DBAdaptor, startTm, endTm time.Time, lang string) (string, error) {
+func exportAuditReport(ctx context.Context, mongoCli mongo.DBAdaptor, startTm, endTm time.Time, lang string) (string, error) {
 	var logList []model.AuditLog
 	tb := (&model.AuditLog{}).CollectName()
 
 	sort := bson.M{"create_tm": -1}
 	query := bson.M{"create_tm": bson.M{"$gte": startTm, "$lte": endTm}}
 	query["status"] = 0
-	err := mongoCli.FindWithMultiple(tb, query, nil, sort, &logList, 1000000, 0)
+	err := mongoCli.FindWithMultiple(ctx, tb, query, nil, sort, &logList, 1000000, 0)
 	if err != nil {
 		return "", err
 	}
@@ -847,11 +847,11 @@ func exportAuditReport(mongoCli mongo.DBAdaptor, startTm, endTm time.Time, lang 
 	return fileId, nil
 }
 
-func exportSystemReport(mongoCli mongo.DBAdaptor, startTm, endTm time.Time, lang string) (string, error) {
+func exportSystemReport(ctx context.Context, mongoCli mongo.DBAdaptor, startTm, endTm time.Time, lang string) (string, error) {
 	return "", nil
 }
 
-func updateExportTaskStatus(mongoCli mongo.DBAdaptor, taskId, status, errMsg, filePath string) error {
+func updateExportTaskStatus(ctx context.Context, mongoCli mongo.DBAdaptor, taskId, status, errMsg, filePath string) error {
 	et := model.ExportTask{}
 
 	query := bson.M{"task_id": taskId}
@@ -860,16 +860,16 @@ func updateExportTaskStatus(mongoCli mongo.DBAdaptor, taskId, status, errMsg, fi
 		updateM["$set"] = bson.M{"status": status, "err_msg": errMsg}
 	}
 
-	return mongoCli.UpdateRaw(et.CollectName(), &query, &updateM, false)
+	return mongoCli.UpdateRaw(ctx, et.CollectName(), &query, &updateM, false)
 }
 
-func getLatestScanRiskTaskByType(mongoCli mongo.DBAdaptor, typ string) (*model.ScanTasks, error) {
+func getLatestScanRiskTaskByType(ctx context.Context, mongoCli mongo.DBAdaptor, typ string) (*model.ScanTasks, error) {
 	var st []model.ScanTasks
 	tb := (&model.ScanTasks{}).CollectName()
 
 	query := bson.M{"type": typ, "status": "FINISH"}
 	sort := bson.M{"create_tm": -1}
-	err := mongoCli.FindSortByLimitAndSkip(tb, query, sort, &st, 1, 0)
+	err := mongoCli.FindSortByLimitAndSkip(ctx, tb, query, sort, &st, 1, 0)
 	if err != nil {
 		return nil, err
 	}
@@ -880,12 +880,12 @@ func getLatestScanRiskTaskByType(mongoCli mongo.DBAdaptor, typ string) (*model.S
 	return &st[0], err
 }
 
-func getAllDcHostnames(mongoCli mongo.DBAdaptor, domains []string) ([]string, error) {
+func getAllDcHostnames(ctx context.Context, mongoCli mongo.DBAdaptor, domains []string) ([]string, error) {
 	var dcHostnames []string
 
 	var dm model.Domain
 	for _, domain := range domains {
-		err, exist := mongoCli.FindOne(dm.CollectName(), bson.M{"name": domain}, &dm)
+		err, exist := mongoCli.FindOne(ctx, dm.CollectName(), bson.M{"name": domain}, &dm)
 		if err != nil || !exist {
 			return nil, err
 		}
