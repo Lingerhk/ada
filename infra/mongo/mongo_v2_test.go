@@ -1,19 +1,20 @@
 package mongo
 
 import (
+	"context"
 	"testing"
 	"time"
 
-	"go.mongodb.org/mongo-driver/v2/bson"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"go.mongodb.org/mongo-driver/v2/bson"
 )
 
 // Test configuration for UAT MongoDB
 const (
-	testMongoURI    = "mongodb://user_ada:XEl44B4p3hFurztFMo38@192.168.7.2:27017/db_ada?authSource=db_ada"
-	testDBName      = "db_ada"
-	testCollection  = "test_mongo_v2_upgrade"
+	testMongoURI      = "mongodb://user_ada:XEl44B4p3hFurztFMo38@192.168.7.2:27017/db_ada?authSource=db_ada"
+	testDBName        = "db_ada"
+	testCollection    = "test_mongo_v2_upgrade"
 	testSeqCollection = "test_seq_counters"
 )
 
@@ -36,14 +37,14 @@ type TestSeqCounter struct {
 // setupTestSession creates a new MongoDB session for testing
 func setupTestSession(t *testing.T) *MongoSession {
 	session := NewMongoSession()
-	err := session.Connect(testMongoURI, testDBName)
+	err := session.Connect(context.Background(), testMongoURI, testDBName)
 	require.NoError(t, err, "Failed to connect to test MongoDB")
 
 	session.SetPoolLimit(10)
 
 	// Clean up test collection before tests
-	_ = session.Drop(testCollection)
-	_ = session.Drop(testSeqCollection)
+	_ = session.Drop(context.Background(), testCollection)
+	_ = session.Drop(context.Background(), testSeqCollection)
 
 	return session
 }
@@ -51,10 +52,10 @@ func setupTestSession(t *testing.T) *MongoSession {
 // teardownTestSession closes the session and cleans up
 func teardownTestSession(t *testing.T, session *MongoSession) {
 	// Clean up test collections
-	_ = session.Drop(testCollection)
-	_ = session.Drop(testSeqCollection)
+	_ = session.Drop(context.Background(), testCollection)
+	_ = session.Drop(context.Background(), testSeqCollection)
 
-	session.Disconnect()
+	session.Disconnect(context.Background())
 }
 
 // TestUpdate tests the Update method with v2 driver
@@ -71,19 +72,19 @@ func TestUpdate(t *testing.T) {
 		UpdatedAt: time.Now(),
 	}
 
-	err := session.Insert(testCollection, doc)
+	err := session.Insert(context.Background(), testCollection, doc)
 	require.NoError(t, err, "Failed to insert test document")
 
 	// Test Update without upsert
 	query := bson.M{"name": "test_update"}
 	update := bson.M{"value": 200, "updated_at": time.Now()}
 
-	err = session.Update(testCollection, query, update, false)
+	err = session.Update(context.Background(), testCollection, query, update, false)
 	assert.NoError(t, err, "Update should succeed")
 
 	// Verify update
 	var result TestDocument
-	err, exists := session.FindOne(testCollection, query, &result)
+	err, exists := session.FindOne(context.Background(), testCollection, query, &result)
 	assert.NoError(t, err, "FindOne should succeed")
 	assert.True(t, exists, "Document should exist")
 	assert.Equal(t, 200, result.Value, "Value should be updated to 200")
@@ -96,17 +97,17 @@ func TestUpdate(t *testing.T) {
 		CreatedAt: time.Now(),
 		UpdatedAt: time.Now(),
 	}
-	err = session.Insert(testCollection, doc2)
+	err = session.Insert(context.Background(), testCollection, doc2)
 	require.NoError(t, err, "Failed to insert second test document")
 
 	query2 := bson.M{"name": "test_update2"}
 	update2 := bson.M{"value": 400}
-	err = session.Update(testCollection, query2, update2, false)
+	err = session.Update(context.Background(), testCollection, query2, update2, false)
 	assert.NoError(t, err, "Update should succeed")
 
 	// Verify second update
 	var result2 TestDocument
-	err, exists = session.FindOne(testCollection, query2, &result2)
+	err, exists = session.FindOne(context.Background(), testCollection, query2, &result2)
 	assert.NoError(t, err, "FindOne should succeed")
 	assert.True(t, exists, "Document should exist")
 	assert.Equal(t, 400, result2.Value, "Value should be 400")
@@ -124,19 +125,19 @@ func TestUpdateWithResult(t *testing.T) {
 		CreatedAt: time.Now(),
 	}
 
-	err := session.Insert(testCollection, doc)
+	err := session.Insert(context.Background(), testCollection, doc)
 	require.NoError(t, err, "Failed to insert test document")
 
 	// Test UpdateWithResult
 	query := bson.M{"name": "test_update_result"}
 	update := bson.M{"value": 250}
 
-	err = session.Update(testCollection, query, update, false)
+	err = session.Update(context.Background(), testCollection, query, update, false)
 	assert.NoError(t, err, "UpdateWithResult should succeed")
 
 	// Verify the update
 	var result TestDocument
-	err, exists := session.FindOne(testCollection, query, &result)
+	err, exists := session.FindOne(context.Background(), testCollection, query, &result)
 	assert.NoError(t, err, "FindOne should succeed")
 	assert.True(t, exists, "Document should exist")
 	assert.Equal(t, 250, result.Value, "Value should be updated to 250")
@@ -154,19 +155,19 @@ func TestUpdateAll(t *testing.T) {
 		TestDocument{Name: "bulk_3", Value: 30, Tags: []string{"bulk"}, CreatedAt: time.Now()},
 	}
 
-	err := session.InsertAll(testCollection, docs...)
+	err := session.InsertAll(context.Background(), testCollection, docs...)
 	require.NoError(t, err, "Failed to insert test documents")
 
 	// Test UpdateAll
 	query := bson.M{"tags": "bulk"}
 	update := bson.M{"value": 999, "updated_at": time.Now()}
 
-	err = session.UpdateRaw(testCollection, query, bson.M{"$set": update}, true)
+	err = session.UpdateRaw(context.Background(), testCollection, query, bson.M{"$set": update}, true)
 	assert.NoError(t, err, "UpdateAll should succeed")
 
 	// Verify all documents were updated
 	var results []TestDocument
-	err = session.FindAll(testCollection, query, &results)
+	err = session.FindAll(context.Background(), testCollection, query, &results)
 	assert.NoError(t, err, "FindAll should succeed")
 	assert.Len(t, results, 3, "Should have 3 documents")
 
@@ -184,23 +185,23 @@ func TestFindAndAutoInc(t *testing.T) {
 	seqName := "test_sequence"
 
 	// Get first sequence number
-	seq1, err := session.GetNextSequence(seqName)
+	seq1, err := session.GetNextSequence(context.Background(), seqName)
 	assert.NoError(t, err, "GetNextSequence should succeed")
 	assert.Equal(t, int32(1), seq1, "First sequence should be 1")
 
 	// Get second sequence number
-	seq2, err := session.GetNextSequence(seqName)
+	seq2, err := session.GetNextSequence(context.Background(), seqName)
 	assert.NoError(t, err, "GetNextSequence should succeed")
 	assert.Equal(t, int32(2), seq2, "Second sequence should be 2")
 
 	// Get third sequence number
-	seq3, err := session.GetNextSequence(seqName)
+	seq3, err := session.GetNextSequence(context.Background(), seqName)
 	assert.NoError(t, err, "GetNextSequence should succeed")
 	assert.Equal(t, int32(3), seq3, "Third sequence should be 3")
 
 	// Test concurrent sequence generation
 	seqName2 := "test_sequence_2"
-	seq2_1, err := session.GetNextSequence(seqName2)
+	seq2_1, err := session.GetNextSequence(context.Background(), seqName2)
 	assert.NoError(t, err, "GetNextSequence should succeed")
 	assert.Equal(t, int32(1), seq2_1, "First sequence of second counter should be 1")
 }
@@ -217,13 +218,13 @@ func TestOne(t *testing.T) {
 		TestDocument{Name: "third", Value: 3, CreatedAt: time.Now().Add(-2 * time.Hour)},
 	}
 
-	err := session.InsertAll(testCollection, docs...)
+	err := session.InsertAll(context.Background(), testCollection, docs...)
 	require.NoError(t, err, "Failed to insert test documents")
 
 	// Test One with simple query
 	query := bson.M{"name": "first"}
 	var result TestDocument
-	err, exists := session.FindOne(testCollection, query, &result)
+	err, exists := session.FindOne(context.Background(), testCollection, query, &result)
 	assert.NoError(t, err, "FindOne should succeed")
 	assert.True(t, exists, "Document should exist")
 	assert.Equal(t, "first", result.Name, "Name should be 'first'")
@@ -232,7 +233,7 @@ func TestOne(t *testing.T) {
 	// Test One with non-existent document
 	query2 := bson.M{"name": "nonexistent"}
 	var result2 TestDocument
-	err, exists = session.FindOne(testCollection, query2, &result2)
+	err, exists = session.FindOne(context.Background(), testCollection, query2, &result2)
 	assert.Error(t, err, "FindOne should return error for non-existent document")
 	assert.False(t, exists, "Document should not exist")
 	assert.Equal(t, ErrNotFound, err, "Error should be ErrNotFound")
@@ -241,7 +242,7 @@ func TestOne(t *testing.T) {
 	query3 := bson.M{"name": "second"}
 	selection := bson.M{"name": 1, "value": 1}
 	var result3 TestDocument
-	err = session.FindWithSelect(testCollection, query3, selection, &result3, 1)
+	err = session.FindWithSelect(context.Background(), testCollection, query3, selection, &result3, 1)
 	assert.NoError(t, err, "FindWithSelect should succeed")
 	assert.Equal(t, "second", result3.Name, "Name should be 'second'")
 	assert.Equal(t, 2, result3.Value, "Value should be 2")
@@ -250,7 +251,7 @@ func TestOne(t *testing.T) {
 	query4 := bson.M{}
 	sorter := bson.M{"created_at": 1}
 	var result4 TestDocument
-	err = session.FindWithMultiple(testCollection, query4, nil, sorter, &result4, 1, 0)
+	err = session.FindWithMultiple(context.Background(), testCollection, query4, nil, sorter, &result4, 1, 0)
 	assert.NoError(t, err, "FindWithMultiple should succeed")
 	assert.Equal(t, "third", result4.Name, "Should return oldest document (third)")
 }
@@ -268,12 +269,12 @@ func TestDistinct(t *testing.T) {
 		TestDocument{Name: "doc4", Value: 4, Tags: []string{"tag1"}, CreatedAt: time.Now()},
 	}
 
-	err := session.InsertAll(testCollection, docs...)
+	err := session.InsertAll(context.Background(), testCollection, docs...)
 	require.NoError(t, err, "Failed to insert test documents")
 
 	// Test Distinct on name field
 	query := bson.M{}
-	distinctValues, err := session.FindWithDistinct(testCollection, "name", query)
+	distinctValues, err := session.FindWithDistinct(context.Background(), testCollection, "name", query)
 	assert.NoError(t, err, "FindWithDistinct should succeed")
 	assert.Len(t, distinctValues, 4, "Should have 4 distinct names")
 
@@ -290,13 +291,13 @@ func TestDistinct(t *testing.T) {
 	assert.Contains(t, names, "doc4", "Should contain 'doc4'")
 
 	// Test Distinct on value field
-	distinctValues2, err := session.FindWithDistinct(testCollection, "value", query)
+	distinctValues2, err := session.FindWithDistinct(context.Background(), testCollection, "value", query)
 	assert.NoError(t, err, "FindWithDistinct should succeed")
 	assert.Len(t, distinctValues2, 4, "Should have 4 distinct values")
 
 	// Test Distinct with query filter
 	query2 := bson.M{"value": bson.M{"$gte": 3}}
-	distinctValues3, err := session.FindWithDistinct(testCollection, "name", query2)
+	distinctValues3, err := session.FindWithDistinct(context.Background(), testCollection, "name", query2)
 	assert.NoError(t, err, "FindWithDistinct should succeed")
 	assert.Len(t, distinctValues3, 2, "Should have 2 distinct names with value >= 3")
 }
@@ -314,18 +315,18 @@ func TestUpdateById(t *testing.T) {
 		CreatedAt: time.Now(),
 	}
 
-	err := session.Insert(testCollection, doc)
+	err := session.Insert(context.Background(), testCollection, doc)
 	require.NoError(t, err, "Failed to insert test document")
 
 	// Test UpdateById
 	update := bson.M{"value": 600, "updated_at": time.Now()}
-	err = session.UpdateById(testCollection, doc.ID, update)
+	err = session.UpdateById(context.Background(), testCollection, doc.ID, update)
 	assert.NoError(t, err, "UpdateById should succeed")
 
 	// Verify update
 	var result TestDocument
 	query := bson.M{"_id": doc.ID}
-	err, exists := session.FindOne(testCollection, query, &result)
+	err, exists := session.FindOne(context.Background(), testCollection, query, &result)
 	assert.NoError(t, err, "FindOne should succeed")
 	assert.True(t, exists, "Document should exist")
 	assert.Equal(t, 600, result.Value, "Value should be updated to 600")
@@ -345,7 +346,7 @@ func TestComplexQueries(t *testing.T) {
 		TestDocument{Name: "delta", Value: 300, Tags: []string{"normal"}, CreatedAt: now},
 	}
 
-	err := session.InsertAll(testCollection, docs...)
+	err := session.InsertAll(context.Background(), testCollection, docs...)
 	require.NoError(t, err, "Failed to insert test documents")
 
 	// Test range query with sorting
@@ -353,14 +354,14 @@ func TestComplexQueries(t *testing.T) {
 	sorter := bson.M{"value": -1}
 	var results []TestDocument
 
-	err = session.FindSortByLimitAndSkip(testCollection, query, sorter, &results, 10, 0)
+	err = session.FindSortByLimitAndSkip(context.Background(), testCollection, query, sorter, &results, 10, 0)
 	assert.NoError(t, err, "FindSortByLimitAndSkip should succeed")
 	assert.Len(t, results, 2, "Should find 2 documents")
 	assert.Equal(t, "beta", results[0].Name, "First result should be beta (200)")
 	assert.Equal(t, "gamma", results[1].Name, "Second result should be gamma (150)")
 
 	// Test count
-	count, err := session.FindCount(testCollection, query)
+	count, err := session.FindCount(context.Background(), testCollection, query)
 	assert.NoError(t, err, "FindCount should succeed")
 	assert.Equal(t, int64(2), count, "Count should be 2")
 
@@ -368,12 +369,12 @@ func TestComplexQueries(t *testing.T) {
 	query2 := bson.M{}
 	sorter2 := bson.M{"value": 1}
 	var page1 []TestDocument
-	err = session.FindSortByLimitAndSkip(testCollection, query2, sorter2, &page1, 2, 0)
+	err = session.FindSortByLimitAndSkip(context.Background(), testCollection, query2, sorter2, &page1, 2, 0)
 	assert.NoError(t, err, "First page should succeed")
 	assert.Len(t, page1, 2, "First page should have 2 documents")
 
 	var page2 []TestDocument
-	err = session.FindSortByLimitAndSkip(testCollection, query2, sorter2, &page2, 2, 2)
+	err = session.FindSortByLimitAndSkip(context.Background(), testCollection, query2, sorter2, &page2, 2, 2)
 	assert.NoError(t, err, "Second page should succeed")
 	assert.Len(t, page2, 2, "Second page should have 2 documents")
 
@@ -389,18 +390,18 @@ func TestErrorHandling(t *testing.T) {
 	// Test FindOne with non-existent document
 	query := bson.M{"name": "nonexistent"}
 	var result TestDocument
-	err, exists := session.FindOne(testCollection, query, &result)
+	err, exists := session.FindOne(context.Background(), testCollection, query, &result)
 	assert.Error(t, err, "Should return error")
 	assert.False(t, exists, "Document should not exist")
 	assert.Equal(t, ErrNotFound, err, "Should be ErrNotFound")
 
 	// Test Remove non-existent document (should not error)
-	err = session.Remove(testCollection, query, false)
+	err = session.Remove(context.Background(), testCollection, query, false)
 	assert.NoError(t, err, "Remove on non-existent document should not error")
 
 	// Test invalid limit
 	var results []TestDocument
-	err = session.Find(testCollection, bson.M{}, &results, 0)
+	err = session.Find(context.Background(), testCollection, bson.M{}, &results, 0)
 	assert.Error(t, err, "Should error on invalid limit")
 	assert.Equal(t, ErrorLimit, err, "Should be ErrorLimit")
 }
