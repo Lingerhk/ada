@@ -2,6 +2,7 @@ package scgo
 
 import (
 	"ada/infra/mongo"
+	"context"
 	"encoding/json"
 	"fmt"
 	"os"
@@ -77,9 +78,9 @@ func BuildPluginIndex(scRoot string) (*PluginIndex, error) {
 // - tb_scan_plugin
 // - default templates in tb_scan_template
 // - backfills missing builtin plugins into other templates (enable=0)
-func RegisterPluginsAndTemplates(mgo mongo.DBAdaptor, idx *PluginIndex) error {
+func RegisterPluginsAndTemplates(ctx context.Context, mgo mongo.DBAdaptor, idx *PluginIndex) error {
 	// step 1 register plugins
-	if err := mgo.Remove("tb_scan_plugin", bson.M{}, true); err != nil {
+	if err := mgo.Remove(ctx, "tb_scan_plugin", bson.M{}, true); err != nil {
 		return err
 	}
 
@@ -94,7 +95,7 @@ func RegisterPluginsAndTemplates(mgo mongo.DBAdaptor, idx *PluginIndex) error {
 		if ent == nil {
 			continue
 		}
-		if err := mgo.Insert("tb_scan_plugin", ent.PackageDoc); err != nil {
+		if err := mgo.Insert(ctx, "tb_scan_plugin", ent.PackageDoc); err != nil {
 			return fmt.Errorf("insert plugin %d: %w", id, err)
 		}
 		if _, ok := builtin[ent.Category]; ok {
@@ -108,7 +109,7 @@ func RegisterPluginsAndTemplates(mgo mongo.DBAdaptor, idx *PluginIndex) error {
 	weakpwdName := "内置弱口令检测模板"
 
 	// delete templates with these names
-	if err := mgo.Remove("tb_scan_template", bson.M{"name": bson.M{"$in": []string{baselineName, leakName, weakpwdName}}}, true); err != nil {
+	if err := mgo.Remove(ctx, "tb_scan_template", bson.M{"name": bson.M{"$in": []string{baselineName, leakName, weakpwdName}}}, true); err != nil {
 		return err
 	}
 
@@ -138,14 +139,14 @@ func RegisterPluginsAndTemplates(mgo mongo.DBAdaptor, idx *PluginIndex) error {
 			"create_tm": now,
 			"update_tm": now,
 		}
-		if err := mgo.Insert("tb_scan_template", doc); err != nil {
+		if err := mgo.Insert(ctx, "tb_scan_template", doc); err != nil {
 			return fmt.Errorf("insert default template %s: %w", t.Name, err)
 		}
 	}
 
 	// step 3 update other templates: ensure all builtin plugins exist, missing ones appended with enable=0
 	var others []bson.M
-	if err := mgo.FindAll("tb_scan_template", bson.M{"name": bson.M{"$nin": []string{baselineName, leakName, weakpwdName}}}, &others); err != nil {
+	if err := mgo.FindAll(ctx, "tb_scan_template", bson.M{"name": bson.M{"$nin": []string{baselineName, leakName, weakpwdName}}}, &others); err != nil {
 		return err
 	}
 
@@ -234,7 +235,7 @@ func RegisterPluginsAndTemplates(mgo mongo.DBAdaptor, idx *PluginIndex) error {
 		})
 
 		upd := bson.M{"plugins": plugins, "update_tm": now}
-		if err := mgo.UpdateById("tb_scan_template", id, upd); err != nil {
+		if err := mgo.UpdateById(ctx, "tb_scan_template", id, upd); err != nil {
 			return fmt.Errorf("update template %s: %w", strings.TrimSpace(asString(t["name"])), err)
 		}
 	}

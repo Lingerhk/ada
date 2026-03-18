@@ -4,6 +4,7 @@ import (
 	"ada/infra/mongo"
 	"context"
 	"fmt"
+	"sort"
 	"time"
 
 	"github.com/redis/go-redis/v9"
@@ -14,21 +15,51 @@ import (
 const (
 	defaultRedisQueueExpire = time.Hour * 12 // expire 12h
 	defaultMaxLogsSize      = 1000
+	defaultTrimBatchSize    = 100
 	defaultRedisQueueName   = "ada:logs_queue"
 	defaultMongoCollName    = "tb_system_logs"
 )
+
+type redisListClient interface {
+	LLen(ctx context.Context, key string) (int64, error)
+	LTrim(ctx context.Context, key string, start, stop int64) error
+	LPush(ctx context.Context, key string, values ...string) error
+	Expire(ctx context.Context, key string, expiration time.Duration) error
+}
+
+type redisClientAdapter struct {
+	client *redis.Client
+}
+
+func (a redisClientAdapter) LLen(ctx context.Context, key string) (int64, error) {
+	return a.client.LLen(ctx, key).Result()
+}
+
+func (a redisClientAdapter) LTrim(ctx context.Context, key string, start, stop int64) error {
+	return a.client.LTrim(ctx, key, start, stop).Err()
+}
+
+func (a redisClientAdapter) LPush(ctx context.Context, key string, values ...string) error {
+	parts := make([]any, len(values))
+	for i, value := range values {
+		parts[i] = value
+	}
+	return a.client.LPush(ctx, key, parts...).Err()
+}
+
+func (a redisClientAdapter) Expire(ctx context.Context, key string, expiration time.Duration) error {
+	return a.client.Expire(ctx, key, expiration).Err()
+}
 
 // ==================== Redis Hook ====================
 
 // LogrusRedis delivers logs to a Redis List
 type LogrusRedis struct {
-	ctx         context.Context
-	client      *redis.Client
-	key         string
-	rangeCursor int64
-	len         int64
-	Expire      time.Duration
-	formatter   *logrus.TextFormatter
+	ctx       context.Context
+	client    redisListClient
+	key       string
+	Expire    time.Duration
+	formatter *logrus.TextFormatter
 }
 
 // Fire adds logrus entry into redis list
@@ -39,22 +70,22 @@ func (r *LogrusRedis) Fire(entry *logrus.Entry) error {
 	}
 
 	// if queue too long, we need delete some old logs first.
-	queueLen, err := r.client.LLen(r.ctx, r.key).Result()
+	queueLen, err := r.client.LLen(r.ctx, r.key)
 	if err != nil {
 		return err
 	}
-	if queueLen > defaultMaxLogsSize {
-		if err := r.client.LTrim(r.ctx, r.key, 100, -1).Err(); err != nil {
+	if queueLen >= defaultMaxLogsSize {
+		if err := r.client.LTrim(r.ctx, r.key, defaultTrimBatchSize, -1); err != nil {
 			return err
 		}
 	}
 
-	err = r.client.LPush(r.ctx, r.key, body).Err()
+	err = r.client.LPush(r.ctx, r.key, string(body))
 	if err != nil {
 		return err
 	}
 
-	return r.client.Expire(r.ctx, r.key, r.Expire).Err()
+	return r.client.Expire(r.ctx, r.key, r.Expire)
 }
 
 // Levels returns the available logging levels.
@@ -69,6 +100,10 @@ func (r *LogrusRedis) Levels() []logrus.Level {
 
 // NewLogrusRedis creates LogrusRedis instance
 func NewLogrusRedis(client *redis.Client, key string) *LogrusRedis {
+	return newLogrusRedisWithClient(redisClientAdapter{client: client}, key)
+}
+
+func newLogrusRedisWithClient(client redisListClient, key string) *LogrusRedis {
 	if key == "" {
 		key = defaultRedisQueueName
 	}
@@ -89,7 +124,6 @@ type LogrusMongoHook struct {
 	mongoCli   mongo.DBAdaptor
 	collection string
 	module     string
-	formatter  *logrus.JSONFormatter
 }
 
 // SystemLog represents the log document structure in MongoDB
@@ -120,34 +154,37 @@ func (h *LogrusMongoHook) Fire(entry *logrus.Entry) error {
 
 	// Check if logs collection is too large
 	// If total > defaultMaxLogsSize (1000), delete the oldest 100 logs
-	total, err := h.mongoCli.FindCount(h.collection, bson.M{})
+	total, err := h.mongoCli.FindCount(h.ctx, h.collection, bson.M{})
 	if err != nil {
 		return err
 	}
 
-	if total > defaultMaxLogsSize {
-		// Find the oldest 100 logs by sorting by time ascending
+	if total >= defaultMaxLogsSize {
+		// Find the oldest logs by sorting by time ascending.
 		var oldLogs []SystemLog
 		err = h.mongoCli.FindSortByLimitAndSkip(
+			h.ctx,
 			h.collection,
 			bson.M{},
-			bson.M{"time": 1}, // Sort ascending (oldest first)
+			bson.M{"time": 1},
 			&oldLogs,
-			100, // Get 100 oldest
+			defaultTrimBatchSize,
 			0,
 		)
 		if err == nil && len(oldLogs) > 0 {
-			// Extract timestamp of the 100th oldest log
+			sort.Slice(oldLogs, func(i, j int) bool {
+				return oldLogs[i].Time.Before(oldLogs[j].Time)
+			})
 			oldestTime := oldLogs[len(oldLogs)-1].Time
-			// Delete all logs older than or equal to the 100th oldest log
-			h.mongoCli.Remove(h.collection, bson.M{"time": bson.M{"$lte": oldestTime}}, true)
+			if err := h.mongoCli.Remove(h.ctx, h.collection, bson.M{"time": bson.M{"$lte": oldestTime}}, true); err != nil {
+				return err
+			}
 		}
 	}
 
 	// Insert into MongoDB using DBAdaptor
-	err = h.mongoCli.Insert(h.collection, logDoc)
+	err = h.mongoCli.Insert(h.ctx, h.collection, logDoc)
 	if err != nil {
-		// Log insertion error but don't propagate to avoid logging loops
 		return err
 	}
 
@@ -167,16 +204,18 @@ func (h *LogrusMongoHook) Levels() []logrus.Level {
 
 // NewLogrusMongoHook creates a new LogrusMongoHook instance
 func NewLogrusMongoHook(mongoCli mongo.DBAdaptor, module string) *LogrusMongoHook {
-	fieldMap := logrus.FieldMap{
-		"module": module,
-	}
+	return NewLogrusMongoHookWithCollection(mongoCli, module, defaultMongoCollName)
+}
 
+func NewLogrusMongoHookWithCollection(mongoCli mongo.DBAdaptor, module, collection string) *LogrusMongoHook {
+	if collection == "" {
+		collection = defaultMongoCollName
+	}
 	hook := &LogrusMongoHook{
 		ctx:        context.Background(),
 		mongoCli:   mongoCli,
-		collection: defaultMongoCollName,
+		collection: collection,
 		module:     module,
-		formatter:  &logrus.JSONFormatter{FieldMap: fieldMap},
 	}
 
 	return hook

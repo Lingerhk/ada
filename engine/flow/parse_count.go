@@ -120,7 +120,7 @@ func (r *Ruleset) storeEvent(ctx context.Context, insId string, fr FlowRule, act
 	}
 
 	// 插入单条行为
-	if err := r.mongoCli.Insert(aet.CollectName(), aet); err != nil {
+	if err := r.mongoCli.Insert(ctx, aet.CollectName(), aet); err != nil {
 		logger.Errorf("insert event err:%v", err)
 		return err
 	}
