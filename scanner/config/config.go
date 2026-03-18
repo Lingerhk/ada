@@ -46,6 +46,7 @@ type Env struct {
 	Cfg      *Config
 	RedisCli *redis.Client
 	MongoCli mongo.DBAdaptor
+	ctx      context.Context
 }
 
 func InitLog(setting *Config, mongoCli mongo.DBAdaptor) error {
@@ -110,7 +111,7 @@ func InitMongoClient(setting *Config) (mongo.DBAdaptor, error) {
 		return nil, err
 	}
 
-	err = mongoCli.Connect(setting.Mongodb.URI, cs.Database)
+	err = mongoCli.Connect(context.Background(), setting.Mongodb.URI, cs.Database)
 	if err != nil {
 		return nil, err
 	}
@@ -164,5 +165,5 @@ func Init(confPath string) (*Env, error) {
 		return nil, err
 	}
 
-	return &Env{&setting, redisCli, mongoCli}, nil
+	return &Env{Cfg: &setting, RedisCli: redisCli, MongoCli: mongoCli, ctx: context.Background()}, nil
 }

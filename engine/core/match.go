@@ -176,8 +176,8 @@ func (e *EngineWorker) syncElasticsearch(ctx context.Context, alertBytes []byte)
 
 	// return the es document _id
 	req := esapi.IndexRequest{
-		Index:   common.AlertActivityIndexKey,
-		Body:    bytes.NewReader(alertBytes),
+		Index: common.AlertActivityIndexKey,
+		Body:  bytes.NewReader(alertBytes),
 		// NOTE: avoid per-doc refresh; bulk writer handles visibility
 		Refresh: "false",
 	}
@@ -210,7 +210,7 @@ func (e *EngineWorker) syncMongodb(act model.AlertActivityESDB) (bson.ObjectID, 
 	act.ID = bson.NewObjectID()
 
 	// 插入单条行为
-	if err := e.mongoCli.Insert(act.CollectName(), act); err != nil {
+	if err := e.mongoCli.Insert(e.ctx, act.CollectName(), act); err != nil {
 		logger.Warnf("insert activity err:%v", err)
 		return bson.NilObjectID, err
 	}
