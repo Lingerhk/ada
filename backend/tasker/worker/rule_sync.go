@@ -50,10 +50,10 @@ type RuleDescriptor struct {
 }
 
 // RuleSyncTask executes rule synchronization from remote server
-func (w *Worker) RuleSyncTask() error {
+func (w *Worker) RuleSyncTask(ctx context.Context) error {
+	w = w.withContext(ctx)
 	time.Sleep(10 * time.Second) // wait 10s for case: first run at the process started(wait for other service ready)
 
-	ctx := context.Background()
 	rulesPath := filepath.Join(common.ROOT_PATH, "download", "rules")
 
 	// Get system info to check UpgradeRule setting
@@ -1274,11 +1274,10 @@ func (w *Worker) generateVersionFile() error {
 
 // sendReloadSignalToEngine sends a reload signal to engine via Redis pub/sub
 func (w *Worker) sendReloadSignalToEngine() error {
-	ctx := context.Background()
 
 	// Publish reload message to Redis channel
 	message := fmt.Sprintf("reload:%d", time.Now().Unix())
-	err := w.env.RedisCli.Publish(ctx, cache.EngineReloadChannel, message).Err()
+	err := w.env.RedisCli.Publish(context.Background(), cache.EngineReloadChannel, message).Err()
 	if err != nil {
 		logger.Errorf("Failed to publish reload signal to engine: %v", err)
 		return err

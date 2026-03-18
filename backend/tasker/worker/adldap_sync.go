@@ -17,8 +17,8 @@ import (
 )
 
 // ADLdapSyncTask 进行域内铭感条目同步
-func (w *Worker) ADLdapSyncTask() error {
-	ctx := context.Background()
+func (w *Worker) ADLdapSyncTask(ctx context.Context) error {
+	w = w.withContext(ctx)
 	var ldapSearch *ldap.LDAPSearch
 
 	// 遍历查找所有的domain redis key

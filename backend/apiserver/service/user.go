@@ -38,6 +38,7 @@ func userLoginExpireKey(username string) string {
 
 // getLoginErrorCount gets the login error count from Redis
 func (s *ADAServiceV2) getLoginErrorCount(ctx context.Context, username string) int {
+	s = s.withContext(ctx)
 	val, err := s.env.RedisCli.Get(ctx, userLoginErrorKey(username)).Int()
 	if err != nil {
 		return 0
@@ -47,6 +48,7 @@ func (s *ADAServiceV2) getLoginErrorCount(ctx context.Context, username string) 
 
 // incrLoginErrorCount increments the login error count in Redis
 func (s *ADAServiceV2) incrLoginErrorCount(ctx context.Context, username string) error {
+	s = s.withContext(ctx)
 	key := userLoginErrorKey(username)
 	pipe := s.env.RedisCli.Pipeline()
 	pipe.Incr(ctx, key)
@@ -57,15 +59,18 @@ func (s *ADAServiceV2) incrLoginErrorCount(ctx context.Context, username string)
 
 // resetLoginErrorCount resets the login error count in Redis
 func (s *ADAServiceV2) resetLoginErrorCount(ctx context.Context, username string) error {
+	s = s.withContext(ctx)
 	return s.env.RedisCli.Del(ctx, userLoginErrorKey(username)).Err()
 }
 
 // setLastLoginExpireTime sets the last login expire time in Redis
 func (s *ADAServiceV2) setLastLoginExpireTime(ctx context.Context, username string, expireTime int64) error {
+	s = s.withContext(ctx)
 	return s.env.RedisCli.Set(ctx, userLoginExpireKey(username), expireTime, 0).Err()
 }
 
 func (s *ADAServiceV2) Login(ctx context.Context, in *v2.LoginReq) (*v2.LoginReply, error) {
+	s = s.withContext(ctx)
 	user, err := server.GetUser(s.env, in.Username)
 	if err != nil {
 		return nil, status.Error(codes.Unauthenticated, s.I18n("User.Login.InvalidCredentials"))
@@ -149,11 +154,13 @@ func (s *ADAServiceV2) Login(ctx context.Context, in *v2.LoginReq) (*v2.LoginRep
 }
 
 func (s *ADAServiceV2) Logout(ctx context.Context, in *v2.LogoutReq) (*v2.LogoutReply, error) {
+	s = s.withContext(ctx)
 	// passed
 	return &v2.LogoutReply{Result: common.RESP_SUCCESS}, nil
 }
 
 func (s *ADAServiceV2) ListUser(ctx context.Context, in *v2.ListUserReq) (*v2.ListUserReply, error) {
+	s = s.withContext(ctx)
 	username := s.GetUser(ctx)
 
 	// 如果是管理员查询子用户列表，则清空查询条件
@@ -205,6 +212,7 @@ func (s *ADAServiceV2) ListUser(ctx context.Context, in *v2.ListUserReq) (*v2.Li
 }
 
 func (s *ADAServiceV2) AddUser(ctx context.Context, in *v2.AddUserReq) (*v2.AddUserReply, error) {
+	s = s.withContext(ctx)
 	if in.Username == "" || in.Password == "" {
 		return nil, status.Error(codes.InvalidArgument, s.I18n("User.AddUser.UsernameAndPasswordEmpty"))
 	}
@@ -245,6 +253,7 @@ func (s *ADAServiceV2) AddUser(ctx context.Context, in *v2.AddUserReq) (*v2.AddU
 }
 
 func (s *ADAServiceV2) UpdateUser(ctx context.Context, in *v2.UpdateUserReq) (*v2.UpdateUserReply, error) {
+	s = s.withContext(ctx)
 	_, err := server.GetUser(s.env, in.Username)
 	if err != nil {
 		return nil, status.Error(codes.Unauthenticated, s.I18n("User.InvalidUsernameOrPassword"))
@@ -270,6 +279,7 @@ func (s *ADAServiceV2) UpdateUser(ctx context.Context, in *v2.UpdateUserReq) (*v
 }
 
 func (s *ADAServiceV2) UpdateUserPassword(ctx context.Context, in *v2.UpdateUserPasswordReq) (*v2.UpdateUserPasswordReply, error) {
+	s = s.withContext(ctx)
 	//is super
 	var userName string
 	if !s.IsSuper(ctx) {
@@ -304,6 +314,7 @@ func (s *ADAServiceV2) UpdateUserPassword(ctx context.Context, in *v2.UpdateUser
 }
 
 func (s *ADAServiceV2) DeleteUser(ctx context.Context, in *v2.DeleteUserReq) (*v2.DeleteUserReply, error) {
+	s = s.withContext(ctx)
 	if !s.IsSuper(ctx) {
 		return nil, status.Error(codes.PermissionDenied, s.I18n("NoPermission"))
 	}
@@ -323,6 +334,7 @@ func (s *ADAServiceV2) DeleteUser(ctx context.Context, in *v2.DeleteUserReq) (*v
 }
 
 func (s *ADAServiceV2) CheckMfa(ctx context.Context, in *v2.CheckMfaReq) (*v2.CheckMfaReply, error) {
+	s = s.withContext(ctx)
 	user, err := server.GetUser(s.env, in.Username)
 	if err != nil {
 		return nil, status.Error(codes.Unauthenticated, s.I18n("User.InvalidUsernameOrPassword"))
@@ -349,6 +361,7 @@ func (s *ADAServiceV2) CheckMfa(ctx context.Context, in *v2.CheckMfaReq) (*v2.Ch
 }
 
 func (s *ADAServiceV2) EnableMfa(ctx context.Context, in *v2.EnableMfaReq) (*v2.EnableMfaReply, error) {
+	s = s.withContext(ctx)
 	userName := in.Username
 	secret := in.Secret
 	code := in.MfaCode
@@ -388,6 +401,7 @@ func (s *ADAServiceV2) EnableMfa(ctx context.Context, in *v2.EnableMfaReq) (*v2.
 }
 
 func (s *ADAServiceV2) DisableMfa(ctx context.Context, in *v2.DisableMfaReq) (*v2.DisableMfaReply, error) {
+	s = s.withContext(ctx)
 	targetUsername := in.Username
 	currentUser := s.GetUser(ctx)
 
@@ -414,6 +428,7 @@ func (s *ADAServiceV2) DisableMfa(ctx context.Context, in *v2.DisableMfaReq) (*v
 }
 
 func (s *ADAServiceV2) UpdateAvatar(ctx context.Context, in *v2.UpdateAvatarReq) (*v2.UpdateAvatarReply, error) {
+	s = s.withContext(ctx)
 	var allowFileType = map[string]int{
 		"JPG":  1,
 		"JPEG": 1,
@@ -454,6 +469,7 @@ func (s *ADAServiceV2) UpdateAvatar(ctx context.Context, in *v2.UpdateAvatarReq)
 }
 
 func (s *ADAServiceV2) ResetPassword(ctx context.Context, in *v2.ResetPasswordReq) (*v2.ResetPasswordReply, error) {
+	s = s.withContext(ctx)
 	if !s.IsSuper(ctx) {
 		return nil, status.Error(codes.PermissionDenied, s.I18n("NoPermission"))
 	}
@@ -479,6 +495,7 @@ func (s *ADAServiceV2) ResetPassword(ctx context.Context, in *v2.ResetPasswordRe
 }
 
 func (s *ADAServiceV2) UserExists(ctx context.Context, in *v2.UserExistsReq) (*v2.UserExistsReply, error) {
+	s = s.withContext(ctx)
 	_, err := server.GetUser(s.env, in.Username)
 	if err == nil {
 		return &v2.UserExistsReply{
@@ -493,6 +510,7 @@ func (s *ADAServiceV2) UserExists(ctx context.Context, in *v2.UserExistsReq) (*v
 
 // AccessKey Management
 func (s *ADAServiceV2) ListAccessKey(ctx context.Context, in *v2.ListAccessKeyReq) (*v2.ListAccessKeyReply, error) {
+	s = s.withContext(ctx)
 	username := s.GetUser(ctx)
 
 	// 如果请求中指定了username，检查权限
@@ -527,6 +545,7 @@ func (s *ADAServiceV2) ListAccessKey(ctx context.Context, in *v2.ListAccessKeyRe
 }
 
 func (s *ADAServiceV2) GenerateAccessKey(ctx context.Context, in *v2.GenerateAccessKeyReq) (*v2.GenerateAccessKeyReply, error) {
+	s = s.withContext(ctx)
 	currentUser := s.GetUser(ctx)
 
 	// Determine target username - if not specified, use current user
@@ -567,6 +586,7 @@ func (s *ADAServiceV2) GenerateAccessKey(ctx context.Context, in *v2.GenerateAcc
 }
 
 func (s *ADAServiceV2) DeleteAccessKey(ctx context.Context, in *v2.DeleteAccessKeyReq) (*v2.DeleteAccessKeyReply, error) {
+	s = s.withContext(ctx)
 	username := s.GetUser(ctx)
 
 	// 获取AccessKey详情以检查所有权

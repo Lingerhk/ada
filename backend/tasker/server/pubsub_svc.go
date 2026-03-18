@@ -26,7 +26,7 @@ func NewPubsubServer(env *config.Env) *PubsubServer {
 	ctx, cancel := context.WithCancel(context.Background())
 	return &PubsubServer{
 		ctx:    ctx,
-		env:    env,
+		env:    env.WithMongoContext(ctx),
 		cancel: cancel,
 	}
 }

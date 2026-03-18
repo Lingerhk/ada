@@ -4,6 +4,7 @@ import (
 	"ada/backend/common"
 	"ada/backend/model"
 	"ada/backend/tasker/config"
+	"context"
 	"os"
 	"os/signal"
 	"syscall"
@@ -20,6 +21,10 @@ type Worker struct {
 
 func New(env *config.Env) *Worker {
 	return &Worker{env}
+}
+
+func (w *Worker) WithContext(ctx context.Context) *Worker {
+	return w.withContext(ctx)
 }
 
 func (w *Worker) GetLanguage() string {

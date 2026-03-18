@@ -114,6 +114,7 @@ func fetchCloudRuleVersion(upgradeSrv string, upgradeProxy bool, httpProxy strin
 }
 
 func (s *ADAServiceV2) GetSystemInfo(ctx context.Context, in *v2.GetSystemInfoReq) (*v2.GetSystemInfoReply, error) {
+	s = s.withContext(ctx)
 	sys, err := server.GetSystemInfo(s.env)
 	if err != nil {
 		logger.Errorf("get system info err: %s", err)
@@ -190,6 +191,7 @@ func (s *ADAServiceV2) GetSystemInfo(ctx context.Context, in *v2.GetSystemInfoRe
 }
 
 func (s *ADAServiceV2) GetSystemIcon(ctx context.Context, in *v2.GetSystemIconReq) (*v2.GetSystemIconReply, error) {
+	s = s.withContext(ctx)
 	si, err := server.GetSystemInfo(s.env)
 	if err != nil {
 		logger.Errorf("get system info err:%v", err)
@@ -216,6 +218,7 @@ func (s *ADAServiceV2) GetSystemIcon(ctx context.Context, in *v2.GetSystemIconRe
 }
 
 func (s *ADAServiceV2) UpdateSystemLanguage(ctx context.Context, in *v2.UpdateSystemLanguageReq) (*v2.UpdateSystemLanguageReply, error) {
+	s = s.withContext(ctx)
 	ret := &v2.UpdateSystemLanguageReply{
 		Result: RESP_FAILED,
 	}
@@ -234,6 +237,7 @@ func (s *ADAServiceV2) UpdateSystemLanguage(ctx context.Context, in *v2.UpdateSy
 }
 
 func (s *ADAServiceV2) UpdateSystemCfg(ctx context.Context, in *v2.UpdateSystemCfgReq) (*v2.UpdateSystemCfgReply, error) {
+	s = s.withContext(ctx)
 	ret := &v2.UpdateSystemCfgReply{
 		Result: RESP_FAILED,
 	}
@@ -299,6 +303,7 @@ func (s *ADAServiceV2) UpdateSystemCfg(ctx context.Context, in *v2.UpdateSystemC
 }
 
 func (s *ADAServiceV2) GetSystemStats(ctx context.Context, in *v2.GetSystemStatsReq) (*v2.GetSystemStatsReply, error) {
+	s = s.withContext(ctx)
 	var statsCount int64
 	if in.Scope == "2h" {
 		statsCount = 60 * 2
@@ -339,6 +344,7 @@ func (s *ADAServiceV2) GetSystemStats(ctx context.Context, in *v2.GetSystemStats
 }
 
 func (s *ADAServiceV2) ListAuditLog(ctx context.Context, in *v2.ListAuditLogReq) (*v2.ListAuditLogReply, error) {
+	s = s.withContext(ctx)
 	query := bson.D{}
 	// 非超级管理员只允许查看自己的日志
 	if !s.IsSuper(ctx) {
@@ -416,6 +422,7 @@ func (s *ADAServiceV2) ListAuditLog(ctx context.Context, in *v2.ListAuditLogReq)
 }
 
 func (s *ADAServiceV2) NetworkDebug(ctx context.Context, in *v2.NetworkDebugReq) (*v2.NetworkDebugReply, error) {
+	s = s.withContext(ctx)
 	// Validate target using allowlist approach (only allow valid hostnames, IPs, or IP:port)
 	// This is more secure than blocklist approach
 
@@ -507,6 +514,7 @@ func (s *ADAServiceV2) NetworkDebug(ctx context.Context, in *v2.NetworkDebugReq)
 }
 
 func (s *ADAServiceV2) GetLicense(ctx context.Context, in *v2.GetLicenseReq) (*v2.GetLicenseReply, error) {
+	s = s.withContext(ctx)
 	ret := v2.GetLicenseReply{Trait: license.GetTrait()}
 
 	licer, err := license.NewAdaLicense(s.env.RedisCli)
@@ -530,6 +538,7 @@ func (s *ADAServiceV2) GetLicense(ctx context.Context, in *v2.GetLicenseReq) (*v
 }
 
 func (s *ADAServiceV2) UpdateLicense(ctx context.Context, in *v2.UpdateLicenseReq) (*v2.UpdateLicenseReply, error) {
+	s = s.withContext(ctx)
 	ret := v2.UpdateLicenseReply{Result: RESP_FAILED}
 
 	if len(in.LicenseKey) != 336 {
@@ -554,6 +563,7 @@ func (s *ADAServiceV2) UpdateLicense(ctx context.Context, in *v2.UpdateLicenseRe
 }
 
 func (s *ADAServiceV2) SetSystemStatsCfg(ctx context.Context, in *v2.SetSystemStatsCfgReq) (*v2.SetSystemStatsCfgReply, error) {
+	s = s.withContext(ctx)
 	sys, err := server.GetSystemInfo(s.env)
 	if err != nil {
 		logger.Errorf("get system info err: %s", err)
@@ -592,6 +602,7 @@ func (s *ADAServiceV2) SetSystemStatsCfg(ctx context.Context, in *v2.SetSystemSt
 }
 
 func (s *ADAServiceV2) ListSystemLogs(ctx context.Context, in *v2.ListSystemLogsReq) (*v2.ListSystemLogsReply, error) {
+	s = s.withContext(ctx)
 	ret := &v2.ListSystemLogsReply{
 		Page:      &v2.ModelPage{PageSize: in.PageSize, PageIdx: in.PageIdx, Total: 0},
 		Exhausted: true,
@@ -623,6 +634,7 @@ func (s *ADAServiceV2) ListSystemLogs(ctx context.Context, in *v2.ListSystemLogs
 }
 
 func (s *ADAServiceV2) GetSystemProxy(ctx context.Context, in *v2.GetSystemProxyReq) (*v2.GetSystemProxyReply, error) {
+	s = s.withContext(ctx)
 	sys, err := server.GetSystemInfo(s.env)
 	if err != nil {
 		logger.Errorf("get system info err: %s", err)
@@ -656,6 +668,7 @@ func (s *ADAServiceV2) GetSystemProxy(ctx context.Context, in *v2.GetSystemProxy
 }
 
 func (s *ADAServiceV2) UpdateSystemProxy(ctx context.Context, in *v2.UpdateSystemProxyReq) (*v2.UpdateSystemProxyReply, error) {
+	s = s.withContext(ctx)
 	ret := &v2.UpdateSystemProxyReply{
 		Result: RESP_FAILED,
 	}
