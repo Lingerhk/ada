@@ -44,7 +44,7 @@ func FindThreatEventLikePattern(e *config.Env, query bson.D, sortTm int32, limit
 	var ae []model.AlertEventESDB
 	tb := (&model.AlertEventESDB{}).CollectName()
 
-	total, err := e.MongoCli.FindCount(tb, query)
+	total, err := e.MongoCli.FindCount(e.MongoContext(), tb, query)
 	if err != nil {
 		return nil, 0, err
 	}
@@ -53,7 +53,7 @@ func FindThreatEventLikePattern(e *config.Env, query bson.D, sortTm int32, limit
 	if sortTm != 0 {
 		sort["end_ts"] = sortTm
 	}
-	err = e.MongoCli.FindSortByLimitAndSkip(tb, query, sort, &ae, int64(limit), int64(offset))
+	err = e.MongoCli.FindSortByLimitAndSkip(e.MongoContext(), tb, query, sort, &ae, int64(limit), int64(offset))
 	if err != nil {
 		return nil, 0, err
 	}
@@ -203,7 +203,7 @@ func GetThreatEventByID(e *config.Env, id string) (*model.AlertEventESDB, error)
 	}
 
 	query := bson.M{"_id": Id}
-	err, _ = e.MongoCli.FindOne(ae.CollectName(), query, &ae)
+	err, _ = e.MongoCli.FindOne(e.MongoContext(), ae.CollectName(), query, &ae)
 	if err != nil {
 		logger.Errorf("get threat event err:%v", err)
 		return nil, err
@@ -215,7 +215,7 @@ func GetThreatEventByID(e *config.Env, id string) (*model.AlertEventESDB, error)
 func GetThreatEventByFlowID(e *config.Env, flowId string) (*model.AlertEventESDB, error) {
 	ae := model.AlertEventESDB{}
 	query := bson.M{"flow_id": flowId}
-	err, exist := e.MongoCli.FindOne(ae.CollectName(), query, &ae)
+	err, exist := e.MongoCli.FindOne(e.MongoContext(), ae.CollectName(), query, &ae)
 	if err != nil || !exist {
 		logger.Errorf("get threat event err:%v", err)
 		return nil, err
@@ -237,7 +237,7 @@ func GetThreatEventNames(e *config.Env) (map[string]string, error) {
 	}
 
 	var results []bson.M
-	err := e.MongoCli.FindWithAggregation(tb, pipeline, &results)
+	err := e.MongoCli.FindWithAggregation(e.MongoContext(), tb, pipeline, &results)
 	if err != nil {
 		logger.Errorf("get threat event names err:%v", err)
 		return nil, err
@@ -273,7 +273,7 @@ func UpdateThreatEventStatus(e *config.Env, id string, eventStatus int32, remark
 		update["remark"] = remark
 	}
 
-	return e.MongoCli.Update(ae.CollectName(), query, update, false)
+	return e.MongoCli.Update(e.MongoContext(), ae.CollectName(), query, update, false)
 }
 
 func GetThreatActivityByID(e *config.Env, id string) (*model.AlertActivityESDB, error) {
@@ -284,7 +284,7 @@ func GetThreatActivityByID(e *config.Env, id string) (*model.AlertActivityESDB, 
 	}
 
 	query := bson.M{"_id": Id}
-	err, _ = e.MongoCli.FindOne(aa.CollectName(), query, &aa)
+	err, _ = e.MongoCli.FindOne(e.MongoContext(), aa.CollectName(), query, &aa)
 	if err != nil {
 		logger.Errorf("get threat activity err:%v", err)
 		return nil, err
@@ -323,7 +323,7 @@ func FindThreatActivitySelect(e *config.Env, query bson.D, sortTm int32, limit, 
 	var aas []model.AlertActivityESDB
 	tb := (&model.AlertActivityESDB{}).CollectName()
 
-	total, err := e.MongoCli.FindCount(tb, query)
+	total, err := e.MongoCli.FindCount(e.MongoContext(), tb, query)
 	if err != nil {
 		return nil, 0, err
 	}
@@ -332,7 +332,7 @@ func FindThreatActivitySelect(e *config.Env, query bson.D, sortTm int32, limit, 
 	if sortTm != 0 {
 		sort["create_tm"] = sortTm
 	}
-	err = e.MongoCli.FindSortByLimitAndSkip(tb, query, sort, &aas, int64(limit), int64(offset))
+	err = e.MongoCli.FindSortByLimitAndSkip(e.MongoContext(), tb, query, sort, &aas, int64(limit), int64(offset))
 	if err != nil {
 		return nil, 0, err
 	}
@@ -373,7 +373,7 @@ func GetThreatActivityAggNames(e *config.Env, dcHostname []string, startTm, endT
 	}
 
 	var results []bson.M
-	err := e.MongoCli.FindWithAggregation(tb, pipeline, &results)
+	err := e.MongoCli.FindWithAggregation(e.MongoContext(), tb, pipeline, &results)
 	if err != nil {
 		logger.Errorf("threat tops err:%v", err)
 		return nil, err
@@ -419,12 +419,12 @@ func FindSensitiveEntryList(e *config.Env, typ string, domains []string, origins
 		sort["update_tm"] = orderUpdateTm
 	}
 
-	count, err := e.MongoCli.FindCount(tb, query)
+	count, err := e.MongoCli.FindCount(e.MongoContext(), tb, query)
 	if err != nil {
 		return nil, 0, err
 	}
 
-	err = e.MongoCli.FindSortByLimitAndSkip(tb, query, sort, &se, int64(limit), int64(offset))
+	err = e.MongoCli.FindSortByLimitAndSkip(e.MongoContext(), tb, query, sort, &se, int64(limit), int64(offset))
 	if err != nil {
 		return nil, 0, err
 	}
@@ -440,7 +440,7 @@ func GetSensitiveEntryById(e *config.Env, id string) (*model.SensitiveEntry, err
 	}
 
 	query := bson.M{"_id": Id}
-	err, _ = e.MongoCli.FindOne(se.CollectName(), query, &se)
+	err, _ = e.MongoCli.FindOne(e.MongoContext(), se.CollectName(), query, &se)
 	if err != nil {
 		logger.Errorf("get threat activity err:%v", err)
 		return nil, err
@@ -452,7 +452,7 @@ func GetSensitiveEntryById(e *config.Env, id string) (*model.SensitiveEntry, err
 func GetSensitiveEntryByName(e *config.Env, name, typ, domain string) (*model.SensitiveEntry, error) {
 	se := model.SensitiveEntry{}
 	query := bson.M{"type": typ, "domain": domain, "content.name": name}
-	err, _ := e.MongoCli.FindOne(se.CollectName(), query, &se)
+	err, _ := e.MongoCli.FindOne(e.MongoContext(), se.CollectName(), query, &se)
 	if err != nil {
 		logger.Errorf("get sensitive entry err:%v", err)
 		return nil, err
@@ -471,7 +471,7 @@ func AddSensitiveEntry(e *config.Env, name, sid, typ, domain string) error {
 	se.CreateTm = utime.CurTime()
 	se.UpdateTm = utime.CurTime()
 
-	return e.MongoCli.Insert(se.CollectName(), &se)
+	return e.MongoCli.Insert(e.MongoContext(), se.CollectName(), &se)
 }
 
 func DeleteSensitiveEntry(e *config.Env, Id string) error {
@@ -482,7 +482,7 @@ func DeleteSensitiveEntry(e *config.Env, Id string) error {
 		return err
 	}
 
-	return e.MongoCli.RemoveById(se.CollectName(), objId)
+	return e.MongoCli.RemoveById(e.MongoContext(), se.CollectName(), objId)
 }
 
 func ThreatTops(e *config.Env, domain, typ string, duration int32) ([]bson.M, error) {
@@ -530,7 +530,7 @@ func ThreatTops(e *config.Env, domain, typ string, duration int32) ([]bson.M, er
 	}
 
 	var results []bson.M
-	err := e.MongoCli.FindWithAggregation(tb, pipeline, &results)
+	err := e.MongoCli.FindWithAggregation(e.MongoContext(), tb, pipeline, &results)
 	if err != nil {
 		logger.Errorf("threat tops err:%v", err)
 		return nil, err
@@ -573,7 +573,7 @@ func ThreatTrends(e *config.Env, domain string, levels []int32, duration int32) 
 	}
 
 	var results []bson.M
-	err := e.MongoCli.FindWithAggregation(tb, pipeline, &results)
+	err := e.MongoCli.FindWithAggregation(e.MongoContext(), tb, pipeline, &results)
 	if err != nil {
 		logger.Errorf("threat trends err:%v", err)
 		return nil, err
@@ -612,11 +612,11 @@ func FindAllThreatWhitelist(e *config.Env, ruleId string, domains []string, orig
 		}
 	}
 
-	total, err := e.MongoCli.FindCount(tb, query)
+	total, err := e.MongoCli.FindCount(e.MongoContext(), tb, query)
 	if err != nil {
 		return nil, 0, err
 	}
-	if err := e.MongoCli.FindByLimitAndSkip(tb, query, &awList, limit, skip); err != nil {
+	if err := e.MongoCli.FindByLimitAndSkip(e.MongoContext(), tb, query, &awList, limit, skip); err != nil {
 		return nil, 0, err
 	}
 	return awList, total, nil
@@ -629,7 +629,7 @@ func GetThreatWhitelistById(e *config.Env, wId string) (*model.AlertWhitelist, e
 	if err != nil {
 		return nil, err
 	}
-	err, exist := e.MongoCli.FindOne(aw.CollectName(), bson.M{"_id": Id}, &aw)
+	err, exist := e.MongoCli.FindOne(e.MongoContext(), aw.CollectName(), bson.M{"_id": Id}, &aw)
 	if err != nil || !exist {
 		return nil, err
 	}
@@ -651,7 +651,7 @@ func AddThreatWhitelist(e *config.Env, ruleId, ruleTitle, ruleType, domain, rema
 	aw.CreateTm = utime.CurTime()
 	aw.UpdateTm = utime.CurTime()
 
-	err := e.MongoCli.Insert(aw.CollectName(), &aw)
+	err := e.MongoCli.Insert(e.MongoContext(), aw.CollectName(), &aw)
 	if err != nil {
 		return "", err
 	}
@@ -668,7 +668,7 @@ func UpdateThreatWhitelist(e *config.Env, Id, remark string, rules []map[string]
 
 	query := bson.M{"_id": id}
 	update := bson.M{"$set": bson.M{"rule_info": rules, "remark": remark, "update_tm": utime.CurTime()}}
-	err = e.MongoCli.UpdateRaw(sc.CollectName(), query, &update, false)
+	err = e.MongoCli.UpdateRaw(e.MongoContext(), sc.CollectName(), query, &update, false)
 	if err != nil {
 		return err
 	}
@@ -683,7 +683,7 @@ func DeleteThreatWhitelist(e *config.Env, Id string) error {
 		return err
 	}
 
-	err = e.MongoCli.RemoveById(aw.CollectName(), objId)
+	err = e.MongoCli.RemoveById(e.MongoContext(), aw.CollectName(), objId)
 	if err != nil {
 		return err
 	}
@@ -699,7 +699,7 @@ func FindDomainEntryUser(e *config.Env, domain, search string) ([]string, error)
 	if search != "" {
 		query["sAMAccountName"] = bson.M{"$regex": search, "$options": "i"}
 	}
-	err := e.MongoCli.FindAll(tb, query, &auList)
+	err := e.MongoCli.FindAll(e.MongoContext(), tb, query, &auList)
 	if err != nil {
 		return nil, err
 	}
@@ -723,7 +723,7 @@ func FindDomainEntryGroup(e *config.Env, domain, search string) ([]string, error
 	if search != "" {
 		query["sAMAccountName"] = bson.M{"$regex": search, "$options": "i"}
 	}
-	err := e.MongoCli.FindAll(tb, query, &agList)
+	err := e.MongoCli.FindAll(e.MongoContext(), tb, query, &agList)
 	if err != nil {
 		return nil, err
 	}
@@ -747,7 +747,7 @@ func FindDomainEntryComputer(e *config.Env, domain, search string) ([]string, er
 	if search != "" {
 		query["sAMAccountName"] = bson.M{"$regex": search, "$options": "i"}
 	}
-	err := e.MongoCli.FindAll(tb, query, &auList)
+	err := e.MongoCli.FindAll(e.MongoContext(), tb, query, &auList)
 	if err != nil {
 		return nil, err
 	}
@@ -790,11 +790,11 @@ func FindAllThreatBlock(e *config.Env, domains []string, origin []int32, search,
 		query = append(query, bson.E{Key: "update_tm", Value: bson.M{"$gte": startTime, "$lte": endTime}})
 	}
 
-	total, err := e.MongoCli.FindCount(tb, query)
+	total, err := e.MongoCli.FindCount(e.MongoContext(), tb, query)
 	if err != nil {
 		return nil, 0, err
 	}
-	if err := e.MongoCli.FindByLimitAndSkip(tb, query, &abList, limit, skip); err != nil {
+	if err := e.MongoCli.FindByLimitAndSkip(e.MongoContext(), tb, query, &abList, limit, skip); err != nil {
 		return nil, 0, err
 	}
 	return abList, total, nil
@@ -816,7 +816,7 @@ func AddThreatBlock(e *config.Env, name, domain, remark string, userBlock, ipBlo
 	ab.CreateTm = utime.CurTime()
 	ab.UpdateTm = utime.CurTime()
 
-	return e.MongoCli.Insert(ab.CollectName(), &ab)
+	return e.MongoCli.Insert(e.MongoContext(), ab.CollectName(), &ab)
 }
 
 func UpdateThreatBlock(e *config.Env, id, name, remark string, userBlock, ipBlock bool, userList, ipList []string, results []map[string]string) error {
@@ -843,7 +843,7 @@ func UpdateThreatBlock(e *config.Env, id, name, remark string, userBlock, ipBloc
 	}
 
 	update := bson.M{"$set": updatePrams}
-	return e.MongoCli.UpdateRaw(ab.CollectName(), query, &update, false)
+	return e.MongoCli.UpdateRaw(e.MongoContext(), ab.CollectName(), query, &update, false)
 }
 
 func DeleteThreatBlock(e *config.Env, id string) error {
@@ -854,7 +854,7 @@ func DeleteThreatBlock(e *config.Env, id string) error {
 		return err
 	}
 
-	return e.MongoCli.RemoveById(ab.CollectName(), objId)
+	return e.MongoCli.RemoveById(e.MongoContext(), ab.CollectName(), objId)
 }
 
 func GetThreatBlock(e *config.Env, id string) (*model.AlertBlock, error) {
@@ -865,7 +865,7 @@ func GetThreatBlock(e *config.Env, id string) (*model.AlertBlock, error) {
 		return nil, err
 	}
 
-	err, exist := e.MongoCli.FindOne(ab.CollectName(), bson.M{"_id": objId}, &ab)
+	err, exist := e.MongoCli.FindOne(e.MongoContext(), ab.CollectName(), bson.M{"_id": objId}, &ab)
 	if err != nil || !exist {
 		return nil, err
 	}

@@ -213,7 +213,7 @@ func (cs *CronScheduler) loadJobConfigsFromDB() ([]*model.ScanConf, error) {
 	var jobList []*model.ScanConf
 	filter := bson.M{"is_enable": true}
 
-	if err := cs.Tasker.env.MongoCli.FindAll((&model.ScanConf{}).CollectName(), filter, &jobList); err != nil {
+	if err := cs.Tasker.env.MongoCli.FindAll(cs.Tasker.env.MongoContext(), (&model.ScanConf{}).CollectName(), filter, &jobList); err != nil {
 		return nil, fmt.Errorf("failed to query scan configs: %w", err)
 	}
 

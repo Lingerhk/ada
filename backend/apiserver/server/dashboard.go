@@ -26,7 +26,7 @@ func GetAlertCountsByLevel(e *config.Env, domains []string) (map[string]int32, e
 
 	// Get all alert events
 	var alerts []model.AlertEventESDB
-	err := e.MongoCli.FindAll(tb, query, &alerts)
+	err := e.MongoCli.FindAll(e.MongoContext(), tb, query, &alerts)
 	if err != nil {
 		logger.Errorf("find alert events err:%v", err)
 		return result, err
@@ -68,7 +68,7 @@ func GetBaselineCountsByLevel(e *config.Env, domains []string) (map[string]int32
 
 		var tasks []model.ScanTasks
 		sort := bson.M{"create_tm": -1}
-		err := e.MongoCli.FindSortByLimitAndSkip((&model.ScanTasks{}).CollectName(), taskQuery, sort, &tasks, 1, 0)
+		err := e.MongoCli.FindSortByLimitAndSkip(e.MongoContext(), (&model.ScanTasks{}).CollectName(), taskQuery, sort, &tasks, 1, 0)
 		if err != nil {
 			logger.Errorf("find baseline tasks err:%v", err)
 			continue
@@ -83,7 +83,7 @@ func GetBaselineCountsByLevel(e *config.Env, domains []string) (map[string]int32
 			{Key: "group_id", Value: tasks[0].ID.Hex()},
 		}
 		var subtasks []model.ScanSubTasks
-		err = e.MongoCli.FindAll((&model.ScanSubTasks{}).CollectName(), subtaskQuery, &subtasks)
+		err = e.MongoCli.FindAll(e.MongoContext(), (&model.ScanSubTasks{}).CollectName(), subtaskQuery, &subtasks)
 		if err != nil {
 			logger.Errorf("find baseline subtasks err:%v", err)
 			continue
@@ -123,7 +123,7 @@ func GetLeakCountsByLevel(e *config.Env, domains []string) (map[string]int32, er
 
 		var tasks []model.ScanTasks
 		sort := bson.M{"create_tm": -1}
-		err := e.MongoCli.FindSortByLimitAndSkip((&model.ScanTasks{}).CollectName(), taskQuery, sort, &tasks, 1, 0)
+		err := e.MongoCli.FindSortByLimitAndSkip(e.MongoContext(), (&model.ScanTasks{}).CollectName(), taskQuery, sort, &tasks, 1, 0)
 		if err != nil {
 			logger.Errorf("find leak tasks err:%v", err)
 			continue
@@ -138,7 +138,7 @@ func GetLeakCountsByLevel(e *config.Env, domains []string) (map[string]int32, er
 			{Key: "group_id", Value: tasks[0].ID.Hex()},
 		}
 		var subtasks []model.ScanSubTasks
-		err = e.MongoCli.FindAll((&model.ScanSubTasks{}).CollectName(), subtaskQuery, &subtasks)
+		err = e.MongoCli.FindAll(e.MongoContext(), (&model.ScanSubTasks{}).CollectName(), subtaskQuery, &subtasks)
 		if err != nil {
 			logger.Errorf("find leak subtasks err:%v", err)
 			continue
@@ -177,7 +177,7 @@ func GetWeakPwdCount(e *config.Env, domains []string) (int32, error) {
 
 		var tasks []model.ScanTasks
 		sort := bson.M{"create_tm": -1}
-		err := e.MongoCli.FindSortByLimitAndSkip((&model.ScanTasks{}).CollectName(), taskQuery, sort, &tasks, 1, 0)
+		err := e.MongoCli.FindSortByLimitAndSkip(e.MongoContext(), (&model.ScanTasks{}).CollectName(), taskQuery, sort, &tasks, 1, 0)
 		if err != nil {
 			logger.Errorf("find weakpwd tasks err:%v", err)
 			continue
@@ -191,7 +191,7 @@ func GetWeakPwdCount(e *config.Env, domains []string) (int32, error) {
 		subtaskQuery := bson.D{
 			{Key: "group_id", Value: tasks[0].ID.Hex()},
 		}
-		total, err := e.MongoCli.FindCount((&model.ScanSubTasks{}).CollectName(), subtaskQuery)
+		total, err := e.MongoCli.FindCount(e.MongoContext(), (&model.ScanSubTasks{}).CollectName(), subtaskQuery)
 		if err != nil {
 			logger.Errorf("find weakpwd subtasks count err:%v", err)
 			continue
@@ -215,7 +215,7 @@ func GetAssetCounts(e *config.Env, domains []string) (int32, int32, error) {
 	for _, domain := range domains {
 		// Get total assets for this domain (users + computers)
 		userQuery := bson.D{{Key: "domain", Value: domain}}
-		userCount, err := e.MongoCli.FindCount((&model.AssetUser{}).CollectName(), userQuery)
+		userCount, err := e.MongoCli.FindCount(e.MongoContext(), (&model.AssetUser{}).CollectName(), userQuery)
 		if err != nil {
 			logger.Errorf("find user count err:%v", err)
 		} else {
@@ -223,7 +223,7 @@ func GetAssetCounts(e *config.Env, domains []string) (int32, int32, error) {
 		}
 
 		computerQuery := bson.D{{Key: "domain", Value: domain}}
-		computerCount, err := e.MongoCli.FindCount((&model.AssetComputer{}).CollectName(), computerQuery)
+		computerCount, err := e.MongoCli.FindCount(e.MongoContext(), (&model.AssetComputer{}).CollectName(), computerQuery)
 		if err != nil {
 			logger.Errorf("find computer count err:%v", err)
 		} else {
@@ -235,7 +235,7 @@ func GetAssetCounts(e *config.Env, domains []string) (int32, int32, error) {
 			{Key: "domain", Value: domain},
 			{Key: "create_tm", Value: bson.M{"$gte": todayStart}},
 		}
-		userTodayCount, err := e.MongoCli.FindCount((&model.AssetUser{}).CollectName(), userTodayQuery)
+		userTodayCount, err := e.MongoCli.FindCount(e.MongoContext(), (&model.AssetUser{}).CollectName(), userTodayQuery)
 		if err != nil {
 			logger.Errorf("find today user count err:%v", err)
 		} else {
@@ -246,7 +246,7 @@ func GetAssetCounts(e *config.Env, domains []string) (int32, int32, error) {
 			{Key: "domain", Value: domain},
 			{Key: "create_tm", Value: bson.M{"$gte": todayStart}},
 		}
-		computerTodayCount, err := e.MongoCli.FindCount((&model.AssetComputer{}).CollectName(), computerTodayQuery)
+		computerTodayCount, err := e.MongoCli.FindCount(e.MongoContext(), (&model.AssetComputer{}).CollectName(), computerTodayQuery)
 		if err != nil {
 			logger.Errorf("find today computer count err:%v", err)
 		} else {
@@ -264,7 +264,7 @@ func GetAssetDistribution(e *config.Env, domains []string) (map[string]int32, er
 	for _, domain := range domains {
 		// Get user count
 		userQuery := bson.D{{Key: "domain", Value: domain}}
-		userCount, err := e.MongoCli.FindCount((&model.AssetUser{}).CollectName(), userQuery)
+		userCount, err := e.MongoCli.FindCount(e.MongoContext(), (&model.AssetUser{}).CollectName(), userQuery)
 		if err != nil {
 			logger.Errorf("find user count err:%v", err)
 		} else {
@@ -273,7 +273,7 @@ func GetAssetDistribution(e *config.Env, domains []string) (map[string]int32, er
 
 		// Get computer count
 		computerQuery := bson.D{{Key: "domain", Value: domain}}
-		computerCount, err := e.MongoCli.FindCount((&model.AssetComputer{}).CollectName(), computerQuery)
+		computerCount, err := e.MongoCli.FindCount(e.MongoContext(), (&model.AssetComputer{}).CollectName(), computerQuery)
 		if err != nil {
 			logger.Errorf("find computer count err:%v", err)
 		} else {
@@ -282,7 +282,7 @@ func GetAssetDistribution(e *config.Env, domains []string) (map[string]int32, er
 
 		// Get group count
 		groupQuery := bson.D{{Key: "domain", Value: domain}}
-		groupCount, err := e.MongoCli.FindCount((&model.AssetGroup{}).CollectName(), groupQuery)
+		groupCount, err := e.MongoCli.FindCount(e.MongoContext(), (&model.AssetGroup{}).CollectName(), groupQuery)
 		if err != nil {
 			logger.Errorf("find group count err:%v", err)
 		} else {
@@ -298,7 +298,7 @@ func GetRuleDistribution(e *config.Env) (map[string]int32, error) {
 	result := make(map[string]int32)
 
 	// Get alert rule count (from tb_alert_rule)
-	alertRuleCount, err := e.MongoCli.FindCount((&model.AlertRule{}).CollectName(), bson.D{})
+	alertRuleCount, err := e.MongoCli.FindCount(e.MongoContext(), (&model.AlertRule{}).CollectName(), bson.D{})
 	if err != nil {
 		logger.Errorf("find alert rule count err:%v", err)
 	} else {
@@ -306,7 +306,7 @@ func GetRuleDistribution(e *config.Env) (map[string]int32, error) {
 	}
 
 	// Get activity rule count (from tb_activity_rule)
-	activityRuleCount, err := e.MongoCli.FindCount((&model.AlertActivityRule{}).CollectName(), bson.D{})
+	activityRuleCount, err := e.MongoCli.FindCount(e.MongoContext(), (&model.AlertActivityRule{}).CollectName(), bson.D{})
 	if err != nil {
 		logger.Errorf("find activity rule count err:%v", err)
 	} else {
@@ -321,7 +321,7 @@ func GetAgentDistribution(e *config.Env) (map[string]int32, error) {
 	result := make(map[string]int32)
 
 	// Get domain count (from tb_domain)
-	domainCount, err := e.MongoCli.FindCount((&model.Domain{}).CollectName(), bson.D{})
+	domainCount, err := e.MongoCli.FindCount(e.MongoContext(), (&model.Domain{}).CollectName(), bson.D{})
 	if err != nil {
 		logger.Errorf("find domain count err:%v", err)
 	} else {
@@ -329,7 +329,7 @@ func GetAgentDistribution(e *config.Env) (map[string]int32, error) {
 	}
 
 	// Get sensor count (from tb_sensor)
-	sensorCount, err := e.MongoCli.FindCount((&model.Sensor{}).CollectName(), bson.D{})
+	sensorCount, err := e.MongoCli.FindCount(e.MongoContext(), (&model.Sensor{}).CollectName(), bson.D{})
 	if err != nil {
 		logger.Errorf("find sensor count err:%v", err)
 	} else {
@@ -338,7 +338,7 @@ func GetAgentDistribution(e *config.Env) (map[string]int32, error) {
 
 	// Get DC count by aggregating DCList from all domains
 	var domains []model.Domain
-	err = e.MongoCli.FindAll((&model.Domain{}).CollectName(), bson.D{}, &domains)
+	err = e.MongoCli.FindAll(e.MongoContext(), (&model.Domain{}).CollectName(), bson.D{}, &domains)
 	if err != nil {
 		logger.Errorf("find domains err:%v", err)
 	} else {
@@ -357,7 +357,7 @@ func GetEventDistribution(e *config.Env) (map[string]int32, error) {
 	result := make(map[string]int32)
 
 	// Get alert event count (from tb_alert_event)
-	eventCount, err := e.MongoCli.FindCount((&model.AlertEventESDB{}).CollectName(), bson.D{})
+	eventCount, err := e.MongoCli.FindCount(e.MongoContext(), (&model.AlertEventESDB{}).CollectName(), bson.D{})
 	if err != nil {
 		logger.Errorf("find alert event count err:%v", err)
 	} else {
@@ -365,7 +365,7 @@ func GetEventDistribution(e *config.Env) (map[string]int32, error) {
 	}
 
 	// Get alert activity count (from tb_alert_activity)
-	activityCount, err := e.MongoCli.FindCount((&model.AlertActivityESDB{}).CollectName(), bson.D{})
+	activityCount, err := e.MongoCli.FindCount(e.MongoContext(), (&model.AlertActivityESDB{}).CollectName(), bson.D{})
 	if err != nil {
 		logger.Errorf("find alert activity count err:%v", err)
 	} else {

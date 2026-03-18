@@ -20,8 +20,8 @@ func TestFindAllSystemLogs(t *testing.T) {
 	collectionName := "tb_system_logs"
 
 	// Clean up before test - remove all test logs
-	env.MongoCli.Remove(collectionName, bson.M{"module": testModule}, true)
-	defer env.MongoCli.Remove(collectionName, bson.M{"module": testModule}, true)
+	env.MongoCli.Remove(env.MongoContext(), collectionName, bson.M{"module": testModule}, true)
+	defer env.MongoCli.Remove(env.MongoContext(), collectionName, bson.M{"module": testModule}, true)
 
 	// Parse test times
 	time1, _ := time.Parse(time.RFC3339, "2025-10-17T14:03:08Z")
@@ -56,7 +56,7 @@ func TestFindAllSystemLogs(t *testing.T) {
 		},
 	}
 
-	err := env.MongoCli.InsertAll(collectionName, testLogs...)
+	err := env.MongoCli.InsertAll(env.MongoContext(), collectionName, testLogs...)
 	assert.NoError(t, err)
 
 	// Test 1: Get all logs without filters

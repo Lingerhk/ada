@@ -79,7 +79,7 @@ func FindAllUser(e *config.Env, limit, offset int32, search, username string, fi
 		query = append(query, bson.E{Key: "pwd_update_tm", Value: bson.M{"$gte": startTime.Add(-time.Hour * 8), "$lte": endTime.Add(-time.Hour * 8).Add(time.Second)}})
 	}
 
-	total, err := e.MongoCli.FindCount(tb, query)
+	total, err := e.MongoCli.FindCount(e.MongoContext(), tb, query)
 	if err != nil {
 		return nil, 0, err
 	}
@@ -98,10 +98,10 @@ func FindAllUser(e *config.Env, limit, offset int32, search, username string, fi
 		rsort = bson.M{"create_tm": -1}
 	}
 
-	err = e.MongoCli.FindSortByLimitAndSkip(tb, query, rsort, &users, int64(limit), int64(offset))
+	err = e.MongoCli.FindSortByLimitAndSkip(e.MongoContext(), tb, query, rsort, &users, int64(limit), int64(offset))
 	if err != nil {
 		var rawUsers []bson.M
-		rawErr := e.MongoCli.FindSortByLimitAndSkip(tb, query, rsort, &rawUsers, int64(limit), int64(offset))
+		rawErr := e.MongoCli.FindSortByLimitAndSkip(e.MongoContext(), tb, query, rsort, &rawUsers, int64(limit), int64(offset))
 		if rawErr == nil {
 			if detailErr := describeUserDecodeError(rawUsers); detailErr != nil {
 				return nil, 0, detailErr
@@ -131,7 +131,7 @@ func describeUserDecodeError(rawUsers []bson.M) error {
 
 func GetUser(e *config.Env, userName string) (*model.User, error) {
 	var u model.User
-	err, exist := e.MongoCli.FindOne(u.CollectName(), bson.M{"username": userName}, &u)
+	err, exist := e.MongoCli.FindOne(e.MongoContext(), u.CollectName(), bson.M{"username": userName}, &u)
 	if err != nil || !exist {
 		return nil, err
 	}
@@ -142,7 +142,7 @@ func GetUser(e *config.Env, userName string) (*model.User, error) {
 func AddUser(e *config.Env, userName, passHash, passStrength, role, mobile, email, remark, department string, priv int32) error {
 	var u model.User
 
-	uid, err := e.MongoCli.GetNextSequence(u.CollectName())
+	uid, err := e.MongoCli.GetNextSequence(e.MongoContext(), u.CollectName())
 	if err != nil {
 		return err
 	}
@@ -163,7 +163,7 @@ func AddUser(e *config.Env, userName, passHash, passStrength, role, mobile, emai
 	u.ActiveTm = utime.CurTime()
 	u.UpdateTm = utime.CurTime()
 
-	err = e.MongoCli.Insert(u.CollectName(), &u)
+	err = e.MongoCli.Insert(e.MongoContext(), u.CollectName(), &u)
 	if err != nil {
 		return err
 	}
@@ -176,7 +176,7 @@ func UpdateUser(e *config.Env, user *model.User) error {
 	// update user property
 
 	query := bson.M{"username": user.UserName}
-	err := e.MongoCli.Update(u.CollectName(), &query, &user, false)
+	err := e.MongoCli.Update(e.MongoContext(), u.CollectName(), &query, &user, false)
 	if err != nil {
 		return err
 	}
@@ -198,7 +198,7 @@ func UpdateUserInfo(e *config.Env, userName, role, password, mobile, email, rema
 		}}
 	}
 
-	err := e.MongoCli.UpdateRaw(u.CollectName(), &query, &updateM, false)
+	err := e.MongoCli.UpdateRaw(e.MongoContext(), u.CollectName(), &query, &updateM, false)
 	if err != nil {
 		return err
 	}
@@ -214,7 +214,7 @@ func UpdateUserPassword(e *config.Env, userName, passHash, passStrength string) 
 		"pwd_update_tm": utime.CurTime(),
 	}
 	query := bson.M{"username": userName}
-	err := e.MongoCli.Update(u.CollectName(), &query, &user, false)
+	err := e.MongoCli.Update(e.MongoContext(), u.CollectName(), &query, &user, false)
 	if err != nil {
 		return err
 	}
@@ -224,7 +224,7 @@ func UpdateUserPassword(e *config.Env, userName, passHash, passStrength string) 
 func UpdateUserSecret(e *config.Env, user *model.User) error {
 	query := bson.M{"_id": user.ID}
 	update := bson.M{"$set": bson.M{"secret": user.Secret, "mfa_status": "enable"}}
-	err := e.MongoCli.UpdateRaw(user.CollectName(), query, update, false)
+	err := e.MongoCli.UpdateRaw(e.MongoContext(), user.CollectName(), query, update, false)
 	if err != nil {
 		return err
 	}
@@ -234,7 +234,7 @@ func UpdateUserSecret(e *config.Env, user *model.User) error {
 func DisableMfa(e *config.Env, user *model.User) error {
 	query := bson.M{"_id": user.ID}
 	update := bson.M{"$set": bson.M{"secret": "", "mfa_status": "disable"}}
-	err := e.MongoCli.UpdateRaw(user.CollectName(), query, update, false)
+	err := e.MongoCli.UpdateRaw(e.MongoContext(), user.CollectName(), query, update, false)
 	if err != nil {
 		return err
 	}
@@ -244,7 +244,7 @@ func DisableMfa(e *config.Env, user *model.User) error {
 func DeleteUser(e *config.Env, userName string) error {
 	var u model.User
 	query := bson.M{"username": userName}
-	err := e.MongoCli.Remove(u.CollectName(), &query, false)
+	err := e.MongoCli.Remove(e.MongoContext(), u.CollectName(), &query, false)
 	if err != nil {
 		return err
 	}
@@ -258,7 +258,7 @@ func UpdateUserAvatar(e *config.Env, userId int32, file string) error {
 		"avatar": file,
 	}
 
-	err := e.MongoCli.UpdateById(user.CollectName(), userId, &update)
+	err := e.MongoCli.UpdateById(e.MongoContext(), user.CollectName(), userId, &update)
 	if err != nil {
 		return err
 	}
@@ -270,7 +270,7 @@ func FindUserByName(e *config.Env, username string) (*model.User, error) {
 	tb := (&model.User{}).CollectName()
 
 	m := bson.M{"username": username}
-	err, _ := e.MongoCli.FindOne(tb, m, &user)
+	err, _ := e.MongoCli.FindOne(e.MongoContext(), tb, m, &user)
 	if err != nil {
 		return nil, err
 	}
@@ -287,7 +287,7 @@ func ListAccessKey(e *config.Env, username string) ([]model.AccessKey, error) {
 		query["username"] = username
 	}
 
-	err := e.MongoCli.FindAll(tb, query, &keys)
+	err := e.MongoCli.FindAll(e.MongoContext(), tb, query, &keys)
 	if err != nil {
 		return nil, err
 	}
@@ -323,7 +323,7 @@ func GenerateAccessKey(e *config.Env, username, remark string) (string, error) {
 		UpdateTm:   time.Now(),
 	}
 
-	err = e.MongoCli.Insert(tb, key)
+	err = e.MongoCli.Insert(e.MongoContext(), tb, key)
 	if err != nil {
 		logger.Errorf("insert access key error: %v", err)
 		return "", err
@@ -343,7 +343,7 @@ func GetAccessKey(e *config.Env, id string) (*model.AccessKey, error) {
 	}
 
 	m := bson.M{"_id": objID}
-	err, _ = e.MongoCli.FindOne(tb, m, &key)
+	err, _ = e.MongoCli.FindOne(e.MongoContext(), tb, m, &key)
 	if err != nil {
 		return nil, err
 	}
@@ -366,7 +366,7 @@ func DeleteAccessKey(e *config.Env, id string) error {
 			"update_tm": time.Now(),
 		},
 	}
-	err = e.MongoCli.UpdateRaw(tb, m, update, false)
+	err = e.MongoCli.UpdateRaw(e.MongoContext(), tb, m, update, false)
 	if err != nil {
 		logger.Errorf("disable access key error: %v", err)
 		return err

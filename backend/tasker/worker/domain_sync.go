@@ -96,7 +96,7 @@ func syncDomainStatus(w *Worker, lang string) (bool, error) {
 					title := fmt.Sprintf("%s:%s", getNotifyMsgTypeDesc(common.NotifyMsgSystem, lang), getI18n("domain_status_abnormal", lang))
 					desc := fmt.Sprintf(getI18n("domain_status_abnormal_desc", lang), name, lastTm.Format("2006:01:02 15:04:05"))
 					params := map[string]string{"last_online_tm": lastTm.Format("2006:01:02 15:04:05"), "dc_hostname": name}
-					err = AddNotify(w.env.MongoCli, title, "domain", desc, lang, params)
+					err = AddNotify(w.env.MongoContext(), w.env.MongoCli, title, "domain", desc, lang, params)
 					// update domain_last_notify_tm
 					_ = w.env.RedisCli.Set(ctx, lastNotifyKey, "1", 6*time.Hour).Err()
 				}
@@ -242,7 +242,7 @@ func getDomainListByStatus(e *Worker, status string) ([]model.Domain, error) {
 		query = bson.M{"status": status}
 	}
 
-	err := e.env.MongoCli.FindAll(domain.CollectName(), query, &domainList)
+	err := e.env.MongoCli.FindAll(e.env.MongoContext(), domain.CollectName(), query, &domainList)
 	if err != nil {
 		return nil, err
 	}
@@ -252,13 +252,13 @@ func getDomainListByStatus(e *Worker, status string) ([]model.Domain, error) {
 
 // 同步域控制器状态
 func updateDomainByID(w *Worker, domain model.Domain) error {
-	return w.env.MongoCli.UpdateById(domain.CollectName(), domain.ID, &domain)
+	return w.env.MongoCli.UpdateById(w.env.MongoContext(), domain.CollectName(), domain.ID, &domain)
 }
 
 func getSensorByDCHostName(w *Worker, dcHostName string) (*model.Sensor, error) {
 	query := bson.M{"dc_hostname": strings.ToLower(dcHostName)}
 	var sensor model.Sensor
-	err, _ := w.env.MongoCli.FindOne(sensor.CollectName(), query, &sensor)
+	err, _ := w.env.MongoCli.FindOne(w.env.MongoContext(), sensor.CollectName(), query, &sensor)
 	if err != nil {
 		return nil, err
 	}
@@ -326,7 +326,13 @@ func getDomainDCListWithLDAP(dcHostnameList []string, domainName, username, pass
 		domain = strings.Join(parts[1:], ".")
 		// LDAP查询该域内的所有DC列表
 		dnPrefix := ""
-		logger.Printf("ldap params:ldapAddr:%s, username:%s, password:%s, dns:%s\n", ldapAddr, username, password, dns)
+		logger.Infof(
+			"ldap params: ldapAddr=%s username=%s password_set=%t dns=%s",
+			ldapAddr,
+			common.MaskSensitive(username),
+			password != "",
+			dns,
+		)
 		ldapSearch, err = ldap.NewSearch(ldapAddr, username, password, dns, dnPrefix)
 		if err != nil {
 			logger.Warnf("neNewSearch(%s) err:%v, continue.", ldapAddr, err)

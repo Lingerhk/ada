@@ -326,16 +326,16 @@ func (w *Worker) syncAllUser(ls *ldap.LDAPSearch, domainName string) error {
 		}
 
 		// update or add user
-		_, exist := w.env.MongoCli.FindOne(obj.CollectName(), bson.M{"sAMAccountName": obj.SAMAccountName, "domain": obj.Domain}, &user)
+		_, exist := w.env.MongoCli.FindOne(w.env.MongoContext(), obj.CollectName(), bson.M{"sAMAccountName": obj.SAMAccountName, "domain": obj.Domain}, &user)
 		if exist {
 			update := bson.M{
 				"syncTm": time.Now().Unix(),
 			}
-			err = w.env.MongoCli.UpdateById(obj.CollectName(), user.ID, &update)
+			err = w.env.MongoCli.UpdateById(w.env.MongoContext(), obj.CollectName(), user.ID, &update)
 		} else {
 			obj.ID = bson.NewObjectID()
 			obj.SyncTm = time.Now().Unix()
-			err = w.env.MongoCli.Insert(obj.CollectName(), &obj)
+			err = w.env.MongoCli.Insert(w.env.MongoContext(), obj.CollectName(), &obj)
 		}
 		if err != nil {
 			logger.Warnf("store asset user err:%v", err)
@@ -348,7 +348,7 @@ func (w *Worker) syncAllUser(ls *ldap.LDAPSearch, domainName string) error {
 	query := bson.D{}
 	query = append(query, bson.E{Key: "domain", Value: obj.Domain})
 	query = append(query, bson.E{Key: "syncTm", Value: bson.M{"$lte": time.Now().Add(-time.Minute * 10)}})
-	err = w.env.MongoCli.FindAll(obj.CollectName(), query, &userList)
+	err = w.env.MongoCli.FindAll(w.env.MongoContext(), obj.CollectName(), query, &userList)
 	if err != nil {
 		logger.Errorf("find all user err:%v", err)
 		return err
@@ -358,7 +358,7 @@ func (w *Worker) syncAllUser(ls *ldap.LDAPSearch, domainName string) error {
 			"isDelete": true,
 			"syncTm":   time.Now().Unix(),
 		}
-		err = w.env.MongoCli.UpdateById(user.CollectName(), user.ID, &update)
+		err = w.env.MongoCli.UpdateById(w.env.MongoContext(), user.CollectName(), user.ID, &update)
 		if err != nil {
 			logger.Warnf("updat asset user err:%v", err)
 			continue
@@ -437,16 +437,16 @@ func (w *Worker) syncAllGroup(ls *ldap.LDAPSearch, domainName string) error {
 		}
 
 		// update or add group
-		_, exist := w.env.MongoCli.FindOne(obj.CollectName(), bson.M{"sAMAccountName": obj.SAMAccountName, "domain": obj.Domain}, &group)
+		_, exist := w.env.MongoCli.FindOne(w.env.MongoContext(), obj.CollectName(), bson.M{"sAMAccountName": obj.SAMAccountName, "domain": obj.Domain}, &group)
 		if exist {
 			update := bson.M{
 				"syncTm": time.Now().Unix(),
 			}
-			err = w.env.MongoCli.UpdateById(obj.CollectName(), group.ID, &update)
+			err = w.env.MongoCli.UpdateById(w.env.MongoContext(), obj.CollectName(), group.ID, &update)
 		} else {
 			obj.ID = bson.NewObjectID()
 			obj.SyncTm = time.Now().Unix()
-			err = w.env.MongoCli.Insert(obj.CollectName(), &obj)
+			err = w.env.MongoCli.Insert(w.env.MongoContext(), obj.CollectName(), &obj)
 		}
 		if err != nil {
 			logger.Warnf("store asset group err:%v", err)
@@ -459,7 +459,7 @@ func (w *Worker) syncAllGroup(ls *ldap.LDAPSearch, domainName string) error {
 	query := bson.D{}
 	query = append(query, bson.E{Key: "domain", Value: obj.Domain})
 	query = append(query, bson.E{Key: "syncTm", Value: bson.M{"$lte": time.Now().Add(-time.Minute * 10)}})
-	err = w.env.MongoCli.FindAll(obj.CollectName(), query, &groupList)
+	err = w.env.MongoCli.FindAll(w.env.MongoContext(), obj.CollectName(), query, &groupList)
 	if err != nil {
 		logger.Errorf("find all group err:%v", err)
 		return err
@@ -469,7 +469,7 @@ func (w *Worker) syncAllGroup(ls *ldap.LDAPSearch, domainName string) error {
 			"isDelete": true,
 			"syncTm":   time.Now().Unix(),
 		}
-		err = w.env.MongoCli.UpdateById(group.CollectName(), group.ID, &update)
+		err = w.env.MongoCli.UpdateById(w.env.MongoContext(), group.CollectName(), group.ID, &update)
 		if err != nil {
 			logger.Warnf("update asset group err:%v", err)
 			continue
@@ -555,16 +555,16 @@ func (w *Worker) syncAllComputer(ls *ldap.LDAPSearch, domainName string) error {
 		}
 
 		// update or add computer
-		_, exist := w.env.MongoCli.FindOne(obj.CollectName(), bson.M{"sAMAccountName": obj.SAMAccountName, "domain": obj.Domain}, &computer)
+		_, exist := w.env.MongoCli.FindOne(w.env.MongoContext(), obj.CollectName(), bson.M{"sAMAccountName": obj.SAMAccountName, "domain": obj.Domain}, &computer)
 		if exist {
 			update := bson.M{
 				"syncTm": time.Now().Unix(),
 			}
-			err = w.env.MongoCli.UpdateById(obj.CollectName(), computer.ID, &update)
+			err = w.env.MongoCli.UpdateById(w.env.MongoContext(), obj.CollectName(), computer.ID, &update)
 		} else {
 			obj.ID = bson.NewObjectID()
 			obj.SyncTm = time.Now().Unix()
-			err = w.env.MongoCli.Insert(obj.CollectName(), &obj)
+			err = w.env.MongoCli.Insert(w.env.MongoContext(), obj.CollectName(), &obj)
 		}
 		if err != nil {
 			logger.Warnf("store asset computer err:%v", err)
@@ -577,7 +577,7 @@ func (w *Worker) syncAllComputer(ls *ldap.LDAPSearch, domainName string) error {
 	query := bson.D{}
 	query = append(query, bson.E{Key: "domain", Value: obj.Domain})
 	query = append(query, bson.E{Key: "syncTm", Value: bson.M{"$lte": time.Now().Add(-time.Minute * 10)}})
-	err = w.env.MongoCli.FindAll(obj.CollectName(), query, &computerList)
+	err = w.env.MongoCli.FindAll(w.env.MongoContext(), obj.CollectName(), query, &computerList)
 	if err != nil {
 		logger.Errorf("find all computer err:%v", err)
 		return err
@@ -587,7 +587,7 @@ func (w *Worker) syncAllComputer(ls *ldap.LDAPSearch, domainName string) error {
 			"isDelete": true,
 			"syncTm":   time.Now().Unix(),
 		}
-		err = w.env.MongoCli.UpdateById(computer.CollectName(), computer.ID, &update)
+		err = w.env.MongoCli.UpdateById(w.env.MongoContext(), computer.CollectName(), computer.ID, &update)
 		if err != nil {
 			logger.Warnf("update asset computer err:%v", err)
 			continue
@@ -605,7 +605,7 @@ func (w *Worker) addOrUpdateEntry(ctx context.Context, currTm time.Time, domainN
 	key := cache.SensitiveEntryKey(domainName, entryType)
 
 	var se model.SensitiveEntry
-	_, exist := w.env.MongoCli.FindOne(se.CollectName(), bson.M{"domain": domainName, "type": entryType, "content.name": name}, &se)
+	_, exist := w.env.MongoCli.FindOne(w.env.MongoContext(), se.CollectName(), bson.M{"domain": domainName, "type": entryType, "content.name": name}, &se)
 	if exist {
 		// Update the UpdateTm
 		update := bson.M{
@@ -615,7 +615,7 @@ func (w *Worker) addOrUpdateEntry(ctx context.Context, currTm time.Time, domainN
 				"name": name,
 			},
 		}
-		err := w.env.MongoCli.UpdateById(se.CollectName(), se.ID, &update)
+		err := w.env.MongoCli.UpdateById(w.env.MongoContext(), se.CollectName(), se.ID, &update)
 		if err != nil {
 			logger.Warnf("failed to update sensitive entry: %v", err)
 			return fmt.Errorf("failed to update sensitive entry: %v", err)
@@ -635,7 +635,7 @@ func (w *Worker) addOrUpdateEntry(ctx context.Context, currTm time.Time, domainN
 	se.Origin = 0
 	se.CreateTm = currTm
 	se.UpdateTm = currTm
-	err := w.env.MongoCli.Insert(se.CollectName(), &se)
+	err := w.env.MongoCli.Insert(w.env.MongoContext(), se.CollectName(), &se)
 	if err != nil {
 		return err
 	}
@@ -661,7 +661,7 @@ func (w *Worker) deleteRemovedEntry(ctx context.Context, currTm time.Time, domai
 		"update_tm": bson.M{"$lt": currTm}, // Not updated in current sync
 	}
 
-	err := w.env.MongoCli.FindAll((&model.SensitiveEntry{}).CollectName(), query, &entryList)
+	err := w.env.MongoCli.FindAll(w.env.MongoContext(), (&model.SensitiveEntry{}).CollectName(), query, &entryList)
 	if err != nil {
 		logger.Errorf("find stale sensitive entries (type: %s) err: %v", entryType, err)
 		return err
@@ -676,7 +676,7 @@ func (w *Worker) deleteRemovedEntry(ctx context.Context, currTm time.Time, domai
 	// Delete each stale entry from MongoDB and Redis
 	for _, entry := range entryList {
 		// Delete from MongoDB
-		err = w.env.MongoCli.RemoveById(entry.CollectName(), entry.ID)
+		err = w.env.MongoCli.RemoveById(w.env.MongoContext(), entry.CollectName(), entry.ID)
 		if err != nil {
 			logger.Warnf("failed to delete sensitive entry (id: %s, type: %s) err: %v", entry.ID.Hex(), entryType, err)
 			continue

@@ -13,7 +13,7 @@ func GetSensorByID(e *config.Env, id string) (*model.Sensor, error) {
 	sensor := model.Sensor{}
 	query := bson.M{"_id": id}
 
-	err, _ := e.MongoCli.FindOne(sensor.CollectName(), query, &sensor)
+	err, _ := e.MongoCli.FindOne(e.MongoContext(), sensor.CollectName(), query, &sensor)
 	if err != nil {
 		logger.Errorf("get sensor err:%v", err)
 		return nil, err
@@ -47,14 +47,14 @@ func FindAllSensor(e *config.Env, keyword string, status, domain []string, limit
 		query = append(query, bson.E{Key: "domain", Value: bson.M{"$in": domain}})
 	}
 
-	total, err := e.MongoCli.FindCount(tb, query)
+	total, err := e.MongoCli.FindCount(e.MongoContext(), tb, query)
 	if err != nil {
 		return nil, 0, err
 	}
 
 	var sort = bson.M{"last_online_tm": tmSort}
 
-	if err := e.MongoCli.FindSortByLimitAndSkip(tb, query, sort, &agents, limit, skip); err != nil {
+	if err := e.MongoCli.FindSortByLimitAndSkip(e.MongoContext(), tb, query, sort, &agents, limit, skip); err != nil {
 		return nil, 0, err
 	}
 	return agents, total, nil
@@ -73,7 +73,7 @@ func UpdateSensorConf(e *config.Env, Id, remark string, bindNetIface []string, p
 		update[k] = v
 	}
 
-	err := e.MongoCli.UpdateById(u.CollectName(), Id, &update)
+	err := e.MongoCli.UpdateById(e.MongoContext(), u.CollectName(), Id, &update)
 	if err != nil {
 		return err
 	}
@@ -83,7 +83,7 @@ func UpdateSensorConf(e *config.Env, Id, remark string, bindNetIface []string, p
 func DeleteSensor(e *config.Env, Id string) error {
 	var sensor model.Sensor
 
-	err := e.MongoCli.RemoveById(sensor.CollectName(), Id)
+	err := e.MongoCli.RemoveById(e.MongoContext(), sensor.CollectName(), Id)
 	if err != nil {
 		return err
 	}
@@ -94,7 +94,7 @@ func FindAllSensorByDomain(e *config.Env, domain string) ([]model.Sensor, error)
 	var sensors []model.Sensor
 	tb := (&model.Sensor{}).CollectName()
 
-	err := e.MongoCli.FindAll(tb, bson.M{"domain": domain}, &sensors)
+	err := e.MongoCli.FindAll(e.MongoContext(), tb, bson.M{"domain": domain}, &sensors)
 	if err != nil {
 		return nil, err
 	}
@@ -106,7 +106,7 @@ func GetSensorByDcHostName(e *config.Env, dcHostName string) (*model.Sensor, err
 	var sensor model.Sensor
 	tb := (&model.Sensor{}).CollectName()
 
-	err, exist := e.MongoCli.FindOne(tb, bson.M{"dc_hostname": dcHostName}, &sensor)
+	err, exist := e.MongoCli.FindOne(e.MongoContext(), tb, bson.M{"dc_hostname": dcHostName}, &sensor)
 	if err != nil || !exist {
 		return nil, err
 	}

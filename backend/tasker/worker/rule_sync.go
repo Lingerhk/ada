@@ -58,7 +58,7 @@ func (w *Worker) RuleSyncTask(ctx context.Context) error {
 
 	// Get system info to check UpgradeRule setting
 	var sysInfo model.SystemInfo
-	_, exist := w.env.MongoCli.FindOne(sysInfo.CollectName(), bson.M{}, &sysInfo)
+	_, exist := w.env.MongoCli.FindOne(w.env.MongoContext(), sysInfo.CollectName(), bson.M{}, &sysInfo)
 	if !exist {
 		logger.Warn("System info not found, skipping rule sync")
 		return nil
@@ -462,7 +462,7 @@ func (w *Worker) collectFlowRulesToUpload(ctx context.Context, remoteRules map[s
 
 	// Query all flow rules from database
 	var flowRules []model.AlertRule
-	if err := w.env.MongoCli.FindAll((&model.AlertRule{}).CollectName(), bson.M{}, &flowRules); err != nil {
+	if err := w.env.MongoCli.FindAll(w.env.MongoContext(), (&model.AlertRule{}).CollectName(), bson.M{}, &flowRules); err != nil {
 		return nil, fmt.Errorf("failed to query flow rules: %w", err)
 	}
 
@@ -518,7 +518,7 @@ func (w *Worker) collectActivityRulesToUpload(ctx context.Context, remoteRules m
 
 	// Query all activity rules from database
 	var activityRules []model.AlertActivityRule
-	if err := w.env.MongoCli.FindAll((&model.AlertActivityRule{}).CollectName(), bson.M{}, &activityRules); err != nil {
+	if err := w.env.MongoCli.FindAll(w.env.MongoContext(), (&model.AlertActivityRule{}).CollectName(), bson.M{}, &activityRules); err != nil {
 		return nil, nil, fmt.Errorf("failed to query activity rules: %w", err)
 	}
 
@@ -740,7 +740,7 @@ func (w *Worker) updateActivityRule(ctx context.Context, meta RuleMetadata, rule
 
 	// Check if rule exists
 	var existingRule model.AlertActivityRule
-	_, exists := w.env.MongoCli.FindOne(existingRule.CollectName(), bson.M{"_id": rule.ID}, &existingRule)
+	_, exists := w.env.MongoCli.FindOne(w.env.MongoContext(), existingRule.CollectName(), bson.M{"_id": rule.ID}, &existingRule)
 
 	if exists {
 		// Update existing rule
@@ -760,7 +760,7 @@ func (w *Worker) updateActivityRule(ctx context.Context, meta RuleMetadata, rule
 			"update_tm":     updateTm,
 		}
 
-		if err := w.env.MongoCli.UpdateById(existingRule.CollectName(), rule.ID, update); err != nil {
+		if err := w.env.MongoCli.UpdateById(w.env.MongoContext(), existingRule.CollectName(), rule.ID, update); err != nil {
 			return fmt.Errorf("failed to update rule: %w", err)
 		}
 		logger.Debugf("Updated activity rule: %s", rule.ID)
@@ -769,7 +769,7 @@ func (w *Worker) updateActivityRule(ctx context.Context, meta RuleMetadata, rule
 		rule.CreateTm = createTm
 		rule.UpdateTm = updateTm
 
-		if err := w.env.MongoCli.Insert(rule.CollectName(), &rule); err != nil {
+		if err := w.env.MongoCli.Insert(w.env.MongoContext(), rule.CollectName(), &rule); err != nil {
 			return fmt.Errorf("failed to insert rule: %w", err)
 		}
 		logger.Debugf("Inserted new activity rule: %s", rule.ID)
@@ -805,7 +805,7 @@ func (w *Worker) updateFlowRule(ctx context.Context, meta RuleMetadata, rulesDir
 
 	// Check if rule exists
 	var existingRule model.AlertRule
-	_, exists := w.env.MongoCli.FindOne(existingRule.CollectName(), bson.M{"_id": rule.ID}, &existingRule)
+	_, exists := w.env.MongoCli.FindOne(w.env.MongoContext(), existingRule.CollectName(), bson.M{"_id": rule.ID}, &existingRule)
 
 	if exists {
 		// Update existing rule
@@ -828,7 +828,7 @@ func (w *Worker) updateFlowRule(ctx context.Context, meta RuleMetadata, rulesDir
 			"update_tm":     updateTm,
 		}
 
-		if err := w.env.MongoCli.UpdateById(existingRule.CollectName(), rule.ID, update); err != nil {
+		if err := w.env.MongoCli.UpdateById(w.env.MongoContext(), existingRule.CollectName(), rule.ID, update); err != nil {
 			return fmt.Errorf("failed to update flow rule: %w", err)
 		}
 		logger.Debugf("Updated flow rule: %s", rule.ID)
@@ -838,7 +838,7 @@ func (w *Worker) updateFlowRule(ctx context.Context, meta RuleMetadata, rulesDir
 		rule.CreateTm = createTm
 		rule.UpdateTm = updateTm
 
-		if err := w.env.MongoCli.Insert(rule.CollectName(), &rule); err != nil {
+		if err := w.env.MongoCli.Insert(w.env.MongoContext(), rule.CollectName(), &rule); err != nil {
 			return fmt.Errorf("failed to insert flow rule: %w", err)
 		}
 		logger.Debugf("Inserted new flow rule: %s", rule.ID)
@@ -966,7 +966,15 @@ func (w *Worker) createUploadPackage(ctx context.Context, uploadDesc *RuleUpload
 		}
 
 		if info.IsDir() {
-			return nil
+			if path == tmpDir {
+				return nil
+			}
+			relPath, err := filepath.Rel(tmpDir, path)
+			if err != nil {
+				return err
+			}
+			_, err = zipWriter.Create(filepath.ToSlash(relPath) + "/")
+			return err
 		}
 
 		// Get relative path
@@ -976,7 +984,7 @@ func (w *Worker) createUploadPackage(ctx context.Context, uploadDesc *RuleUpload
 		}
 
 		// Create ZIP entry
-		writer, err := zipWriter.Create(relPath)
+		writer, err := zipWriter.Create(filepath.ToSlash(relPath))
 		if err != nil {
 			return err
 		}
@@ -996,7 +1004,7 @@ func (w *Worker) createUploadPackage(ctx context.Context, uploadDesc *RuleUpload
 // exportFlowRuleToYAML exports a flow rule from DB to YAML file
 func (w *Worker) exportFlowRuleToYAML(ctx context.Context, ruleID, outputDir string) error {
 	var rule model.AlertRule
-	_, exists := w.env.MongoCli.FindOne(rule.CollectName(), bson.M{"_id": ruleID}, &rule)
+	_, exists := w.env.MongoCli.FindOne(w.env.MongoContext(), rule.CollectName(), bson.M{"_id": ruleID}, &rule)
 	if !exists {
 		return fmt.Errorf("rule not found: %s", ruleID)
 	}
@@ -1015,7 +1023,7 @@ func (w *Worker) exportFlowRuleToYAML(ctx context.Context, ruleID, outputDir str
 // exportActivityRuleToYAML exports an activity rule from DB to YAML file
 func (w *Worker) exportActivityRuleToYAML(ctx context.Context, ruleID, outputDir string) error {
 	var rule model.AlertActivityRule
-	_, exists := w.env.MongoCli.FindOne(rule.CollectName(), bson.M{"_id": ruleID}, &rule)
+	_, exists := w.env.MongoCli.FindOne(w.env.MongoContext(), rule.CollectName(), bson.M{"_id": ruleID}, &rule)
 	if !exists {
 		return fmt.Errorf("rule not found: %s", ruleID)
 	}
@@ -1181,7 +1189,7 @@ func (w *Worker) writeAllRulesToDisk() error {
 
 	// Step 2: Sync alert rules (flow rules)
 	var alertRules []model.AlertRule
-	if err := w.env.MongoCli.FindAll((&model.AlertRule{}).CollectName(), bson.M{}, &alertRules); err != nil {
+	if err := w.env.MongoCli.FindAll(w.env.MongoContext(), (&model.AlertRule{}).CollectName(), bson.M{}, &alertRules); err != nil {
 		return fmt.Errorf("failed to query alert rules: %w", err)
 	}
 
@@ -1193,7 +1201,7 @@ func (w *Worker) writeAllRulesToDisk() error {
 
 	// Step 3: Sync activity rules (winlog/pktlog rules)
 	var activityRules []model.AlertActivityRule
-	if err := w.env.MongoCli.FindAll((&model.AlertActivityRule{}).CollectName(), bson.M{}, &activityRules); err != nil {
+	if err := w.env.MongoCli.FindAll(w.env.MongoContext(), (&model.AlertActivityRule{}).CollectName(), bson.M{}, &activityRules); err != nil {
 		return fmt.Errorf("failed to query activity rules: %w", err)
 	}
 
