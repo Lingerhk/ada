@@ -100,10 +100,33 @@ func FindAllUser(e *config.Env, limit, offset int32, search, username string, fi
 
 	err = e.MongoCli.FindSortByLimitAndSkip(tb, query, rsort, &users, int64(limit), int64(offset))
 	if err != nil {
-		return nil, 0, err
+		var rawUsers []bson.M
+		rawErr := e.MongoCli.FindSortByLimitAndSkip(tb, query, rsort, &rawUsers, int64(limit), int64(offset))
+		if rawErr == nil {
+			if detailErr := describeUserDecodeError(rawUsers); detailErr != nil {
+				return nil, 0, detailErr
+			}
+		}
+		return nil, 0, fmt.Errorf("find users failed: %w", err)
 	}
 
 	return users, total, nil
+}
+
+func describeUserDecodeError(rawUsers []bson.M) error {
+	for _, rawUser := range rawUsers {
+		blob, err := bson.Marshal(rawUser)
+		if err != nil {
+			return fmt.Errorf("marshal tb_user username=%v _id=%v failed: %w", rawUser["username"], rawUser["_id"], err)
+		}
+
+		var user model.User
+		if err := bson.Unmarshal(blob, &user); err != nil {
+			return fmt.Errorf("decode tb_user username=%v _id=%v failed: %w", rawUser["username"], rawUser["_id"], err)
+		}
+	}
+
+	return nil
 }
 
 func GetUser(e *config.Env, userName string) (*model.User, error) {

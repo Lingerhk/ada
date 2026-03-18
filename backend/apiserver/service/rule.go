@@ -45,6 +45,7 @@ func detectionToYAML(detection any) (string, error) {
 // Alert Rule methods
 
 func (s *ADAServiceV2) ListAlertRule(ctx context.Context, in *v2.ListAlertRuleReq) (*v2.ListAlertRuleReply, error) {
+	s = s.withContext(ctx)
 	limit := in.PageSize
 	if limit == 0 {
 		limit = 10
@@ -152,6 +153,7 @@ func (s *ADAServiceV2) ListAlertRule(ctx context.Context, in *v2.ListAlertRuleRe
 }
 
 func (s *ADAServiceV2) AddAlertRule(ctx context.Context, in *v2.AddAlertRuleReq) (*v2.AddAlertRuleReply, error) {
+	s = s.withContext(ctx)
 	// If ID is provided, check if rule with this ID already exists
 	if in.ID != "" {
 		existingRule, err := server.GetAlertRuleByID(s.env, in.ID)
@@ -234,6 +236,7 @@ func (s *ADAServiceV2) AddAlertRule(ctx context.Context, in *v2.AddAlertRuleReq)
 }
 
 func (s *ADAServiceV2) UpdateAlertRule(ctx context.Context, in *v2.UpdateAlertRuleReq) (*v2.UpdateAlertRuleReply, error) {
+	s = s.withContext(ctx)
 	updates := bson.M{}
 
 	if in.Title != "" {
@@ -332,6 +335,7 @@ func (s *ADAServiceV2) UpdateAlertRule(ctx context.Context, in *v2.UpdateAlertRu
 }
 
 func (s *ADAServiceV2) DeleteAlertRule(ctx context.Context, in *v2.DeleteAlertRuleReq) (*v2.DeleteAlertRuleReply, error) {
+	s = s.withContext(ctx)
 	err := server.DeleteAlertRule(s.env, in.ID)
 	if err != nil {
 		logger.Errorf("DeleteAlertRule failed: %v", err)
@@ -355,6 +359,7 @@ func (s *ADAServiceV2) DeleteAlertRule(ctx context.Context, in *v2.DeleteAlertRu
 
 // GetAlertTypes
 func (s *ADAServiceV2) GetAlertTypes(ctx context.Context, in *v2.GetAlertTypesReq) (*v2.GetAlertTypesReply, error) {
+	s = s.withContext(ctx)
 	return &v2.GetAlertTypesReply{
 		AlertTypes: common.RuleTypeMap,
 	}, nil
@@ -362,6 +367,7 @@ func (s *ADAServiceV2) GetAlertTypes(ctx context.Context, in *v2.GetAlertTypesRe
 
 // GetAlertRuleNames returns alert rule names mapping (rule_id -> rule_name)
 func (s *ADAServiceV2) GetAlertRuleNames(ctx context.Context, in *v2.GetAlertRuleNamesReq) (*v2.GetAlertRuleNamesReply, error) {
+	s = s.withContext(ctx)
 	var nameMap = make(map[string]string)
 
 	if in.RuleId != "" {
@@ -391,6 +397,7 @@ func (s *ADAServiceV2) GetAlertRuleNames(ctx context.Context, in *v2.GetAlertRul
 
 // GetAlertRuleTags
 func (s *ADAServiceV2) GetAlertRuleTags(ctx context.Context, in *v2.GetAlertRuleTagsReq) (*v2.GetAlertRuleTagsReply, error) {
+	s = s.withContext(ctx)
 	tags, err := server.GetAllRuleTags(s.env)
 	if err != nil {
 		logger.Errorf("get all rule tags err:%v", err)
@@ -405,6 +412,7 @@ func (s *ADAServiceV2) GetAlertRuleTags(ctx context.Context, in *v2.GetAlertRule
 
 // GetActivityRuleFields
 func (s *ADAServiceV2) GetActivityRuleFields(ctx context.Context, in *v2.GetActivityRuleFieldsReq) (*v2.GetActivityRuleFieldsReply, error) {
+	s = s.withContext(ctx)
 	fields, err := server.GetAllActivityRuleFields(s.env)
 	if err != nil {
 		logger.Errorf("get all activity rule fields err:%v", err)
@@ -417,6 +425,7 @@ func (s *ADAServiceV2) GetActivityRuleFields(ctx context.Context, in *v2.GetActi
 
 // GetActivityRuleUniqueFields
 func (s *ADAServiceV2) GetActivityRuleNames(ctx context.Context, in *v2.GetActivityRuleNamesReq) (*v2.GetActivityRuleNamesReply, error) {
+	s = s.withContext(ctx)
 	// Get all activity rules without filters
 	rules, _, err := server.ListActivityRule(s.env, []string{}, []int32{}, []string{}, "", []string{}, "", "", -1, 10000, 0)
 	if err != nil {
@@ -438,6 +447,7 @@ func (s *ADAServiceV2) GetActivityRuleNames(ctx context.Context, in *v2.GetActiv
 }
 
 func (s *ADAServiceV2) GetActivityRuleUniqueFields(ctx context.Context, in *v2.GetActivityRuleUniqueFieldsReq) (*v2.GetActivityRuleUniqueFieldsReply, error) {
+	s = s.withContext(ctx)
 	uniqueFields, err := server.GetAllActivityRuleUniqueFields(s.env)
 	if err != nil {
 		logger.Errorf("get all activity rule unique fields err:%v", err)
@@ -449,6 +459,7 @@ func (s *ADAServiceV2) GetActivityRuleUniqueFields(ctx context.Context, in *v2.G
 }
 
 func (s *ADAServiceV2) ListActivityRule(ctx context.Context, in *v2.ListActivityRuleReq) (*v2.ListActivityRuleReply, error) {
+	s = s.withContext(ctx)
 	limit := in.PageSize
 	if limit == 0 {
 		limit = 10
@@ -528,6 +539,7 @@ func (s *ADAServiceV2) ListActivityRule(ctx context.Context, in *v2.ListActivity
 }
 
 func (s *ADAServiceV2) GetActivityRule(ctx context.Context, in *v2.GetActivityRuleReq) (*v2.GetActivityRuleReply, error) {
+	s = s.withContext(ctx)
 	rule, err := server.GetActivityRuleByID(s.env, in.ID)
 	if err != nil {
 		logger.Errorf("GetActivityRule failed: %v", err)
@@ -561,6 +573,7 @@ func (s *ADAServiceV2) GetActivityRule(ctx context.Context, in *v2.GetActivityRu
 }
 
 func (s *ADAServiceV2) AddActivityRule(ctx context.Context, in *v2.AddActivityRuleReq) (*v2.AddActivityRuleReply, error) {
+	s = s.withContext(ctx)
 	// Parse detection YAML
 	detection, err := parseActivityDetectionYAML(in.Detection)
 	if err != nil {
@@ -611,6 +624,7 @@ func (s *ADAServiceV2) AddActivityRule(ctx context.Context, in *v2.AddActivityRu
 }
 
 func (s *ADAServiceV2) UpdateActivityRule(ctx context.Context, in *v2.UpdateActivityRuleReq) (*v2.UpdateActivityRuleReply, error) {
+	s = s.withContext(ctx)
 	updates := bson.M{}
 
 	if in.Title != "" {
@@ -686,6 +700,7 @@ func (s *ADAServiceV2) UpdateActivityRule(ctx context.Context, in *v2.UpdateActi
 }
 
 func (s *ADAServiceV2) DeleteActivityRule(ctx context.Context, in *v2.DeleteActivityRuleReq) (*v2.DeleteActivityRuleReply, error) {
+	s = s.withContext(ctx)
 	// Check if any alert rules reference this activity rule
 	count, err := server.CountAlertRulesReferencingActivityRule(s.env, in.ID)
 	if err != nil {

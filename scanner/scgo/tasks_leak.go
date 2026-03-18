@@ -1,6 +1,8 @@
 package scgo
 
 import (
+	"ada/infra/gocelery"
+	"context"
 	"encoding/json"
 	"fmt"
 	"strings"
@@ -13,6 +15,16 @@ type LeakTask struct {
 	svc    *Service
 	kwargs map[string]any
 	id     string
+}
+
+func (t *LeakTask) WithContext(ctx context.Context) gocelery.CeleryTask {
+	if t == nil {
+		return nil
+	}
+
+	clone := *t
+	clone.svc = t.svc.WithContext(ctx)
+	return &clone
 }
 
 func (t *LeakTask) ParseKwargs(kwargs map[string]any) error {

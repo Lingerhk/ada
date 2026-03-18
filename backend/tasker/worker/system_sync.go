@@ -16,7 +16,8 @@ import (
 	"time"
 )
 
-func (w *Worker) SystemSyncTask() error {
+func (w *Worker) SystemSyncTask(ctx context.Context) error {
+	w = w.withContext(ctx)
 	// 1.采集系统状态
 	saveStatsInfo(w.env.RedisCli)
 

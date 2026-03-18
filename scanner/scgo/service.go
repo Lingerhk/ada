@@ -48,6 +48,7 @@ func NewService(env *config.Env, runPath string) (*Service, error) {
 }
 
 func (s *Service) Start(ctx context.Context) error {
+	s = s.withContext(ctx)
 	if err := RegisterPluginsAndTemplates(s.MongoCli, s.Plugins); err != nil {
 		return err
 	}
@@ -65,9 +66,9 @@ func (s *Service) Start(ctx context.Context) error {
 	}
 
 	// Register factory tasks to avoid data races.
-	cc.Register("tasks.baseline.execute_baseline", func() gocelery.CeleryTask { return &BaselineTask{svc: s} })
-	cc.Register("tasks.leak.execute_leak", func() gocelery.CeleryTask { return &LeakTask{svc: s} })
-	cc.Register("tasks.weakpwd.execute_weakpwd", func() gocelery.CeleryTask { return &WeakPwdTask{svc: s} })
+	cc.Register("tasks.baseline.execute_baseline", func() gocelery.CeleryTask { return &BaselineTask{svc: s.withContext(ctx)} })
+	cc.Register("tasks.leak.execute_leak", func() gocelery.CeleryTask { return &LeakTask{svc: s.withContext(ctx)} })
+	cc.Register("tasks.weakpwd.execute_weakpwd", func() gocelery.CeleryTask { return &WeakPwdTask{svc: s.withContext(ctx)} })
 
 	logger.Infof("scanner(scgo) starting celery workers=%d", concurrency)
 	cc.StartWorkerWithContext(ctx)

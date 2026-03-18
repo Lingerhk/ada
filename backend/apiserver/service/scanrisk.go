@@ -32,6 +32,7 @@ type weakPwdUserList []struct {
 }
 
 func (s *ADAServiceV2) ScanRiskStats(ctx context.Context, in *v2.ScanRiskStatsReq) (*v2.ScanRiskStatsReply, error) {
+	s = s.withContext(ctx)
 	var domains []string
 	if in.Domain == "all" {
 		domainList, err := server.GetDomainList(s.env)
@@ -99,6 +100,7 @@ func (s *ADAServiceV2) ScanRiskStats(ctx context.Context, in *v2.ScanRiskStatsRe
 }
 
 func (s *ADAServiceV2) ListBaseline(ctx context.Context, in *v2.ListBaselineReq) (*v2.ListBaselineReply, error) {
+	s = s.withContext(ctx)
 	ret := &v2.ListBaselineReply{
 		Page:      &v2.ModelPage{PageSize: in.PageSize, PageIdx: in.PageIdx, Total: 0},
 		Exhausted: true,
@@ -153,6 +155,7 @@ func (s *ADAServiceV2) ListBaseline(ctx context.Context, in *v2.ListBaselineReq)
 }
 
 func (s *ADAServiceV2) GetBaseline(ctx context.Context, in *v2.GetBaselineReq) (*v2.GetBaselineReply, error) {
+	s = s.withContext(ctx)
 	subTask, err := server.GetScanSubTaskById(s.env, in.ID)
 	if err != nil {
 		logger.Errorf("get baseline err:%v", err)
@@ -193,6 +196,7 @@ func (s *ADAServiceV2) GetBaseline(ctx context.Context, in *v2.GetBaselineReq) (
 }
 
 func (s *ADAServiceV2) ListLeak(ctx context.Context, in *v2.ListLeakReq) (*v2.ListLeakReply, error) {
+	s = s.withContext(ctx)
 	ret := &v2.ListLeakReply{
 		Page:      &v2.ModelPage{PageSize: in.PageSize, PageIdx: in.PageIdx, Total: 0},
 		Exhausted: true,
@@ -241,6 +245,7 @@ func (s *ADAServiceV2) ListLeak(ctx context.Context, in *v2.ListLeakReq) (*v2.Li
 }
 
 func (s *ADAServiceV2) ListWeakPwd(ctx context.Context, in *v2.ListWeakPwdReq) (*v2.ListWeakPwdReply, error) {
+	s = s.withContext(ctx)
 	ret := &v2.ListWeakPwdReply{
 		Page:      &v2.ModelPage{PageSize: in.PageSize, PageIdx: in.PageIdx, Total: 0},
 		Exhausted: true,
@@ -332,6 +337,7 @@ func (s *ADAServiceV2) ListWeakPwd(ctx context.Context, in *v2.ListWeakPwdReq) (
 }
 
 func (s *ADAServiceV2) ListScanTask(ctx context.Context, in *v2.ListScanTaskReq) (*v2.ListScanTaskReply, error) {
+	s = s.withContext(ctx)
 	ret := &v2.ListScanTaskReply{
 		Page:      &v2.ModelPage{PageSize: in.PageSize, PageIdx: in.PageIdx, Total: 0},
 		Exhausted: true,
@@ -367,6 +373,7 @@ func (s *ADAServiceV2) ListScanTask(ctx context.Context, in *v2.ListScanTaskReq)
 }
 
 func (s *ADAServiceV2) GetScanTask(ctx context.Context, in *v2.GetScanTaskReq) (*v2.GetScanTaskReply, error) {
+	s = s.withContext(ctx)
 	task, err := server.GetScanTasksById(s.env, in.ID)
 	if err != nil {
 		logger.Errorf("get scan task by id(%s) err:%v", in.ID, err)
@@ -484,6 +491,7 @@ func (s *ADAServiceV2) GetScanTask(ctx context.Context, in *v2.GetScanTaskReq) (
 }
 
 func (s *ADAServiceV2) AddScanTask(ctx context.Context, in *v2.AddScanTaskReq) (*v2.AddScanTaskReply, error) {
+	s = s.withContext(ctx)
 	ret := v2.AddScanTaskReply{Result: RESP_FAILED}
 
 	var plans = make(map[string]string)
@@ -535,6 +543,7 @@ func (s *ADAServiceV2) AddScanTask(ctx context.Context, in *v2.AddScanTaskReq) (
 }
 
 func (s *ADAServiceV2) RecheckScanTask(ctx context.Context, in *v2.RecheckScanTaskReq) (*v2.RecheckScanTaskReply, error) {
+	s = s.withContext(ctx)
 	ret := v2.RecheckScanTaskReply{Result: RESP_FAILED}
 
 	client, err := rpc.NewClient(ctx, s.env.Cfg.BindSrv.TaskAddr)
@@ -555,6 +564,7 @@ func (s *ADAServiceV2) RecheckScanTask(ctx context.Context, in *v2.RecheckScanTa
 }
 
 func (s *ADAServiceV2) DeleteScanTask(ctx context.Context, in *v2.DeleteScanTaskReq) (*v2.DeleteScanTaskReply, error) {
+	s = s.withContext(ctx)
 	if !s.IsSuper(ctx) {
 		return nil, status.Error(codes.PermissionDenied, s.I18n("NoPermission"))
 	}
@@ -586,6 +596,7 @@ func (s *ADAServiceV2) DeleteScanTask(ctx context.Context, in *v2.DeleteScanTask
 }
 
 func (s *ADAServiceV2) ListScanConf(ctx context.Context, in *v2.ListScanConfReq) (*v2.ListScanConfReply, error) {
+	s = s.withContext(ctx)
 	cnfList, err := server.FindAllScanConf(s.env)
 	if err != nil {
 		logger.Errorf("get scan conf err:%v", err)
@@ -617,6 +628,7 @@ func (s *ADAServiceV2) ListScanConf(ctx context.Context, in *v2.ListScanConfReq)
 }
 
 func (s *ADAServiceV2) SetScanConf(ctx context.Context, in *v2.SetScanConfReq) (*v2.SetScanConfReply, error) {
+	s = s.withContext(ctx)
 	if !s.IsSuper(ctx) {
 		return nil, status.Error(codes.PermissionDenied, s.I18n("NoPermission"))
 	}
@@ -635,6 +647,7 @@ func (s *ADAServiceV2) SetScanConf(ctx context.Context, in *v2.SetScanConfReq) (
 }
 
 func (s *ADAServiceV2) GetScanConf(ctx context.Context, in *v2.GetScanConfReq) (*v2.GetScanConfReply, error) {
+	s = s.withContext(ctx)
 	cnf, err := server.GetScanConfById(s.env, in.ID)
 	if err != nil {
 		logger.Errorf("get scan conf(id:%s) err:%v", in.ID, err)
@@ -658,6 +671,7 @@ func (s *ADAServiceV2) GetScanConf(ctx context.Context, in *v2.GetScanConfReq) (
 }
 
 func (s *ADAServiceV2) UpdateScanConf(ctx context.Context, in *v2.UpdateScanConfReq) (*v2.UpdateScanConfReply, error) {
+	s = s.withContext(ctx)
 	if !s.IsSuper(ctx) {
 		return nil, status.Error(codes.PermissionDenied, s.I18n("NoPermission"))
 	}
@@ -703,6 +717,7 @@ func (s *ADAServiceV2) UpdateScanConf(ctx context.Context, in *v2.UpdateScanConf
 }
 
 func (s *ADAServiceV2) GetScanTmplNames(ctx context.Context, in *v2.GetScanTmplNamesReq) (*v2.GetScanTmplNamesReply, error) {
+	s = s.withContext(ctx)
 	tmplList, err := server.FindScanTmplSelect(s.env, in.Type, 100, 0)
 	if err != nil {
 		logger.Errorf("list scan tmpl err:%v", err)
@@ -718,6 +733,7 @@ func (s *ADAServiceV2) GetScanTmplNames(ctx context.Context, in *v2.GetScanTmplN
 }
 
 func (s *ADAServiceV2) ListScanTmpl(ctx context.Context, in *v2.ListScanTmplReq) (*v2.ListScanTmplReply, error) {
+	s = s.withContext(ctx)
 	limit, offset := in.PageSize, (in.PageIdx-1)*in.PageSize
 	tmplList, err := server.FindScanTmplSelect(s.env, in.Type, int64(limit), int64(offset))
 	if err != nil {
@@ -747,6 +763,7 @@ func (s *ADAServiceV2) ListScanTmpl(ctx context.Context, in *v2.ListScanTmplReq)
 }
 
 func (s *ADAServiceV2) GetScanTmpl(ctx context.Context, in *v2.GetScanTmplReq) (*v2.GetScanTmplReply, error) {
+	s = s.withContext(ctx)
 	tmpl, err := server.GetScanTmplById(s.env, in.ID)
 	if err != nil {
 		logger.Errorf("get scan tmpl by id(%s) err:%v", in.ID, err)
@@ -779,6 +796,7 @@ func (s *ADAServiceV2) GetScanTmpl(ctx context.Context, in *v2.GetScanTmplReq) (
 }
 
 func (s *ADAServiceV2) UpdateScanTmpl(ctx context.Context, in *v2.UpdateScanTmplReq) (*v2.UpdateScanTmplReply, error) {
+	s = s.withContext(ctx)
 	ret := v2.UpdateScanTmplReply{Result: RESP_FAILED}
 
 	if !s.IsSuper(ctx) {
@@ -807,6 +825,7 @@ func (s *ADAServiceV2) UpdateScanTmpl(ctx context.Context, in *v2.UpdateScanTmpl
 }
 
 func (s *ADAServiceV2) DeleteScanTmpl(ctx context.Context, in *v2.DeleteScanTmplReq) (*v2.DeleteScanTmplReply, error) {
+	s = s.withContext(ctx)
 	ret := v2.DeleteScanTmplReply{Result: RESP_FAILED}
 
 	if !s.IsSuper(ctx) {
@@ -836,6 +855,7 @@ func (s *ADAServiceV2) DeleteScanTmpl(ctx context.Context, in *v2.DeleteScanTmpl
 }
 
 func (s *ADAServiceV2) AddScanTmpl(ctx context.Context, in *v2.AddScanTmplReq) (*v2.AddScanTmplReply, error) {
+	s = s.withContext(ctx)
 	ret := v2.AddScanTmplReply{Result: RESP_FAILED}
 
 	if !s.IsSuper(ctx) {
@@ -864,6 +884,7 @@ func (s *ADAServiceV2) AddScanTmpl(ctx context.Context, in *v2.AddScanTmplReq) (
 }
 
 func (s *ADAServiceV2) ListScanPlugin(ctx context.Context, in *v2.ListScanPluginReq) (*v2.ListScanPluginReply, error) {
+	s = s.withContext(ctx)
 	plugins, err := server.FindScanPluginSelect(s.env, in.Type)
 	if err != nil {
 		logger.Errorf("get scan plugins by type(%s) err:%v", in.Type, err)

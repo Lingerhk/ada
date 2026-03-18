@@ -20,8 +20,8 @@ import (
 	logger "github.com/sirupsen/logrus"
 )
 
-func (w *Worker) SystemNotifyTask() error {
-	ctx := context.Background()
+func (w *Worker) SystemNotifyTask(ctx context.Context) error {
+	w = w.withContext(ctx)
 
 	var s model.SystemInfo
 	err, exist := w.env.MongoCli.FindOne(s.CollectName(), bson.M{}, &s)

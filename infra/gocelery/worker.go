@@ -53,7 +53,9 @@ func (w *CeleryWorker) StartWorkerWithContext(ctx context.Context) {
 					}
 
 					// run task
-					resultMsg, err := w.RunTask(taskMessage)
+					taskCtx, cancel := context.WithCancel(wctx)
+					resultMsg, err := w.RunTask(taskCtx, taskMessage)
+					cancel()
 					if err != nil {
 						log.Printf("failed to run task message %s: %+v", taskMessage.TaskID, err)
 						continue
@@ -113,7 +115,7 @@ func (w *CeleryWorker) GetTask(name string) any {
 }
 
 // RunTask runs celery task
-func (w *CeleryWorker) RunTask(message *TaskMessage) (*ResultMessage, error) {
+func (w *CeleryWorker) RunTask(ctx context.Context, message *TaskMessage) (*ResultMessage, error) {
 
 	// ignore if the message is expired
 	if message.Expires != nil && message.Expires.UTC().Before(time.Now().UTC()) {
@@ -140,6 +142,10 @@ func (w *CeleryWorker) RunTask(message *TaskMessage) (*ResultMessage, error) {
 	// convert to task interface
 	taskInterface, ok := task.(CeleryTask)
 	if ok {
+		if contextualTask, ok := taskInterface.(ContextTask); ok {
+			taskInterface = contextualTask.WithContext(ctx)
+		}
+
 		// Celery kwargs do not include task_id by default; inject it for task handlers.
 		if message.Kwargs == nil {
 			message.Kwargs = map[string]any{}

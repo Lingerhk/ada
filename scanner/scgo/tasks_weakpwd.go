@@ -1,6 +1,8 @@
 package scgo
 
 import (
+	"ada/infra/gocelery"
+	"context"
 	"encoding/json"
 	"fmt"
 
@@ -11,6 +13,16 @@ type WeakPwdTask struct {
 	svc    *Service
 	kwargs map[string]any
 	id     string
+}
+
+func (t *WeakPwdTask) WithContext(ctx context.Context) gocelery.CeleryTask {
+	if t == nil {
+		return nil
+	}
+
+	clone := *t
+	clone.svc = t.svc.WithContext(ctx)
+	return &clone
 }
 
 func (t *WeakPwdTask) ParseKwargs(kwargs map[string]any) error {
