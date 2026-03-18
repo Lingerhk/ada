@@ -1,6 +1,7 @@
 package mongo
 
 import (
+	"context"
 	"fmt"
 	"testing"
 	"time"
@@ -26,22 +27,22 @@ type QuickTestDoc struct {
 
 func setupQuickTest(t *testing.T) *MongoSession {
 	session := NewMongoSession()
-	err := session.Connect(quickTestURI, quickTestDB)
+	err := session.Connect(context.Background(), quickTestURI, quickTestDB)
 	if err != nil {
 		t.Fatalf("Failed to connect: %v", err)
 	}
 
 	// Clean up
-	_ = session.Drop(quickTestCollection)
-	_ = session.Drop("tb_seq_counters")
+	_ = session.Drop(context.Background(), quickTestCollection)
+	_ = session.Drop(context.Background(), "tb_seq_counters")
 
 	return session
 }
 
 func cleanupQuickTest(t *testing.T, session *MongoSession) {
-	_ = session.Drop(quickTestCollection)
-	_ = session.Drop("tb_seq_counters")
-	session.Disconnect()
+	_ = session.Drop(context.Background(), quickTestCollection)
+	_ = session.Drop(context.Background(), "tb_seq_counters")
+	session.Disconnect(context.Background())
 }
 
 // Test 1: Update method (modified in collection.go:54-73)
@@ -57,7 +58,7 @@ func TestQuick_Update(t *testing.T) {
 		Value: 100,
 		Time:  time.Now(),
 	}
-	err := session.Insert(quickTestCollection, doc)
+	err := session.Insert(context.Background(), quickTestCollection, doc)
 	if err != nil {
 		t.Fatalf("Insert failed: %v", err)
 	}
@@ -66,7 +67,7 @@ func TestQuick_Update(t *testing.T) {
 	// Update the document
 	query := bson.M{"name": "test1"}
 	update := bson.M{"value": 200}
-	err = session.Update(quickTestCollection, query, update, false)
+	err = session.Update(context.Background(), quickTestCollection, query, update, false)
 	if err != nil {
 		t.Fatalf("Update failed: %v", err)
 	}
@@ -74,7 +75,7 @@ func TestQuick_Update(t *testing.T) {
 
 	// Verify update
 	var result QuickTestDoc
-	err, exists := session.FindOne(quickTestCollection, query, &result)
+	err, exists := session.FindOne(context.Background(), quickTestCollection, query, &result)
 	if err != nil {
 		t.Fatalf("FindOne failed: %v", err)
 	}
@@ -100,7 +101,7 @@ func TestQuick_UpdateAll(t *testing.T) {
 		QuickTestDoc{Name: "bulk2", Value: 20, Time: time.Now()},
 		QuickTestDoc{Name: "bulk3", Value: 30, Time: time.Now()},
 	}
-	err := session.InsertAll(quickTestCollection, docs...)
+	err := session.InsertAll(context.Background(), quickTestCollection, docs...)
 	if err != nil {
 		t.Fatalf("InsertAll failed: %v", err)
 	}
@@ -109,7 +110,7 @@ func TestQuick_UpdateAll(t *testing.T) {
 	// Update all documents using UpdateRaw (which calls UpdateAll internally)
 	query := bson.M{}
 	update := bson.M{"$set": bson.M{"value": 999}}
-	err = session.UpdateRaw(quickTestCollection, query, update, true)
+	err = session.UpdateRaw(context.Background(), quickTestCollection, query, update, true)
 	if err != nil {
 		t.Fatalf("UpdateAll failed: %v", err)
 	}
@@ -117,7 +118,7 @@ func TestQuick_UpdateAll(t *testing.T) {
 
 	// Verify all documents were updated
 	var results []QuickTestDoc
-	err = session.FindAll(quickTestCollection, query, &results)
+	err = session.FindAll(context.Background(), quickTestCollection, query, &results)
 	if err != nil {
 		t.Fatalf("FindAll failed: %v", err)
 	}
@@ -140,7 +141,7 @@ func TestQuick_FindAndAutoInc(t *testing.T) {
 	fmt.Println("\n=== Testing FindAndAutoInc Method ===")
 
 	// Get sequence numbers
-	seq1, err := session.GetNextSequence("test_seq")
+	seq1, err := session.GetNextSequence(context.Background(), "test_seq")
 	if err != nil {
 		t.Fatalf("GetNextSequence failed: %v", err)
 	}
@@ -149,7 +150,7 @@ func TestQuick_FindAndAutoInc(t *testing.T) {
 	}
 	fmt.Printf("✓ First sequence: %d\n", seq1)
 
-	seq2, err := session.GetNextSequence("test_seq")
+	seq2, err := session.GetNextSequence(context.Background(), "test_seq")
 	if err != nil {
 		t.Fatalf("GetNextSequence failed: %v", err)
 	}
@@ -158,7 +159,7 @@ func TestQuick_FindAndAutoInc(t *testing.T) {
 	}
 	fmt.Printf("✓ Second sequence: %d\n", seq2)
 
-	seq3, err := session.GetNextSequence("test_seq")
+	seq3, err := session.GetNextSequence(context.Background(), "test_seq")
 	if err != nil {
 		t.Fatalf("GetNextSequence failed: %v", err)
 	}
@@ -181,7 +182,7 @@ func TestQuick_One(t *testing.T) {
 		QuickTestDoc{Name: "first", Value: 1, Time: time.Now()},
 		QuickTestDoc{Name: "second", Value: 2, Time: time.Now()},
 	}
-	err := session.InsertAll(quickTestCollection, docs...)
+	err := session.InsertAll(context.Background(), quickTestCollection, docs...)
 	if err != nil {
 		t.Fatalf("InsertAll failed: %v", err)
 	}
@@ -190,7 +191,7 @@ func TestQuick_One(t *testing.T) {
 	// Test FindOne
 	query := bson.M{"name": "first"}
 	var result QuickTestDoc
-	err, exists := session.FindOne(quickTestCollection, query, &result)
+	err, exists := session.FindOne(context.Background(), quickTestCollection, query, &result)
 	if err != nil {
 		t.Fatalf("FindOne failed: %v", err)
 	}
@@ -205,7 +206,7 @@ func TestQuick_One(t *testing.T) {
 	// Test non-existent document
 	query2 := bson.M{"name": "nonexistent"}
 	var result2 QuickTestDoc
-	err, exists = session.FindOne(quickTestCollection, query2, &result2)
+	err, exists = session.FindOne(context.Background(), quickTestCollection, query2, &result2)
 	if err != ErrNotFound {
 		t.Fatalf("Expected ErrNotFound, got: %v", err)
 	}
@@ -229,7 +230,7 @@ func TestQuick_Distinct(t *testing.T) {
 		QuickTestDoc{Name: "alice", Value: 3, Time: time.Now()},
 		QuickTestDoc{Name: "charlie", Value: 4, Time: time.Now()},
 	}
-	err := session.InsertAll(quickTestCollection, docs...)
+	err := session.InsertAll(context.Background(), quickTestCollection, docs...)
 	if err != nil {
 		t.Fatalf("InsertAll failed: %v", err)
 	}
@@ -237,7 +238,7 @@ func TestQuick_Distinct(t *testing.T) {
 
 	// Get distinct names
 	query := bson.M{}
-	distinctNames, err := session.FindWithDistinct(quickTestCollection, "name", query)
+	distinctNames, err := session.FindWithDistinct(context.Background(), quickTestCollection, "name", query)
 	if err != nil {
 		t.Fatalf("FindWithDistinct failed: %v", err)
 	}
@@ -271,7 +272,7 @@ func TestQuick_ComplexWorkflow(t *testing.T) {
 	fmt.Println("\n=== Testing Complex Workflow ===")
 
 	// 1. Use FindAndAutoInc to get ID
-	id, err := session.GetNextSequence("workflow_seq")
+	id, err := session.GetNextSequence(context.Background(), "workflow_seq")
 	if err != nil {
 		t.Fatalf("GetNextSequence failed: %v", err)
 	}
@@ -283,7 +284,7 @@ func TestQuick_ComplexWorkflow(t *testing.T) {
 		Value: int(id * 100),
 		Time:  time.Now(),
 	}
-	err = session.Insert(quickTestCollection, doc)
+	err = session.Insert(context.Background(), quickTestCollection, doc)
 	if err != nil {
 		t.Fatalf("Insert failed: %v", err)
 	}
@@ -292,7 +293,7 @@ func TestQuick_ComplexWorkflow(t *testing.T) {
 	// 3. Use FindOne to retrieve
 	query := bson.M{"name": doc.Name}
 	var result QuickTestDoc
-	err, exists := session.FindOne(quickTestCollection, query, &result)
+	err, exists := session.FindOne(context.Background(), quickTestCollection, query, &result)
 	if err != nil {
 		t.Fatalf("FindOne failed: %v", err)
 	}
@@ -303,7 +304,7 @@ func TestQuick_ComplexWorkflow(t *testing.T) {
 
 	// 4. Use Update to modify
 	update := bson.M{"value": 999}
-	err = session.Update(quickTestCollection, query, update, false)
+	err = session.Update(context.Background(), quickTestCollection, query, update, false)
 	if err != nil {
 		t.Fatalf("Update failed: %v", err)
 	}
@@ -311,7 +312,7 @@ func TestQuick_ComplexWorkflow(t *testing.T) {
 
 	// 5. Use FindOne again to verify
 	var result2 QuickTestDoc
-	err, exists = session.FindOne(quickTestCollection, query, &result2)
+	err, exists = session.FindOne(context.Background(), quickTestCollection, query, &result2)
 	if err != nil {
 		t.Fatalf("FindOne failed: %v", err)
 	}
@@ -321,7 +322,7 @@ func TestQuick_ComplexWorkflow(t *testing.T) {
 	fmt.Printf("✓ Verified update: value=%d\n", result2.Value)
 
 	// 6. Use Distinct to verify uniqueness
-	distinctValues, err := session.FindWithDistinct(quickTestCollection, "value", bson.M{})
+	distinctValues, err := session.FindWithDistinct(context.Background(), quickTestCollection, "value", bson.M{})
 	if err != nil {
 		t.Fatalf("FindWithDistinct failed: %v", err)
 	}

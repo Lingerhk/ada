@@ -1,6 +1,7 @@
 package mongo
 
 import (
+	"context"
 	"errors"
 )
 
@@ -14,38 +15,38 @@ var (
 
 // DBAdaptor encapsulates MongoDB database operation interface
 type DBAdaptor interface {
-	Connect(uri, db string) error
-	Disconnect()
+	Connect(ctx context.Context, uri, db string) error
+	Disconnect(ctx context.Context)
 	SetPoolLimit(limit uint64)
 
 	// Common operation interfaces
-	FindOne(name string, query, result any) (err error, exist bool)
-	Find(name string, query, result any, limit int64) error
-	FindAll(name string, query, result any) error
-	FindByLimitAndSkip(name string, query, result any, limit, skip int64) error
+	FindOne(ctx context.Context, name string, query, result any) (err error, exist bool)
+	Find(ctx context.Context, name string, query, result any, limit int64) error
+	FindAll(ctx context.Context, name string, query, result any) error
+	FindByLimitAndSkip(ctx context.Context, name string, query, result any, limit, skip int64) error
 
-	FindWithSelect(name string, query, selection, result any, limit int64) error
-	FindSelect(name string, query, selection, result any) error
-	FindWithMultiple(name string, query, selection, sorter, result any, limit, skip int64) error
+	FindWithSelect(ctx context.Context, name string, query, selection, result any, limit int64) error
+	FindSelect(ctx context.Context, name string, query, selection, result any) error
+	FindWithMultiple(ctx context.Context, name string, query, selection, sorter, result any, limit, skip int64) error
 
-	FindCount(name string, query any) (c int64, err error)
-	FindSortByLimitAndSkip(name string, query, sorter, result any, limit, skip int64) error
+	FindCount(ctx context.Context, name string, query any) (c int64, err error)
+	FindSortByLimitAndSkip(ctx context.Context, name string, query, sorter, result any, limit, skip int64) error
 
-	FindWithAggregation(name string, pipeline, result any) error
+	FindWithAggregation(ctx context.Context, name string, pipeline, result any) error
 
-	Remove(name string, query any, multi bool) error
-	RemoveById(name string, id any) error
+	Remove(ctx context.Context, name string, query any, multi bool) error
+	RemoveById(ctx context.Context, name string, id any) error
 
-	Drop(name string) error
+	Drop(ctx context.Context, name string) error
 
-	Insert(name string, doc any) error
-	InsertAll(name string, docs ...any) error
+	Insert(ctx context.Context, name string, doc any) error
+	InsertAll(ctx context.Context, name string, docs ...any) error
 
-	Update(name string, query, update any, multi bool) error
-	UpdateById(name string, id, update any) error // id is the original type of _id, eg: ObjectID, int
-	UpdateRaw(name string, query, update any, multi bool) error
+	Update(ctx context.Context, name string, query, update any, multi bool) error
+	UpdateById(ctx context.Context, name string, id, update any) error // id is the original type of _id, eg: ObjectID, int
+	UpdateRaw(ctx context.Context, name string, query, update any, multi bool) error
 
-	GetNextSequence(name string) (int32, error)
+	GetNextSequence(ctx context.Context, name string) (int32, error)
 
-	FindWithDistinct(name, distinct string, query any) ([]any, error)
+	FindWithDistinct(ctx context.Context, name, distinct string, query any) ([]any, error)
 }
