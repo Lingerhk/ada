@@ -19,6 +19,7 @@ type Service struct {
 	Cfg       *config.Config
 	RedisCli  *redis.Client
 	MongoCli  mongo.DBAdaptor
+	ctx       context.Context
 	RunPath   string // e.g. /var/lib/scada
 	ScRoot    string // e.g. /var/lib/scada/.sc
 	PythonBin string
@@ -40,6 +41,7 @@ func NewService(env *config.Env, runPath string) (*Service, error) {
 		Cfg:       env.Cfg,
 		RedisCli:  env.RedisCli,
 		MongoCli:  env.MongoCli,
+		ctx:       context.Background(),
 		RunPath:   runPath,
 		ScRoot:    scRoot,
 		PythonBin: py,
@@ -49,7 +51,7 @@ func NewService(env *config.Env, runPath string) (*Service, error) {
 
 func (s *Service) Start(ctx context.Context) error {
 	s = s.withContext(ctx)
-	if err := RegisterPluginsAndTemplates(s.MongoCli, s.Plugins); err != nil {
+	if err := RegisterPluginsAndTemplates(ctx, s.MongoCli, s.Plugins); err != nil {
 		return err
 	}
 

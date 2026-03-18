@@ -13,7 +13,7 @@ func (s *Service) getTemplatePlugin(templateHex string, pluginID int32) (map[str
 		return nil, err
 	}
 	var tmpl bson.M
-	err, exist := s.MongoCli.FindOne("tb_scan_template", bson.M{"_id": id}, &tmpl)
+	err, exist := s.MongoCli.FindOne(s.mongoContext(), "tb_scan_template", bson.M{"_id": id}, &tmpl)
 	if err != nil {
 		return nil, err
 	}

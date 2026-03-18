@@ -1,4 +1,6 @@
 
+set -euo pipefail
+
 version=2.9.1
 root_path="/home/adadmin/adaegis"
 ada_path="${root_path}/ada"
@@ -11,9 +13,14 @@ remote_server="adadmin@192.168.7.2"
 
 # build engine
 build_engine() {
+    cd ${ada_path} || exit;
+    make engine
+    cd - || exit;
     cd engine || exit;
     cp ${ada_path}/bin/engine ./
     cp ${ada_path}/bin/engine.yaml ./
+    rm -rf rules
+    cp -r ${ada_path}/engine/rules ./rules
     sed -i "s/version=.*/version=${version}/g" Dockerfile
     docker build --network=host -f Dockerfile -t ada_engine:${version} .
     cd - || exit
@@ -50,6 +57,9 @@ build_backend() {
 
 # build scanner
 build_scanner() {
+    cd ${ada_path} || exit;
+    make scanner
+    cd - || exit;
     cd scanner || exit;
     cp ${ada_path}/bin/scanner ./
     cp ${ada_path}/bin/scanner ./scanner
@@ -267,6 +277,10 @@ deploy_service() {
 }
 
 main() {
+    if [ $# -lt 2 ]; then
+        echo "Usage: $0 {build [component]|package [component]|deploy [component]|release [component]}"
+        exit 1
+    fi
     case $1 in
         build)
             build_images $2
