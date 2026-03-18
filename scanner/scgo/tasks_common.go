@@ -18,11 +18,11 @@ func (s *Service) updateScanTaskByIDHex(idHex string, update bson.M) error {
 	if err != nil {
 		return err
 	}
-	return s.MongoCli.UpdateRaw("tb_scan_tasks", bson.M{"_id": id}, update, false)
+	return s.MongoCli.UpdateRaw(s.mongoContext(), "tb_scan_tasks", bson.M{"_id": id}, update, false)
 }
 
 func (s *Service) updateSubTaskByTaskID(taskID string, update bson.M) error {
-	return s.MongoCli.UpdateRaw("tb_scan_subtasks", bson.M{"task_id": taskID}, update, false)
+	return s.MongoCli.UpdateRaw(s.mongoContext(), "tb_scan_subtasks", bson.M{"task_id": taskID}, update, false)
 }
 
 func (s *Service) countSubTasks(groupID, status string) (int64, error) {
@@ -30,7 +30,7 @@ func (s *Service) countSubTasks(groupID, status string) (int64, error) {
 	if status != "" {
 		q["status"] = status
 	}
-	return s.MongoCli.FindCount("tb_scan_subtasks", q)
+	return s.MongoCli.FindCount(s.mongoContext(), "tb_scan_subtasks", q)
 }
 
 func (s *Service) getScanTaskByIDHex(idHex string) (bson.M, error) {
@@ -39,7 +39,7 @@ func (s *Service) getScanTaskByIDHex(idHex string) (bson.M, error) {
 		return nil, err
 	}
 	var doc bson.M
-	err, exist := s.MongoCli.FindOne("tb_scan_tasks", bson.M{"_id": id}, &doc)
+	err, exist := s.MongoCli.FindOne(s.mongoContext(), "tb_scan_tasks", bson.M{"_id": id}, &doc)
 	if err != nil {
 		return nil, err
 	}
@@ -51,7 +51,7 @@ func (s *Service) getScanTaskByIDHex(idHex string) (bson.M, error) {
 
 func (s *Service) getSubTaskByTaskID(taskID string) (bson.M, error) {
 	var doc bson.M
-	err, exist := s.MongoCli.FindOne("tb_scan_subtasks", bson.M{"task_id": taskID}, &doc)
+	err, exist := s.MongoCli.FindOne(s.mongoContext(), "tb_scan_subtasks", bson.M{"task_id": taskID}, &doc)
 	if err != nil {
 		return nil, err
 	}

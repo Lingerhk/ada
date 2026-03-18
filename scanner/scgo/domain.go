@@ -20,7 +20,7 @@ type DCInfo struct {
 
 func (s *Service) getDomainByName(name string) (bson.M, error) {
 	var dm bson.M
-	err, exist := s.MongoCli.FindOne("tb_domain", bson.M{"name": name}, &dm)
+	err, exist := s.MongoCli.FindOne(s.mongoContext(), "tb_domain", bson.M{"name": name}, &dm)
 	if err != nil {
 		return nil, err
 	}

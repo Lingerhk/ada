@@ -172,7 +172,7 @@ func main() {
 	}
 	defer func() {
 		if server.mongoCli != nil {
-			server.mongoCli.Disconnect()
+			server.mongoCli.Disconnect(server.shutdownCtx)
 		}
 	}()
 
@@ -249,7 +249,7 @@ func (s *Server) initMongoDB() error {
 	MongoURL := fmt.Sprintf("mongodb://%s:%s@%s/?authSource=%s",
 		s.mongoUser, s.mongoPasswd, s.mongoHost, s.mongoDbName)
 
-	err := mongoCli.Connect(MongoURL, s.mongoDbName)
+	err := mongoCli.Connect(s.shutdownCtx, MongoURL, s.mongoDbName)
 	if err != nil {
 		return fmt.Errorf("failed to connect to MongoDB: %w", err)
 	}
@@ -643,7 +643,7 @@ func (s *Server) processActivityRulesFromMongoDB(pktlogDir, winlogDir string, pk
 
 	// Query all enabled activity rules from MongoDB
 	query := bson.M{}
-	if err := s.mongoCli.FindAll("tb_activity_rule", query, &activityRules); err != nil {
+	if err := s.mongoCli.FindAll(s.shutdownCtx, "tb_activity_rule", query, &activityRules); err != nil {
 		return fmt.Errorf("failed to query activity rules: %w", err)
 	}
 
@@ -711,7 +711,7 @@ func (s *Server) processFlowRulesFromMongoDB(dstDir string, metaList *[]RuleMeta
 
 	// Query all alert rules from MongoDB
 	query := bson.M{}
-	if err := s.mongoCli.FindAll("tb_alert_rule", query, &alertRules); err != nil {
+	if err := s.mongoCli.FindAll(s.shutdownCtx, "tb_alert_rule", query, &alertRules); err != nil {
 		return fmt.Errorf("failed to query alert rules: %w", err)
 	}
 
@@ -791,7 +791,16 @@ func (s *Server) createZipArchive(srcDir, zipPath, parentDir string) error {
 		}
 
 		if info.IsDir() {
-			return nil
+			if path == srcDir {
+				return nil
+			}
+			relPath, err := filepath.Rel(srcDir, path)
+			if err != nil {
+				return err
+			}
+			dirPath := filepath.ToSlash(filepath.Join(parentDir, relPath)) + "/"
+			_, err = zipWriter.Create(dirPath)
+			return err
 		}
 
 		// Get relative path
@@ -801,7 +810,7 @@ func (s *Server) createZipArchive(srcDir, zipPath, parentDir string) error {
 		}
 
 		// Add parent directory to the zip path
-		zipPath := filepath.Join(parentDir, relPath)
+		zipPath := filepath.ToSlash(filepath.Join(parentDir, relPath))
 
 		// Create ZIP entry
 		writer, err := zipWriter.Create(zipPath)
