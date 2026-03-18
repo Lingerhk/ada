@@ -24,7 +24,7 @@ func (w *Worker) SystemNotifyTask(ctx context.Context) error {
 	w = w.withContext(ctx)
 
 	var s model.SystemInfo
-	err, exist := w.env.MongoCli.FindOne(s.CollectName(), bson.M{}, &s)
+	err, exist := w.env.MongoCli.FindOne(w.env.MongoContext(), s.CollectName(), bson.M{}, &s)
 	if err != nil {
 		return err
 	}
@@ -89,7 +89,7 @@ func checkSystemStatusCPU(ctx context.Context, env *config.Env, statsCfg map[str
 		load15m := env.RedisCli.HGet(ctx, cache.SysStatsInfoKey, "local_15m").Val()
 		title := fmt.Sprintf("%s:%s", getNotifyMsgTypeDesc(common.NotifyMsgSystem, lang), getI18n("cpu_overload", lang))
 		params := map[string]string{"cpu_percent": cpu, "load_15m": load15m, "threshold": fmt.Sprintf("%.1f", threshold)}
-		err = AddNotify(env.MongoCli, title, "cpu", fmt.Sprintf(getI18n("cpu_exceed", lang), threshold), lang, params)
+		err = AddNotify(env.MongoContext(), env.MongoCli, title, "cpu", fmt.Sprintf(getI18n("cpu_exceed", lang), threshold), lang, params)
 	}
 
 	return err
@@ -115,7 +115,7 @@ func checkSystemStatusMem(ctx context.Context, env *config.Env, statsCfg map[str
 		memTotal := env.RedisCli.HGet(ctx, cache.SysStatsInfoKey, "mem_total").Val()
 		title := fmt.Sprintf("%s:%s", getNotifyMsgTypeDesc(common.NotifyMsgSystem, lang), getI18n("mem_overload", lang))
 		params := map[string]string{"mem_percent": mem, "mem_total": memTotal, "threshold": fmt.Sprintf("%.1f", threshold)}
-		err = AddNotify(env.MongoCli, title, "mem", fmt.Sprintf(getI18n("mem_exceed", lang), threshold), lang, params)
+		err = AddNotify(env.MongoContext(), env.MongoCli, title, "mem", fmt.Sprintf(getI18n("mem_exceed", lang), threshold), lang, params)
 	}
 
 	return err
@@ -141,7 +141,7 @@ func checkSystemStatusDisk(ctx context.Context, env *config.Env, statsCfg map[st
 		diskTotal := env.RedisCli.HGet(ctx, cache.SysStatsInfoKey, "disk_total").Val()
 		title := fmt.Sprintf("%s:%s", getNotifyMsgTypeDesc(common.NotifyMsgSystem, lang), getI18n("disk_overload", lang))
 		params := map[string]string{"disk_percent": disk, "disk_total": diskTotal, "threshold": fmt.Sprintf("%.1f", threshold)}
-		err = AddNotify(env.MongoCli, title, "disk", fmt.Sprintf(getI18n("disk_exceed", lang), threshold), lang, params)
+		err = AddNotify(env.MongoContext(), env.MongoCli, title, "disk", fmt.Sprintf(getI18n("disk_exceed", lang), threshold), lang, params)
 	}
 
 	return err
@@ -170,7 +170,7 @@ func checkSystemStatusES(ctx context.Context, env *config.Env, statsCfg map[stri
 		esDiskTotal := env.RedisCli.HGet(ctx, cache.SysStatsInfoKey, "es_disk_total").Val()
 		title := fmt.Sprintf("%s:%s", getNotifyMsgTypeDesc(common.NotifyMsgSystem, lang), getI18n("es_disk_overload", lang))
 		params := map[string]string{"es_disk_percent": esDisk, "es_disk_total": esDiskTotal, "es_disk_avail": esDiskAvail, "threshold": fmt.Sprintf("%.1f", threshold)}
-		err = AddNotify(env.MongoCli, title, "es", fmt.Sprintf(getI18n("es_disk_exceed", lang), threshold), lang, params)
+		err = AddNotify(env.MongoContext(), env.MongoCli, title, "es", fmt.Sprintf(getI18n("es_disk_exceed", lang), threshold), lang, params)
 	}
 
 	// Check ES CPU usage
@@ -193,7 +193,7 @@ func checkSystemStatusES(ctx context.Context, env *config.Env, statsCfg map[stri
 		esSysLoad1m := env.RedisCli.HGet(ctx, cache.SysStatsInfoKey, "es_sys_load1m").Val()
 		title := fmt.Sprintf("%s:%s", getNotifyMsgTypeDesc(common.NotifyMsgSystem, lang), getI18n("es_cpu_overload", lang))
 		params := map[string]string{"es_cpu_percent": esCpu, "es_sys_load1m": esSysLoad1m, "threshold": fmt.Sprintf("%1.f", threshold)}
-		err = AddNotify(env.MongoCli, title, "es", fmt.Sprintf(getI18n("es_cpu_exceed", lang), threshold), lang, params)
+		err = AddNotify(env.MongoContext(), env.MongoCli, title, "es", fmt.Sprintf(getI18n("es_cpu_exceed", lang), threshold), lang, params)
 	}
 
 	return err
@@ -228,7 +228,7 @@ func checkSystemStatusSensor(ctx context.Context, env *config.Env, statsCfg map[
 			if currentTs-parsedTm.Unix() > 1200 {
 				lastNotifyKey := fmt.Sprintf("ada:server:notify_ttl_sensor_1_%s", sensorKey)
 				// 更新sensor状态
-				err = updateSensorStatus(env.MongoCli, sensorKey, sCommon.SensorStatusStop)
+				err = updateSensorStatus(env.MongoContext(), env.MongoCli, sensorKey, sCommon.SensorStatusStop)
 				if err != nil {
 					logger.Warnf("update sensor status err:%v", err)
 				}
@@ -237,7 +237,7 @@ func checkSystemStatusSensor(ctx context.Context, env *config.Env, statsCfg map[
 				if env.RedisCli.Exists(ctx, lastNotifyKey).Val() == 0 {
 					title := fmt.Sprintf("%s:%s", getNotifyMsgTypeDesc(common.NotifyMsgSystem, lang), getI18n("sensor_status_abnormal", lang))
 					params := map[string]string{"last_online_tm": lastOnlineTm, "dc_hostname": info["dc_hostname"], "ip": info["ip"]}
-					err = AddNotify(env.MongoCli, title, "sensor", getI18n("sensor_status_abnormal", lang), lang, params)
+					err = AddNotify(env.MongoContext(), env.MongoCli, title, "sensor", getI18n("sensor_status_abnormal", lang), lang, params)
 					if err == nil {
 						if err := env.RedisCli.Set(ctx, lastNotifyKey, "1", 6*time.Hour).Err(); err != nil {
 							logger.Warnf("redis set sensor notify last_tm key err:%v", err)
@@ -261,7 +261,7 @@ func checkSystemStatusSensor(ctx context.Context, env *config.Env, statsCfg map[
 				if env.RedisCli.Exists(ctx, lastNotifyKey).Val() == 0 {
 					title := fmt.Sprintf("%s:%s", getNotifyMsgTypeDesc(common.NotifyMsgSystem, lang), getI18n("sensor_time_abnormal", lang))
 					params := map[string]string{"dc_hostname": info["dc_hostname"], "ip": info["ip"], "sensor_timestamp": sensorTimestampStr, "system_timestamp": strconv.FormatInt(currentTs, 10)}
-					err = AddNotify(env.MongoCli, title, "sensor", getI18n("sensor_time_abnormal", lang), lang, params)
+					err = AddNotify(env.MongoContext(), env.MongoCli, title, "sensor", getI18n("sensor_time_abnormal", lang), lang, params)
 					if err == nil {
 						if err := env.RedisCli.Set(ctx, lastNotifyKey, "1", 6*time.Hour).Err(); err != nil {
 							logger.Warnf("redis set sensor notify sensor_timestamp key err:%v", err)
@@ -284,7 +284,7 @@ func checkSystemStatusSensor(ctx context.Context, env *config.Env, statsCfg map[
 				if env.RedisCli.Exists(ctx, lastNotifyKey).Val() == 0 {
 					title := fmt.Sprintf("%s:%s", getNotifyMsgTypeDesc(common.NotifyMsgSystem, lang), getI18n("sensor_log_not_collected", lang))
 					params := map[string]string{"dc_hostname": info["dc_hostname"], "ip": info["ip"], "sensor_last_online": info["last_online_tm"]}
-					err = AddNotify(env.MongoCli, title, "sensor", getI18n("sensor_log_abnormal", lang), lang, params)
+					err = AddNotify(env.MongoContext(), env.MongoCli, title, "sensor", getI18n("sensor_log_abnormal", lang), lang, params)
 					if err == nil {
 						if err := env.RedisCli.Set(ctx, lastNotifyKey, "1", 6*time.Hour).Err(); err != nil {
 							logger.Warnf("redis set sensor notify last_tm key err:%v", err)
@@ -304,7 +304,7 @@ func checkSystemStatusSensor(ctx context.Context, env *config.Env, statsCfg map[
 					if env.RedisCli.Exists(ctx, lastNotifyKey).Val() == 0 {
 						title := fmt.Sprintf("%s:%s", getNotifyMsgTypeDesc(common.NotifyMsgSystem, lang), getI18n("sensor_log_collection_abnormal", lang))
 						params := map[string]string{"dc_hostname": info["dc_hostname"], "ip": info["ip"], "last_collect_tm": time.Unix(ts, 0).String()}
-						err = AddNotify(env.MongoCli, title, "sensor", getI18n("sensor_log_abnormal", lang), lang, params)
+						err = AddNotify(env.MongoContext(), env.MongoCli, title, "sensor", getI18n("sensor_log_abnormal", lang), lang, params)
 						if err == nil {
 							if err := env.RedisCli.Set(ctx, lastNotifyKey, "1", 6*time.Hour).Err(); err != nil {
 								logger.Warnf("redis set sensor notify last_tm key err:%v", err)
@@ -322,7 +322,7 @@ func checkSystemStatusSensor(ctx context.Context, env *config.Env, statsCfg map[
 				if env.RedisCli.Exists(ctx, lastNotifyKey).Val() == 0 {
 					title := fmt.Sprintf("%s:%s", getNotifyMsgTypeDesc(common.NotifyMsgSystem, lang), getI18n("sensor_traffic_not_collected", lang))
 					params := map[string]string{"dc_hostname": info["dc_hostname"], "ip": info["ip"], "sensor_last_online": info["last_online_tm"]}
-					err = AddNotify(env.MongoCli, title, "sensor", getI18n("sensor_traffic_abnormal", lang), lang, params)
+					err = AddNotify(env.MongoContext(), env.MongoCli, title, "sensor", getI18n("sensor_traffic_abnormal", lang), lang, params)
 					if err == nil {
 						if err := env.RedisCli.Set(ctx, lastNotifyKey, "1", 6*time.Hour).Err(); err != nil {
 							logger.Warnf("redis set sensor notify last_tm key err:%v", err)
@@ -342,7 +342,7 @@ func checkSystemStatusSensor(ctx context.Context, env *config.Env, statsCfg map[
 					if env.RedisCli.Exists(ctx, lastNotifyKey).Val() == 0 {
 						title := fmt.Sprintf("%s:%s", getNotifyMsgTypeDesc(common.NotifyMsgSystem, lang), getI18n("sensor_traffic_abnormal", lang))
 						params := map[string]string{"dc_hostname": info["dc_hostname"], "ip": info["ip"], "last_collect_tm": time.Unix(ts, 0).String()}
-						err = AddNotify(env.MongoCli, title, "sensor", getI18n("sensor_traffic_abnormal", lang), lang, params)
+						err = AddNotify(env.MongoContext(), env.MongoCli, title, "sensor", getI18n("sensor_traffic_abnormal", lang), lang, params)
 						if err == nil {
 							if err := env.RedisCli.Set(ctx, lastNotifyKey, "1", 6*time.Hour).Err(); err != nil {
 								logger.Warnf("redis set sensor notify last_tm key err:%v", err)
@@ -357,7 +357,7 @@ func checkSystemStatusSensor(ctx context.Context, env *config.Env, statsCfg map[
 	return nil
 }
 
-func updateSensorStatus(mongoCli mongo.DBAdaptor, sensorKey, status string) error {
+func updateSensorStatus(ctx context.Context, mongoCli mongo.DBAdaptor, sensorKey, status string) error {
 	var s model.Sensor
 
 	// sensorKey: ada:sensor:id:ac858538-4a4d-4c23-8725-2d607aaf0efb
@@ -366,7 +366,7 @@ func updateSensorStatus(mongoCli mongo.DBAdaptor, sensorKey, status string) erro
 		return fmt.Errorf("invalid sensor key(%s)", sensorKey)
 	}
 
-	err, exist := mongoCli.FindOne(s.CollectName(), bson.M{"_id": parts[1]}, &s)
+	err, exist := mongoCli.FindOne(ctx, s.CollectName(), bson.M{"_id": parts[1]}, &s)
 	if err != nil || !exist {
 		return err
 	}
@@ -375,7 +375,7 @@ func updateSensorStatus(mongoCli mongo.DBAdaptor, sensorKey, status string) erro
 		"status": status,
 	}
 
-	err = mongoCli.UpdateById(s.CollectName(), s.ID, &update)
+	err = mongoCli.UpdateById(ctx, s.CollectName(), s.ID, &update)
 	if err != nil {
 		logger.Errorf("update sensor statusid(%s) err:%v", s.ID, err)
 		return err
@@ -384,7 +384,7 @@ func updateSensorStatus(mongoCli mongo.DBAdaptor, sensorKey, status string) erro
 	return nil
 }
 
-func AddNotify(mongoCli mongo.DBAdaptor, title, eventType, desc, lang string, params map[string]string) error {
+func AddNotify(ctx context.Context, mongoCli mongo.DBAdaptor, title, eventType, desc, lang string, params map[string]string) error {
 	notify := model.Notify{
 		ID:        bson.NewObjectID(),
 		Title:     title,
@@ -395,7 +395,7 @@ func AddNotify(mongoCli mongo.DBAdaptor, title, eventType, desc, lang string, pa
 		CreateTm:  time.Now(),
 	}
 
-	err := mongoCli.Insert(notify.CollectName(), &notify)
+	err := mongoCli.Insert(ctx, notify.CollectName(), &notify)
 	if err != nil {
 		logger.Errorf("insert notify err :%v", err)
 		return err
@@ -411,7 +411,7 @@ func AddNotify(mongoCli mongo.DBAdaptor, title, eventType, desc, lang string, pa
 
 	notifyByte, _ := json.Marshal(notifyMsg)
 
-	confList, err := getNotifyConfs(mongoCli, common.NotifyMsgSystem)
+	confList, err := getNotifyConfs(ctx, mongoCli, common.NotifyMsgSystem)
 	if err != nil {
 		logger.Errorf("get notify conf(system) err:%v", err)
 		return err
@@ -421,7 +421,7 @@ func AddNotify(mongoCli mongo.DBAdaptor, title, eventType, desc, lang string, pa
 	var sysInfo model.SystemInfo
 	notifyProxy := false
 	httpProxy := ""
-	_, exist := mongoCli.FindOne(sysInfo.CollectName(), bson.M{}, &sysInfo)
+	_, exist := mongoCli.FindOne(ctx, sysInfo.CollectName(), bson.M{}, &sysInfo)
 	if exist && sysInfo.SystemProxy != nil {
 		notifyProxy = sysInfo.SystemProxy["notify_proxy"] == "true"
 		httpProxy = sysInfo.SystemProxy["http_proxy"]

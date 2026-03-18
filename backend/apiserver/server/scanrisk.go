@@ -16,7 +16,7 @@ func GetLatestTaskByType(e *config.Env, typ string) (*model.ScanTasks, error) {
 
 	query := bson.M{"type": typ, "status": "FINISH"}
 	sort := bson.M{"create_tm": -1}
-	err := e.MongoCli.FindSortByLimitAndSkip(tb, query, sort, &st, 1, 0)
+	err := e.MongoCli.FindSortByLimitAndSkip(e.MongoContext(), tb, query, sort, &st, 1, 0)
 	if err != nil {
 		return nil, err
 	}
@@ -54,7 +54,7 @@ func FindBaselineListSelect(e *config.Env, groupId string, domains, subTypes []s
 		sort = bson.M{"update_tm": orderUpdateTm}
 	}
 
-	err := e.MongoCli.FindSortByLimitAndSkip(tb, query, sort, &sst, int64(limit), int64(offset))
+	err := e.MongoCli.FindSortByLimitAndSkip(e.MongoContext(), tb, query, sort, &sst, int64(limit), int64(offset))
 	if err != nil {
 		return sst, 0, err
 	}
@@ -73,7 +73,7 @@ func FindWeakPwdListSelect(e *config.Env, groupId string, domains []string, limi
 	}
 
 	sort := bson.M{"update_tm": -1}
-	err := e.MongoCli.FindSortByLimitAndSkip(tb, query, sort, &sst, int64(limit), int64(offset))
+	err := e.MongoCli.FindSortByLimitAndSkip(e.MongoContext(), tb, query, sort, &sst, int64(limit), int64(offset))
 	if err != nil {
 		return sst, 0, err
 	}
@@ -115,7 +115,7 @@ func FindLeakListSelect(e *config.Env, groupId string, domains, subTypes []strin
 		sort = bson.M{"update_tm": orderUpdateTm}
 	}
 
-	err := e.MongoCli.FindSortByLimitAndSkip(tb, query, sort, &sst, int64(limit), int64(offset))
+	err := e.MongoCli.FindSortByLimitAndSkip(e.MongoContext(), tb, query, sort, &sst, int64(limit), int64(offset))
 	if err != nil {
 		return sst, 0, err
 	}
@@ -131,7 +131,7 @@ func GetScanSubTaskById(e *config.Env, id string) (*model.ScanSubTasks, error) {
 	}
 
 	query := bson.M{"_id": Id}
-	err, _ = e.MongoCli.FindOne(sst.CollectName(), query, &sst)
+	err, _ = e.MongoCli.FindOne(e.MongoContext(), sst.CollectName(), query, &sst)
 	if err != nil {
 		logger.Errorf("get scan sub_task err:%v", err)
 		return nil, err
@@ -162,7 +162,7 @@ func FindScanTasksSelect(e *config.Env, typ, status, cycle, startTm, endTm strin
 		query = append(query, bson.E{Key: "update_tm", Value: bson.M{"$gte": startTime.Add(-time.Hour * 8), "$lte": endTime.Add(-time.Hour * 8)}})
 	}
 
-	total, err := e.MongoCli.FindCount(tb, query)
+	total, err := e.MongoCli.FindCount(e.MongoContext(), tb, query)
 	if err != nil {
 		return nil, 0, err
 	}
@@ -174,7 +174,7 @@ func FindScanTasksSelect(e *config.Env, typ, status, cycle, startTm, endTm strin
 	if orderUpdateTm != 0 {
 		sort["update_tm"] = orderUpdateTm
 	}
-	err = e.MongoCli.FindSortByLimitAndSkip(tb, query, sort, &sts, int64(limit), int64(offset))
+	err = e.MongoCli.FindSortByLimitAndSkip(e.MongoContext(), tb, query, sort, &sts, int64(limit), int64(offset))
 	if err != nil {
 		return nil, 0, err
 	}
@@ -190,7 +190,7 @@ func GetScanTasksById(e *config.Env, id string) (*model.ScanTasks, error) {
 	}
 
 	query := bson.M{"_id": Id}
-	err, _ = e.MongoCli.FindOne(st.CollectName(), query, &st)
+	err, _ = e.MongoCli.FindOne(e.MongoContext(), st.CollectName(), query, &st)
 	if err != nil {
 		logger.Errorf("get scan task err:%v", err)
 		return nil, err
@@ -203,7 +203,7 @@ func DeleteScanTasks(e *config.Env, Id string) error {
 	// delete the related subtasks first
 	var sst model.ScanSubTasks
 	query := bson.M{"group_id": Id}
-	err := e.MongoCli.Remove(sst.CollectName(), &query, true)
+	err := e.MongoCli.Remove(e.MongoContext(), sst.CollectName(), &query, true)
 	if err != nil {
 		return err
 	}
@@ -213,7 +213,7 @@ func DeleteScanTasks(e *config.Env, Id string) error {
 	if err != nil {
 		return err
 	}
-	return e.MongoCli.RemoveById(st.CollectName(), objId)
+	return e.MongoCli.RemoveById(e.MongoContext(), st.CollectName(), objId)
 }
 
 func FindSubScanTasks(e *config.Env, groupId string, limit, offset int32) ([]model.ScanSubTasks, int64, error) {
@@ -223,12 +223,12 @@ func FindSubScanTasks(e *config.Env, groupId string, limit, offset int32) ([]mod
 	query := bson.M{"group_id": groupId}
 	sort := bson.M{"create_tm": -1}
 
-	total, err := e.MongoCli.FindCount(tb, query)
+	total, err := e.MongoCli.FindCount(e.MongoContext(), tb, query)
 	if err != nil {
 		return nil, 0, err
 	}
 
-	err = e.MongoCli.FindSortByLimitAndSkip(tb, query, sort, &sst, int64(limit), int64(offset))
+	err = e.MongoCli.FindSortByLimitAndSkip(e.MongoContext(), tb, query, sort, &sst, int64(limit), int64(offset))
 	if err != nil {
 		return sst, 0, err
 	}
@@ -237,7 +237,7 @@ func FindSubScanTasks(e *config.Env, groupId string, limit, offset int32) ([]mod
 }
 
 func DropDomainUserHash(e *config.Env, tbName string) error {
-	return e.MongoCli.Drop(tbName)
+	return e.MongoCli.Drop(e.MongoContext(), tbName)
 }
 
 func GetLatestSubTaskByDomain(e *config.Env, domain, typ string) ([]model.ScanSubTasks, error) {
@@ -251,7 +251,7 @@ func GetLatestSubTaskByDomain(e *config.Env, domain, typ string) ([]model.ScanSu
 	}
 
 	sort := bson.M{"create_tm": -1}
-	err := e.MongoCli.FindSortByLimitAndSkip(tb, query, sort, &st, 1, 0)
+	err := e.MongoCli.FindSortByLimitAndSkip(e.MongoContext(), tb, query, sort, &st, 1, 0)
 	if err != nil {
 		return nil, err
 	}
@@ -264,7 +264,7 @@ func GetLatestSubTaskByDomain(e *config.Env, domain, typ string) ([]model.ScanSu
 	query2 := bson.D{}
 	query2 = append(query2, bson.E{Key: "status", Value: "FINISH"}, bson.E{Key: "group_id", Value: st[0].ID.Hex()}, bson.E{Key: "params.domain", Value: domain})
 	sort2 := bson.M{"update_tm": -1}
-	err = e.MongoCli.FindSortByLimitAndSkip(tb2, query2, sort2, &sst, 500, 0)
+	err = e.MongoCli.FindSortByLimitAndSkip(e.MongoContext(), tb2, query2, sort2, &sst, 500, 0)
 	if err != nil {
 		return sst, err
 	}
@@ -276,7 +276,7 @@ func FindAllScanConf(e *config.Env) ([]model.ScanConf, error) {
 	var sc []model.ScanConf
 	tb := (&model.ScanConf{}).CollectName()
 
-	err := e.MongoCli.FindAll(tb, bson.M{}, &sc)
+	err := e.MongoCli.FindAll(e.MongoContext(), tb, bson.M{}, &sc)
 	if err != nil {
 		return nil, err
 	}
@@ -293,7 +293,7 @@ func FindScanTmplSelect(e *config.Env, typ string, limit, offset int64) ([]model
 		query["type"] = typ
 	}
 
-	if err := e.MongoCli.FindByLimitAndSkip(tb, query, &st, limit, offset); err != nil {
+	if err := e.MongoCli.FindByLimitAndSkip(e.MongoContext(), tb, query, &st, limit, offset); err != nil {
 		return nil, err
 	}
 
@@ -308,7 +308,7 @@ func GetScanTmplById(e *config.Env, id string) (*model.ScanTemplate, error) {
 	}
 
 	query := bson.M{"_id": Id}
-	err, _ = e.MongoCli.FindOne(st.CollectName(), query, &st)
+	err, _ = e.MongoCli.FindOne(e.MongoContext(), st.CollectName(), query, &st)
 	if err != nil {
 		logger.Errorf("get scan tmpl err:%v", err)
 		return nil, err
@@ -320,7 +320,7 @@ func GetScanTmplById(e *config.Env, id string) (*model.ScanTemplate, error) {
 func GetScanTmplByName(e *config.Env, name string) (*model.ScanTemplate, error) {
 	st := model.ScanTemplate{}
 	query := bson.M{"name": name}
-	err, exist := e.MongoCli.FindOne(st.CollectName(), query, &st)
+	err, exist := e.MongoCli.FindOne(e.MongoContext(), st.CollectName(), query, &st)
 	if err != nil || !exist {
 		return nil, err
 	}
@@ -338,7 +338,7 @@ func AddScanTmpl(e *config.Env, name, typ string, plugins []model.ScanPlugin) er
 	st.CreateTm = utime.CurTime()
 	st.UpdateTm = utime.CurTime()
 
-	return e.MongoCli.Insert(st.CollectName(), &st)
+	return e.MongoCli.Insert(e.MongoContext(), st.CollectName(), &st)
 }
 
 func UpdateScanTmpl(e *config.Env, id, name string, plugins []model.ScanPlugin) error {
@@ -351,7 +351,7 @@ func UpdateScanTmpl(e *config.Env, id, name string, plugins []model.ScanPlugin) 
 	query := bson.M{"_id": Id}
 	updateM := bson.M{"$set": bson.M{"name": name, "plugins": plugins}}
 
-	return e.MongoCli.UpdateRaw(st.CollectName(), &query, &updateM, false)
+	return e.MongoCli.UpdateRaw(e.MongoContext(), st.CollectName(), &query, &updateM, false)
 }
 
 func GetScanConfById(e *config.Env, id string) (*model.ScanConf, error) {
@@ -362,7 +362,7 @@ func GetScanConfById(e *config.Env, id string) (*model.ScanConf, error) {
 	}
 
 	query := bson.M{"_id": Id}
-	err, _ = e.MongoCli.FindOne(sc.CollectName(), query, &sc)
+	err, _ = e.MongoCli.FindOne(e.MongoContext(), sc.CollectName(), query, &sc)
 	if err != nil {
 		logger.Errorf("get scan conf err:%v", err)
 		return nil, err
@@ -379,14 +379,14 @@ func UpdateScanConf(e *config.Env, id string, updater bson.M) error {
 	}
 
 	var sc model.ScanConf
-	return e.MongoCli.Update(sc.CollectName(), bson.M{"_id": Id}, updater, false)
+	return e.MongoCli.Update(e.MongoContext(), sc.CollectName(), bson.M{"_id": Id}, updater, false)
 }
 
 // GetDefaultScanTmplMap 获取默认类型的scan tmpl 与id对应map
 func GetDefaultScanTmplMap(e *config.Env) (map[string]string, error) {
 	var stList []model.ScanTemplate
 	tb := (&model.ScanTemplate{}).CollectName()
-	err := e.MongoCli.FindAll(tb, bson.M{"tmpl_type": 1}, &stList)
+	err := e.MongoCli.FindAll(e.MongoContext(), tb, bson.M{"tmpl_type": 1}, &stList)
 	if err != nil {
 		return nil, err
 	}
@@ -403,7 +403,7 @@ func UpdateScanConfByDomain(e *config.Env, domain string, isDelete bool) error {
 	// 对于添加操作，遍历扫描配置(baseline/leak/weakpwd)默认模板，将该domain添加到plans
 	var scList []model.ScanConf
 	tb := (&model.ScanConf{}).CollectName()
-	err := e.MongoCli.FindAll(tb, bson.M{}, &scList)
+	err := e.MongoCli.FindAll(e.MongoContext(), tb, bson.M{}, &scList)
 	if err != nil {
 		return err
 	}
@@ -433,7 +433,7 @@ func UpdateScanConfByDomain(e *config.Env, domain string, isDelete bool) error {
 			"update_tm": utime.CurTime(),
 		}
 
-		err = e.MongoCli.UpdateById(sc.CollectName(), sc.ID, &update)
+		err = e.MongoCli.UpdateById(e.MongoContext(), sc.CollectName(), sc.ID, &update)
 		if err != nil {
 			logger.Errorf("ignore update scan conf by id(%s) err:%v", sc.ID, err)
 			continue
@@ -447,7 +447,7 @@ func UpdateScanConfByDomain(e *config.Env, domain string, isDelete bool) error {
 func UpdateScanConfByDomainV2(e *config.Env, oldDomain, domain string) error {
 	var scList []model.ScanConf
 	tb := (&model.ScanConf{}).CollectName()
-	err := e.MongoCli.FindAll(tb, bson.M{}, &scList)
+	err := e.MongoCli.FindAll(e.MongoContext(), tb, bson.M{}, &scList)
 	if err != nil {
 		return err
 	}
@@ -471,7 +471,7 @@ func UpdateScanConfByDomainV2(e *config.Env, oldDomain, domain string) error {
 			"update_tm": utime.CurTime(),
 		}
 
-		err = e.MongoCli.UpdateById(sc.CollectName(), sc.ID, &update)
+		err = e.MongoCli.UpdateById(e.MongoContext(), sc.CollectName(), sc.ID, &update)
 		if err != nil {
 			logger.Errorf("ignore update scan conf by id(%s) err:%v", sc.ID, err)
 			continue
@@ -489,7 +489,7 @@ func DeleteScanTmpl(e *config.Env, Id string) error {
 		return err
 	}
 
-	return e.MongoCli.RemoveById(st.CollectName(), objId)
+	return e.MongoCli.RemoveById(e.MongoContext(), st.CollectName(), objId)
 }
 
 func FindScanPluginSelect(e *config.Env, category string) ([]model.ScanPlugin, error) {
@@ -497,7 +497,7 @@ func FindScanPluginSelect(e *config.Env, category string) ([]model.ScanPlugin, e
 	tb := (&model.ScanPlugin{}).CollectName()
 
 	query := bson.M{"category": category}
-	err := e.MongoCli.FindAll(tb, query, &sp)
+	err := e.MongoCli.FindAll(e.MongoContext(), tb, query, &sp)
 	if err != nil {
 		logger.Errorf("get scan plugin err:%v", err)
 		return nil, err
@@ -509,7 +509,7 @@ func FindScanPluginSelect(e *config.Env, category string) ([]model.ScanPlugin, e
 func GetScanPluginById(e *config.Env, Id int32) (model.ScanPlugin, error) {
 	sp := model.ScanPlugin{}
 	query := bson.M{"_id": Id}
-	err, exist := e.MongoCli.FindOne(sp.CollectName(), query, &sp)
+	err, exist := e.MongoCli.FindOne(e.MongoContext(), sp.CollectName(), query, &sp)
 	if err != nil || !exist {
 		logger.Errorf("get scan plugin err:%v", err)
 		return sp, err

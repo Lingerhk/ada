@@ -106,7 +106,7 @@ func (s *GrpcService) updateUserActiveTm(username string) error {
 		now := time.Now()
 		var u model.User
 		update := bson.M{"$set": bson.M{"active_tm": now}}
-		err := s.env.MongoCli.UpdateRaw(u.CollectName(), bson.M{"username": username}, &update, false)
+		err := s.env.MongoCli.UpdateRaw(s.env.MongoContext(), u.CollectName(), bson.M{"username": username}, &update, false)
 		if err != nil {
 			logger.Errorf("Failed to update user active_tm for %s: %v", username, err)
 			return err
@@ -132,7 +132,7 @@ func (s *GrpcService) authenticateByAccessKey(secretHash string) (*util.UserClai
 		"status":      "active",
 	}
 
-	err, exist := s.env.MongoCli.FindOne(tb, query, &accessKey)
+	err, exist := s.env.MongoCli.FindOne(s.env.MongoContext(), tb, query, &accessKey)
 	if err != nil {
 		logger.Errorf("Failed to query AccessKey: %v", err)
 		return nil, fmt.Errorf("authentication failed")
@@ -160,7 +160,7 @@ func (s *GrpcService) authenticateByAccessKey(secretHash string) (*util.UserClai
 		// Update the ActiveTm field in database
 		now := time.Now()
 		accessKey.ActiveTm = now
-		err = s.env.MongoCli.UpdateById(tb, accessKey.ID, &accessKey)
+		err = s.env.MongoCli.UpdateById(s.env.MongoContext(), tb, accessKey.ID, &accessKey)
 		if err != nil {
 			logger.Warnf("Failed to update AccessKey ActiveTm for %s: %v", accessKeyID, err)
 			// Don't fail authentication if we can't update the timestamp
@@ -174,7 +174,7 @@ func (s *GrpcService) authenticateByAccessKey(secretHash string) (*util.UserClai
 
 	// Get user info to construct UserClaim
 	var user model.User
-	err, exist = s.env.MongoCli.FindOne(user.CollectName(), bson.M{"username": username}, &user)
+	err, exist = s.env.MongoCli.FindOne(s.env.MongoContext(), user.CollectName(), bson.M{"username": username}, &user)
 	if err != nil || !exist {
 		logger.Errorf("Failed to get user info for username %s: %v", username, err)
 		return nil, fmt.Errorf("user not found")
@@ -407,14 +407,18 @@ func (s *GrpcService) logging() grpc.UnaryServerInterceptor {
 		resp, err := handler(ctx, req)
 
 		duration := time.Since(startTime)
-		argsStr := req.(fmt.Stringer).String()
 		fullMethod := args.FullMethod
+		argsStr := fmt.Sprintf("%v", req)
+		if stringer, ok := req.(fmt.Stringer); ok {
+			argsStr = stringer.String()
+		}
+		maskedArgsStr := eventMasking(fullMethod, argsStr)
 		logFields := logger.Fields{
 			"ip":      addr,
 			"path":    fullMethod,
 			"ts":      duration.Seconds(),
 			"timeout": quota,
-			"args":    argsStr,
+			"args":    maskedArgsStr,
 		}
 		// add audit log
 		eventResult := "Success"

@@ -44,7 +44,7 @@ func ListAlertRule(e *config.Env, levels []int32, status []string, enable *bool,
 	}
 
 	// Get total count
-	total, err := e.MongoCli.FindCount(tb, query)
+	total, err := e.MongoCli.FindCount(e.MongoContext(), tb, query)
 	if err != nil {
 		return nil, 0, err
 	}
@@ -57,7 +57,7 @@ func ListAlertRule(e *config.Env, levels []int32, status []string, enable *bool,
 
 	// Find with pagination
 	var rules []*model.AlertRule
-	err = e.MongoCli.FindSortByLimitAndSkip(tb, query, sort, &rules, int64(limit), int64(offset))
+	err = e.MongoCli.FindSortByLimitAndSkip(e.MongoContext(), tb, query, sort, &rules, int64(limit), int64(offset))
 	if err != nil {
 		return nil, 0, err
 	}
@@ -77,7 +77,7 @@ func AddAlertRule(e *config.Env, rule *model.AlertRule) error {
 		rule.ID = bson.NewObjectID().Hex()
 	}
 
-	return e.MongoCli.Insert(tb, rule)
+	return e.MongoCli.Insert(e.MongoContext(), tb, rule)
 }
 
 func UpdateAlertRule(e *config.Env, id string, updates bson.M) error {
@@ -88,13 +88,13 @@ func UpdateAlertRule(e *config.Env, id string, updates bson.M) error {
 
 	filter := bson.M{"_id": id}
 
-	return e.MongoCli.Update(tb, filter, updates, false)
+	return e.MongoCli.Update(e.MongoContext(), tb, filter, updates, false)
 }
 
 func DeleteAlertRule(e *config.Env, id string) error {
 	tb := (&model.AlertRule{}).CollectName()
 	filter := bson.M{"_id": id}
-	return e.MongoCli.Remove(tb, filter, false)
+	return e.MongoCli.Remove(e.MongoContext(), tb, filter, false)
 }
 
 func GetAlertRuleByID(e *config.Env, id string) (*model.AlertRule, error) {
@@ -102,7 +102,7 @@ func GetAlertRuleByID(e *config.Env, id string) (*model.AlertRule, error) {
 	filter := bson.M{"_id": id}
 
 	var rule model.AlertRule
-	err, exist := e.MongoCli.FindOne(tb, filter, &rule)
+	err, exist := e.MongoCli.FindOne(e.MongoContext(), tb, filter, &rule)
 	if err != nil {
 		return nil, err
 	}
@@ -155,7 +155,7 @@ func ListActivityRule(e *config.Env, ids []string, levels []int32, status []stri
 	}
 
 	// Get total count
-	total, err := e.MongoCli.FindCount(tb, query)
+	total, err := e.MongoCli.FindCount(e.MongoContext(), tb, query)
 	if err != nil {
 		return nil, 0, err
 	}
@@ -168,7 +168,7 @@ func ListActivityRule(e *config.Env, ids []string, levels []int32, status []stri
 
 	// Find with pagination
 	var rules []*model.AlertActivityRule
-	err = e.MongoCli.FindSortByLimitAndSkip(tb, query, sort, &rules, int64(limit), int64(offset))
+	err = e.MongoCli.FindSortByLimitAndSkip(e.MongoContext(), tb, query, sort, &rules, int64(limit), int64(offset))
 	if err != nil {
 		return nil, 0, err
 	}
@@ -181,7 +181,7 @@ func GetActivityRuleByID(e *config.Env, id string) (*model.AlertActivityRule, er
 	filter := bson.M{"_id": id}
 
 	var rule model.AlertActivityRule
-	err, exist := e.MongoCli.FindOne(tb, filter, &rule)
+	err, exist := e.MongoCli.FindOne(e.MongoContext(), tb, filter, &rule)
 	if err != nil {
 		return nil, err
 	}
@@ -204,7 +204,7 @@ func AddActivityRule(e *config.Env, rule *model.AlertActivityRule) error {
 		return fmt.Errorf("invalid rule ID format, should be like: winlog-0000-0001")
 	}
 
-	return e.MongoCli.Insert(tb, rule)
+	return e.MongoCli.Insert(e.MongoContext(), tb, rule)
 }
 
 func UpdateActivityRule(e *config.Env, id string, updates bson.M) error {
@@ -215,13 +215,13 @@ func UpdateActivityRule(e *config.Env, id string, updates bson.M) error {
 
 	filter := bson.M{"_id": id}
 
-	return e.MongoCli.Update(tb, filter, updates, false)
+	return e.MongoCli.Update(e.MongoContext(), tb, filter, updates, false)
 }
 
 func DeleteActivityRule(e *config.Env, id string) error {
 	tb := (&model.AlertActivityRule{}).CollectName()
 	filter := bson.M{"_id": id}
-	return e.MongoCli.Remove(tb, filter, false)
+	return e.MongoCli.Remove(e.MongoContext(), tb, filter, false)
 }
 
 // CountAlertRulesReferencingActivityRule counts how many alert rules reference the given activity rule ID
@@ -231,7 +231,7 @@ func CountAlertRulesReferencingActivityRule(e *config.Env, activityRuleID string
 	filter := bson.M{
 		"detection.sigma_rules": activityRuleID,
 	}
-	count, err := e.MongoCli.FindCount(tb, filter)
+	count, err := e.MongoCli.FindCount(e.MongoContext(), tb, filter)
 	if err != nil {
 		return 0, err
 	}
@@ -275,7 +275,7 @@ func GetAllRuleTags(e *config.Env) ([]string, error) {
 	// Get tags from AlertRule collection
 	alertRuleTb := (&model.AlertRule{}).CollectName()
 	var alertRules []model.AlertRule
-	err := e.MongoCli.FindAll(alertRuleTb, bson.D{}, &alertRules)
+	err := e.MongoCli.FindAll(e.MongoContext(), alertRuleTb, bson.D{}, &alertRules)
 	if err != nil {
 		logger.Errorf("find alert rules err:%v", err)
 		return nil, err
@@ -292,7 +292,7 @@ func GetAllRuleTags(e *config.Env) ([]string, error) {
 	// Get tags from AlertActivityRule collection
 	activityRuleTb := (&model.AlertActivityRule{}).CollectName()
 	var activityRules []model.AlertActivityRule
-	err = e.MongoCli.FindAll(activityRuleTb, bson.D{}, &activityRules)
+	err = e.MongoCli.FindAll(e.MongoContext(), activityRuleTb, bson.D{}, &activityRules)
 	if err != nil {
 		logger.Errorf("find activity rules err:%v", err)
 		return nil, err
@@ -322,7 +322,7 @@ func GetAllActivityRuleFields(e *config.Env) ([]string, error) {
 	// Get fields from AlertActivityRule collection
 	activityRuleTb := (&model.AlertActivityRule{}).CollectName()
 	var activityRules []model.AlertActivityRule
-	err := e.MongoCli.FindAll(activityRuleTb, bson.D{}, &activityRules)
+	err := e.MongoCli.FindAll(e.MongoContext(), activityRuleTb, bson.D{}, &activityRules)
 	if err != nil {
 		logger.Errorf("find activity rules err:%v", err)
 		return nil, err
@@ -352,7 +352,7 @@ func GetAllActivityRuleUniqueFields(e *config.Env) ([]string, error) {
 	// Get uniqueFields from AlertActivityRule collection
 	activityRuleTb := (&model.AlertActivityRule{}).CollectName()
 	var activityRules []model.AlertActivityRule
-	err := e.MongoCli.FindAll(activityRuleTb, bson.D{}, &activityRules)
+	err := e.MongoCli.FindAll(e.MongoContext(), activityRuleTb, bson.D{}, &activityRules)
 	if err != nil {
 		logger.Errorf("find activity rules err:%v", err)
 		return nil, err
@@ -378,7 +378,7 @@ func GetAllActivityRuleUniqueFields(e *config.Env) ([]string, error) {
 func GetThreatRuleByID(e *config.Env, flowId string) (*model.AlertRule, error) {
 	ad := model.AlertRule{}
 
-	err, _ := e.MongoCli.FindOne(ad.CollectName(), bson.M{"_id": flowId}, &ad)
+	err, _ := e.MongoCli.FindOne(e.MongoContext(), ad.CollectName(), bson.M{"_id": flowId}, &ad)
 	if err != nil {
 		logger.Errorf("get threat desc err:%v", err)
 		return nil, err
@@ -392,7 +392,7 @@ func GetAllThreatRules(e *config.Env) ([]model.AlertRule, error) {
 	tb := (&model.AlertRule{}).CollectName()
 
 	query := bson.M{}
-	err := e.MongoCli.FindAll(tb, query, &adList)
+	err := e.MongoCli.FindAll(e.MongoContext(), tb, query, &adList)
 	if err != nil {
 		return nil, err
 	}
@@ -411,7 +411,7 @@ func FindThreatDescSelect(e *config.Env, levels []int32, enable []bool) ([]model
 		query = bson.M{"enable": bson.M{"$in": enable}}
 	}
 
-	err := e.MongoCli.FindAll(tb, query, &adList)
+	err := e.MongoCli.FindAll(e.MongoContext(), tb, query, &adList)
 	if err != nil {
 		return nil, err
 	}
@@ -421,7 +421,7 @@ func FindThreatDescSelect(e *config.Env, levels []int32, enable []bool) ([]model
 // GetThreatAttackFlowByID 需要优化该处，修改为通用方法
 func GetThreatAttackFlowByID(e *config.Env, flowId string, fieldData map[string]string) (*model.AttackFlow, error) {
 	ad := model.AlertRule{}
-	err, _ := e.MongoCli.FindOne(ad.CollectName(), bson.M{"_id": flowId}, &ad)
+	err, _ := e.MongoCli.FindOne(e.MongoContext(), ad.CollectName(), bson.M{"_id": flowId}, &ad)
 	if err != nil {
 		logger.Errorf("get threat attack_flow err:%v", err)
 		return nil, err

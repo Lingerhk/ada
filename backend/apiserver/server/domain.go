@@ -16,7 +16,7 @@ func GetDomainList(env *config.Env) ([]*model.Domain, error) {
 	domain := model.Domain{}
 	domainList := make([]*model.Domain, 0)
 
-	if err := env.MongoCli.FindAll(domain.CollectName(), bson.M{}, &domainList); err != nil {
+	if err := env.MongoCli.FindAll(env.MongoContext(), domain.CollectName(), bson.M{}, &domainList); err != nil {
 		return nil, err
 	}
 
@@ -53,11 +53,11 @@ func FindAllDomain(e *config.Env, limit, skip int64, FilterDomain string, Filter
 		query = append(query, bson.E{Key: "$or", Value: b})
 	}
 
-	total, err := e.MongoCli.FindCount(tb, query)
+	total, err := e.MongoCli.FindCount(e.MongoContext(), tb, query)
 	if err != nil {
 		return nil, 0, err
 	}
-	if err := e.MongoCli.FindByLimitAndSkip(tb, query, &domainList, limit, skip); err != nil {
+	if err := e.MongoCli.FindByLimitAndSkip(e.MongoContext(), tb, query, &domainList, limit, skip); err != nil {
 		return nil, 0, err
 	}
 	return domainList, total, nil
@@ -69,7 +69,7 @@ func FindAllDomainByStatus(e *config.Env, status string) ([]model.Domain, error)
 
 	query := bson.M{"status": status}
 
-	err := e.MongoCli.FindAll(tb, query, &domainList)
+	err := e.MongoCli.FindAll(e.MongoContext(), tb, query, &domainList)
 	if err != nil {
 		return nil, err
 	}
@@ -78,7 +78,7 @@ func FindAllDomainByStatus(e *config.Env, status string) ([]model.Domain, error)
 
 func GetDomainByName(e *config.Env, domain string) (*model.Domain, error) {
 	var dm model.Domain
-	err, exist := e.MongoCli.FindOne(dm.CollectName(), bson.M{"name": domain}, &dm)
+	err, exist := e.MongoCli.FindOne(e.MongoContext(), dm.CollectName(), bson.M{"name": domain}, &dm)
 	if err != nil || !exist {
 		return nil, err
 	}
@@ -92,7 +92,7 @@ func GetDomainById(e *config.Env, id string) (*model.Domain, error) {
 	if err != nil {
 		return nil, err
 	}
-	err, exist := e.MongoCli.FindOne(dm.CollectName(), bson.M{"_id": Id}, &dm)
+	err, exist := e.MongoCli.FindOne(e.MongoContext(), dm.CollectName(), bson.M{"_id": Id}, &dm)
 	if err != nil || !exist {
 		return nil, err
 	}
@@ -107,7 +107,7 @@ func AddDomain(e *config.Env, name, dcHostName, status string, ldapConf map[stri
 	domain.Status = status
 	domain.LdapConf = ldapConf
 	domain.CreateTm = utime.CurTime()
-	err := e.MongoCli.Insert(domain.CollectName(), &domain)
+	err := e.MongoCli.Insert(e.MongoContext(), domain.CollectName(), &domain)
 	if err != nil {
 		return err
 	}
@@ -127,7 +127,7 @@ func UpdateDomain(e *config.Env, id, name, dcHostName, status string, ldapConf m
 	if err != nil {
 		return err
 	}
-	err = e.MongoCli.UpdateById(domain.CollectName(), Id, &domain)
+	err = e.MongoCli.UpdateById(e.MongoContext(), domain.CollectName(), Id, &domain)
 	if err != nil {
 		return err
 	}
@@ -140,7 +140,7 @@ func DeleteDomain(e *config.Env, Id string) error {
 	if err != nil {
 		return err
 	}
-	return e.MongoCli.RemoveById(u.CollectName(), objId)
+	return e.MongoCli.RemoveById(e.MongoContext(), u.CollectName(), objId)
 }
 
 func CheckDomain(env *config.Env, hostname, domainName string) (*model.Domain, error) {
@@ -149,7 +149,7 @@ func CheckDomain(env *config.Env, hostname, domainName string) (*model.Domain, e
 	tb := domain.CollectName()
 	query := bson.D{{Key: "name", Value: bson.Regex{Pattern: domainName, Options: "i"}}, {Key: "dc_hostname", Value: bson.Regex{Pattern: hostname, Options: "i"}}}
 
-	err, _ := env.MongoCli.FindOne(tb, query, &domain)
+	err, _ := env.MongoCli.FindOne(env.MongoContext(), tb, query, &domain)
 	if err != nil {
 		return nil, err
 	}
@@ -170,7 +170,7 @@ func GetPwdByLdapAddr(e *config.Env, ldapAddr string) (*model.Domain, error) {
 
 	query := bson.M{"name": domainName}
 
-	err, _ = e.MongoCli.FindOne(domain.CollectName(), query, &domain)
+	err, _ = e.MongoCli.FindOne(e.MongoContext(), domain.CollectName(), query, &domain)
 	if err != nil {
 		logger.Errorf("find domain info by name err:%v", err)
 		return nil, err
@@ -204,5 +204,5 @@ func UpdateDCHasSensor(e *config.Env, domainID, dcHostname string, hasSensor boo
 		return err
 	}
 
-	return e.MongoCli.UpdateById(domain.CollectName(), objId, domain)
+	return e.MongoCli.UpdateById(e.MongoContext(), domain.CollectName(), objId, domain)
 }

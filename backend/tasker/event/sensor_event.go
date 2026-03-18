@@ -60,7 +60,7 @@ func (s *SensorEvent) register(regMsg sCommon.AdaMessage) {
 	// check sensor_id already exist
 	sensor := model.Sensor{}
 	query := bson.M{"_id": regMsg.AgentID}
-	err, _ := s.mongoCli.FindOne(sensor.CollectName(), query, &sensor)
+	err, _ := s.mongoCli.FindOne(ctx, sensor.CollectName(), query, &sensor)
 	if err == nil {
 		logger.Warnf("sensor(%s) already exist, will ignore this register msg", regMsg.AgentID)
 		s.cmdResp(ctx, regMsg.TaskID, regMsg.AgentID, "sensor already exist")
@@ -124,7 +124,7 @@ func (s *SensorEvent) register(regMsg sCommon.AdaMessage) {
 	sensor.LastOnlineTm = time.Now()
 	sensor.LastCollectTm = time.Now()
 
-	err = s.mongoCli.Insert(sensor.CollectName(), &sensor)
+	err = s.mongoCli.Insert(ctx, sensor.CollectName(), &sensor)
 	if err != nil {
 		logger.Errorf("create sensor err:%v", err)
 		s.cmdResp(ctx, regMsg.TaskID, regMsg.AgentID, err.Error())
@@ -189,7 +189,7 @@ func (s *SensorEvent) state(stateMsg sCommon.AdaMessage) {
 	// check sensor_id exist
 	sensor := model.Sensor{}
 	query := bson.M{"_id": stateMsg.AgentID}
-	err, _ := s.mongoCli.FindOne(sensor.CollectName(), query, &sensor)
+	err, _ := s.mongoCli.FindOne(ctx, sensor.CollectName(), query, &sensor)
 	if err != nil {
 		if err == mongo.ErrNotFound {
 			logger.Warnf("sensor(%s) does not exist, will ignore this state msg", stateMsg.AgentID)
@@ -253,7 +253,7 @@ func (s *SensorEvent) state(stateMsg sCommon.AdaMessage) {
 	sensor.LastOnlineTm = time.Unix(stateMsg.Timestamp, 0)
 	sensor.LastCollectTm = time.Unix(stateMsg.Timestamp, 0)
 
-	err = s.mongoCli.Update(sensor.CollectName(), &query, &sensor, false)
+	err = s.mongoCli.Update(ctx, sensor.CollectName(), &query, &sensor, false)
 	if err != nil {
 		logger.Warnf("update sensor(%s) err:%v", stateMsg.AgentID, err)
 		return

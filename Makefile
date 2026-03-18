@@ -4,12 +4,12 @@ COMMIT_VERSION=$(shell git log -1 --format="%h")
 COMMIT_TIME=$(shell git log -1 --format="%ci" | cut -d' ' -f1,2)
 
 BUILD_BASE_PATH=$(shell pwd)
-BUILD_PATH_APISERVER=backend/apiserver/cmd
-BUILD_PATH_TASK_SERVER=backend/tasker/cmd/server
-BUILD_PATH_TASK_WORKER=backend/tasker/cmd/worker
-BUILD_PATH_RECEIVER=backend/recevier/cmd
-BUILD_PATH_ENGINE=engine/cmd
-BUILD_PATH_SCANNER=scanner/cmd
+BUILD_PATH_APISERVER=./backend/apiserver/cmd
+BUILD_PATH_TASK_SERVER=./backend/tasker/cmd/server
+BUILD_PATH_TASK_WORKER=./backend/tasker/cmd/worker
+BUILD_PATH_RECEIVER=./backend/recevier/cmd
+BUILD_PATH_ENGINE=./engine/cmd
+BUILD_PATH_SCANNER=./scanner/cmd
 BUILD_PATH_INFRA=ada/infra
 BUILD_API_PROTO_PATH=${BUILD_BASE_PATH}/backend/apiserver/api/v2
 BUILD_RPC_PROTO_PATH=${BUILD_BASE_PATH}/backend/tasker/api
@@ -61,7 +61,7 @@ engine:
         -o ${BUILD_BASE_PATH}/bin/engine ${BUILD_PATH_ENGINE}/engine.go
 
 scanner:
-	/usr/local/go/bin/go build -ldflags \
+	CGO_ENABLED=0 /usr/local/go/bin/go build -ldflags \
         "-w -s -X '${BUILD_PATH_INFRA}/version.BuildVersion=${BUILD_VERSION}'\
         -X '${BUILD_PATH_INFRA}/version.BuildTime=${BUILD_TIME}'\
         -X '${BUILD_PATH_INFRA}/version.BuildName=ADA@scanner'\
