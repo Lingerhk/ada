@@ -514,6 +514,7 @@ func (p *tsharkPlugin) eventFromTsharkEKRecord(iface string, record map[string]a
 	} else {
 		delete(event, "ProtocolFields")
 	}
+	delete(event, "FrameTimeEpoch")
 	delete(event, "FrameProtocols")
 
 	return event, nil
@@ -566,6 +567,7 @@ func (p *tsharkPlugin) eventFromTsharkFieldsLine(iface, line string, now time.Ti
 		}
 	}
 	event["@timestamp"] = normalizeTsharkTimestamp(stringFromEvent(event, "FrameTimeEpoch"), now)
+	delete(event, "FrameTimeEpoch")
 	delete(event, "FrameProtocols")
 
 	return event, nil
