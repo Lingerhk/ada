@@ -66,6 +66,9 @@ func httpServe(env *config.Env) {
 	// handle health check
 	h.GET("/ping", hh.pingHandler)
 
+	// handle MCP streamable HTTP endpoint
+	h.Any("/mcp", gin.WrapH(service.NewMCPHTTPHandler(env)))
+
 	// handle static file
 	//h.StaticFS("/static", http.FS(frontend)) // http.FileServer(http.FS(frontend))) // TODO: 等前端打包好后开启次route path
 
