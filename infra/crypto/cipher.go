@@ -18,19 +18,6 @@ func MD5String(key string, length int) string {
 	return result[:length]
 }
 
-// RandString generates a cryptographically secure random string of specified length.
-// Uses crypto/rand for secure random number generation suitable for secrets,
-// API keys, and other security-sensitive operations.
-// This implementation uses rejection sampling via crypto/rand.Int to ensure
-// uniform distribution without modulo bias.
-func RandString(length int) string {
-	s, err := RandStringE(length)
-	if err != nil {
-		return ""
-	}
-	return s
-}
-
 // RandStringE generates a cryptographically secure random string and returns an error on entropy failure.
 func RandStringE(length int) (string, error) {
 	const letterBytes = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"

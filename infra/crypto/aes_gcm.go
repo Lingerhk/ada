@@ -99,11 +99,6 @@ func (a *AesGCM) Decrypt(ciphertext []byte) ([]byte, error) {
 	return plaintext, nil
 }
 
-// EncryptString is a convenience method that encrypts a string and returns a byte slice
-func (a *AesGCM) EncryptString(plaintext string) ([]byte, error) {
-	return a.Encrypt(plaintext)
-}
-
 // DecryptString is a convenience method that decrypts to a string
 func (a *AesGCM) DecryptString(ciphertext []byte) (string, error) {
 	plaintext, err := a.Decrypt(ciphertext)

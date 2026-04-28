@@ -158,6 +158,7 @@ Get-FileHash "C:\Program Files\adaegis\adaegis.exe" -Algorithm SHA256
 - `pkg/vc_redist.x64.exe`
 - `pkg/npcap-0.93.exe`
 - `pkg/*.zip`（插件包）
+- `pkg/tshark/tshark.exe` 及同目录完整 Wireshark runtime
 
 ### 9.2 注意区分两套配置
 - **测试环境 zip**：`sensor.cfg` 通常指向测试 server（例如 `RegHost=192.168.1.2`）

@@ -20,8 +20,9 @@ const (
 const (
 	SensorSvcName = "adaegis"
 
-	PlugEvtName = "evt"
-	PlugPktName = "pkt"
+	PlugEvtName    = "evt"
+	PlugPktName    = "pkt"
+	PlugTsharkName = "tshark"
 
 	PlugRpcFwName     = "rpcfw"
 	PlugRpcFwProcName = "rpcFwManager.exe"

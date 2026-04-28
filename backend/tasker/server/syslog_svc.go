@@ -55,8 +55,12 @@ const (
 	},
 	"mappings": {
 	  "properties": {
-		"ts": {
+		"@timestamp": {
 		  "type": "date"
+		},
+		"ProtocolFields": {
+		  "type": "object",
+		  "enabled": false
 		}
 	  }
 	}
@@ -239,8 +243,14 @@ func (s *SyslogServer) syslogSync(event map[string]any) {
 		return
 	}
 
-	// 记录当前dc的timestamp到SensorCollectStatusKey中，task_worker会check是否异常
 	now := time.Now()
+	content := event["content"].(string)
+	if isPktlogSyslog(content) {
+		s.syncPktlogContent(s.ctx, hostname, content, now, true)
+		return
+	}
+
+	// 记录当前dc的timestamp到SensorCollectStatusKey中，task_worker会check是否异常
 	if now.Unix()%4 == 0 {
 		if err := s.env.RedisCli.HSet(s.ctx, cache.SensorCollectStatusKey, "winlog_"+hostname, now.Unix()).Err(); err != nil {
 			logger.Warnf("update winlog sensor collect status failed for %s: %v", hostname, err)
@@ -258,7 +268,6 @@ func (s *SyslogServer) syslogSync(event map[string]any) {
 		}
 	}
 
-	content := event["content"].(string)
 	if err := s.env.RedisCli.LPush(s.ctx, eveLogQueueKey, content).Err(); err != nil {
 		logger.Errorf("lpush redis err:%v", err)
 		// do nothing
@@ -538,11 +547,24 @@ func (s *SyslogServer) pktlogSync(ctx context.Context, event string) {
 		return
 	}
 
+	s.syncPktlogContent(ctx, pktlog[0], "{"+pktlog[1], time.Now(), false)
+}
+
+func isPktlogSyslog(content string) bool {
+	var obj map[string]any
+	if err := json.Unmarshal([]byte(content), &obj); err != nil {
+		return false
+	}
+	logType, _ := obj["LogType"].(string)
+	source, _ := obj["Source"].(string)
+	return strings.EqualFold(logType, "pktlog") || strings.EqualFold(source, "tshark")
+}
+
+func (s *SyslogServer) syncPktlogContent(ctx context.Context, hostname, content string, now time.Time, pushQueue bool) {
 	// 如果queue超过52.4W条（约200M），则清除部分旧数据。
-	now := time.Now()
 	if now.Unix()%4 == 0 {
-		if err := s.env.RedisCli.HSet(s.ctx, cache.SensorCollectStatusKey, "pktlog_"+pktlog[0], now.Unix()).Err(); err != nil {
-			logger.Warnf("update pktlog sensor collect status failed for %s: %v", pktlog[0], err)
+		if err := s.env.RedisCli.HSet(s.ctx, cache.SensorCollectStatusKey, "pktlog_"+hostname, now.Unix()).Err(); err != nil {
+			logger.Warnf("update pktlog sensor collect status failed for %s: %v", hostname, err)
 		}
 
 		queueLen, err := s.env.RedisCli.LLen(ctx, pktLogQueueKey).Result()
@@ -556,8 +578,14 @@ func (s *SyslogServer) pktlogSync(ctx context.Context, event string) {
 		}
 	}
 
+	if pushQueue {
+		if err := s.env.RedisCli.LPush(ctx, pktLogQueueKey, content).Err(); err != nil {
+			logger.Errorf("lpush pktlog redis err:%v", err)
+		}
+	}
+
 	// --- Start pktlog stats logic ---
-	err := s.collectLogStats("pktlog", pktlog[0], now)
+	err := s.collectLogStats("pktlog", hostname, now)
 	if err != nil {
 		logger.Warnf("collect pktlog stats err:%v", err)
 	}
@@ -571,7 +599,7 @@ func (s *SyslogServer) pktlogSync(ctx context.Context, event string) {
 	item := esutil.BulkIndexerItem{
 		Action: "index",
 		Index:  s.pktLogIndexName,
-		Body:   strings.NewReader("{" + pktlog[1]), // add "{" to the beginning of the pktlog json
+		Body:   strings.NewReader(content),
 		// OnFailure is the optional callback for each failed operation
 		OnFailure: func(
 			ctx context.Context,

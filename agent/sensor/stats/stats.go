@@ -111,6 +111,7 @@ func (s *State) getSensorState(ctx context.Context, plugProcessMap map[string]ui
 
 	msg.Data["pkt_status"] = sCommon.SensorStatusStop
 	msg.Data["log_status"] = sCommon.SensorStatusStop
+	msg.Data["tshark_status"] = sCommon.SensorStatusStop
 
 	msg.Data["rpcfw_status"] = sCommon.SensorStatusStop
 	msg.Data["rpcfw_cpu_used"] = "0%"
@@ -126,6 +127,9 @@ func (s *State) getSensorState(ctx context.Context, plugProcessMap map[string]ui
 
 	if val, ok := plugProcessMap[sCommon.PlugEvtName]; ok && val > 0 {
 		msg.Data["log_status"] = sCommon.SensorStatusRun
+	}
+	if val, ok := plugProcessMap[sCommon.PlugTsharkName]; ok && val > 0 {
+		msg.Data["tshark_status"] = sCommon.SensorStatusRun
 	}
 
 	sensorCpuUsed, sensorMemUsed, rpcfwCpuUsed, ldapfwCpuUsed, rpcfwMemUsed, ldapfwMemUsed, err := GetSensorResUsed(ctx, plugProcessMap, 3*time.Second)
@@ -220,6 +224,31 @@ func GetSensorResUsed(ctx context.Context, plugProcessMap map[string]uint32, int
 			sensorCpuUsed += cpu
 			sensorMemUsed += mem
 		}
+	}
+
+	for pluginName, pid := range plugProcessMap {
+		if pid == 0 {
+			continue
+		}
+		switch pluginName {
+		case sCommon.SensorSvcName, sCommon.PlugRpcFwName, sCommon.PlugLdapFwName, sCommon.PlugPktName, sCommon.PlugEvtName:
+			continue
+		}
+		select {
+		case <-ctx.Done():
+			return 0, 0, 0, 0, 0, 0, ctx.Err()
+		default:
+		}
+		cpu, mem, err := getProcessCpuMemPercent(ctx, interval, pid)
+		if err != nil {
+			if err == context.Canceled || err == context.DeadlineExceeded {
+				return 0, 0, 0, 0, 0, 0, err
+			}
+			logger.Warnf("Error getting %s resource usage (pid: %d): %v", pluginName, pid, err)
+			continue
+		}
+		sensorCpuUsed += cpu
+		sensorMemUsed += mem
 	}
 
 	return sensorCpuUsed, sensorMemUsed, rpcfwCpuUsed, ldapfwCpuUsed, rpcfwMemUsed, ldapfwMemUsed, nil
