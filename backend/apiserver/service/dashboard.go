@@ -71,12 +71,15 @@ func (s *ADAServiceV2) DashboardStats(ctx context.Context, in *v2.DashboardStats
 		maps.Copy(reply.Leak, leakCounts)
 	}
 
-	// Get weak password counts
-	weakpwdCount, err := server.GetWeakPwdCount(s.env, domains)
+	// Get weak password counts from latest and previous finished scan tasks.
+	weakpwdCount, previousWeakpwdCount, err := server.GetWeakPwdCounts(s.env, domains)
 	if err != nil {
 		logger.Errorf("get weakpwd count err:%v", err)
 	} else {
 		reply.Weakpwd["total"] = weakpwdCount
+		reply.Weakpwd["latest"] = weakpwdCount
+		reply.Weakpwd["previous"] = previousWeakpwdCount
+		reply.Weakpwd["diff"] = weakpwdCount - previousWeakpwdCount
 	}
 
 	// Get agent distribution (domains, sensors, dcs)
@@ -116,7 +119,53 @@ func (s *ADAServiceV2) DashboardStats(ctx context.Context, in *v2.DashboardStats
 
 func (s *ADAServiceV2) DashboardTrends(ctx context.Context, in *v2.DashboardTrendsReq) (*v2.DashboardTrendsReply, error) {
 	s = s.withContext(ctx)
-	return &v2.DashboardTrendsReply{}, nil
+	var domains []string
+	if in.Domain == "all" || in.Domain == "" {
+		domainList, err := server.GetDomainList(s.env)
+		if err != nil {
+			logger.Errorf("get domain list err:%v", err)
+			return nil, status.Error(codes.Internal, s.I18n("InternalError"))
+		}
+		for _, dm := range domainList {
+			if dm.Status == baseCommon.DomainStatusInit {
+				continue
+			}
+			domains = append(domains, dm.Name)
+		}
+	} else {
+		domains = []string{in.Domain}
+	}
+
+	trend, err := server.GetAlertTrendByMonth(s.env, domains, int(in.Year))
+	if err != nil {
+		logger.Errorf("get alert trend err:%v", err)
+		return nil, status.Error(codes.Internal, s.I18n("InternalError"))
+	}
+
+	return &v2.DashboardTrendsReply{
+		Labels:                  trend.Labels,
+		Total:                   trend.Total,
+		High:                    trend.High,
+		Medium:                  trend.Medium,
+		Low:                     trend.Low,
+		AlertPending:            trend.AlertPending,
+		AlertHandled:            trend.AlertHandled,
+		AlertWhitelisted:        trend.AlertWhitelisted,
+		AlertBlocked:            trend.AlertBlocked,
+		DomainRiskDomains:       trend.DomainRiskDomains,
+		DomainRiskHighAlerts:    trend.DomainRiskHighAlerts,
+		DomainRiskHighLeaks:     trend.DomainRiskHighLeaks,
+		DomainRiskHighBaselines: trend.DomainRiskHighBaselines,
+		ScanLeakFinished:        trend.ScanLeakFinished,
+		ScanLeakFailed:          trend.ScanLeakFailed,
+		ScanLeakHits:            trend.ScanLeakHits,
+		ScanBaselineFinished:    trend.ScanBaselineFinished,
+		ScanBaselineFailed:      trend.ScanBaselineFailed,
+		ScanBaselineHits:        trend.ScanBaselineHits,
+		ScanWeakpwdFinished:     trend.ScanWeakpwdFinished,
+		ScanWeakpwdFailed:       trend.ScanWeakpwdFailed,
+		ScanWeakpwdHits:         trend.ScanWeakpwdHits,
+	}, nil
 }
 
 func (s *ADAServiceV2) DashboardLogStats(ctx context.Context, in *v2.DashboardLogStatsReq) (*v2.DashboardLogStatsReply, error) {

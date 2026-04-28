@@ -269,7 +269,7 @@ func TestAesGCM_Base64Encoding(t *testing.T) {
 	}
 }
 
-func TestAesGCM_StringMethods(t *testing.T) {
+func TestAesGCM_DecryptString(t *testing.T) {
 	key := make([]byte, 32)
 	if _, err := rand.Read(key); err != nil {
 		t.Fatalf("Failed to generate random key: %v", err)
@@ -282,13 +282,11 @@ func TestAesGCM_StringMethods(t *testing.T) {
 
 	plaintext := "test password 123"
 
-	// Test EncryptString
-	ciphertext, err := gcm.EncryptString(plaintext)
+	ciphertext, err := gcm.Encrypt(plaintext)
 	if err != nil {
-		t.Fatalf("EncryptString failed: %v", err)
+		t.Fatalf("Encrypt failed: %v", err)
 	}
 
-	// Test DecryptString
 	decrypted, err := gcm.DecryptString(ciphertext)
 	if err != nil {
 		t.Fatalf("DecryptString failed: %v", err)

@@ -4,6 +4,7 @@
 $adaegisServer = "YOUR_ADA_SERVER_IP"
 
 $sensorDir = "C:\Program Files\adaegis"
+$tsharkDir = "$sensorDir\tshark"
 $logFile = "$sensorDir\install.log"
 
 function Write-Log {
@@ -65,7 +66,19 @@ try {
         Write-Log "Npcap already installed"
     }
 
-    # 5. Install RPCFW
+    # 5. Install Visual C++ runtime required by LDAPFW and the bundled TShark runtime
+    if (Test-Path "$sensorDir\pkg\vc_redist.x64.exe") {
+        Write-Log "Installing VC_redist.x64..."
+        $process = Start-Process -FilePath "$sensorDir\pkg\vc_redist.x64.exe" -ArgumentList "/quiet", "/norestart" -Wait -PassThru
+        if (($process.ExitCode -ne 0) -and ($process.ExitCode -ne 3010)) {
+            throw "VC_redist.x64 installation failed with exit code $($process.ExitCode)"
+        }
+        Write-Log "Installed VC_redist.x64"
+    } else {
+        Write-Log "vc_redist.x64.exe not found in package"
+    }
+
+    # 6. Install RPCFW
     $rpcfwDir = "$sensorDir\rpcfw"
     if (!(Test-Path $rpcfwDir)) {
         Write-Log "Installing RPCFW..."
@@ -85,7 +98,7 @@ try {
         Write-Log "RPCFW service already installed"
     }
 
-    # 6. Install LDAPFW
+    # 7. Install LDAPFW
     $ldapfwDir = "$sensorDir\ldapfw"
     if (!(Test-Path $ldapfwDir)) {
         Write-Log "Installing LDAPFW..."
@@ -122,21 +135,68 @@ try {
         Write-Log "Installed LDAPFW service"
     }
 
-    # 7. Copy ADAegis files
+    # 8. Install bundled TShark runtime
+    $bundledTsharkDir = "$sensorDir\pkg\tshark"
+    if (Test-Path "$bundledTsharkDir\tshark.exe") {
+        Write-Log "Installing bundled TShark runtime..."
+        if (Test-Path -Path $tsharkDir -PathType Container) {
+            Remove-Item -Path $tsharkDir -Recurse -Force
+        }
+        Copy-Item -Path $bundledTsharkDir -Destination $tsharkDir -Recurse -Force
+        $process = Start-Process -FilePath "$tsharkDir\tshark.exe" -ArgumentList "-v" -WorkingDirectory $tsharkDir -Wait -PassThru -WindowStyle Hidden
+        if ($process.ExitCode -ne 0) {
+            throw "Bundled TShark verification failed with exit code $($process.ExitCode)"
+        }
+        Write-Log "Installed bundled TShark runtime: $tsharkDir\tshark.exe"
+    } elseif (Test-Path "$bundledTsharkDir\Wireshark-4.6.4-x64.exe") {
+        Write-Log "Bundled TShark runtime not found; bootstrapping from bundled Wireshark installer..."
+        $wiresharkInstaller = "$bundledTsharkDir\Wireshark-4.6.4-x64.exe"
+        $expectedHash = "102017d8e99a75b57895cd2144e6a61dc335a8ff14c7a25bd83a55f8ea9ad77b"
+        $actualHash = (Get-FileHash -Path $wiresharkInstaller -Algorithm SHA256).Hash.ToLower()
+        if ($actualHash -ne $expectedHash) {
+            throw "Wireshark installer SHA256 mismatch: $actualHash"
+        }
+        $sig = Get-AuthenticodeSignature -FilePath $wiresharkInstaller
+        if ($sig.Status -ne "Valid") {
+            throw "Wireshark installer signature is not valid: $($sig.Status)"
+        }
+        $process = Start-Process -FilePath $wiresharkInstaller -ArgumentList "/S", "/desktopicon=no" -Wait -PassThru
+        if ($process.ExitCode -ne 0) {
+            throw "Wireshark installer failed with exit code $($process.ExitCode)"
+        }
+        $wiresharkDir = "C:\Program Files\Wireshark"
+        if (!(Test-Path "$wiresharkDir\tshark.exe")) {
+            throw "Wireshark installer completed but tshark.exe was not found at $wiresharkDir"
+        }
+        if (Test-Path -Path $tsharkDir -PathType Container) {
+            Remove-Item -Path $tsharkDir -Recurse -Force
+        }
+        New-Item -Path $tsharkDir -ItemType Directory -Force | Out-Null
+        Copy-Item -Path "$wiresharkDir\*" -Destination $tsharkDir -Recurse -Force
+        $process = Start-Process -FilePath "$tsharkDir\tshark.exe" -ArgumentList "-v" -WorkingDirectory $tsharkDir -Wait -PassThru -WindowStyle Hidden
+        if ($process.ExitCode -ne 0) {
+            throw "Bootstrapped TShark verification failed with exit code $($process.ExitCode)"
+        }
+        Write-Log "Bootstrapped bundled TShark runtime: $tsharkDir\tshark.exe"
+    } else {
+        Write-Log "Bundled TShark runtime not found at $bundledTsharkDir; tshark plugin will use configured/system fallback path"
+    }
+
+    # 9. Copy ADAegis files
     Write-Log "Copying ADAegis files..."
     Copy-Item -Path "$sensorDir\pkg\adaegis.exe" -Destination "$sensorDir\adaegis.exe" -Force
     Copy-Item -Path "$sensorDir\pkg\sensor.cfg" -Destination "$sensorDir\sensor.cfg" -Force
     Copy-Item -Path "$sensorDir\pkg\uninstall-adaegis.ps1" -Destination "$sensorDir\uninstall-adaegis.ps1" -Force
     Write-Log "Copied ADAegis files"
 
-    # 8. update adaegis server into sensor.cfg
+    # 10. update adaegis server into sensor.cfg
     Write-Log "Updating ADAegis server into sensor.cfg..."
     $process = Start-Process -FilePath "$sensorDir\adaegis.exe" -ArgumentList "-m", "${adaegisServer}" -WorkingDirectory $sensorDir -Wait -PassThru
     if ($process.ExitCode -ne 0) {
         throw "Failed to update ADAegis server in sensor.cfg. Exit code: $($process.ExitCode)"
     }
 
-    # 9. Register ADAegis
+    # 11. Register ADAegis
     Write-Log "Registering ADAegis sensor..."
     $process = Start-Process -FilePath "$sensorDir\adaegis.exe" -ArgumentList "-r" -WorkingDirectory $sensorDir -Wait -PassThru
     if ($process.ExitCode -ne 0) {
@@ -149,7 +209,7 @@ try {
         throw "Failed to register ADAegis sensor"
     }
 
-    # 10. Create ADAegis service if it doesn't exist
+    # 12. Create ADAegis service if it doesn't exist
     $service = Get-Service -Name "Adaegis" -ErrorAction SilentlyContinue
     if ($null -eq $service) {
         Write-Log "Creating ADAegis service..."
@@ -177,18 +237,18 @@ try {
         Invoke-Expression $cmd
     }
 
-    # 11. Start ADAegis service
+    # 13. Start ADAegis service
     Write-Log "Starting ADAegis service..."
     Start-Service -Name "Adaegis"
     
-    # 12. Clean up temporary files
+    # 14. Clean up temporary files
     Write-Log "Cleaning up..."
     Remove-Item -Path $packagePath -Force
     Remove-Item -Path "$sensorDir\pkg" -Recurse -Force
 
     Start-Sleep -Seconds 1
 
-    # 13. Check if ADAegis service is running
+    # 15. Check if ADAegis service is running
     $service = Get-Service -Name "Adaegis" -ErrorAction SilentlyContinue
     if ($service.Status -eq "Running") {
         Write-Log "ADAegis service is running"
