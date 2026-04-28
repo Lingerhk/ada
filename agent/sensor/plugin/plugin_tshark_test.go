@@ -108,6 +108,9 @@ func TestEventFromTsharkFieldsLineUsesPacketTimestamp(t *testing.T) {
 	if _, ok := event["ts"]; ok {
 		t.Fatalf("unexpected ts field: %#v", event)
 	}
+	if _, ok := event["FrameTimeEpoch"]; ok {
+		t.Fatalf("unexpected FrameTimeEpoch field: %#v", event)
+	}
 	if _, ok := event["FrameProtocols"]; ok {
 		t.Fatalf("unexpected FrameProtocols field: %#v", event)
 	}
@@ -136,6 +139,9 @@ func TestEventFromTsharkEKLineBuildsProtocolFields(t *testing.T) {
 	}
 	if _, ok := event["ts"]; ok {
 		t.Fatalf("unexpected ts field: %#v", event)
+	}
+	if _, ok := event["FrameTimeEpoch"]; ok {
+		t.Fatalf("unexpected FrameTimeEpoch field: %#v", event)
 	}
 	if _, ok := event["FrameProtocols"]; ok {
 		t.Fatalf("unexpected FrameProtocols field: %#v", event)
@@ -214,6 +220,9 @@ func TestEventFromTsharkEKLineFiltersProtocolFields(t *testing.T) {
 	}
 	if event["@timestamp"] != time.Date(2026, 4, 27, 17, 21, 22, 149774000, time.UTC).UnixMilli() {
 		t.Fatalf("@timestamp = %v", event["@timestamp"])
+	}
+	if _, ok := event["FrameTimeEpoch"]; ok {
+		t.Fatalf("unexpected FrameTimeEpoch field: %#v", event)
 	}
 
 	layers, ok := event["ProtocolFields"].(map[string]any)
