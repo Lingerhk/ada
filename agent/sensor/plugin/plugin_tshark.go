@@ -22,7 +22,7 @@ import (
 )
 
 const (
-	defaultTsharkCaptureFilter = "(((tcp or udp) and (port 53 or port 88 or port 135 or port 137 or port 138 or port 139 or port 389 or port 445 or port 464 or port 593 or port 636 or port 3268 or port 3269 or port 3389)) or (tcp and portrange 49152-65535)) and (not (host %s))"
+	defaultTsharkCaptureFilter = "(((tcp or udp) and (port 53 or port 88 or port 135 or port 137 or port 138 or port 139 or port 389 or port 445 or port 464 or port 593 or port 636 or port 3268 or port 3269 or port 3389 or port 5985 or port 5986 or port 9389)) or (tcp and portrange 49152-65535)) and (not (host %s))"
 	defaultTsharkDisplayFilter = ""
 	tsharkEventQueueSize       = 4096
 	tsharkSenderWorkerCount    = 2
@@ -57,6 +57,18 @@ var defaultTsharkFields = []string{
 	"epm.proto.ip",
 	"epm.proto.tcp_port",
 	"epm.proto.named_pipe",
+	"tls.handshake.extensions_server_name",
+	"tls.handshake.version",
+	"tls.record.version",
+	"tls.handshake.ciphersuite",
+	"tls.handshake.type",
+	"tls.record.content_type",
+	"tls.alert_message.desc",
+	"http.host",
+	"http.request.method",
+	"http.request.uri",
+	"http.user_agent",
+	"http.response.code",
 }
 
 var defaultTsharkDecodeAs = []string{
@@ -68,6 +80,11 @@ var defaultTsharkDecodeAs = []string{
 	"tcp.port==593,dcerpc",
 	"tcp.port==3389,tpkt",
 	"tcp.port==389,ldap",
+	"tcp.port==5985,http",
+	"tcp.port==5986,tls",
+	"tcp.port==636,tls",
+	"tcp.port==3269,tls",
+	"tcp.port==9389,tls",
 	"udp.port==389,cldap",
 	"udp.port==137,nbns",
 	"udp.port==138,nbdgm",
@@ -135,7 +152,10 @@ func (p *tsharkPlugin) SetConfig(path, captureFilter, displayFilter, fieldsCSV s
 		changed = true
 	}
 	if captureFilter != "" {
-		if strings.Contains(captureFilter, "%s") {
+		captureFilter = strings.TrimSpace(captureFilter)
+		if isLegacyDefaultTsharkCaptureFilter(captureFilter) {
+			captureFilter = fmt.Sprintf(defaultTsharkCaptureFilter, p.remoteHost)
+		} else if strings.Contains(captureFilter, "%s") {
 			captureFilter = fmt.Sprintf(captureFilter, p.remoteHost)
 		} else if !strings.Contains(captureFilter, p.remoteHost) {
 			captureFilter = fmt.Sprintf("%s and (not (host %s))", captureFilter, p.remoteHost)
@@ -490,6 +510,8 @@ func (p *tsharkPlugin) eventFromTsharkEKRecord(iface string, record map[string]a
 	setFirstLayerValue(event, "RpcEndpoint", layers, "dcerpc_dcerpc_cn_sec_addr", "dcerpc.cn_sec_addr", "epm_epm_proto_tcp_port", "epm.proto.tcp_port")
 	setFirstLayerValue(event, "RpcEndpointIp", layers, "epm_epm_proto_ip", "epm.proto.ip")
 	setFirstLayerValue(event, "RpcNamedPipe", layers, "epm_epm_proto_named_pipe", "epm.proto.named_pipe")
+	setTsharkSecurityMetadata(event, layers)
+	setTsharkHTTPMetadata(event, layers)
 
 	if stringFromEvent(event, "Protocol") == "" {
 		event["Protocol"] = protocolFromLayers(layers, stringFromEvent(event, "FrameProtocols"))
@@ -501,14 +523,15 @@ func (p *tsharkPlugin) eventFromTsharkEKRecord(iface string, record map[string]a
 	}
 
 	protocolFields := protocolFieldsFromTsharkLayers(layers, eventType, stringFromEvent(event, "Protocol"))
+	coerceTsharkEventNumbers(event)
 
 	event["LogType"] = "pktlog"
 	event["Source"] = "tshark"
 	event["EventType"] = eventType
 	event["Hostname"] = p.hostname
-	event["Iface"] = iface
-	event["SensorTime"] = strconv.FormatInt(now.Unix(), 10)
+	event["SensorTime"] = now.Unix()
 	event["@timestamp"] = normalizeTsharkTimestamp(stringFromEvent(event, "FrameTimeEpoch"), now)
+	setTsharkSecuritySummary(event, layers, eventType)
 	if len(protocolFields) > 0 {
 		event["ProtocolFields"] = protocolFields
 	} else {
@@ -549,12 +572,13 @@ func (p *tsharkPlugin) eventFromTsharkFieldsLine(iface, line string, now time.Ti
 		return nil, nil
 	}
 
+	coerceTsharkEventNumbers(event)
+
 	event["LogType"] = "pktlog"
 	event["Source"] = "tshark"
 	event["EventType"] = eventType
 	event["Hostname"] = p.hostname
-	event["Iface"] = iface
-	event["SensorTime"] = strconv.FormatInt(now.Unix(), 10)
+	event["SensorTime"] = now.Unix()
 
 	if _, ok := event["SrcIp"]; !ok {
 		if v, ok := event["SrcIpV6"]; ok {
@@ -648,6 +672,14 @@ func splitCSV(v string) []string {
 	return out
 }
 
+func isLegacyDefaultTsharkCaptureFilter(filter string) bool {
+	filter = strings.Join(strings.Fields(filter), " ")
+	if containsAny(filter, "port 5985", "port 5986", "port 9389") {
+		return false
+	}
+	return strings.Contains(filter, "port 636 or port 3268 or port 3269 or port 3389)) or (tcp and portrange 49152-65535)")
+}
+
 func resolveTsharkPath(configured string) (string, error) {
 	candidates := []string{}
 	if strings.TrimSpace(configured) != "" {
@@ -719,6 +751,30 @@ func normalizeTsharkField(field string) string {
 		return "RpcEndpointIp"
 	case "epm.proto.named_pipe":
 		return "RpcNamedPipe"
+	case "tls.handshake.extensions_server_name":
+		return "TlsServerName"
+	case "tls.handshake.version":
+		return "TlsHandshakeVersion"
+	case "tls.record.version":
+		return "TlsRecordVersion"
+	case "tls.handshake.ciphersuite":
+		return "TlsCipherSuite"
+	case "tls.handshake.type":
+		return "TlsHandshakeType"
+	case "tls.record.content_type":
+		return "TlsRecordContentType"
+	case "tls.alert_message.desc":
+		return "TlsAlertMessage"
+	case "http.host":
+		return "HttpHost"
+	case "http.request.method":
+		return "HttpMethod"
+	case "http.request.uri":
+		return "HttpRequestUri"
+	case "http.user_agent":
+		return "HttpUserAgent"
+	case "http.response.code":
+		return "HttpStatus"
 	default:
 		return strings.NewReplacer(".", "_", "-", "_").Replace(field)
 	}
@@ -729,6 +785,16 @@ func eventTypeFromTsharkEvent(event map[string]any) string {
 	if layers, ok := event["ProtocolFields"].(map[string]any); ok {
 		protocol += ":" + protocolNamesFromLayers(layers)
 	}
+
+	srcPort := stringFromEvent(event, "SrcPort")
+	dstPort := stringFromEvent(event, "DstPort")
+	if typ := adServiceEventTypeFromPorts(srcPort, dstPort); typ != "" {
+		return typ
+	}
+	if containsEncryptedSMB(protocol, event["ProtocolFields"]) {
+		return "smb_encrypted"
+	}
+
 	switch {
 	case containsAny(protocol, "dcerpc", "dce/rpc", "epm"):
 		return "dcerpc"
@@ -744,6 +810,8 @@ func eventTypeFromTsharkEvent(event map[string]any) string {
 		return "ntlm"
 	case strings.Contains(protocol, "dns"):
 		return "dns"
+	case containsAny(protocol, "http", "xml"):
+		return "http"
 	case containsAny(protocol, "rdp", "tpkt", "cotp"):
 		return "rdp"
 	case containsAny(protocol, "nbns", "nbss", "nbdgm", "netbios"):
@@ -756,8 +824,6 @@ func eventTypeFromTsharkEvent(event map[string]any) string {
 		}
 	}
 
-	srcPort := stringFromEvent(event, "SrcPort")
-	dstPort := stringFromEvent(event, "DstPort")
 	if srcPort != "" || dstPort != "" {
 		if typ := eventTypeFromPorts(srcPort, dstPort); typ != "" {
 			return typ
@@ -769,6 +835,12 @@ func eventTypeFromTsharkEvent(event map[string]any) string {
 func eventTypeFromPorts(ports ...string) string {
 	for _, port := range ports {
 		switch strings.TrimSpace(port) {
+		case "636", "3269":
+			return "ldaps"
+		case "5985", "5986":
+			return "winrm"
+		case "9389":
+			return "adws"
 		case "53":
 			return "dns"
 		case "88":
@@ -779,7 +851,7 @@ func eventTypeFromPorts(ports ...string) string {
 			return "netbios"
 		case "139":
 			return "smb"
-		case "389", "636", "3268", "3269":
+		case "389", "3268":
 			return "ldap"
 		case "445":
 			return "smb2"
@@ -792,11 +864,76 @@ func eventTypeFromPorts(ports ...string) string {
 	return ""
 }
 
-func stringFromEvent(event map[string]any, key string) string {
-	if v, ok := event[key].(string); ok {
-		return v
+func adServiceEventTypeFromPorts(ports ...string) string {
+	for _, port := range ports {
+		switch strings.TrimSpace(port) {
+		case "636", "3269":
+			return "ldaps"
+		case "5985", "5986":
+			return "winrm"
+		case "9389":
+			return "adws"
+		}
 	}
 	return ""
+}
+
+func stringFromEvent(event map[string]any, key string) string {
+	v, ok := event[key]
+	if !ok {
+		return ""
+	}
+	if s := tsharkValueToString(v); s != "" {
+		return s
+	}
+	return ""
+}
+
+func coerceTsharkEventNumbers(event map[string]any) {
+	for _, key := range []string{"SrcPort", "DstPort"} {
+		if port, ok := tsharkValueToInt(event[key]); ok {
+			event[key] = port
+		}
+	}
+}
+
+func tsharkValueToInt(v any) (int, bool) {
+	switch val := v.(type) {
+	case int:
+		return val, true
+	case int8:
+		return int(val), true
+	case int16:
+		return int(val), true
+	case int32:
+		return int(val), true
+	case int64:
+		return int(val), true
+	case uint:
+		return int(val), true
+	case uint8:
+		return int(val), true
+	case uint16:
+		return int(val), true
+	case uint32:
+		return int(val), true
+	case uint64:
+		return int(val), true
+	case float64:
+		intVal := int(val)
+		if val == float64(intVal) {
+			return intVal, true
+		}
+	case string:
+		val = strings.TrimSpace(val)
+		if val == "" {
+			return 0, false
+		}
+		if intVal, err := strconv.Atoi(val); err == nil {
+			return intVal, true
+		}
+	}
+	return 0, false
 }
 
 func setFirstLayerValue(event map[string]any, eventKey string, layers map[string]any, layerKeys ...string) {
@@ -879,6 +1016,26 @@ func tsharkValueToString(v any) string {
 	switch val := v.(type) {
 	case string:
 		return strings.TrimSpace(val)
+	case int:
+		return strconv.Itoa(val)
+	case int8:
+		return strconv.FormatInt(int64(val), 10)
+	case int16:
+		return strconv.FormatInt(int64(val), 10)
+	case int32:
+		return strconv.FormatInt(int64(val), 10)
+	case int64:
+		return strconv.FormatInt(val, 10)
+	case uint:
+		return strconv.FormatUint(uint64(val), 10)
+	case uint8:
+		return strconv.FormatUint(uint64(val), 10)
+	case uint16:
+		return strconv.FormatUint(uint64(val), 10)
+	case uint32:
+		return strconv.FormatUint(uint64(val), 10)
+	case uint64:
+		return strconv.FormatUint(val, 10)
 	case float64:
 		return strconv.FormatFloat(val, 'f', -1, 64)
 	case bool:
@@ -903,7 +1060,7 @@ func tsharkValueToString(v any) string {
 
 func protocolFromLayers(layers map[string]any, frameProtocols string) string {
 	layerNames := protocolNamesFromLayers(layers)
-	for _, protocol := range []string{"dcerpc", "epm", "ldap", "cldap", "smb2", "smb", "kerberos", "krb5", "ntlmssp", "dns", "rdp", "tpkt", "cotp", "nbns", "nbss", "nbdgm"} {
+	for _, protocol := range []string{"dcerpc", "epm", "ldap", "cldap", "smb2_transform", "smb2", "smb", "kerberos", "krb5", "ntlmssp", "dns", "rdp", "tpkt", "cotp", "http", "tls", "ssl", "nbns", "nbss", "nbdgm"} {
 		if containsAny(layerNames, protocol) {
 			return protocol
 		}
@@ -928,11 +1085,56 @@ func protocolFieldsFromTsharkLayers(layers map[string]any, eventType, protocol s
 	filtered := make(map[string]any, len(layers))
 	for key, val := range layers {
 		layerName := strings.ToLower(strings.TrimSpace(key))
-		if allowed[layerName] {
-			filtered[key] = val
+		if allowed[layerName] && !isTsharkTransportLayer(layerName) {
+			filtered[key] = simplifyTsharkProtocolFieldValue(layerName, val)
 		}
 	}
 	return filtered
+}
+
+func simplifyTsharkProtocolFieldValue(layerName string, raw any) any {
+	switch val := raw.(type) {
+	case map[string]any:
+		out := make(map[string]any, len(val))
+		for key, item := range val {
+			simplifiedKey := simplifyTsharkProtocolFieldKey(layerName, key)
+			if _, exists := out[simplifiedKey]; exists && simplifiedKey != key {
+				simplifiedKey = key
+			}
+			out[simplifiedKey] = simplifyTsharkProtocolFieldValue(layerName, item)
+		}
+		return out
+	case []any:
+		out := make([]any, 0, len(val))
+		for _, item := range val {
+			out = append(out, simplifyTsharkProtocolFieldValue(layerName, item))
+		}
+		return out
+	default:
+		return raw
+	}
+}
+
+func simplifyTsharkProtocolFieldKey(layerName, key string) string {
+	layerName = strings.ToLower(strings.TrimSpace(layerName))
+	if layerName == "" || key == "" {
+		return key
+	}
+
+	normalizedLayer := normalizeTsharkFieldKey(layerName)
+	lowerKey := strings.ToLower(key)
+	prefixes := []string{
+		normalizedLayer + "_" + normalizedLayer + "_",
+		layerName + "." + layerName + ".",
+		normalizedLayer + "_",
+		layerName + ".",
+	}
+	for _, prefix := range prefixes {
+		if strings.HasPrefix(lowerKey, prefix) && len(key) > len(prefix) {
+			return key[len(prefix):]
+		}
+	}
+	return key
 }
 
 func tsharkProtocolLayerSet(eventType, protocol string) map[string]bool {
@@ -940,7 +1142,7 @@ func tsharkProtocolLayerSet(eventType, protocol string) map[string]bool {
 	add := func(names ...string) {
 		for _, name := range names {
 			name = strings.ToLower(strings.TrimSpace(name))
-			if name != "" {
+			if name != "" && !isTsharkTransportLayer(name) {
 				allowed[name] = true
 			}
 		}
@@ -952,6 +1154,14 @@ func tsharkProtocolLayerSet(eventType, protocol string) map[string]bool {
 		add("dcerpc", "epm")
 	case "ldap":
 		add("ldap", "cldap")
+	case "ldaps":
+		add("tls", "ssl", "ldap")
+	case "winrm":
+		add("http", "tls", "ssl", "xml")
+	case "adws":
+		add("tls", "ssl", "nettcp", "net.tcp", "ms_nmf")
+	case "smb_encrypted":
+		add("smb2", "smb3", "smb2_transform", "smb2_transform_header")
 	case "smb2":
 		add("smb2")
 	case "smb":
@@ -968,6 +1178,127 @@ func tsharkProtocolLayerSet(eventType, protocol string) map[string]bool {
 		add("nbns", "nbss", "nbdgm", "netbios")
 	}
 	return allowed
+}
+
+func setTsharkSecurityMetadata(event map[string]any, layers map[string]any) {
+	setFirstLayerValue(event, "TlsServerName", layers, "tls_tls_handshake_extensions_server_name", "tls.handshake.extensions_server_name", "ssl_ssl_handshake_extensions_server_name", "ssl.handshake.extensions_server_name")
+	setFirstLayerValue(event, "TlsHandshakeVersion", layers, "tls_tls_handshake_version", "tls.handshake.version", "ssl_ssl_handshake_version", "ssl.handshake.version")
+	setFirstLayerValue(event, "TlsRecordVersion", layers, "tls_tls_record_version", "tls.record.version", "ssl_ssl_record_version", "ssl.record.version")
+	setFirstLayerValue(event, "TlsCipherSuite", layers, "tls_tls_handshake_ciphersuite", "tls.handshake.ciphersuite", "tls_tls_handshake_ciphersuite_str", "tls.handshake.ciphersuite_str", "ssl_ssl_handshake_ciphersuite", "ssl.handshake.ciphersuite")
+	setFirstLayerValue(event, "TlsHandshakeType", layers, "tls_tls_handshake_type", "tls.handshake.type", "ssl_ssl_handshake_type", "ssl.handshake.type")
+	setFirstLayerValue(event, "TlsRecordContentType", layers, "tls_tls_record_content_type", "tls.record.content_type", "ssl_ssl_record_content_type", "ssl.record.content_type")
+	setFirstLayerValue(event, "TlsAlertMessage", layers, "tls_tls_alert_message_desc", "tls.alert_message.desc", "ssl_ssl_alert_message_desc", "ssl.alert_message.desc")
+}
+
+func setTsharkHTTPMetadata(event map[string]any, layers map[string]any) {
+	setFirstLayerValue(event, "HttpHost", layers, "http_http_host", "http.host")
+	setFirstLayerValue(event, "HttpMethod", layers, "http_http_request_method", "http.request.method")
+	setFirstLayerValue(event, "HttpRequestUri", layers, "http_http_request_uri", "http.request.uri", "http_http_request_full_uri", "http.request.full_uri")
+	setFirstLayerValue(event, "HttpUserAgent", layers, "http_http_user_agent", "http.user_agent")
+	setFirstLayerValue(event, "HttpStatus", layers, "http_http_response_code", "http.response.code")
+}
+
+func setTsharkSecuritySummary(event map[string]any, layers map[string]any, eventType string) {
+	securityLayer := ""
+	switch {
+	case containsEncryptedSMB("", event["ProtocolFields"]):
+		securityLayer = "smb-encryption"
+	case hasAnyLayer(layers, "tls", "ssl") || hasAnyPort(event, "636", "3269", "5986"):
+		securityLayer = "tls"
+	case eventType == "rdp":
+		securityLayer = "rdp-security"
+	case eventType == "winrm" && hasAnyPort(event, "5985"):
+		securityLayer = "http"
+	}
+
+	if securityLayer == "" {
+		return
+	}
+	event["SecurityLayer"] = securityLayer
+	event["Encrypted"] = securityLayer != "http"
+}
+
+func hasAnyLayer(layers map[string]any, names ...string) bool {
+	available := strings.ToLower(protocolNamesFromLayers(layers))
+	for _, name := range names {
+		if containsAny(available, strings.ToLower(name)) {
+			return true
+		}
+	}
+	return false
+}
+
+func hasAnyPort(event map[string]any, ports ...string) bool {
+	srcPort := stringFromEvent(event, "SrcPort")
+	dstPort := stringFromEvent(event, "DstPort")
+	for _, port := range ports {
+		if srcPort == port || dstPort == port {
+			return true
+		}
+	}
+	return false
+}
+
+func containsEncryptedSMB(protocol string, raw any) bool {
+	if containsAny(strings.ToLower(protocol), "smb2_transform", "smb3_transform", "smb2 transform", "smb3 transform") {
+		return true
+	}
+	return containsEncryptedSMBValue(raw)
+}
+
+func containsEncryptedSMBValue(raw any) bool {
+	switch val := raw.(type) {
+	case map[string]any:
+		for key, item := range val {
+			normalized := strings.ToLower(strings.NewReplacer(".", "_", "-", "_", " ", "_").Replace(key))
+			if containsAny(normalized, "smb2_transform", "smb3_transform") {
+				return true
+			}
+			if containsAny(normalized, "smb2_flags_encrypted", "smb3_flags_encrypted") && truthyTsharkValue(item) {
+				return true
+			}
+			if containsEncryptedSMBValue(item) {
+				return true
+			}
+		}
+	case []any:
+		for _, item := range val {
+			if containsEncryptedSMBValue(item) {
+				return true
+			}
+		}
+	}
+	return false
+}
+
+func truthyTsharkValue(raw any) bool {
+	switch val := raw.(type) {
+	case bool:
+		return val
+	case float64:
+		return val != 0
+	case string:
+		switch strings.ToLower(strings.TrimSpace(val)) {
+		case "1", "true", "yes", "set":
+			return true
+		}
+	case map[string]any:
+		for _, key := range []string{"show", "value"} {
+			if item, ok := val[key]; ok && truthyTsharkValue(item) {
+				return true
+			}
+		}
+	}
+	return false
+}
+
+func isTsharkTransportLayer(name string) bool {
+	switch strings.ToLower(strings.TrimSpace(name)) {
+	case "frame", "eth", "ethertype", "ip", "ipv6", "icmp", "icmpv6", "tcp", "udp", "sctp", "data":
+		return true
+	default:
+		return false
+	}
 }
 
 func containsAny(s string, needles ...string) bool {
