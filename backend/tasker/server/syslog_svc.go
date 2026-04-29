@@ -58,6 +58,15 @@ const (
 		"@timestamp": {
 		  "type": "date"
 		},
+		"SensorTime": {
+		  "type": "long"
+		},
+		"SrcPort": {
+		  "type": "integer"
+		},
+		"DstPort": {
+		  "type": "integer"
+		},
 		"ProtocolFields": {
 		  "type": "object",
 		  "enabled": false
