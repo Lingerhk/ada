@@ -158,7 +158,11 @@ func (r *Ruleset) extractActivities(activities []flowActivity, sigmaIds []string
 }
 
 func (r *Ruleset) matchByActivities(ctx context.Context, activities []flowActivity, validSets [][]int64, matchBy string) ([]flowActivity, bool) {
-	conditions := parseMatchByExpression(matchBy)
+	matchExpr, _, err := parseMatchExpression(matchBy)
+	if err != nil {
+		logger.Warnf("parse match_by(%s) err:%v, will ignore this flow", matchBy, err)
+		return nil, false
+	}
 	activityCount := int64(len(activities))
 
 	for _, validSet := range validSets {
@@ -171,7 +175,7 @@ func (r *Ruleset) matchByActivities(ctx context.Context, activities []flowActivi
 			actList = append(actList, activities[actIdx])
 		}
 
-		matched := r.match(ctx, conditions, actList...)
+		matched := r.matchExpr(ctx, matchExpr, actList...)
 		if matched {
 			// TODO：如果match多条，这里就只取第一条了。。。
 			return actList, true
@@ -181,65 +185,103 @@ func (r *Ruleset) matchByActivities(ctx context.Context, activities []flowActivi
 	return nil, false
 }
 
+func (r *Ruleset) matchExpr(ctx context.Context, expr *matchExprNode, activity ...flowActivity) bool {
+	if expr == nil {
+		return false
+	}
+
+	switch expr.kind {
+	case matchExprCondition:
+		return r.matchCondition(ctx, expr.condition, activity...)
+	case matchExprAnd:
+		return r.matchExpr(ctx, expr.left, activity...) && r.matchExpr(ctx, expr.right, activity...)
+	case matchExprOr:
+		return r.matchExpr(ctx, expr.left, activity...) || r.matchExpr(ctx, expr.right, activity...)
+	case matchExprNot:
+		return !r.matchExpr(ctx, expr.left, activity...)
+	default:
+		return false
+	}
+}
+
 func (r *Ruleset) match(ctx context.Context, conditions []Condition, activity ...flowActivity) bool {
 	// 遍历表达式中的每个子句
 	for _, c := range conditions {
-		if !c.valid || c.fieldOneIdx < 0 || int(c.fieldOneIdx) >= len(activity) {
+		if !r.matchCondition(ctx, c, activity...) {
 			return false
 		}
-		v1 := getFieldVal(c.fieldOneVal, activity[c.fieldOneIdx])
+	}
 
-		if c.operation == "in" {
-			switch c.fieldTwoTyp {
-			case "slice":
-				inSlice := false
-				for _, v := range strings.Split(c.fieldTwoVal, ",") {
-					if v1 == v {
-						inSlice = true
-						break
-					}
+	return true
+}
+
+func (r *Ruleset) matchCondition(ctx context.Context, c Condition, activity ...flowActivity) bool {
+	if !c.valid || c.fieldOneIdx < 0 || int(c.fieldOneIdx) >= len(activity) {
+		return false
+	}
+	v1 := getFieldVal(c.fieldOneVal, activity[c.fieldOneIdx])
+
+	if c.operation == "in" {
+		switch c.fieldTwoTyp {
+		case "slice":
+			inSlice := false
+			for _, v := range strings.Split(c.fieldTwoVal, ",") {
+				if v1 == v {
+					inSlice = true
+					break
 				}
-				if !inSlice {
-					return false
-				}
-			case "cache":
-				v2 := getFieldRdxVal(ctx, r.redisCli, c.fieldTwoVal, activity)
-				inSlice := false
-				for _, v := range v2 {
-					if strings.ToLower(v1) == strings.ToLower(v) {
-						inSlice = true
-						break
-					}
-				}
-				if !inSlice {
-					return false
-				}
-			case "ldap":
-				// TODO: ldap
-			default:
-				logger.Warnf("invalid condition(fieldTwoTyp: %s), will ignore!", c.fieldTwoTyp)
+			}
+			if !inSlice {
 				return false
 			}
+		case "cache":
+			v2 := getFieldRdxVal(ctx, r.redisCli, c.fieldTwoVal, activity)
+			inSlice := false
+			for _, v := range v2 {
+				if strings.ToLower(v1) == strings.ToLower(v) {
+					inSlice = true
+					break
+				}
+			}
+			if !inSlice {
+				return false
+			}
+		case "ldap":
+			v2 := getFieldLDAPVal(ctx, r.redisCli, c.fieldTwoVal, activity)
+			inSlice := false
+			for _, v := range v2 {
+				if strings.ToLower(v1) == strings.ToLower(v) {
+					inSlice = true
+					break
+				}
+			}
+			if !inSlice {
+				return false
+			}
+		default:
+			logger.Warnf("invalid condition(fieldTwoTyp: %s), will ignore!", c.fieldTwoTyp)
+			return false
+		}
+	} else {
+		var v2 string
+		if c.fieldTwoTyp == "const" {
+			v2 = c.fieldTwoVal
 		} else {
-			var v2 string
-			if c.fieldTwoTyp == "const" {
-				v2 = c.fieldTwoVal
-			} else {
-				if c.fieldTwoIdx < 0 || int(c.fieldTwoIdx) >= len(activity) {
-					return false
-				}
-				v2 = getFieldVal(c.fieldTwoVal, activity[c.fieldTwoIdx])
-			}
-			if v1 == "" && v2 == "" {
-				// 都为空时的合理性，也是存在的
-				continue
-			}
-			if v1 == "" || v2 == "" {
+			if c.fieldTwoIdx < 0 || int(c.fieldTwoIdx) >= len(activity) {
 				return false
 			}
-			if !compare(c.operation, v1, v2) {
-				return false
-			}
+			v2 = getFieldVal(c.fieldTwoVal, activity[c.fieldTwoIdx])
+		}
+
+		if v1 == "" && v2 == "" {
+			// 都为空时的合理性，也是存在的
+			return true
+		}
+		if v1 == "" || v2 == "" {
+			return false
+		}
+		if !compare(c.operation, v1, v2) {
+			return false
 		}
 	}
 

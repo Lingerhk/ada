@@ -74,6 +74,8 @@
 | `ada:engine:active:<flow_id>` | set | 活跃 Flow instance key 集合 |
 | `ada:engine:activity_cache:<mongo_id>` | hash | activity 关联缓存 |
 | `ada:engine:flow_whitelist...` | hash | Flow 白名单条件 |
+| `ada:engine:ldap_search_channel` | pubsub | `$v.ldap` cache miss 后的异步查询请求 |
+| `ada:engine:ldap_search_pending:<hash>` | string | `$v.ldap` miss 去重 key，TTL 60s |
 | `ada:server:notify_queue` | list | engine/scanner 推送通知，task_worker 消费 |
 
 ### 域和资产缓存
@@ -84,9 +86,9 @@
 | `ada:server:ldap:<domain>` | string | LDAP 账号缓存 |
 | `ada:server:<domain>:ip_relate_dc` | hash | IP 到 DC FQDN 映射 |
 | `ada:engine:dc_ip:<ip>` | string | Zeek RedisWriter 用 IP 反查 hostname |
-| `ada:engine:<domain>:sensitive_users` | set | 敏感用户 |
-| `ada:engine:<domain>:sensitive_groups` | set | 敏感组 |
-| `ada:engine:<domain>:sensitive_computers` | set | 敏感计算机 |
+| `ada:engine:<domain>:sensitive_users` | set | 敏感用户，可由定时 LDAP 同步或 `$v.ldap` miss 异步回填 |
+| `ada:engine:<domain>:sensitive_groups` | set | 敏感组，可由定时 LDAP 同步或 `$v.ldap` miss 异步回填 |
+| `ada:engine:<domain>:sensitive_computers` | set | 敏感计算机，可由定时 LDAP 同步或 `$v.ldap` miss 异步回填 |
 | `ada:engine:<domain>:honeypot_accounts` | set | 蜜罐账号 |
 
 ### 系统和 dashboard
@@ -120,6 +122,7 @@
 ## 数据一致性注意事项
 
 - MongoDB 是业务状态准源，ES 主要用于检索和展示，不能只看 ES 判断业务任务是否失败。
-- Redis 队列是异步边界，队列积压不等于数据丢失，但长期积压说明消费者异常或 pending。
+- Redis 队列是异步边界，队列积压不等于数据丢失，但长期积压说明消费者异常。
 - Flow 关联依赖 Redis 缓存 TTL，超过窗口后无法再关联历史 activity。
+- `$v.ldap` 使用 Redis 作为同步热路径缓存。LDAP miss 会发布给 tasker，并通过 `ada:engine:ldap_search_pending:<hash>` 做 60 秒去重。
 - Zeek RedisWriter 依赖 `ada:engine:dc_ip:<ip>` 将 IP 映射为 hostname；映射缺失会影响域归属。

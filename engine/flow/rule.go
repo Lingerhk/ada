@@ -59,6 +59,7 @@ type FlowRule struct {
 		CacheKey   map[string][]string `yaml:"cache_key"`   // sigma_id -> fields used to build flow instance cache key
 		MatchBy    string              `yaml:"match_by"`
 		Conditions []Condition
+		MatchExpr  *matchExprNode `yaml:"-"`
 	} `yaml:"detection"`
 	Level        string              `yaml:"level"`
 	UniqueFilter []string            `yaml:"unique_filter"` // 唯一性过滤（如果之前存在该事件，测忽略）
@@ -184,8 +185,14 @@ func NewRuleList(files []string) ([]FlowRule, error) {
 		}
 		r.Detection.WinSizeTs = val
 
-		// parse match_by into Conditions object, and update fields into sigma rule 'fields'
-		r.Detection.Conditions = parseMatchByExpression(r.Detection.MatchBy)
+		// parse match_by into AST/Conditions object, and update fields into sigma rule 'fields'
+		matchExpr, conditions, err := parseMatchExpression(r.Detection.MatchBy)
+		if err != nil {
+			logger.Warnf("ignore invalid match_by flow:%s err:%v", r.ID, err)
+			continue
+		}
+		r.Detection.MatchExpr = matchExpr
+		r.Detection.Conditions = conditions
 		if len(r.Detection.Conditions) == 0 {
 			logger.Warnf("ignore invalid empty match_by flow:%s", r.ID)
 			continue
@@ -287,10 +294,10 @@ func extractFields(conditions []Condition, sigmaIDs []string) map[string][]strin
 			// 只处理表达式前部分: $s1.LoginType in $v.slice.["ss", "sd", "sc"], 还支持`in $v.cache.key_xxxx`
 			sid := sigmaIDs[c.fieldOneIdx]
 			sigmaFields[sid] = append(sigmaFields[sid], c.fieldOneVal)
-			if c.fieldTwoTyp == "cache" {
+			if c.fieldTwoTyp == "cache" || c.fieldTwoTyp == "ldap" {
 				for _, ref := range extractCacheFieldRefs(c.fieldTwoVal) {
 					if ref.idx < 0 || ref.idx > int64(sigmaRuleTotal-1) {
-						logger.Warnf("cache field idx(%d) out of index, sigmaID len:%d", ref.idx, sigmaRuleTotal)
+						logger.Warnf("%s field idx(%d) out of index, sigmaID len:%d", c.fieldTwoTyp, ref.idx, sigmaRuleTotal)
 						continue
 					}
 					sigmaFields[sigmaIDs[ref.idx]] = append(sigmaFields[sigmaIDs[ref.idx]], ref.field)
@@ -317,33 +324,20 @@ func extractFields(conditions []Condition, sigmaIDs []string) map[string][]strin
 }
 
 func parseMatchByExpression(matchBy string) []Condition {
-	var conditions []Condition
-
-	// TODO: 暂时兼容_count表达式: `$s1._count == 3` 后续可继续优化
-	// 后续可支持:
-	// $s1.LoginType._count == 3 ?????
-	if strings.Contains(matchBy, "$s1._count") {
-		parts := strings.SplitN(strings.ReplaceAll(matchBy, " ", ""), "==", 2)
-		if len(parts) != 2 {
-			logger.Warnf("0-invalid condition(%s), will ignore!", matchBy)
-			return conditions
-		}
-		conditions = append(conditions, Condition{fieldOneIdx: 0, fieldOneVal: "_count", fieldTwoIdx: -1, fieldTwoVal: parts[1], fieldTwoTyp: "const", operation: "==", valid: true})
-		return conditions
+	_, conditions, err := parseMatchExpression(matchBy)
+	if err != nil {
+		logger.Warnf("invalid match_by(%s): %v", matchBy, err)
+		return nil
 	}
-
-	// matchBy 多条件的，目前仅支持`AND`， 后续实现`OR`和'()'
-	// matchBy: `$s1.SubjectUserName == $s2.SubjectUserName AND $s1.SourceProcessId == $s2.ProcessId AND $s1.LoginType in $v.slice.["ss", "sd", "sc"]`
-	// 将表达式分割成条件, 解析每个条件
-	for condition := range strings.SplitSeq(matchBy, "AND") {
-		conditions = append(conditions, parseCondition(condition))
-	}
-
 	return conditions
 }
 
 func parseCondition(condition string) Condition {
 	c := Condition{fieldOneIdx: -1, fieldTwoIdx: -1}
+
+	if countExpr, err := parseCountExpression(condition); err == nil {
+		return countExpr.toCondition()
+	}
 
 	expression := strings.ReplaceAll(condition, " ", "") // 移除所有空格符
 	if strings.Contains(expression, "$v.slice.") {
@@ -414,7 +408,38 @@ func parseCondition(condition string) Condition {
 		c.valid = oneIdx >= 0 && oneVal != ""
 	} else if strings.Contains(expression, "$v.ldap.") {
 		// 表达式: $s1.LoginType in $v.ldap.key_xxxx
-		// TODO: 后续实现
+		parts := strings.SplitN(expression, "in$v.ldap.", 2)
+		if len(parts) != 2 {
+			logger.Warnf("1-invalid condition(%s), will ignore!", condition)
+			return c
+		}
+
+		field1 := parts[0] // `$s1.LoginType`
+		field2 := parts[1] // `key_xxxx`
+
+		if !strings.HasPrefix(field2, "key_") {
+			logger.Warnf("2-invalid condition(%s), will ignore!", condition)
+			return c
+		}
+		if !validateCacheTemplate(field2) {
+			logger.Warnf("2-invalid ldap key template(%s), will ignore!", condition)
+			return c
+		}
+
+		if !strings.HasPrefix(field1, "$s") {
+			logger.Warnf("3-invalid condition(%s), will ignore!", condition)
+			return c
+		}
+
+		oneIdx, oneVal := parseConditionKV(field1)
+
+		c.fieldOneIdx = oneIdx
+		c.fieldOneVal = oneVal
+		c.fieldTwoIdx = -1
+		c.fieldTwoVal = field2
+		c.fieldTwoTyp = "ldap"
+		c.operation = "in"
+		c.valid = oneIdx >= 0 && oneVal != ""
 	} else {
 		// 其他表达式: `$s1.SubjectUserName == $s2.SubjectUserName` 或 `$s1.SourceProcessId !=$s2.ProcessId` 或 `$s1.SubjectUserName == admin`
 		var opType string

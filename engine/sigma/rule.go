@@ -41,9 +41,9 @@ type Rule struct {
 	Status         string   `yaml:"status" json:"status"`
 	References     []string `yaml:"references" json:"references"`
 
-	Logsource `yaml:"logsource" json:"logsource"`
-	Detection `yaml:"detection" json:"detection"`
-	Tags      `yaml:"tags" json:"tags"`
+	Logsource Logsource `yaml:"logsource" json:"logsource"`
+	Detection Detection `yaml:"detection" json:"detection"`
+	Tags      Tags      `yaml:"tags" json:"tags"`
 }
 
 // HasTags returns true if the rule contains all provided tags, otherwise false
@@ -106,7 +106,77 @@ func (r *Rule) convertLevel() error {
 // RuleFromYAML parses yaml data into Rule object
 func RuleFromYAML(data []byte) (r Rule, err error) {
 	err = yaml.Unmarshal(data, &r)
+	if err == nil {
+		r.normalizeDetection()
+	}
 	return
+}
+
+func (r *Rule) normalizeDetection() {
+	if r.Detection == nil {
+		return
+	}
+	for name, expr := range r.Detection {
+		if name == "condition" {
+			continue
+		}
+		if normalized, ok := normalizeLegacyKeyValueSelection(expr); ok {
+			r.Detection[name] = normalized
+		}
+	}
+}
+
+func normalizeLegacyKeyValueSelection(expr any) (map[string]any, bool) {
+	items, ok := expr.([]any)
+	if !ok || len(items) == 0 {
+		return nil, false
+	}
+
+	selection := make(map[string]any, len(items))
+	for _, item := range items {
+		pairs, ok := item.([]any)
+		if !ok || len(pairs) == 0 {
+			return nil, false
+		}
+
+		var field string
+		var value any
+		hasValue := false
+		for _, pair := range pairs {
+			m, ok := legacyKeyValuePairMap(pair)
+			if !ok {
+				return nil, false
+			}
+			switch fmt.Sprintf("%v", m["key"]) {
+			case "key":
+				field = fmt.Sprintf("%v", m["value"])
+			case "value":
+				value = m["value"]
+				hasValue = true
+			default:
+				return nil, false
+			}
+		}
+		if field == "" || !hasValue {
+			return nil, false
+		}
+		selection[field] = value
+	}
+
+	return selection, true
+}
+
+func legacyKeyValuePairMap(pair any) (map[string]any, bool) {
+	switch m := pair.(type) {
+	case Detection:
+		return map[string]any(m), true
+	case map[string]any:
+		return m, true
+	case map[any]any:
+		return cleanUpInterfaceMap(m), true
+	default:
+		return nil, false
+	}
 }
 
 // IsMultipart checks if rule is multipart
@@ -183,6 +253,24 @@ type Logsource struct {
 	Category   string `yaml:"category" json:"category"`
 	Service    string `yaml:"service" json:"service"`
 	Definition string `yaml:"definition" json:"definition"`
+}
+
+func (l *Logsource) UnmarshalYAML(value *yaml.Node) error {
+	switch value.Kind {
+	case yaml.ScalarNode:
+		l.Product = value.Value
+		return nil
+	case yaml.MappingNode:
+		type rawLogsource Logsource
+		var raw rawLogsource
+		if err := value.Decode(&raw); err != nil {
+			return err
+		}
+		*l = Logsource(raw)
+		return nil
+	default:
+		return fmt.Errorf("invalid logsource kind: %v", value.Kind)
+	}
 }
 
 // Detection represents the detection field in sigma rule

@@ -122,10 +122,10 @@ Actual file names depend on `ProjectName` and the tasker moduleName. During trou
 
 1. Check whether `ada:evelog_queue` or `ada:pktlog_queue` has backlog.
 2. Check whether engine is running and rules are loaded.
-3. Check whether license runtime check has put engine into pending state.
-4. Check whether the Sigma rule `logsource`, `detection`, `fields`, and `unique_fields` match actual fields.
-5. Check whether `tb_alert_activity` has activity records.
-6. If activity exists but event does not, check Flow rules and Redis flow instances.
+3. Check whether the Sigma rule `logsource`, `detection`, `fields`, and `unique_fields` match actual fields.
+4. Check whether `tb_alert_activity` has activity records.
+5. If activity exists but event does not, check Flow rules, Redis flow instances, and `match_by` parsing.
+6. If `$v.ldap` is involved, check the Redis lookup set, `ada:engine:ldap_search_pending:<hash>`, and tasker logs for `ada:engine:ldap_search_channel`.
 
 ### Scan Tasks Do Not Move
 

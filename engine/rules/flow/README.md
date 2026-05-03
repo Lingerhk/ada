@@ -34,12 +34,16 @@ detection:
 
 - 计数`count`
 ```shell
-$s1._count == 3
+$s1._count >= 3
+len($s1) >= 3
+len(distinct($s1.TargetUserName)) >= 3
+$s1.TargetUserName._count >= 3
 ```
 
 - 关系判断`==`,`!=`,`>`,`<`,`>=`,`<=`
 ```shell
 $s1.SubjectUserName == $s2.UserName AND $s1.SourceProcessId == $s2.ProcessId
+$s1.SubjectUserName == $s2.UserName OR ($s1.SourceProcessId == $s2.ProcessId AND NOT ($s1.LoginType == guest))
 ```
 
 - IN操作符`in`--`slice`
@@ -54,11 +58,7 @@ $s1.SubjectUserName == $s2.UserName AND $s1.SourceProcessId == $s2.ProcessId
 
 - IN操作符`in`--`ldap`
 ```shell
- $s1.ProcessId == $s2.SourceProcessId AND $s1.LoginType in $v.ldap.key_xxx
+ $s1.ProcessId == $s2.SourceProcessId AND $s1.LoginType in $v.ldap.key_ada:engine:%s:sensitive_users($s1.TargetDomainName)
 ```
 
-
-- TODO: IN操作符`==`--`ldap`
-```shell
- $s1.ProcessId == $s2.SourceProcessId AND $s1.LoginType == $v.ldap.key_xxx
-```
+`$v.ldap` 先同步读取 Redis set；cache miss 时通过 `ada:engine:ldap_search_channel` 触发 tasker 异步 LDAP 查询并回填缓存，避免阻塞 FlowMatcher。
