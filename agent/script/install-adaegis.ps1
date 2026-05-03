@@ -148,10 +148,10 @@ try {
             throw "Bundled TShark verification failed with exit code $($process.ExitCode)"
         }
         Write-Log "Installed bundled TShark runtime: $tsharkDir\tshark.exe"
-    } elseif (Test-Path "$bundledTsharkDir\Wireshark-4.6.4-x64.exe") {
+    } elseif (Test-Path "$bundledTsharkDir\Wireshark-4.6.5-x64.exe") {
         Write-Log "Bundled TShark runtime not found; bootstrapping from bundled Wireshark installer..."
-        $wiresharkInstaller = "$bundledTsharkDir\Wireshark-4.6.4-x64.exe"
-        $expectedHash = "102017d8e99a75b57895cd2144e6a61dc335a8ff14c7a25bd83a55f8ea9ad77b"
+        $wiresharkInstaller = "$bundledTsharkDir\Wireshark-4.6.5-x64.exe"
+        $expectedHash = "3c3a2f020d5e053514eefa30dde49e596b857edef6971b655bdfd09af504b0f6"
         $actualHash = (Get-FileHash -Path $wiresharkInstaller -Algorithm SHA256).Hash.ToLower()
         if ($actualHash -ne $expectedHash) {
             throw "Wireshark installer SHA256 mismatch: $actualHash"

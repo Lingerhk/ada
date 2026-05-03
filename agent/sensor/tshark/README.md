@@ -18,8 +18,8 @@ https://www.wireshark.org/download.html
 Current pinned build:
 
 ```text
-Wireshark-4.6.4-x64.exe
-SHA256: 102017d8e99a75b57895cd2144e6a61dc335a8ff14c7a25bd83a55f8ea9ad77b
+Wireshark-4.6.5-x64.exe
+SHA256: 3c3a2f020d5e053514eefa30dde49e596b857edef6971b655bdfd09af504b0f6
 ```
 
 Before refreshing this runtime, verify the installer Authenticode signature on
@@ -54,7 +54,7 @@ size reduction requires a custom Wireshark build or binary compression, both of
 which add operational and maintenance risk.
 
 If maintaining the fully extracted runtime is not practical in a checkout,
-`pkg\tshark\Wireshark-4.6.4-x64.exe` can be included as a bootstrap fallback.
+`pkg\tshark\Wireshark-4.6.5-x64.exe` can be included as a bootstrap fallback.
 The installer script verifies its SHA256 and Authenticode signature, installs
 Wireshark silently, then mirrors `C:\Program Files\Wireshark` into
 `C:\Program Files\adaegis\tshark`. Runtime resolution still uses the ADAegis
@@ -81,8 +81,8 @@ The current minimized package was validated in the test environment:
 
 ```text
 host: 192.168.7.2 backend / 192.168.1.10 DC
-sensor: 2.6.15
-tshark: Wireshark 4.6.4
+sensor: 2.6.22
+tshark: Wireshark 4.6.5
 zip size with minimized runtime: 65M
 runtime directory size: 110M
 ```
@@ -136,7 +136,7 @@ pkg\tshark\...
 The fallback package form is:
 
 ```text
-pkg\tshark\Wireshark-4.6.4-x64.exe
+pkg\tshark\Wireshark-4.6.5-x64.exe
 ```
 
 When packaging on macOS, avoid AppleDouble metadata and use deflate compression.
