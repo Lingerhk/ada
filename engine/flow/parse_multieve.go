@@ -11,6 +11,10 @@ import (
 
 // 匹配器: 多条winlog类型
 func (r *Ruleset) matchEventMultiEve(ctx context.Context, fr FlowRule, flowInstances []string) {
+	r.matchEventSequence(ctx, fr, flowInstances, "multi-eve")
+}
+
+func (r *Ruleset) matchEventSequence(ctx context.Context, fr FlowRule, flowInstances []string, eventName string) {
 	for _, insId := range flowInstances {
 		func() {
 			insCtx, cancel := context.WithTimeout(ctx, 2*time.Second)
@@ -18,7 +22,7 @@ func (r *Ruleset) matchEventMultiEve(ctx context.Context, fr FlowRule, flowInsta
 
 			stop := time.Now().UnixNano() / 1e6
 
-			logger.Debugf("11----handle matchEventMultiEve instance_id %s", insId)
+			logger.Debugf("handle %s instance_id %s", eventName, insId)
 
 			// 取最新winSize内的所有事件
 			activities, err := r.getFlowActivitiesByWinSize(insCtx, insId, fr.Detection.WinSizeTs, stop)
@@ -35,14 +39,14 @@ func (r *Ruleset) matchEventMultiEve(ctx context.Context, fr FlowRule, flowInsta
 				return
 			}
 
-			// 对flow事件进行unique_filter过滤
-			if r.checkUniqueFilter(insCtx, fr.ID, fr.UniqueFilter, activities) {
-				logger.Debugf("ignore flow instance(%s) by matched unique_filter:%s", insId, fr.UniqueFilter)
+			matchedActivities, matched := r.matchByActivities(insCtx, activities, validSets, fr.Detection.MatchBy)
+			if !matched {
 				return
 			}
 
-			matchedActivities, matched := r.matchByActivities(insCtx, activities, validSets, fr.Detection.MatchBy)
-			if !matched {
+			// 对flow事件进行unique_filter过滤
+			if r.checkUniqueFilter(insCtx, fr.ID, fr.UniqueFilter, matchedActivities) {
+				logger.Debugf("ignore flow instance(%s) by matched unique_filter:%s", insId, fr.UniqueFilter)
 				return
 			}
 
@@ -50,16 +54,16 @@ func (r *Ruleset) matchEventMultiEve(ctx context.Context, fr FlowRule, flowInsta
 			logger.Debugf("matched flow from activities: %v", matchedActivities)
 
 			if err := r.storeEvent(insCtx, insId, fr, matchedActivities); err != nil {
-				logger.Warnf("store event(multi-eve) err:%v, will ignore this flow instance!", err)
+				logger.Warnf("store event(%s) err:%v, will ignore this flow instance!", eventName, err)
 			}
 
 			// 如果存在unique_filter，则添加到redis cache中
-			if err := r.addUniqueFilter(insCtx, fr.ID, fr.UniqueFilter, activities); err != nil {
+			if err := r.addUniqueFilter(insCtx, fr.ID, fr.UniqueFilter, matchedActivities); err != nil {
 				logger.Warnf("add unique_filter(flow_insId:%s,filter: %s) err:%v", insId, fr.UniqueFilter, err)
 			}
 
 			if err := r.redisCli.Del(insCtx, insId).Err(); err != nil {
-				logger.Warnf("delete flow instance(multi-eve) err:%v", err)
+				logger.Warnf("delete flow instance(%s) err:%v", eventName, err)
 			}
 		}()
 	}
@@ -180,6 +184,9 @@ func (r *Ruleset) matchByActivities(ctx context.Context, activities []flowActivi
 func (r *Ruleset) match(ctx context.Context, conditions []Condition, activity ...flowActivity) bool {
 	// 遍历表达式中的每个子句
 	for _, c := range conditions {
+		if !c.valid || c.fieldOneIdx < 0 || int(c.fieldOneIdx) >= len(activity) {
+			return false
+		}
 		v1 := getFieldVal(c.fieldOneVal, activity[c.fieldOneIdx])
 
 		if c.operation == "in" {
@@ -218,6 +225,9 @@ func (r *Ruleset) match(ctx context.Context, conditions []Condition, activity ..
 			if c.fieldTwoTyp == "const" {
 				v2 = c.fieldTwoVal
 			} else {
+				if c.fieldTwoIdx < 0 || int(c.fieldTwoIdx) >= len(activity) {
+					return false
+				}
 				v2 = getFieldVal(c.fieldTwoVal, activity[c.fieldTwoIdx])
 			}
 			if v1 == "" && v2 == "" {
@@ -250,35 +260,10 @@ func getFieldVal(field string, act flowActivity) string {
 func getFieldRdxVal(ctx context.Context, redisCli *redis.Client, field2 string, acts []flowActivity) []string {
 	// 从redis中获取key_xxxx($s1.TargetDomainName), 并转为string.Join(",")形式字符串
 	// key_xxxx 可带参数，如: `key_ada:engine:user:%s:sensitive_users($s1.TargetDomainName)`，也可留空
-	cacheKey := field2
-	if strings.Contains(field2, "$s") && strings.Contains(field2, "(") && strings.Contains(field2, ")") {
-		parts := strings.SplitN(field2, "(", 2)
-		keyPrefix := strings.TrimPrefix(parts[0], "key_")                                            // key_ada:engine:user:%s:sensitive_users
-		params := strings.Split(strings.ReplaceAll(strings.TrimSuffix(parts[1], ")"), " ", ""), ",") // [$s1.TargetDomainName]
-
-		var paramVals []any
-		for _, param := range params {
-			idx, val := parseConditionKV(param)
-			fieldVal := strings.ToLower(getFieldVal(val, acts[idx]))
-			if fieldVal == "" {
-				logger.Warnf("3-invalid extract condition(field2:%s, extract:%s) err, format failed!", field2, param)
-				continue
-			}
-
-			// 这里需要进行特殊处理，原因是nxlog原始日志里的TargetDomainName没有后缀，如:`CHINASIX`
-			if val == "TargetDomainName" {
-				hostname := strings.ToLower(acts[0].activityCache["field_Hostname"])
-				if hostname == "" {
-					logger.Warn("4-invalid extract hostname from activities[0] failed!")
-					continue
-				}
-				if !strings.HasSuffix(hostname, fieldVal) {
-					fieldVal = strings.Join(strings.Split(hostname, ".")[1:], ".")
-				}
-			}
-			paramVals = append(paramVals, fieldVal)
-		}
-		cacheKey = fmt.Sprintf(keyPrefix, paramVals...)
+	cacheKey, ok := buildCacheLookupKey(field2, acts)
+	if !ok {
+		logger.Warnf("invalid cache key template:%s", field2)
+		return []string{}
 	}
 
 	items, err := redisCli.SMembers(ctx, cacheKey).Result()
