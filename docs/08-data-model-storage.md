@@ -74,6 +74,8 @@ Definition files:
 | `ada:engine:active:<flow_id>` | set | Active Flow instance key set |
 | `ada:engine:activity_cache:<mongo_id>` | hash | Activity correlation cache |
 | `ada:engine:flow_whitelist...` | hash | Flow whitelist conditions |
+| `ada:engine:ldap_search_channel` | pubsub | Async `$v.ldap` cache-miss lookup requests |
+| `ada:engine:ldap_search_pending:<hash>` | string | 60s deduplication key for repeated `$v.ldap` misses |
 | `ada:server:notify_queue` | list | Notifications pushed by engine/scanner and consumed by task_worker |
 
 ### Domain and Asset Cache
@@ -84,9 +86,9 @@ Definition files:
 | `ada:server:ldap:<domain>` | string | LDAP account cache |
 | `ada:server:<domain>:ip_relate_dc` | hash | IP to DC FQDN mapping |
 | `ada:engine:dc_ip:<ip>` | string | Hostname lookup by IP for Zeek RedisWriter |
-| `ada:engine:<domain>:sensitive_users` | set | Sensitive users |
-| `ada:engine:<domain>:sensitive_groups` | set | Sensitive groups |
-| `ada:engine:<domain>:sensitive_computers` | set | Sensitive computers |
+| `ada:engine:<domain>:sensitive_users` | set | Sensitive users; can be filled by scheduled LDAP sync or async `$v.ldap` miss handling |
+| `ada:engine:<domain>:sensitive_groups` | set | Sensitive groups; can be filled by scheduled LDAP sync or async `$v.ldap` miss handling |
+| `ada:engine:<domain>:sensitive_computers` | set | Sensitive computers; can be filled by scheduled LDAP sync or async `$v.ldap` miss handling |
 | `ada:engine:<domain>:honeypot_accounts` | set | Honeypot accounts |
 
 ### System and Dashboard
@@ -120,6 +122,7 @@ Field conventions:
 ## Data Consistency Notes
 
 - MongoDB is the source of truth for business state; ES is mainly for search and display, so do not judge business task failure by ES alone.
-- Redis queues are async boundaries. Backlog does not mean data loss, but long-lived backlog indicates an abnormal or pending consumer.
+- Redis queues are async boundaries. Backlog does not mean data loss, but long-lived backlog indicates an abnormal consumer.
 - Flow correlation depends on Redis cache TTL. After the window expires, historical activity can no longer be correlated.
+- `$v.ldap` uses Redis as the synchronous hot-path cache. LDAP misses are published to tasker and deduplicated with `ada:engine:ldap_search_pending:<hash>` for 60 seconds.
 - Zeek RedisWriter depends on `ada:engine:dc_ip:<ip>` to map IP addresses to hostnames. Missing mappings affect domain attribution.

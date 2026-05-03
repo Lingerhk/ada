@@ -122,10 +122,10 @@ GOCACHE=/tmp/ada-go-build go test ./...
 
 1. 查 `ada:evelog_queue` 或 `ada:pktlog_queue` 是否积压。
 2. 查 engine 是否启动并加载规则。
-3. 查 license runtime check 是否让 engine 进入 pending。
-4. 查 Sigma rule 的 `logsource`、`detection`、`fields`、`unique_fields` 是否匹配实际字段。
-5. 查 `tb_alert_activity` 是否有 activity。
-6. 如果 activity 有但 event 没有，查 Flow 规则和 Redis flow instance。
+3. 查 Sigma rule 的 `logsource`、`detection`、`fields`、`unique_fields` 是否匹配实际字段。
+4. 查 `tb_alert_activity` 是否有 activity。
+5. 如果 activity 有但 event 没有，查 Flow 规则、Redis flow instance 和 `match_by` 解析。
+6. 如果涉及 `$v.ldap`，查 Redis lookup set、`ada:engine:ldap_search_pending:<hash>` 和 tasker 中 `ada:engine:ldap_search_channel` 处理日志。
 
 ### 扫描任务不动
 

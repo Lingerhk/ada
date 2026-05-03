@@ -13,7 +13,7 @@ const (
 
 	FlowWhitelistPrefixKey = "ada:engine:flow_whitelist"
 
-	FlowInstancePrefixKey = "ada:engine:instance"
+	FlowInstancePrefixKey  = "ada:engine:instance"
 	FlowActiveSetPrefixKey = "ada:engine:active" // SADD记录每个flow_id的活跃instance(zsetKey)
 
 	EveLogQueueKey = "ada:evelog_queue" // same with task_server module
@@ -26,6 +26,9 @@ const (
 	AlertNotifyQueueKey = "ada:server:notify_queue" // 告警Notify推送队列(taskworker进行notify)
 
 	EngineReloadChannel = "ada:engine:reload" // Redis pub/sub channel for engine rule reload
+
+	LdapSearchPubsubChan       = "ada:engine:ldap_search_channel" // Flow $v.ldap cache miss async lookup channel
+	LdapSearchPendingPrefixKey = "ada:engine:ldap_search_pending" // SETNX throttle key for repeated LDAP miss requests
 )
 
 // flow规则支持的类型
@@ -40,4 +43,6 @@ const (
 const (
 	MaxFlowSelections = 16       // flow关联sigma的最大数量
 	MaxFlowWinSize    = 6 * 3600 // flow最大窗口大小(6h)
+
+	LdapSearchCacheTTLSeconds = 60 // LDAP consumer should populate Redis lookup sets with at least this ttl
 )

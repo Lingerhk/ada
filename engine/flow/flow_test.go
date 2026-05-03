@@ -4,6 +4,7 @@ import (
 	"ada/engine/common"
 	"ada/infra/mongo"
 	"context"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"os"
@@ -167,6 +168,111 @@ func TestParseConditionKeepsLongOperators(t *testing.T) {
 	}
 	if c.operation != ">=" {
 		t.Fatalf("expected >= operator, got %q", c.operation)
+	}
+}
+
+func TestMatchExpressionSupportsOrParenthesesAndNot(t *testing.T) {
+	expr, conditions, err := parseMatchExpression("($s1.UserName == admin OR $s2.UserName == bob) AND NOT ($s1.TargetDomainName == blocked)")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(conditions) != 3 {
+		t.Fatalf("expected 3 leaf conditions, got %d", len(conditions))
+	}
+
+	rs := &Ruleset{}
+	act1 := flowActivity{activityCache: map[string]string{
+		"field_UserName":         "alice",
+		"field_TargetDomainName": "example.com",
+	}}
+	act2 := flowActivity{activityCache: map[string]string{
+		"field_UserName": "bob",
+	}}
+	if !rs.matchExpr(context.Background(), expr, act1, act2) {
+		t.Fatalf("expected expression to match")
+	}
+
+	act1.activityCache["field_TargetDomainName"] = "blocked"
+	if rs.matchExpr(context.Background(), expr, act1, act2) {
+		t.Fatalf("expected NOT branch to reject blocked domain")
+	}
+}
+
+func TestCountExpressionSupportsComparatorsLenAndDistinct(t *testing.T) {
+	activities := []flowActivity{
+		{activityCache: map[string]string{"sid": "winlog-0001", "field_TargetUserName": "Alice"}},
+		{activityCache: map[string]string{"sid": "winlog-0001", "field_TargetUserName": "alice"}},
+		{activityCache: map[string]string{"sid": "winlog-0001", "field_TargetUserName": "Bob"}},
+	}
+	sigmaIDs := []string{"winlog-0001"}
+
+	cases := []string{
+		"$s1._count >= 3",
+		"len($s1) >= 3",
+		"len(distinct($s1.TargetUserName)) == 2",
+		"$s1.TargetUserName._count >= 2",
+	}
+
+	for _, expression := range cases {
+		countExpr, err := parseCountExpression(expression)
+		if err != nil {
+			t.Fatalf("parse %s: %v", expression, err)
+		}
+		if !compareInt(countExpr.operation, countExpr.count(activities, sigmaIDs), countExpr.threshold) {
+			t.Fatalf("expected count expression to match: %s", expression)
+		}
+	}
+}
+
+func TestLDAPLookupUsesRedisCacheAndPublishesMiss(t *testing.T) {
+	s := miniredis.RunT(t)
+	rdb := redis.NewClient(&redis.Options{Addr: s.Addr()})
+	t.Cleanup(func() { _ = rdb.Close() })
+
+	ctx := context.Background()
+	template := "key_ada:engine:%s:sensitive_users($s1.TargetDomainName)"
+	acts := []flowActivity{
+		{activityCache: map[string]string{
+			"field_TargetDomainName": "example.com",
+		}},
+	}
+	cacheKey := "ada:engine:example.com:sensitive_users"
+
+	if err := rdb.SAdd(ctx, cacheKey, "alice").Err(); err != nil {
+		t.Fatal(err)
+	}
+	if vals := getFieldLDAPVal(ctx, rdb, template, acts); len(vals) != 1 || vals[0] != "alice" {
+		t.Fatalf("expected cached LDAP value, got %v", vals)
+	}
+
+	if err := rdb.Del(ctx, cacheKey).Err(); err != nil {
+		t.Fatal(err)
+	}
+	pubsub := rdb.Subscribe(ctx, common.LdapSearchPubsubChan)
+	t.Cleanup(func() { _ = pubsub.Close() })
+	if _, err := pubsub.Receive(ctx); err != nil {
+		t.Fatal(err)
+	}
+
+	if vals := getFieldLDAPVal(ctx, rdb, template, acts); len(vals) != 0 {
+		t.Fatalf("expected empty values on cache miss, got %v", vals)
+	}
+	if exists := rdb.Exists(ctx, ldapPendingKey(cacheKey)).Val(); exists != 1 {
+		t.Fatalf("expected LDAP pending key to be set")
+	}
+
+	msgCtx, cancel := context.WithTimeout(ctx, time.Second)
+	defer cancel()
+	msg, err := pubsub.ReceiveMessage(msgCtx)
+	if err != nil {
+		t.Fatal(err)
+	}
+	var req ldapLookupRequest
+	if err := json.Unmarshal([]byte(msg.Payload), &req); err != nil {
+		t.Fatal(err)
+	}
+	if req.CacheKey != cacheKey || req.CacheTTLSeconds != common.LdapSearchCacheTTLSeconds {
+		t.Fatalf("unexpected LDAP request payload: %#v", req)
 	}
 }
 
