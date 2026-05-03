@@ -262,32 +262,52 @@ func (e *EngineWorker) syncFlowEngine(ctx context.Context, eId, mId, dcHostname 
 		return err
 	}
 
+	e.mu.RLock()
+	flowset := e.Flowset
+	e.mu.RUnlock()
+	if flowset == nil {
+		logger.Warnf("missing flowset, will ignore flow sync for sid:%s", rule.ID)
+		return nil
+	}
+
+	// set rule info into cache once; the same activity can be referenced by multiple flow rules.
+	cacheId, err := e.cacheActivityMeta(ctx, eId, mId, dcHostname, result, rule)
+	if err != nil {
+		logger.Warnf("cache event(mId:%s, sid:%s) err:%v, will ignore!", mId, result.ID, err)
+		return err
+	}
+
 	for _, flowId := range strings.Split(v, ",") {
-		// set rule info into cache
-		cacheId, err := e.cacheActivityMeta(ctx, eId, mId, dcHostname, result, rule)
-		if err != nil {
-			logger.Warnf("cache event(mId:%s, sid:%s) err:%v, will ignore!", mId, result.ID, err)
+		flowId = strings.TrimSpace(flowId)
+		if flowId == "" {
+			continue
+		}
+		instanceKeys := flowset.BuildFlowInstanceKeys(flowId, result.ID, result.Fields, dcHostname, result.UniqueId)
+		if len(instanceKeys) == 0 {
+			logger.Warnf("empty flow instance key(flow:%s, sid:%s), will ignore this activity", flowId, result.ID)
 			continue
 		}
 
-		// set zset
-		zsetKey := fmt.Sprintf("%s:%s_%s", common.FlowInstancePrefixKey, flowId, result.UniqueId)
-		err = e.redisCli.ZAdd(ctx, zsetKey, redis.Z{Score: float64(result.Timestamp), Member: cacheId}).Err()
-		if err != nil {
-			logger.Warnf("set zset err:%v", err)
-			continue
-		}
-		if err := e.redisCli.Expire(ctx, zsetKey, common.MaxFlowWinSize*time.Second).Err(); err != nil {
-			logger.Warnf("set zset expire err:%v", err)
-			continue
-		}
+		for _, instanceKey := range instanceKeys {
+			// set zset
+			zsetKey := fmt.Sprintf("%s:%s_%s", common.FlowInstancePrefixKey, flowId, instanceKey)
+			err = e.redisCli.ZAdd(ctx, zsetKey, redis.Z{Score: float64(result.Timestamp), Member: cacheId}).Err()
+			if err != nil {
+				logger.Warnf("set zset err:%v", err)
+				continue
+			}
+			if err := e.redisCli.Expire(ctx, zsetKey, common.MaxFlowWinSize*time.Second).Err(); err != nil {
+				logger.Warnf("set zset expire err:%v", err)
+				continue
+			}
 
-		// track active instances to avoid KEYS scan
-		activeKey := fmt.Sprintf("%s:%s", common.FlowActiveSetPrefixKey, flowId)
-		if err := e.redisCli.SAdd(ctx, activeKey, zsetKey).Err(); err != nil {
-			logger.Warnf("sadd active instance err:%v", err)
+			// track active instances to avoid KEYS scan
+			activeKey := fmt.Sprintf("%s:%s", common.FlowActiveSetPrefixKey, flowId)
+			if err := e.redisCli.SAdd(ctx, activeKey, zsetKey).Err(); err != nil {
+				logger.Warnf("sadd active instance err:%v", err)
+			}
+			_ = e.redisCli.Expire(ctx, activeKey, (common.MaxFlowWinSize+3600)*time.Second).Err()
 		}
-		_ = e.redisCli.Expire(ctx, activeKey, (common.MaxFlowWinSize+3600)*time.Second).Err()
 	}
 
 	return nil

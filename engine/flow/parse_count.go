@@ -50,7 +50,7 @@ func (r *Ruleset) matchEventCount(ctx context.Context, fr FlowRule, flowInstance
 				}
 
 				// 将该flow instance中的activity从redis(zset)删除，start从new开始算(ts<now的删除)
-				err := r.redisCli.ZRemRangeByScore(insCtx, insId, strconv.FormatInt(stop-common.MaxFlowWinSize, 10), strconv.FormatInt(stop, 10)).Err()
+				err := r.redisCli.ZRemRangeByScore(insCtx, insId, strconv.FormatInt(stop-common.MaxFlowWinSize*1000, 10), strconv.FormatInt(stop, 10)).Err()
 				if err != nil {
 					logger.Warnf("delete alerted event from zset err:%v", err)
 				}
