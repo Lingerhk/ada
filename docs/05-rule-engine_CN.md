@@ -67,6 +67,8 @@ flowchart LR
 | `unique_fields` | 生成 `unique_id` 的字段 |
 | `rdx_key` | 内置规则缓存 key，可用于给后续规则提供上下文 |
 
+完整 YAML 编写语法、示例、验证步骤和排查方法见 [Engine YAML 规则开发指南](../engine/RULE_GUIDE_CN.md)。
+
 匹配输出：
 
 - 命中后生成 `AlertActivityESDB`。
