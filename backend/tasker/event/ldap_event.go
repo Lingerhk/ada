@@ -15,8 +15,9 @@ import (
 )
 
 type LdapEvent struct {
-	redisCli *redis.Client
-	mongoCli mongo.DBAdaptor
+	redisCli     *redis.Client
+	mongoCli     mongo.DBAdaptor
+	lookupValues func(domain, entryType string) ([]any, error)
 }
 
 func NewLdapEvent(redisCli *redis.Client) *LdapEvent {
@@ -51,7 +52,11 @@ func (l *LdapEvent) Process(msgChan, msgData string) {
 		return
 	}
 
-	values, err := l.searchLDAPValues(domain, entryType)
+	lookupValues := l.searchLDAPValues
+	if l.lookupValues != nil {
+		lookupValues = l.lookupValues
+	}
+	values, err := lookupValues(domain, entryType)
 	if err != nil {
 		logger.Warnf("ldap lookup failed domain:%s type:%s err:%v", domain, entryType, err)
 		return
