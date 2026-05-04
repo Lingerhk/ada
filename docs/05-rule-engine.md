@@ -67,6 +67,8 @@ Rule fields are defined in `engine/sigma/rule.go`. Core fields include:
 | `unique_fields` | Fields used to generate `unique_id` |
 | `rdx_key` | Built-in rule cache key, usable as context for later rules |
 
+For detailed YAML authoring syntax, examples, validation steps, and troubleshooting, see [Engine YAML Rule Authoring Guide](../engine/RULE_GUIDE.md).
+
 Match output:
 
 - A hit generates `AlertActivityESDB`.
