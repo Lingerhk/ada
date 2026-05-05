@@ -79,26 +79,7 @@ func (t *WeakPwdTask) RunTask() (any, error) {
 	subDoc, err := t.svc.getSubTaskByTaskID(t.id)
 	incN := int32(1)
 	if err == nil {
-		paramsAny := subDoc["params"]
-		params, ok := paramsAny.(map[string]any)
-		if !ok {
-			if bm, ok2 := paramsAny.(bson.M); ok2 {
-				params = map[string]any(bm)
-			}
-		}
-		if params != nil {
-			if ul, ok := params["user_list"].([]any); ok {
-				if len(ul) == 0 {
-					if c, ok2 := asInt32(params["count"]); ok2 {
-						incN = c
-					} else {
-						incN = 0
-					}
-				} else {
-					incN = int32(len(ul))
-				}
-			}
-		}
+		incN = weakPwdFinishIncrement(subDoc["params"])
 	}
 
 	if retryID == "" {
@@ -124,16 +105,46 @@ func (t *WeakPwdTask) RunTask() (any, error) {
 			if retryID != "" {
 				return pluginResult, nil
 			}
-			final := "FINISH"
-			if em, ok := taskDoc["error_msg"].(string); ok && em != "" {
-				final = "FAILURE"
+			finishCount, _ := t.svc.countSubTasks(groupID, "FINISH")
+			failureCount, _ := t.svc.countSubTasks(groupID, "FAILURE")
+			final := weakPwdFinalStatus(finishCount, failureCount)
+			upd := bson.M{"$set": bson.M{"status": final, "update_tm": nowUTC()}}
+			if final == "FINISH" {
+				upd["$set"].(bson.M)["error_msg"] = ""
 			}
-			_ = t.svc.updateScanTaskByIDHex(groupID, bson.M{"$set": bson.M{"status": final, "update_tm": nowUTC()}})
+			_ = t.svc.updateScanTaskByIDHex(groupID, upd)
 		}
 	}
 
 	b, _ := json.Marshal(pluginResult)
 	return string(b), nil
+}
+
+func weakPwdFinalStatus(finishCount, failureCount int64) string {
+	if failureCount > 0 || finishCount == 0 {
+		return "FAILURE"
+	}
+	return "FINISH"
+}
+
+func weakPwdFinishIncrement(paramsAny any) int32 {
+	params, ok := mapFromAny(paramsAny)
+	if !ok {
+		return 1
+	}
+	if ul, ok := asSliceAny(params["user_list"]); ok {
+		if len(ul) > 0 {
+			return int32(len(ul))
+		}
+		if c, ok := asInt32(params["count"]); ok {
+			return c
+		}
+		return 0
+	}
+	if c, ok := asInt32(params["count"]); ok {
+		return c
+	}
+	return 1
 }
 
 func (t *WeakPwdTask) execPluginWeakPwd(domainName string, plugin map[string]any) (map[string]any, error) {

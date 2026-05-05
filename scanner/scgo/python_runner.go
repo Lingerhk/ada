@@ -125,14 +125,17 @@ func RunPluginVerify(pythonBin, scRoot, module string, kwargs map[string]any) (m
 	}
 	kwargsB64 := base64.StdEncoding.EncodeToString(b)
 
+	extraEnv := []string{
+		"SC_ROOT=" + scRoot,
+		"PLUGIN_MODULE=" + module,
+		"PLUGIN_ACTION=verify",
+		"PLUGIN_KWARGS_B64=" + kwargsB64,
+	}
+	extraEnv = append(extraEnv, pluginMongoEnvFromKwargs(pluginKwargs)...)
+
 	cmd := exec.Command(pythonBin, "-c", pyRunner)
 	cmd.Dir = scRoot
-	cmd.Env = pluginPythonEnv(cmd.Environ(), scRoot,
-		"SC_ROOT="+scRoot,
-		"PLUGIN_MODULE="+module,
-		"PLUGIN_ACTION=verify",
-		"PLUGIN_KWARGS_B64="+kwargsB64,
-	)
+	cmd.Env = pluginPythonEnv(cmd.Environ(), scRoot, extraEnv...)
 	if taskID != "" {
 		cmd.Env = append(cmd.Env, "TASK_ID="+taskID)
 	}
@@ -178,6 +181,39 @@ func RunPluginVerify(pythonBin, scRoot, module string, kwargs map[string]any) (m
 
 func pluginPythonEnv(base []string, scRoot string, extra ...string) []string {
 	return append(setEnv(base, "PYTHONPATH", pluginPythonPath(scRoot)), extra...)
+}
+
+func pluginMongoEnvFromKwargs(kwargs map[string]any) []string {
+	envMap, ok := mapFromAny(kwargs["env"])
+	if !ok {
+		return nil
+	}
+	mongoConf, ok := mapFromAny(envMap["mongo_conf"])
+	if !ok {
+		return nil
+	}
+
+	var env []string
+	if host := asString(mongoConf["host"]); host != "" {
+		if h, p, ok := strings.Cut(host, ":"); ok {
+			env = append(env, "MONGO_HOST="+h)
+			if p != "" {
+				env = append(env, "MONGO_PORT="+p)
+			}
+		} else {
+			env = append(env, "MONGO_HOST="+host)
+		}
+	}
+	if user := asString(mongoConf["user"]); user != "" {
+		env = append(env, "MONGO_USERNAME="+user)
+	}
+	if password := asString(mongoConf["password"]); password != "" {
+		env = append(env, "MONGO_PASSWORD="+password)
+	}
+	if dbName := asString(mongoConf["db_name"]); dbName != "" {
+		env = append(env, "MONGO_DB_NAME="+dbName, "MONGO_AUTH_SOURCE="+dbName)
+	}
+	return env
 }
 
 func pluginPythonPath(scRoot string) string {

@@ -46,6 +46,36 @@ func TestPluginPythonEnvIncludesVenvSitePackages(t *testing.T) {
 	}
 }
 
+func TestPluginMongoEnvFromKwargs(t *testing.T) {
+	got := pluginMongoEnvFromKwargs(map[string]any{
+		"env": map[string]any{
+			"mongo_conf": map[string]any{
+				"host":     "ada_mongodb:27017",
+				"user":     "user_ada",
+				"password": "secret",
+				"db_name":  "db_ada",
+			},
+		},
+	})
+
+	want := []string{
+		"MONGO_HOST=ada_mongodb",
+		"MONGO_PORT=27017",
+		"MONGO_USERNAME=user_ada",
+		"MONGO_PASSWORD=secret",
+		"MONGO_DB_NAME=db_ada",
+		"MONGO_AUTH_SOURCE=db_ada",
+	}
+	if len(got) != len(want) {
+		t.Fatalf("pluginMongoEnvFromKwargs() = %v, want %v", got, want)
+	}
+	for i := range want {
+		if got[i] != want[i] {
+			t.Fatalf("pluginMongoEnvFromKwargs() = %v, want %v", got, want)
+		}
+	}
+}
+
 func TestPluginRunnerGetInfoIntegration(t *testing.T) {
 	pythonBin := os.Getenv("SCGO_TEST_PYTHON")
 	scRoot := os.Getenv("SCGO_TEST_SC_ROOT")
