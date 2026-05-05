@@ -1,0 +1,42 @@
+title: System time changed
+id: winlog-0261
+status: experimental
+rule_origin: public
+description: Detects scenarios where an attacker attempts to change the system time to evade defense. Check also if NewTime
+  is different from PreviousTime to reduce false positives.
+references:
+- https://github.com/mdecrevoisier/EVTX-to-MITRE-Attack/tree/master/TA0005-Defense%20Evasion/T1070.006-Timestomp
+- https://blog.menasec.net/2019/02/threat-hunting-19-suspicious-system.html
+- https://github.com/mdecrevoisier/SIGMA-detection-rules
+author: mdecrevoisier
+date: 2026/05/04
+modified: 2026/05/04
+tags:
+- TA0005
+- attack.t1070.006
+- attack.defense_evasion
+logsource:
+  product: windows
+  service: security
+detection:
+  selection:
+    EventID: 4616
+  filter:
+    ProcessName|endswith:
+    - \VMware\VMware Tools\vmtoolsd.exe
+    - \Windows\System32\svchost.exe
+  condition: selection and not filter
+fields:
+- Hostname
+- EventID
+- ProcessName
+unique_fields:
+- Hostname
+falsepositives:
+- Hypervisors
+level: medium
+x_source_repository: https://github.com/mdecrevoisier/SIGMA-detection-rules
+x_source_commit: ab15e29fcdbed297e305e2602881b8654946592c
+x_source_file: windows-os/win-os-time changed.yaml
+x_legacy_id: winlog-9000-0268
+x_legacy_file: engine/rules/winlog/sigma_ref/9000-0268-system_time_changed.yml

@@ -1,0 +1,48 @@
+title: User account creation disguised in a computer account
+id: winlog-0093
+status: experimental
+rule_origin: public
+description: Detects scenarios where an attacker creates a user account that fakes a computer account.
+references:
+- https://github.com/mdecrevoisier/EVTX-to-MITRE-Attack/tree/master/TA0003-Persistence/T1136-Create%20account
+- https://www.securonix.com/blog/securonix-threat-labs-security-advisory-threat-actors-target-mssql-servers-in-dbjammer-to-deliver-freeworld-ransomware/
+- https://github.com/mdecrevoisier/SIGMA-detection-rules
+author: mdecrevoisier
+date: 2026/05/04
+modified: 2026/05/04
+tags:
+- TA0003
+- attack.t1098
+- attack.t1136
+- attack.t0136
+- attack.persistence
+- attack.defense_evesion
+logsource:
+  product: windows
+  service: security
+detection:
+  selection_creation:
+    EventID: 4720
+    TargetUserName|endswith: $
+  selection_renamed:
+    EventID: 4781
+    NewTargetUserName|endswith: $
+  filter:
+    OldTargetUserName|endswith: $
+  condition: selection_creation or (selection_renamed and not filter)
+fields:
+- Hostname
+- EventID
+- NewTargetUserName
+- OldTargetUserName
+- TargetUserName
+unique_fields:
+- Hostname
+falsepositives:
+- None
+level: high
+x_source_repository: https://github.com/mdecrevoisier/SIGMA-detection-rules
+x_source_commit: ab15e29fcdbed297e305e2602881b8654946592c
+x_source_file: windows-active_directory/win-ad-user account creation disguised in a computer account.yaml
+x_legacy_id: winlog-9000-0069
+x_legacy_file: engine/rules/winlog/sigma_ref/9000-0069-user_account_creation_disguised_in_a_computer_account.yml

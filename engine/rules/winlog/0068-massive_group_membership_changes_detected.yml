@@ -1,0 +1,41 @@
+title: Massive group membership changes detected
+id: winlog-0068
+status: experimental
+rule_origin: public
+description: Detects scenarios where an attacker will add a compromised account into different domain groups in order to gain
+  access to all the assets under the control of those concerned groups.
+references:
+- https://github.com/mdecrevoisier/EVTX-to-MITRE-Attack/tree/master/TA0003-Persistence/T1098.xxx-Account%20manipulation
+- https://github.com/mdecrevoisier/SIGMA-detection-rules
+author: mdecrevoisier
+date: 2026/05/04
+modified: 2026/05/04
+tags:
+- TA0003
+- attack.t1098
+- attack.persistence
+logsource:
+  product: windows
+  service: security
+detection:
+  selection:
+    EventID:
+    - 4728
+    - 4756
+    - 4732
+  condition: selection
+fields:
+- Hostname
+- EventID
+- SubjectUserSid
+- TargetSid
+unique_fields:
+- SubjectUserSid
+falsepositives:
+- Automatic scripts, provisionning accounts
+level: medium
+x_source_repository: https://github.com/mdecrevoisier/SIGMA-detection-rules
+x_source_commit: ab15e29fcdbed297e305e2602881b8654946592c
+x_source_file: windows-active_directory/win-ad-group massive membership changes.yaml
+x_legacy_id: winlog-9000-0044
+x_legacy_file: engine/rules/winlog/sigma_ref/9000-0044-massive_group_membership_changes_detected.yml

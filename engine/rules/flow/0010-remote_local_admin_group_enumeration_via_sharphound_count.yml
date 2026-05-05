@@ -1,0 +1,38 @@
+title: Remote local admin group enumeration via SharpHound Count
+id: flow-0010
+status: experimental
+rule_origin: public
+enable: true
+description: Detects scenarios where an attacker enumerates local administratos group on multiple hosts via SharpHound.
+references:
+- https://github.com/mdecrevoisier/EVTX-to-MITRE-Attack/tree/master/TA0007-Discovery/T1069-Permission%20Groups%20Discovery
+- https://docs.google.com/presentation/d/1OdufXKGYPgoV1d5jDrMYSe-SYKZ7lcA4w2MFn8AkUWE/edit
+- https://www.youtube.com/watch?v=_GJDkbUTSLY
+- https://community.rsa.com/t5/rsa-netwitness-platform-blog/keeping-an-eye-on-your-hounds/ba-p/519889
+- https://bloodhound.readthedocs.io/en/latest/data-collection/sharphound.html
+- https://twitter.com/SBousseaden/status/1617856006255673345
+- https://github.com/mdecrevoisier/SIGMA-detection-rules
+author: mdecrevoisier
+date: 2026/05/04
+modified: 2026/05/04
+tags:
+- TA0007
+- attack.t1069.001
+- attack.discovery
+logsource: flow
+detection:
+  event_type: count
+  win_size: 30m
+  sorted: false
+  sigma_rules:
+  - winlog-0080
+  match_by: $s1.Hostname._count > 20
+level: medium
+unique_filter:
+- $s1.SubjectUserSid
+- ttl_1800
+x_source_repository: https://github.com/mdecrevoisier/SIGMA-detection-rules
+x_source_commit: ab15e29fcdbed297e305e2602881b8654946592c
+x_source_file: windows-active_directory/win-ad-remote local group enumeration (SharpHound).yaml
+x_legacy_id: flow-9000-0005
+x_legacy_file: engine/rules/flow/sigma_ref/9000-0005-remote_local_admin_group_enumeration_via_sharphound_count.yml

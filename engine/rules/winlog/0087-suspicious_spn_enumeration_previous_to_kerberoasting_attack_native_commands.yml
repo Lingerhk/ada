@@ -1,0 +1,44 @@
+title: Suspicious SPN enumeration previous to Kerberoasting attack (native commands)
+id: winlog-0087
+status: experimental
+rule_origin: public
+description: Detects scenarios where an attacker attempts to retrieve SPN using commandline and native tools.
+references:
+- https://github.com/mdecrevoisier/EVTX-to-MITRE-Attack/tree/master/TA0007-Discovery/T1087-Account%20discovery
+- https://github.com/nidem/kerberoast
+- https://github.com/cyberark/RiskySPN
+- https://pentestlab.blog/2018/06/04/spn-discovery/
+- https://adsecurity.org/?p=3458
+- https://www.security.com/threat-intelligence/us-china-espionage
+- https://github.com/mdecrevoisier/SIGMA-detection-rules
+author: mdecrevoisier
+date: 2026/05/04
+modified: 2026/05/04
+tags:
+- TA0000
+- attack.t1087.002
+- attack.account_discovery
+logsource:
+  product: windows
+  category: process_creation
+detection:
+  selection:
+    NewProcessName|endswith: \setspn.exe
+    CommandLine|contains:
+    - /Q
+    - -Q
+  condition: selection
+fields:
+- Hostname
+- CommandLine
+- NewProcessName
+unique_fields:
+- Hostname
+falsepositives:
+- Administrators
+level: high
+x_source_repository: https://github.com/mdecrevoisier/SIGMA-detection-rules
+x_source_commit: ab15e29fcdbed297e305e2602881b8654946592c
+x_source_file: windows-active_directory/win-ad-spn enumeration (command).yaml
+x_legacy_id: winlog-9000-0063
+x_legacy_file: engine/rules/winlog/sigma_ref/9000-0063-suspicious_spn_enumeration_previous_to_kerberoasting_attack_native_comma.yml

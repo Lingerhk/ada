@@ -1,0 +1,51 @@
+title: Replication privileges accessed to perform DCSync attack
+id: winlog-0081
+status: experimental
+rule_origin: public
+description: Detects scenarios where an attacker use DCSync or SecretDump tool to exfiltrate Active Directory credentials
+references:
+- https://github.com/mdecrevoisier/EVTX-to-MITRE-Attack/tree/master/TA0006-Credential%20Access/
+- https://www.ired.team/offensive-security-experiments/active-directory-kerberos-abuse/dump-password-hashes-from-domain-controller-with-dcsync
+- https://attack.stealthbits.com/privilege-escalation-using-mimikatz-dcsync
+- https://blog.fox-it.com/2018/04/26/escalating-privileges-with-acls-in-active-directory/
+- https://simondotsh.com/infosec/2022/07/11/dirsync.html
+- https://www.logpoint.com/en/blog/compromises-in-azure-ad-through-aad-connect/
+- https://thedfirreport.com/2024/06/10/icedid-brings-screenconnect-and-csharp-streamer-to-alphv-ransomware-deployment/
+- https://github.com/mdecrevoisier/SIGMA-detection-rules
+author: mdecrevoisier
+date: 2026/05/04
+modified: 2026/05/04
+tags:
+- TA0006
+- attack.t1003.006
+- attack.credential_access
+logsource:
+  product: windows
+  service: security
+detection:
+  selection:
+    EventID: 4662
+    AccessMask: 256
+    Properties|contains:
+    - 1131f6aa-9c07-11d1-f79f-00c04fc2dcd2
+    - 1131f6ad-9c07-11d1-f79f-00c04fc2dcd2
+    - 89e95b76-444d-4c62-991a-0facbeda640c
+  filter:
+    SubjectUserName|endswith: $
+  condition: selection and not filter
+fields:
+- Hostname
+- AccessMask
+- EventID
+- Properties
+- SubjectUserName
+unique_fields:
+- Hostname
+falsepositives:
+- SharePoint accounts (FIM usage)
+level: high
+x_source_repository: https://github.com/mdecrevoisier/SIGMA-detection-rules
+x_source_commit: ab15e29fcdbed297e305e2602881b8654946592c
+x_source_file: windows-active_directory/win-ad-replication privilege accessed (SecretDump, DCsync).yaml
+x_legacy_id: winlog-9000-0057
+x_legacy_file: engine/rules/winlog/sigma_ref/9000-0057-replication_privileges_accessed_to_perform_dcsync_attack.yml

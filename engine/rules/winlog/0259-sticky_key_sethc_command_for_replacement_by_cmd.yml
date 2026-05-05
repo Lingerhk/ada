@@ -1,0 +1,43 @@
+title: Sticky key sethc command for replacement by CMD
+id: winlog-0259
+status: experimental
+rule_origin: public
+description: Detects scenarios where an attacker attempts to replace the original sethc.exe file by cmd.exe.
+references:
+- https://github.com/mdecrevoisier/EVTX-to-MITRE-Attack/tree/master/TA0004-Privilege%20Escalation/T1546-Image%20File%20Execution%20Options%20Injection
+- https://blogs.technet.microsoft.com/jonathantrull/2016/10/03/detecting-sticky-key-backdoors/
+- https://www.mandiant.com/resources/apt29-domain-frontin
+- https://www.clearskysec.com/wp-content/uploads/2020/02/ClearSky-Fox-Kitten-Campaign-v1.pdf
+- https://github.com/mdecrevoisier/SIGMA-detection-rules
+author: mdecrevoisier
+date: 2026/05/04
+modified: 2026/05/04
+tags:
+- TA0004
+- attack.t1546.008
+- attack.privilege_escalation
+logsource:
+  product: windows
+  category: process_creation
+detection:
+  selection:
+    EventID: 4688
+    CommandLine|contains|all:
+    - copy
+    - cmd.exe
+    - sethc.exe
+  condition: selection
+fields:
+- Hostname
+- CommandLine
+- EventID
+unique_fields:
+- Hostname
+falsepositives:
+- None
+level: high
+x_source_repository: https://github.com/mdecrevoisier/SIGMA-detection-rules
+x_source_commit: ab15e29fcdbed297e305e2602881b8654946592c
+x_source_file: windows-os/win-os-sticky key sethc command for replacement by CMD.yaml
+x_legacy_id: winlog-9000-0265
+x_legacy_file: engine/rules/winlog/sigma_ref/9000-0265-sticky_key_sethc_command_for_replacement_by_cmd.yml

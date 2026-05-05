@@ -1,0 +1,45 @@
+title: Kerberos TGT Request Failed
+id: winlog-0004
+status: experimental
+rule_origin: internal
+description: Detects failed Kerberos Ticket Granting Ticket requests on a domain controller (Event ID 4768 where Status is
+  not 0x0), excluding machine accounts and local loopback noise. This can surface account enumeration or credential guessing
+  against Kerberos.
+references:
+- https://learn.microsoft.com/en-us/windows/security/threat-protection/auditing/event-4768
+- https://attack.mitre.org/techniques/T1087/002/
+- https://attack.mitre.org/techniques/T1110/
+author: ADA default rules
+date: 2021/12/12
+modified: 2026/05/05
+tags:
+- TA0006
+- TA0007
+- attack.t1110
+- attack.t1087.002
+- attack.credential_access
+- attack.discovery
+logsource: winlog
+detection:
+  selection1:
+    EventID: 4768
+  filter_success:
+    Status: '0x0'
+  filter1:
+    IpAddress:
+    - ::1
+    - fe80
+    - 127.0.0.1
+  filter2:
+    TargetUserName|endswith: $
+  condition: selection1 and not filter_success and not filter1 and not filter2
+fields:
+- Hostname
+- TargetUserName
+- IpAddress
+unique_fields:
+- Hostname
+- IpAddress
+level: low
+x_legacy_id: winlog-0101-0003
+x_legacy_file: engine/rules/winlog/0101-0003-kerberos_auth_ticket_failed.yml

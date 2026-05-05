@@ -1,0 +1,30 @@
+title: Brutforce enumeration on Windows OpenSSH server with non existing user Count
+id: flow-0041
+status: experimental
+rule_origin: public
+enable: true
+description: ''
+references:
+- https://github.com/mdecrevoisier/SIGMA-detection-rules
+author: mdecrevoisier
+date: 2026/05/04
+modified: 2026/05/04
+tags:
+- TA0000
+logsource: flow
+detection:
+  event_type: count
+  win_size: 30m
+  sorted: false
+  sigma_rules:
+  - winlog-0154
+  match_by: $s1.TargetUserName._count >= 20
+level: high
+unique_filter:
+- $s1.Hostname
+- ttl_1800
+x_source_repository: https://github.com/mdecrevoisier/SIGMA-detection-rules
+x_source_commit: ab15e29fcdbed297e305e2602881b8654946592c
+x_source_file: windows-openssh/win-os-OpenSSH brutforce enumeration with unexisting users.yaml
+x_legacy_id: flow-9000-0040
+x_legacy_file: engine/rules/flow/sigma_ref/9000-0040-brutforce_enumeration_on_windows_openssh_server_with_non_existing_user_c_value_count.yml

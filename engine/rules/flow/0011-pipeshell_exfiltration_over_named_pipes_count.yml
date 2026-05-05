@@ -1,0 +1,41 @@
+title: PipeShell exfiltration over named pipes Count
+id: flow-0011
+status: experimental
+rule_origin: public
+enable: true
+description: Detects scenarios where an attacker establishes "PipeShell" connection(s) between a server and client(s) in order
+  to move laterally or exfiltrate data. The server side will trigger "ServerStream" IOCs meanwhile the client side will trigger
+  "ClientStream" IOCs. The rule works based on this condition, where at least 2 hosts need to trigger one of the condition.
+references:
+- https://github.com/mdecrevoisier/EVTX-to-MITRE-Attack/tree/master/TA0002-Execution/T1059.001-PowerShell
+- https://github.com/threatexpress/invoke-pipeshell
+- https://github.com/p3nt4/Invoke-Piper/blob/master/Invoke-Piper.psm1
+- https://sudonull.com/post/25207-Using-Pipes-for-Pivoting
+- https://codewhitesec.blogspot.com/2020/01/cve-2019-19470-rumble-in-pipe.html
+- https://decoder.cloud/2019/03/06/windows-named-pipes-impersonation/
+- https://www.powershellgallery.com/packages/PSNamedPipe/1.0.0.19/Content/Public%5CNew-PSNamedPipeServer.ps1
+- https://github.com/mdecrevoisier/SIGMA-detection-rules
+author: mdecrevoisier
+date: 2026/05/04
+modified: 2026/05/04
+tags:
+- TA0002
+- attack.t1059.001
+- attack.execution
+- attack.exfiltration
+logsource: flow
+detection:
+  event_type: count
+  win_size: 5m
+  sorted: false
+  sigma_rules:
+  - winlog-0173
+  match_by: $s1.Hostname._count > 2
+level: medium
+unique_filter:
+- ttl_1800
+x_source_repository: https://github.com/mdecrevoisier/SIGMA-detection-rules
+x_source_commit: ab15e29fcdbed297e305e2602881b8654946592c
+x_source_file: windows-os/win-os-PipeShell exfiltration over named pipes (PowerShell).yaml
+x_legacy_id: flow-9000-0009
+x_legacy_file: engine/rules/flow/sigma_ref/9000-0009-pipeshell_exfiltration_over_named_pipes_count.yml

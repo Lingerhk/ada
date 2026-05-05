@@ -1,0 +1,50 @@
+title: SharpHound enumeration via SMB named pipes
+id: winlog-0225
+status: experimental
+rule_origin: public
+description: Detects scenarios where an attacker enumerate different host via named pipes with SharpHound for discovery purposes.
+references:
+- https://github.com/mdecrevoisier/EVTX-to-MITRE-Attack/tree/master/TA0007-Discovery/T1135.xxx-Network%20Share%20Discovery
+- https://docs.google.com/presentation/d/1OdufXKGYPgoV1d5jDrMYSe-SYKZ7lcA4w2MFn8AkUWE/edit
+- https://www.youtube.com/watch?v=_GJDkbUTSLY
+- https://community.rsa.com/t5/rsa-netwitness-platform-blog/keeping-an-eye-on-your-hounds/ba-p/519889
+- https://bloodhound.readthedocs.io/en/latest/data-collection/sharphound.html
+- https://github.com/mdecrevoisier/SIGMA-detection-rules
+author: mdecrevoisier
+date: 2026/05/04
+modified: 2026/05/04
+tags:
+- TA0007
+- attack.t1135
+- attack.discovery
+logsource:
+  product: windows
+  service: security
+detection:
+  selection:
+    EventID: 5145
+    ShareName: \\*\IPC$
+    RelativeTargetName:
+    - lsarpc
+    - samr
+    - srvsvc
+  filter:
+    IpAddress: '%administration_hosts%'
+  condition: selection and not filter
+  timeframe: 15m
+fields:
+- Hostname
+- EventID
+- IpAddress
+- RelativeTargetName
+- ShareName
+unique_fields:
+- IpAddress
+falsepositives:
+- Administrator activity, backup solutions, Windows Server Manager
+level: medium
+x_source_repository: https://github.com/mdecrevoisier/SIGMA-detection-rules
+x_source_commit: ab15e29fcdbed297e305e2602881b8654946592c
+x_source_file: windows-os/win-os-named pipes reconnaissance via SMB (SharpHound, Pingcastle).yaml
+x_legacy_id: winlog-9000-0226
+x_legacy_file: engine/rules/winlog/sigma_ref/9000-0226-sharphound_enumeration_via_smb_named_pipes.yml

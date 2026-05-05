@@ -1,0 +1,69 @@
+title: Backdoor introduction via registry permission change through WMI (DAMP)
+id: winlog-0242
+status: experimental
+rule_origin: public
+description: Detects scenarios where an attacker modifies registry permissions on a local or remote target in order to introduce
+  a backdoor and dump hashes and credentials.
+references:
+- https://github.com/mdecrevoisier/EVTX-to-MITRE-Attack/tree/master/TA0005-Defense%20Evasion/T1112-Modify%20registry
+- https://github.com/HarmJ0y/DAMP
+- https://threathunterplaybook.com/notebooks/windows/07_discovery/WIN-190625024610.html
+- http://www.harmj0y.net/blog/activedirectory/remote-hash-extraction-on-demand-via-host-security-descriptor-modification/
+- https://github.com/mitre/microsoft-windows-2012r2-memberserver-stig-baseline/blob/master/controls/V-1152.rb
+- https://www.darkoperator.com/blog/2017/10/14/basics-of-tracking-wmi-activity
+- https://github.com/mdecrevoisier/SIGMA-detection-rules
+author: mdecrevoisier
+date: 2026/05/04
+modified: 2026/05/04
+tags:
+- TA0005
+- attack.t1112
+- attack.t1003.002
+- attack.t1003.004
+- attack.t1003.005
+- attack.defense_evasion
+- attack.credential_access
+logsource:
+  product: windows
+  service: security
+detection:
+  selection:
+    EventID: 4674
+    ProcessName|endswith: \System32\wbem\WmiPrvSE.exe
+    ObjectServer: Security
+    ObjectType: Key
+    ObjectName|startswith:
+    - \REGISTRY\MACHINE\SYSTEM\ControlSet001\Control\SecurePipeServers\winreg
+    - \REGISTRY\MACHINE\SYSTEM\ControlSet001\Control\Lsa\Data
+    - \REGISTRY\MACHINE\SYSTEM\ControlSet001\Control\Lsa\GBG
+    - \REGISTRY\MACHINE\SYSTEM\ControlSet001\Control\Lsa\JD
+    - \REGISTRY\MACHINE\SYSTEM\ControlSet001\Control\Lsa\Skew1
+    - \REGISTRY\MACHINE\SECURITY\Policy\Accounts
+    - \REGISTRY\MACHINE\SECURITY\Policy\Pol
+    - \REGISTRY\MACHINE\SECURITY\Policy\Secrets
+    - \REGISTRY\MACHINE\SECURITY\Policy\PolEKList
+    - \REGISTRY\MACHINE\SECURITY\Cache
+    - \REGISTRY\MACHINE\SAM\SAM\DOMAINS\Account
+    - \REGISTRY\MACHINE\SAM\SAM\DOMAINS\Builtin
+  filter:
+    SubjectUserName|endswith: $
+  condition: selection and not filter
+  timeframe: 5m
+fields:
+- Hostname
+- EventID
+- ObjectName
+- ObjectServer
+- ObjectType
+- ProcessName
+- SubjectUserName
+unique_fields:
+- Hostname
+falsepositives:
+- None
+level: high
+x_source_repository: https://github.com/mdecrevoisier/SIGMA-detection-rules
+x_source_commit: ab15e29fcdbed297e305e2602881b8654946592c
+x_source_file: windows-os/win-os-registry backdoor permission change via WMI (DAMP).yaml
+x_legacy_id: winlog-9000-0246
+x_legacy_file: engine/rules/winlog/sigma_ref/9000-0246-backdoor_introduction_via_registry_permission_change_through_wmi_damp.yml

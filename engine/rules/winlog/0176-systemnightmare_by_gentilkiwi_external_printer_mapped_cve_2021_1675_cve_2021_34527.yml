@@ -1,0 +1,59 @@
+title: SystemNightmare by GentilKiwi - External printer mapped (CVE-2021-1675 / CVE-2021-34527)
+id: winlog-0176
+status: experimental
+rule_origin: public
+description: Detects scenarios where an attacker exploit the PrintNightmare vulnerability by abusing the Windows print spooler
+  using the service exposed by Gentilkiwi
+references:
+- https://github.com/mdecrevoisier/EVTX-to-MITRE-Attack/tree/master/TA0004-Privilege%20Escalation/T1574-DLL%20side-loading
+- https://github.com/GossiTheDog/SystemNightmare
+- https://github.com/outflanknl/PrintNightmare
+- https://github.com/cube0x0/CVE-2021-1675
+- https://www.theregister.com/2021/09/21/microsoft_printnightmare/
+- https://www.exabeam.com/information-security/detecting-the-printnightmare-cve-2021-1675-34527-vulnerability-using-exabeam/
+- https://github.com/mdecrevoisier/SIGMA-detection-rules
+author: mdecrevoisier
+date: 2026/05/04
+modified: 2026/05/04
+tags:
+- TA0004
+- attack.t1574.002
+- attack.t1547.010
+- attack.privilege_escalation
+logsource:
+  product: windows
+  service: security
+detection:
+  selection_process:
+    EventID: 4688
+    NewProcessName|endswith:
+    - \net1.exe
+    - \net.exe
+    CommandLine|contains|all:
+    - net use
+    - printnightmare.gentilkiwi.com
+  selection_cred_switch:
+    EventID: 4648
+  selection_cred_switch_opt:
+  - TargetUserName: gentilguest
+  - TargetServerName: printnightmare.gentilkiwi.com
+  - TargetInfo: printnightmare.gentilkiwi.com
+  condition: selection_process or (selection_cred_switch and selection_cred_switch_opt)
+fields:
+- Hostname
+- CommandLine
+- EventID
+- NewProcessName
+- TargetInfo
+- TargetServerName
+- TargetUserName
+unique_fields:
+- Hostname
+falsepositives:
+- pentest
+level: high
+x_source_repository: https://github.com/mdecrevoisier/SIGMA-detection-rules
+x_source_commit: ab15e29fcdbed297e305e2602881b8654946592c
+x_source_file: windows-os/win-os-SystemNightmare by GentilKiwi - external printer mapped (command).yaml
+x_legacy_id: winlog-9000-0174
+x_legacy_file: engine/rules/winlog/sigma_ref/9000-0174-systemnightmare_by_gentilkiwi_external_printer_mapped_cve_2021_1675_cve.yml

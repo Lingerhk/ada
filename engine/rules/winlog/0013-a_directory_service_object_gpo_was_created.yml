@@ -1,0 +1,37 @@
+title: Group Policy Object Created
+id: winlog-0013
+status: test
+rule_origin: internal
+description: Detects creation of an Active Directory object (Event ID 5137), intended for monitoring Group Policy Object creation
+  on domain controllers. New GPOs can be used to change domain-wide configuration or execute code across joined hosts.
+references:
+- https://learn.microsoft.com/en-us/windows/security/threat-protection/auditing/event-5137
+- https://attack.mitre.org/techniques/T1484/001/
+author: ADA default rules
+date: 2017/03/09
+modified: 2026/05/05
+tags:
+- TA0004
+- TA0005
+- attack.t1484.001
+- attack.privilege_escalation
+- attack.defense_evasion
+logsource: winlog
+detection:
+  selection_source:
+    Channel: Security
+    EventID: 5137
+  condition: selection_source
+fields:
+- Hostname
+- DSName
+- SubjectUserName
+- SubjectUserSid
+- ObjectClass
+- ObjectDN
+unique_fields:
+- DSName
+- SubjectUserName
+level: medium
+x_legacy_id: winlog-0103-0007
+x_legacy_file: engine/rules/winlog/0103-0007-ad_gpo_policy_created.yml

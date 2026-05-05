@@ -1,0 +1,41 @@
+title: Active Directory honeypot enumerated by a suspicious host (Bloodhound)
+id: winlog-0069
+status: experimental
+rule_origin: public
+description: Detects scenarios where an attacker is attempting to discover sensitive accounts using tools like Bloodhound.
+  To find out the source of the enumeration, correlate the SubjectLogonId from ID 4662 with TargetLogonId from ID 4624.
+references:
+- https://github.com/mdecrevoisier/EVTX-to-MITRE-Attack/tree/master/TA0007-Discovery/T1087-Account%20discovery
+- https://docs.microsoft.com/en-us/windows/security/threat-protection/auditing/event-4662
+- http://www.labofapenetrationtester.com/2018/10/deploy-deception.html
+- https://jblog.javelin-networks.com/blog/the-honeypot-buster/
+- https://github.com/mdecrevoisier/SIGMA-detection-rules
+author: mdecrevoisier
+date: 2026/05/04
+modified: 2026/05/04
+tags:
+- TA0007
+- attack.t1087
+- attack.discovery
+logsource:
+  product: windows
+  service: security
+detection:
+  selection:
+    EventID: 4662
+    ObjectName: '%honeypot_guid_list%'
+  condition: selection
+fields:
+- Hostname
+- EventID
+- ObjectName
+unique_fields:
+- Hostname
+falsepositives:
+- LDAP explorer tools, pentest
+level: high
+x_source_repository: https://github.com/mdecrevoisier/SIGMA-detection-rules
+x_source_commit: ab15e29fcdbed297e305e2602881b8654946592c
+x_source_file: windows-active_directory/win-ad-honeypot account discovery.yaml
+x_legacy_id: winlog-9000-0045
+x_legacy_file: engine/rules/winlog/sigma_ref/9000-0045-active_directory_honeypot_enumerated_by_a_suspicious_host_bloodhound.yml

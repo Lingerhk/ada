@@ -1,0 +1,46 @@
+title: SQL SA admin user enabled
+id: winlog-0315
+status: experimental
+rule_origin: public
+description: Detects scenarios where an attacker enables the disabled (recommended) SA admin account on the SQL Server instance.
+references:
+- https://github.com/mdecrevoisier/EVTX-to-MITRE-Attack/tree/master/TA0003-Persistence/T1136-Create%20account
+- https://www.stigviewer.com/stig/microsoft_sql_server_2012_database_instance/2017-12-01/finding/V-40936
+- https://www.ultimatewindowssecurity.com/sqlserver/auditlog/sampleevent.aspx
+- https://docs.microsoft.com/en-us/sql/relational-databases/security/auditing/sql-server-audit-action-groups-and-actions?view=sql-server-2017
+- https://www.sqlshack.com/various-techniques-to-audit-sql-server-databases/
+- https://sqlquantumleap.com/reference/server-audit-filter-values-for-action_id/
+- https://github.com/mdecrevoisier/SIGMA-detection-rules
+author: mdecrevoisier
+date: 2026/05/04
+modified: 2026/05/04
+tags:
+- TA0003
+- attack.t1136
+- attack.persistence
+logsource:
+  product: mssql
+  category: application
+detection:
+  selection:
+    EventID: 33205
+    action_id: LGEA
+    class_type: SL
+    object_name: sa
+  condition: selection
+fields:
+- Hostname
+- EventID
+- action_id
+- class_type
+- object_name
+unique_fields:
+- Hostname
+falsepositives:
+- Recovery situations
+level: high
+x_source_repository: https://github.com/mdecrevoisier/SIGMA-detection-rules
+x_source_commit: ab15e29fcdbed297e305e2602881b8654946592c
+x_source_file: windows-sql_server/sql_server-default SA admin user enabled.yaml
+x_legacy_id: winlog-9000-0329
+x_legacy_file: engine/rules/winlog/sigma_ref/9000-0329-sql_sa_admin_user_enabled.yml

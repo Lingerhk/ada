@@ -1,0 +1,41 @@
+title: Sensitive Privilege Used By Interactive Process
+id: winlog-0022
+status: test
+rule_origin: internal
+description: Detects sensitive privilege use events (4673) by command-line oriented processes such as cmd, net, powershell,
+  or reg, excluding LocalSystem. This can surface unusual privileged operations initiated from an interactive shell.
+references:
+- https://learn.microsoft.com/en-us/windows/security/threat-protection/auditing/event-4673
+author: ADA default rules
+date: 2017/03/09
+modified: 2026/05/05
+tags:
+- TA0004
+- attack.privilege_escalation
+logsource: winlog
+detection:
+  selection_source:
+    Channel: Security
+    EventID: 4673
+  selection_process:
+    ProcessName|endswith:
+    - cmd.exe
+    - net.exe
+    - powershell.exe
+    - reg.exe
+  filter_system:
+    SubjectUserSid: S-1-5-18
+  condition: selection_source and selection_process and not filter_system
+fields:
+- Hostname
+- ProcessName
+- PrivilegeList
+- EventType
+- SubjectUserName
+- SubjectUserSid
+unique_fields:
+- Hostname
+- SubjectUserName
+level: high
+x_legacy_id: winlog-0103-0016
+x_legacy_file: engine/rules/winlog/0103-0016-sensitive_privilege_use.yml

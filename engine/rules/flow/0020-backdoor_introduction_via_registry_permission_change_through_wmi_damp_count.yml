@@ -1,0 +1,43 @@
+title: Backdoor introduction via registry permission change through WMI (DAMP) Count
+id: flow-0020
+status: experimental
+rule_origin: public
+enable: true
+description: Detects scenarios where an attacker modifies registry permissions on a local or remote target in order to introduce
+  a backdoor and dump hashes and credentials.
+references:
+- https://github.com/mdecrevoisier/EVTX-to-MITRE-Attack/tree/master/TA0005-Defense%20Evasion/T1112-Modify%20registry
+- https://github.com/HarmJ0y/DAMP
+- https://threathunterplaybook.com/notebooks/windows/07_discovery/WIN-190625024610.html
+- http://www.harmj0y.net/blog/activedirectory/remote-hash-extraction-on-demand-via-host-security-descriptor-modification/
+- https://github.com/mitre/microsoft-windows-2012r2-memberserver-stig-baseline/blob/master/controls/V-1152.rb
+- https://www.darkoperator.com/blog/2017/10/14/basics-of-tracking-wmi-activity
+- https://github.com/mdecrevoisier/SIGMA-detection-rules
+author: mdecrevoisier
+date: 2026/05/04
+modified: 2026/05/04
+tags:
+- TA0005
+- attack.t1112
+- attack.t1003.002
+- attack.t1003.004
+- attack.t1003.005
+- attack.defense_evasion
+- attack.credential_access
+logsource: flow
+detection:
+  event_type: count
+  win_size: 5m
+  sorted: false
+  sigma_rules:
+  - winlog-0242
+  match_by: $s1.ObjectName._count > 10
+level: high
+unique_filter:
+- $s1.Hostname
+- ttl_1800
+x_source_repository: https://github.com/mdecrevoisier/SIGMA-detection-rules
+x_source_commit: ab15e29fcdbed297e305e2602881b8654946592c
+x_source_file: windows-os/win-os-registry backdoor permission change via WMI (DAMP).yaml
+x_legacy_id: flow-9000-0018
+x_legacy_file: engine/rules/flow/sigma_ref/9000-0018-backdoor_introduction_via_registry_permission_change_through_wmi_damp_count.yml

@@ -1,0 +1,34 @@
+title: CrackMaxpExec share permission enumeration Count
+id: flow-0021
+status: experimental
+rule_origin: public
+enable: true
+description: Detects scenarios where an attacker would perform share permission enumeration using CrackMaxExec SMBmodule.
+references:
+- https://github.com/mdecrevoisier/EVTX-to-MITRE-Attack/tree/master/TA0005-Defense%20Evasion/T1222.001-File%20and%20Directory%20Permissions%20Modification
+- https://hideandsec.sh/books/cheatsheets/page/crackmapexec
+- https://www.infosecmatter.com/crackmapexec-module-library/
+- https://mpgn.gitbook.io/crackmapexec/smb-protocol/enumeration/enumerate-shares-and-access
+- https://github.com/mdecrevoisier/SIGMA-detection-rules
+author: mdecrevoisier
+date: 2026/05/04
+modified: 2026/05/04
+tags:
+- TA0000
+logsource: flow
+detection:
+  event_type: count
+  win_size: 15m
+  sorted: false
+  sigma_rules:
+  - winlog-0252
+  match_by: $s1.Hostname._count > 20
+level: medium
+unique_filter:
+- $s1.IpAddress
+- ttl_1800
+x_source_repository: https://github.com/mdecrevoisier/SIGMA-detection-rules
+x_source_commit: ab15e29fcdbed297e305e2602881b8654946592c
+x_source_file: windows-os/win-os-share permission enumeration (CME).yaml
+x_legacy_id: flow-9000-0019
+x_legacy_file: engine/rules/flow/sigma_ref/9000-0019-crackmaxpexec_share_permission_enumeration_count.yml

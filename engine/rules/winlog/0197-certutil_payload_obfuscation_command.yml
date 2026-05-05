@@ -1,0 +1,47 @@
+title: Certutil payload obfuscation (command)
+id: winlog-0197
+status: experimental
+rule_origin: public
+description: Detects scenarios where an attacker attempts to abuse certutil command to download obfuscated malicious payload.
+  Tools like Tchopper can trigger this rule.
+references:
+- https://www.elastic.co/guide/en/security/current/suspicious-certutil-commands.html
+- https://www.bleepingcomputer.com/news/security/certutilexe-could-allow-attackers-to-download-malware-while-bypassing-av/
+- https://attack.mitre.org/software/S0160/
+- https://docs.microsoft.com/en-us/windows-server/administration/windows-commands/certutil
+- https://www.sentinelone.com/blog/malware-living-off-land-with-certutil/
+- https://thedfirreport.com/2022/07/11/select-xmrig-from-sqlserver/
+- https://github.com/mdecrevoisier/SIGMA-detection-rules
+author: mdecrevoisier
+date: 2026/05/04
+modified: 2026/05/04
+tags:
+- TA0005
+- attack.t1140
+- attack.defense_evasion
+logsource:
+  product: windows
+  category: process_creation
+detection:
+  selection:
+    NewProcessName|endswith: \certutil.exe
+    CommandLine|contains:
+    - decode
+    - encode
+    - encodehex
+    - decodehex
+  condition: selection
+fields:
+- Hostname
+- CommandLine
+- NewProcessName
+unique_fields:
+- Hostname
+falsepositives:
+- CSAT Cyber Security Assessment Tool
+level: high
+x_source_repository: https://github.com/mdecrevoisier/SIGMA-detection-rules
+x_source_commit: ab15e29fcdbed297e305e2602881b8654946592c
+x_source_file: windows-os/win-os-certutil obfuscation.yaml
+x_legacy_id: winlog-9000-0197
+x_legacy_file: engine/rules/winlog/sigma_ref/9000-0197-certutil_payload_obfuscation_command.yml

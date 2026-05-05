@@ -1,0 +1,59 @@
+title: WMI spwaning PowerShell process - WMImplant
+id: winlog-0180
+status: experimental
+rule_origin: public
+description: Detects scenarios where an attacker WMIimplant
+references:
+- https://github.com/mdecrevoisier/EVTX-to-MITRE-Attack/tree/master/TA0002-Execution/T1047-Windows%20Management%20Instrumentation
+- https://github.com/FortyNorthSecurity/WMImplant/
+- https://www.darkoperator.com/blog/2017/10/14/basics-of-tracking-wmi-activity
+- Inspired from https://github.com/SigmaHQ/sigma/blob/7bca85e40618126643b9712b80bd663c21908e26/rules/windows/process_creation/win_wmi_spwns_powershell.yml
+- https://github.com/mdecrevoisier/SIGMA-detection-rules
+author: Markus Neis/@Karneades, adapted by mdecrevoisier
+date: 2026/05/04
+modified: 2026/05/04
+tags:
+- TA0002
+- attack.t1047
+- attack.execution
+logsource:
+  product: windows
+  category: process_creation
+detection:
+  selection_basic:
+    EventID: 4688
+    Version: 2
+    ParentProcessName|endswith: \WmiPrvSE.exe
+    NewProcessName|endswith:
+    - \powershell.exe
+    - \pwsh.exe
+    - \powershell_ise.exe
+  selection_sysmon:
+    EventID: 1
+    ParentImage|endswith: \WmiPrvSE.exe
+    Image|endswith|endswith:
+    - \powershell.exe
+    - \pwsh.exe
+    - \powershell_ise.exe
+  filter:
+    CommandLine: '-'
+  condition: (selection_basic or selection_sysmon) and not filter
+fields:
+- Hostname
+- CommandLine
+- EventID
+- Image
+- NewProcessName
+- ParentImage
+- ParentProcessName
+- Version
+unique_fields:
+- Hostname
+falsepositives:
+- Unknown
+level: high
+x_source_repository: https://github.com/mdecrevoisier/SIGMA-detection-rules
+x_source_commit: ab15e29fcdbed297e305e2602881b8654946592c
+x_source_file: windows-os/win-os-WMI spawning PowerShell process - WMImplant (process).yaml
+x_legacy_id: winlog-9000-0179
+x_legacy_file: engine/rules/winlog/sigma_ref/9000-0179-wmi_spwaning_powershell_process_wmimplant.yml

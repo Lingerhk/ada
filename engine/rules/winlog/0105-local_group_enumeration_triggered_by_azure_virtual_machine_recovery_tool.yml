@@ -1,0 +1,38 @@
+title: Local group enumeration triggered by Azure Virtual machine recovery tool
+id: winlog-0105
+status: stable
+rule_origin: public
+description: Detects scenarios where an attacker having compromised a virtual machine via serial cable attempts to enumerate
+  local groups.
+references:
+- https://www.mandiant.com/resources/blog/sim-swapping-abuse-azure-serial
+- https://github.com/mdecrevoisier/SIGMA-detection-rules
+author: mdecrevoisier
+date: 2026/05/04
+modified: 2026/05/04
+tags:
+- TA0007
+- attack.t1069.001
+- attack.discovery
+logsource:
+  product: windows
+  service: security
+detection:
+  selection:
+    EventID: 4799
+    CallerProcessName|contains: Microsoft.Compute.VMAccessAgent
+  condition: selection
+fields:
+- Hostname
+- CallerProcessName
+- EventID
+unique_fields:
+- Hostname
+falsepositives:
+- Virtual machine recovery by administrator
+level: high
+x_source_repository: https://github.com/mdecrevoisier/SIGMA-detection-rules
+x_source_commit: ab15e29fcdbed297e305e2602881b8654946592c
+x_source_file: windows-azure/win-os-local group enumeration via Azure Virtual machine recovery tool.yaml
+x_legacy_id: winlog-9000-0081
+x_legacy_file: engine/rules/winlog/sigma_ref/9000-0081-local_group_enumeration_triggered_by_azure_virtual_machine_recovery_tool.yml

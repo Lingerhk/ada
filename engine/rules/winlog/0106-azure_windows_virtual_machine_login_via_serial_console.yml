@@ -1,0 +1,42 @@
+title: Azure Windows virtual machine login via serial console
+id: winlog-0106
+status: experimental
+rule_origin: public
+description: Detects if an attacker logs on using the serial console.
+references:
+- https://msrc.microsoft.com/blog/2023/08/azure-serial-console-attack-and-defense-part-1/
+- https://learn.microsoft.com/en-us/troubleshoot/azure/virtual-machines/serial-console-cmd-ps-commands
+- https://www.mandiant.com/resources/blog/sim-swapping-abuse-azure-serial
+- https://github.com/mdecrevoisier/SIGMA-detection-rules
+author: mdecrevoisier
+date: 2026/05/04
+modified: 2026/05/04
+tags:
+- TA0001
+- attack.t1078
+- attack.initial_access
+- attack.privilege_escalation
+logsource:
+  product: windows
+  service: security
+detection:
+  selection:
+    EventID: 4624
+    LogonProcess|contains: sacsess.exe
+    LogonType: 2
+  condition: selection
+fields:
+- Hostname
+- EventID
+- LogonProcess
+- LogonType
+unique_fields:
+- Hostname
+falsepositives:
+- Virtual machine recovery by administrator
+level: high
+x_source_repository: https://github.com/mdecrevoisier/SIGMA-detection-rules
+x_source_commit: ab15e29fcdbed297e305e2602881b8654946592c
+x_source_file: windows-azure/win-os-login via Azure serial console.yaml
+x_legacy_id: winlog-9000-0082
+x_legacy_file: engine/rules/winlog/sigma_ref/9000-0082-azure_windows_virtual_machine_login_via_serial_console.yml

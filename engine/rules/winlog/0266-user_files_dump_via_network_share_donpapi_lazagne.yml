@@ -1,0 +1,50 @@
+title: User files dump via network share (DonPapi, Lazagne)
+id: winlog-0266
+status: experimental
+rule_origin: public
+description: Detects scenarios where an attacker attempt to dump user profile information via network share.
+references:
+- https://github.com/mdecrevoisier/EVTX-to-MITRE-Attack/tree/master/TA0006-Credential%20Access/T1555-Credentials%20from%20Password%20Stores
+- https://github.com/login-securite/DonPAPI
+- https://github.com/mdecrevoisier/SIGMA-detection-rules
+author: mdecrevoisier
+date: 2026/05/04
+modified: 2026/05/04
+tags:
+- TA0006
+- attack.t1555
+- attack.credential_access
+logsource:
+  product: windows
+  service: security
+detection:
+  selection:
+    EventID: 5145
+    ShareName: \\*\C$
+    RelativeTargetName|re:
+    - Users\\.*\\Desktop.*
+    - Users\\.*\\Recent.*
+    - Users\\.*\\Downloads.*
+  filter:
+  - RelativeTargetName|re: Users\\.*\\AppData\\.*
+  - IpAddress:
+    - '%vulnerability_scanners%'
+    - '%admin_netork_administration%'
+  condition: selection and not filter
+  timeframe: 5m
+fields:
+- Hostname
+- EventID
+- IpAddress
+- RelativeTargetName
+- ShareName
+unique_fields:
+- Hostname
+falsepositives:
+- Roaming user profile, vulnerability scanners
+level: high
+x_source_repository: https://github.com/mdecrevoisier/SIGMA-detection-rules
+x_source_commit: ab15e29fcdbed297e305e2602881b8654946592c
+x_source_file: windows-os/win-os-user files dump via share (DonPapi, Lazagne).yaml
+x_legacy_id: winlog-9000-0273
+x_legacy_file: engine/rules/winlog/sigma_ref/9000-0273-user_files_dump_via_network_share_donpapi_lazagne.yml

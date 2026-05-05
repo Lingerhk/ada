@@ -1,0 +1,39 @@
+title: Windows Service Created
+id: winlog-0011
+status: test
+rule_origin: internal
+description: Detects installation of a Windows service recorded by Service Control Manager event 7045, excluding known Google
+  updater noise. New services are a common persistence and privilege-escalation mechanism.
+references:
+- https://learn.microsoft.com/en-us/troubleshoot/windows-server/performance/troubleshoot-unexpected-reboots-system-event-logs
+- https://learn.microsoft.com/en-us/windows/win32/services/about-services
+- https://attack.mitre.org/techniques/T1543/003/
+author: ADA default rules
+date: 2017/03/09
+modified: 2026/05/05
+tags:
+- TA0003
+- TA0004
+- attack.t1543.003
+- attack.persistence
+- attack.privilege_escalation
+logsource: winlog
+detection:
+  selection_source:
+    Channel: System
+    EventID: 7045
+  filter_ignore:
+    ServiceName|contains:
+    - GoogleUpdater
+  condition: selection_source and not filter_ignore
+fields:
+- Hostname
+- AccountName
+- ImagePath
+- ServiceName
+unique_fields:
+- Hostname
+- AccountName
+level: medium
+x_legacy_id: winlog-0103-0005
+x_legacy_file: engine/rules/winlog/0103-0005-windows_service_created.yml

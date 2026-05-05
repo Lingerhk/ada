@@ -1,0 +1,37 @@
+title: Domain group enumeration Count
+id: flow-0008
+status: experimental
+rule_origin: public
+enable: true
+description: Detects scenarios where an attacker enumerates domain group with tools like CME (--groups).
+references:
+- https://github.com/mdecrevoisier/EVTX-to-MITRE-Attack/tree/master/TA0007-Discovery/T1069-Permission%20Groups%20Discovery
+- https://hideandsec.sh/books/cheatsheets/page/crackmapexec
+- https://www.infosecmatter.com/crackmapexec-module-library/
+- https://docs.microsoft.com/en-us/windows/win32/adschema/extended-rights
+- https://github.com/mdecrevoisier/SIGMA-detection-rules
+author: mdecrevoisier
+date: 2026/05/04
+modified: 2026/05/04
+tags:
+- TA0007
+- attack.t1069.002
+- attack.t1087.002
+- attack.discovery
+logsource: flow
+detection:
+  event_type: count
+  win_size: 15m
+  sorted: false
+  sigma_rules:
+  - winlog-0067
+  match_by: $s1.ObjectName._count > 30
+level: high
+unique_filter:
+- $s1.Hostname
+- ttl_1800
+x_source_repository: https://github.com/mdecrevoisier/SIGMA-detection-rules
+x_source_commit: ab15e29fcdbed297e305e2602881b8654946592c
+x_source_file: windows-active_directory/win-ad-group domain enumeration (CME).yaml
+x_legacy_id: flow-9000-0003
+x_legacy_file: engine/rules/flow/sigma_ref/9000-0003-domain_group_enumeration_count.yml

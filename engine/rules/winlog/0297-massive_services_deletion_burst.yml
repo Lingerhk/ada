@@ -1,0 +1,42 @@
+title: Massive services deletion burst
+id: winlog-0297
+status: experimental
+rule_origin: public
+description: Detects scenarios where an attacker attempts to delete multiples services on a host. Attacker may target services
+  related to databases, security products or backups (Veeam, Symantec, Acronis ...).
+references:
+- https://unit42.paloaltonetworks.com/mallox-ransomware/
+- https://github.com/mdecrevoisier/SIGMA-detection-rules
+author: mdecrevoisier
+date: 2026/05/04
+modified: 2026/05/04
+tags:
+- TA0040
+- attack.t1489
+- attack.impact
+- attack.defense_evasion
+- attack.1562.001
+logsource:
+  product: windows
+  category: process_creation
+detection:
+  selection:
+    NewProcessName|endswith: \sc.exe
+    CommandLine|contains: delete
+  condition: selection
+  timeframe: 1m
+fields:
+- Hostname
+- CommandLine
+- NewProcessName
+- EventRecordID
+unique_fields:
+- Hostname
+falsepositives:
+- Product uninstallation
+level: high
+x_source_repository: https://github.com/mdecrevoisier/SIGMA-detection-rules
+x_source_commit: ab15e29fcdbed297e305e2602881b8654946592c
+x_source_file: windows-services/win-os-service deletion burst.yaml
+x_legacy_id: winlog-9000-0311
+x_legacy_file: engine/rules/winlog/sigma_ref/9000-0311-massive_services_deletion_burst.yml

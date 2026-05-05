@@ -1,0 +1,37 @@
+title: SharpHound enumeration via SMB named pipes Count
+id: flow-0016
+status: experimental
+rule_origin: public
+enable: true
+description: Detects scenarios where an attacker enumerate different host via named pipes with SharpHound for discovery purposes.
+references:
+- https://github.com/mdecrevoisier/EVTX-to-MITRE-Attack/tree/master/TA0007-Discovery/T1135.xxx-Network%20Share%20Discovery
+- https://docs.google.com/presentation/d/1OdufXKGYPgoV1d5jDrMYSe-SYKZ7lcA4w2MFn8AkUWE/edit
+- https://www.youtube.com/watch?v=_GJDkbUTSLY
+- https://community.rsa.com/t5/rsa-netwitness-platform-blog/keeping-an-eye-on-your-hounds/ba-p/519889
+- https://bloodhound.readthedocs.io/en/latest/data-collection/sharphound.html
+- https://github.com/mdecrevoisier/SIGMA-detection-rules
+author: mdecrevoisier
+date: 2026/05/04
+modified: 2026/05/04
+tags:
+- TA0007
+- attack.t1135
+- attack.discovery
+logsource: flow
+detection:
+  event_type: count
+  win_size: 15m
+  sorted: false
+  sigma_rules:
+  - winlog-0225
+  match_by: $s1.Hostname._count > 30
+level: medium
+unique_filter:
+- $s1.IpAddress
+- ttl_1800
+x_source_repository: https://github.com/mdecrevoisier/SIGMA-detection-rules
+x_source_commit: ab15e29fcdbed297e305e2602881b8654946592c
+x_source_file: windows-os/win-os-named pipes reconnaissance via SMB (SharpHound, Pingcastle).yaml
+x_legacy_id: flow-9000-0014
+x_legacy_file: engine/rules/flow/sigma_ref/9000-0014-sharphound_enumeration_via_smb_named_pipes_count.yml

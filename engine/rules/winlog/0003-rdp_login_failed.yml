@@ -1,0 +1,37 @@
+title: Network Logon Failed
+id: winlog-0003
+status: experimental
+rule_origin: internal
+description: Detects a failed network logon attempt (Event ID 4625, LogonType 3) after filtering machine-account noise. Repeated
+  occurrences can indicate password guessing, password spraying, or failed remote access attempts.
+references:
+- https://learn.microsoft.com/en-us/windows/security/threat-protection/auditing/event-4625
+- https://attack.mitre.org/techniques/T1110/
+author: ADA default rules
+date: 2021/12/12
+modified: 2026/05/05
+tags:
+- TA0006
+- attack.t1110
+- attack.credential_access
+logsource: winlog
+detection:
+  selection1:
+    EventID: 4625
+    LogonType: 3
+  filter1:
+    IpAddress:
+    - ::1
+    - fe80
+    - 127.0.0.1
+  condition: selection1 and not filter1
+fields:
+- Hostname
+- TargetUserName
+- IpAddress
+unique_fields:
+- Hostname
+- IpAddress
+level: low
+x_legacy_id: winlog-0101-0002
+x_legacy_file: engine/rules/winlog/0101-0002-rdp_login_failed.yml

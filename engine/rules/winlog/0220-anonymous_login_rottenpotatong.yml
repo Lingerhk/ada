@@ -1,0 +1,52 @@
+title: Anonymous login (RottenPotatoNG)
+id: winlog-0220
+status: experimental
+rule_origin: public
+description: Detects scenarios where an attacker abuse RPC, NTLM relay and others components to escalate privileges.
+references:
+- https://github.com/mdecrevoisier/EVTX-to-MITRE-Attack/tree/master/TA0004-Privilege%20Escalation/T1134-Access%20Token%20Manipulation
+- https://github.com/breenmachine/RottenPotatoNG
+- https://jlajara.gitlab.io/others/2020/11/22/Potatoes_Windows_Privesc.html
+- https://foxglovesecurity.com/2016/09/26/rotten-potato-privilege-escalation-from-service-accounts-to-system/
+- https://github.com/mdecrevoisier/SIGMA-detection-rules
+author: mdecrevoisier
+date: 2026/05/04
+modified: 2026/05/04
+tags:
+- TA0004
+- attack.t1134.001
+- attack.privilege_escalation
+logsource:
+  product: windows
+  service: security
+detection:
+  selection_login:
+    EventID: 4624
+    TargetUserSid: S-1-5-7
+    LogonType: 3
+    AuthenticationPackageName: NTLM
+    IpAddress: 127.0.0.1
+  selection_process:
+    EventID: 4688
+    SubjectUserSid: S-1-5-18
+    NewProcessName|endswith: \cmd.exe
+  condition: selection_login
+fields:
+- Hostname
+- AuthenticationPackageName
+- EventID
+- IpAddress
+- LogonType
+- NewProcessName
+- SubjectUserSid
+- TargetUserSid
+unique_fields:
+- Hostname
+falsepositives:
+- None
+level: high
+x_source_repository: https://github.com/mdecrevoisier/SIGMA-detection-rules
+x_source_commit: ab15e29fcdbed297e305e2602881b8654946592c
+x_source_file: windows-os/win-os-login anonymous (RottenPotatoNG).yaml
+x_legacy_id: winlog-9000-0221
+x_legacy_file: engine/rules/winlog/sigma_ref/9000-0221-anonymous_login_rottenpotatong.yml

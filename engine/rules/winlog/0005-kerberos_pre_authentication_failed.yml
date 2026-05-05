@@ -1,0 +1,40 @@
+title: Kerberos Pre-Authentication Failed
+id: winlog-0005
+status: experimental
+rule_origin: internal
+description: Detects failed Kerberos pre-authentication on a domain controller (Event ID 4771 where Status is not 0x0), excluding
+  machine accounts and local loopback noise. This is commonly produced by invalid password attempts and password spraying.
+references:
+- https://learn.microsoft.com/en-us/windows/security/threat-protection/auditing/event-4771
+- https://attack.mitre.org/techniques/T1110/003/
+author: ADA default rules
+date: 2021/12/12
+modified: 2026/05/05
+tags:
+- TA0006
+- attack.t1110.003
+- attack.credential_access
+logsource: winlog
+detection:
+  selection1:
+    EventID: 4771
+  filter_success:
+    Status: '0x0'
+  filter1:
+    IpAddress:
+    - ::1
+    - fe80
+    - 127.0.0.1
+  filter2:
+    TargetUserName|endswith: $
+  condition: selection1 and not filter_success and not filter1 and not filter2
+fields:
+- Hostname
+- TargetUserName
+- IpAddress
+unique_fields:
+- Hostname
+- IpAddress
+level: low
+x_legacy_id: winlog-0101-0004
+x_legacy_file: engine/rules/winlog/0101-0004-kerberos_preauth_failed.yml

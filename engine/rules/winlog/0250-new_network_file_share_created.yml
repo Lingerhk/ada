@@ -1,0 +1,39 @@
+title: New network file share created
+id: winlog-0250
+status: experimental
+rule_origin: public
+description: Detects scenarios when a new file share is created.
+references:
+- https://github.com/mdecrevoisier/EVTX-to-MITRE-Attack/tree/master/TA0008-Lateral%20Movement/T1021.002%20-SMB%20Windows%20Admin%20Shares
+- https://docs.microsoft.com/en-us/windows/security/threat-protection/auditing/event-5142
+- https://github.com/mdecrevoisier/SIGMA-detection-rules
+author: mdecrevoisier
+date: 2026/05/04
+modified: 2026/05/04
+tags:
+- TA0008
+- attack.t1021.002
+- attack.lateral_movement
+logsource:
+  product: windows
+  service: security
+detection:
+  selection:
+    EventID: 5142
+  filter:
+    SubjectUserName|endswith: $
+  condition: selection and not filter
+fields:
+- Hostname
+- EventID
+- SubjectUserName
+unique_fields:
+- Hostname
+falsepositives:
+- Administrator actvity
+level: medium
+x_source_repository: https://github.com/mdecrevoisier/SIGMA-detection-rules
+x_source_commit: ab15e29fcdbed297e305e2602881b8654946592c
+x_source_file: windows-os/win-os-share network file created.yaml
+x_legacy_id: winlog-9000-0255
+x_legacy_file: engine/rules/winlog/sigma_ref/9000-0255-new_network_file_share_created.yml

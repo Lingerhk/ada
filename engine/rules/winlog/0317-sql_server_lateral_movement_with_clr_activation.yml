@@ -1,0 +1,40 @@
+title: SQL Server lateral movement with CLR activation
+id: winlog-0317
+status: experimental
+rule_origin: public
+description: Detects scenarios where an attacker enables CLR (Common Language Runtime with .NET) to abuse store procedures
+  in order to move lateraly.
+references:
+- https://github.com/mdecrevoisier/EVTX-to-MITRE-Attack/tree/master/TA0003-Persistence/T1505.001-SQL%20Stored%20Procedures
+- https://research.nccgroup.com/2021/01/21/mssql-lateral-movement/
+- http://www.eventid.net/display-eventid-15457-source-MSSQLSERVER-eventno-9658-phase-1.htm
+- https://github.com/mdecrevoisier/SIGMA-detection-rules
+author: mdecrevoisier
+date: 2026/05/04
+modified: 2026/05/04
+tags:
+- TA0003
+- attack.t1505.001
+- attack.persistence
+logsource:
+  product: mssql
+  category: application
+detection:
+  selection:
+    EventID: 15457
+    EventData|contains: <Data>clr enabled</Data><Data>0</Data><Data>1</Data>
+  condition: selection
+fields:
+- Hostname
+- EventData
+- EventID
+unique_fields:
+- Hostname
+falsepositives:
+- None
+level: high
+x_source_repository: https://github.com/mdecrevoisier/SIGMA-detection-rules
+x_source_commit: ab15e29fcdbed297e305e2602881b8654946592c
+x_source_file: windows-sql_server/sql_server-lateral movement via CLR.yaml
+x_legacy_id: winlog-9000-0331
+x_legacy_file: engine/rules/winlog/sigma_ref/9000-0331-sql_server_lateral_movement_with_clr_activation.yml

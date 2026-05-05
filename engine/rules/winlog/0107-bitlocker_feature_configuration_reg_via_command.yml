@@ -1,0 +1,50 @@
+title: BitLocker feature configuration (Reg via command)
+id: winlog-0107
+status: experimental
+rule_origin: public
+description: Detects scenarios where an attacker configures BitLocker for ransomware purposes.
+references:
+- https://thedfirreport.com/2021/11/15/exchange-exploit-leads-to-domain-wide-ransomware/
+- https://admx.help/?Category=MDOP&Policy=Microsoft.Policies.BitLockerManagement::BMSOSDEncryptionPolicy
+- https://www.bleepingcomputer.com/news/microsoft/microsoft-iranian-hackers-encrypt-windows-systems-using-bitlocker/
+- https://github.com/mdecrevoisier/SIGMA-detection-rules
+author: mdecrevoisier
+date: 2026/05/04
+modified: 2026/05/04
+tags:
+- TA0040
+- attack.t1486
+- attack.impact
+logsource:
+  product: windows
+  category: process_creation
+detection:
+  selection:
+    NewProcessName|endswith: \reg.exe
+    CommandLine|contains|all:
+    - REG ADD
+    - \SOFTWARE\Policies\Microsoft\FVE
+    CommandLine|contains:
+    - UseTPM
+    - UseTPMKey
+    - UseTPMPIN
+    - UseTPMKeyPIN
+    - RecoveryKeyMessage
+    - EnableBDEWithNoTPM
+    - UseAdvancedStartup
+    - RecoveryKeyMessageSource
+  condition: selection
+fields:
+- Hostname
+- CommandLine
+- NewProcessName
+unique_fields:
+- Hostname
+falsepositives:
+- Initial BitLocker configuration via GPO
+level: high
+x_source_repository: https://github.com/mdecrevoisier/SIGMA-detection-rules
+x_source_commit: ab15e29fcdbed297e305e2602881b8654946592c
+x_source_file: windows-bitlocker/win-os-BitLocker feature configuration (Reg via command).yaml
+x_legacy_id: winlog-9000-0083
+x_legacy_file: engine/rules/winlog/sigma_ref/9000-0083-bitlocker_feature_configuration_reg_via_command.yml

@@ -1,0 +1,39 @@
+title: Anonymous login RottenPotatoNG process source
+id: winlog-0333
+status: experimental
+rule_origin: public
+description: Source process event for the RottenPotatoNG anonymous-login multi-event flow rule.
+references:
+- https://github.com/mdecrevoisier/SIGMA-detection-rules
+author: mdecrevoisier
+date: 2026/05/04
+modified: 2026/05/05
+tags:
+- TA0004
+- attack.t1134
+- attack.privilege_escalation
+logsource:
+  product: windows
+  category: process_creation
+detection:
+  selection_process:
+    EventID: 4688
+    SubjectUserSid: S-1-5-18
+    NewProcessName|endswith: \cmd.exe
+  condition: selection_process
+fields:
+- Hostname
+- EventID
+- SubjectUserSid
+- NewProcessName
+unique_fields:
+- Hostname
+falsepositives:
+- None
+level: high
+x_source_repository: https://github.com/mdecrevoisier/SIGMA-detection-rules
+x_source_commit: ab15e29fcdbed297e305e2602881b8654946592c
+x_source_file: windows-os/win-os-login anonymous (RottenPotatoNG).yaml
+x_source_component: selection_process
+x_legacy_id: winlog-9000-0349
+x_legacy_file: engine/rules/winlog/sigma_ref/9000-0349-rottenpotatong_process_source.yml

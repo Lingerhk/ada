@@ -1,0 +1,48 @@
+title: Suspicious modification of a user account SPN to enable Kerberoast attack
+id: winlog-0091
+status: experimental
+rule_origin: public
+description: Detects scenarios where an attacker update the Service Principal Name (SPN) of a user account in order to enable
+  Kerberoast attack and crack its password.
+references:
+- https://github.com/mdecrevoisier/EVTX-to-MITRE-Attack/tree/master/TA0003-Persistence/T1098.xxx-Account%20manipulation
+- https://docs.microsoft.com/en-us/windows/security/threat-protection/auditing/event-5136
+- https://github.com/S1ckB0y1337/Active-Directory-Exploitation-Cheat-Sheet#force-set-spn
+- https://docs.microsoft.com/en-us/troubleshoot/windows-server/windows-security/use-audit-active-directory-objects-track-events
+- https://github.com/mdecrevoisier/SIGMA-detection-rules
+author: mdecrevoisier
+date: 2026/05/04
+modified: 2026/05/04
+tags:
+- TA0003
+- attack.t1098
+- attack.persistence
+logsource:
+  product: windows
+  service: security
+detection:
+  selection:
+    EventID: 5136
+    AttributeLDAPDisplayName: servicePrincipalName
+    ObjectClass: user
+    OperationType: '%%14674'
+  filter:
+    AttributeValue: '-'
+  condition: selection and not filter
+fields:
+- Hostname
+- AttributeLDAPDisplayName
+- AttributeValue
+- EventID
+- ObjectClass
+- OperationType
+unique_fields:
+- Hostname
+falsepositives:
+- Rare administrator modifications on user objects
+level: high
+x_source_repository: https://github.com/mdecrevoisier/SIGMA-detection-rules
+x_source_commit: ab15e29fcdbed297e305e2602881b8654946592c
+x_source_file: windows-active_directory/win-ad-spn modification of a user account (Kerberoasting).yaml
+x_legacy_id: winlog-9000-0067
+x_legacy_file: engine/rules/winlog/sigma_ref/9000-0067-suspicious_modification_of_a_user_account_spn_to_enable_kerberoast_attac.yml

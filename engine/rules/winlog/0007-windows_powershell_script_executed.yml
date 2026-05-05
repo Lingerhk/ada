@@ -1,0 +1,36 @@
+title: PowerShell Script File Executed
+id: winlog-0007
+status: test
+rule_origin: internal
+description: Detects PowerShell script block logging events (Event ID 4104) that reference a .ps1 script file, indicating
+  execution or loading of a PowerShell script block.
+references:
+- https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_logging
+- https://attack.mitre.org/techniques/T1059/001/
+author: ADA default rules
+date: 2017/03/09
+modified: 2026/05/05
+tags:
+- TA0002
+- attack.t1059.001
+- attack.execution
+logsource: winlog
+detection:
+  selection_source:
+    Channel: Microsoft-Windows-PowerShell/Operational
+    EventID: 4104
+  filter_path:
+    ScriptBlockText|contains: .ps1
+  condition: selection_source and filter_path
+fields:
+- Hostname
+- AccountName
+- UserID
+- Path
+- ScriptBlockText
+unique_fields:
+- Hostname
+- AccountName
+level: medium
+x_legacy_id: winlog-0103-0001
+x_legacy_file: engine/rules/winlog/0103-0001-powershell_script_exec.yml

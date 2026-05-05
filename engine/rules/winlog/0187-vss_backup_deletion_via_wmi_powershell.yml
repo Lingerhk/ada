@@ -1,0 +1,59 @@
+title: VSS backup deletion via WMI (Powershell)
+id: winlog-0187
+status: experimental
+rule_origin: public
+description: Detects scenarios where an attacker attempts to delete existing VSS backup via WMI.
+references:
+- https://github.com/mdecrevoisier/EVTX-to-MITRE-Attack/tree/master/TA0040-Impact/T1490-Inhibit%20System%20Recovery
+- https://www.picussecurity.com/resource/blog/how-to-beat-nefilim-ransomware-attacks
+- https://www.itechtics.com/volume-shadow-copies/
+- https://docs.microsoft.com/en-us/windows-server/administration/windows-commands/wbadmin
+- https://www.picussecurity.com/resource/blog/technique-to-delete-volume-shadow-copies-deviceiocontrol
+- https://www.elastic.co/guide/en/security/current/volume-shadow-copy-deletion-via-powershell.html
+- https://blogs.vmware.com/security/2022/09/threat-report-illuminating-volume-shadow-deletion.html
+- https://github.com/mdecrevoisier/SIGMA-detection-rules
+author: mdecrevoisier
+date: 2026/05/04
+modified: 2026/05/04
+tags:
+- TA0040
+- attack.t1490
+- attack.impact
+logsource:
+  product: windows
+  category:
+  - ps_module
+  - ps_script
+detection:
+  selection_powershell_modern:
+    EventID: 4103
+    Payload|contains:
+    - Delete
+    - Remove-WmiObject
+    - Rwmi
+    - Remove-CimInstance
+    - Rcim
+  selection_powershell_block:
+    EventID: 4104
+    ScriptBlockText|contains:
+    - Delete
+    - Remove-WmiObject
+    - Rwmi
+    - Remove-CimInstance
+    - Rcim
+  condition: 1 of selection*
+fields:
+- Hostname
+- EventID
+- Payload
+- ScriptBlockText
+unique_fields:
+- Hostname
+falsepositives:
+- None
+level: high
+x_source_repository: https://github.com/mdecrevoisier/SIGMA-detection-rules
+x_source_commit: ab15e29fcdbed297e305e2602881b8654946592c
+x_source_file: windows-os/win-os-backup VSS deletion (PowerShell).yaml
+x_legacy_id: winlog-9000-0187
+x_legacy_file: engine/rules/winlog/sigma_ref/9000-0187-vss_backup_deletion_via_wmi_powershell.yml

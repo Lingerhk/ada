@@ -1,0 +1,46 @@
+title: Brutforce with denied access due to account restrictions policies
+id: winlog-0194
+status: experimental
+rule_origin: public
+description: Detects scenarios where an attacker attemps to use a comprimised account but failed to login due to account restrictions
+  policies (permissions, time restrictions, workstation, logon type, ...)
+references:
+- https://github.com/mdecrevoisier/EVTX-to-MITRE-Attack/tree/master/TA0001-Initial%20access/T1078-Valid%20accounts
+- https://docs.microsoft.com/en-us/windows/security/threat-protection/auditing/event-4625
+- https://github.com/mdecrevoisier/SIGMA-detection-rules
+author: mdecrevoisier
+date: 2026/05/04
+modified: 2026/05/04
+tags:
+- TA0004
+- attack.t1078
+- attack.privilege_escalation
+logsource:
+  product: windows
+  service: security
+detection:
+  selection:
+    EventID: 4625
+    Status:
+    - '0xc0000022'
+    - '0xC0000413'
+    - '0xC000006E'
+    - '0xC000006F'
+    - '0xC0000070'
+    - '0xC000015B'
+  condition: selection
+fields:
+- Hostname
+- EventID
+- Status
+- EventRecordID
+unique_fields:
+- Hostname
+falsepositives:
+- missconfigured accounts
+level: medium
+x_source_repository: https://github.com/mdecrevoisier/SIGMA-detection-rules
+x_source_commit: ab15e29fcdbed297e305e2602881b8654946592c
+x_source_file: windows-os/win-os-brutforce with denied access due to account restrictions.yaml
+x_legacy_id: winlog-9000-0194
+x_legacy_file: engine/rules/winlog/sigma_ref/9000-0194-brutforce_with_denied_access_due_to_account_restrictions_policies.yml

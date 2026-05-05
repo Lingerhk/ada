@@ -1,0 +1,45 @@
+title: Possible impact of 'SMOKEDHAM backdoor' with MSDTC service privilege escalation via command line
+id: winlog-0286
+status: production
+rule_origin: public
+description: This rule detects activity related to 'SMOKEDHAM backdoor' which manipulate the default running service accounf
+  of the MSDTC service in order to DLL side-load a malicious binary.
+references:
+- https://medium.com/trac-labs/who-ordered-the-smokedham-backdoor-delicacies-in-the-wild-87f51e2e5bd2
+- https://github.com/mdecrevoisier/SIGMA-detection-rules
+author: mdecrevoisier
+date: 2026/05/04
+modified: 2026/05/04
+tags:
+- TA0004
+- attack.t1574.002
+- attack.t1543.003
+- attack.privilege_escalation
+logsource:
+  product: windows
+  category: process_creation
+detection:
+  selection_img:
+  - Image|endswith: \sc.exe
+  - OriginalFileName: sc.exe
+  selection_cli:
+    CommandLine|contains:
+    - config
+    - msdtc
+    - LocalSystem
+  condition: all of selection_*
+fields:
+- Hostname
+- CommandLine
+- Image
+- OriginalFileName
+unique_fields:
+- Hostname
+falsepositives:
+- None  (administrators should not change the service account for MSDTC service)
+level: medium
+x_source_repository: https://github.com/mdecrevoisier/SIGMA-detection-rules
+x_source_commit: ab15e29fcdbed297e305e2602881b8654946592c
+x_source_file: windows-services/win-os-service MSDTC running service change.yaml
+x_legacy_id: winlog-9000-0299
+x_legacy_file: engine/rules/winlog/sigma_ref/9000-0299-possible_impact_of_smokedham_backdoor_with_msdtc_service_privilege_escal.yml

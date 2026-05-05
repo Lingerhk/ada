@@ -1,0 +1,35 @@
+title: Massive service failures - Tchopper Count
+id: flow-0025
+status: experimental
+rule_origin: public
+enable: true
+description: Detects scenarios where an attacker uses the Tchopper tool by abusing the display name of a service as a placeholder
+  to upload an obfuscated payload. Service name may come with very high entropy.
+references:
+- https://github.com/mdecrevoisier/EVTX-to-MITRE-Attack/tree/master/TA0002-Execution/T1569.002-Service%20execution
+- https://github.com/lawrenceamer/TChopper
+- https://github.com/mdecrevoisier/SIGMA-detection-rules
+author: mdecrevoisier
+date: 2026/05/04
+modified: 2026/05/04
+tags:
+- TA0002
+- attack.t1569
+- attack.execution
+logsource: flow
+detection:
+  event_type: count
+  win_size: 20m
+  sorted: false
+  sigma_rules:
+  - winlog-0298
+  match_by: $s1.EventRecordID._count > 100
+level: high
+unique_filter:
+- $s1.Hostname
+- ttl_1800
+x_source_repository: https://github.com/mdecrevoisier/SIGMA-detection-rules
+x_source_commit: ab15e29fcdbed297e305e2602881b8654946592c
+x_source_file: windows-services/win-os-service massive failures - Tchopper (native).yaml
+x_legacy_id: flow-9000-0023
+x_legacy_file: engine/rules/flow/sigma_ref/9000-0023-massive_service_failures_tchopper_count.yml

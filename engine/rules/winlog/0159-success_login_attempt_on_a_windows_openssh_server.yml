@@ -1,0 +1,46 @@
+title: Success login attempt on a Windows OpenSSH server
+id: winlog-0159
+status: experimental
+rule_origin: public
+description: Detects scenarios where an attacker attempts to connect to a Windows host using the SSH protocol.
+references:
+- https://github.com/mdecrevoisier/EVTX-to-MITRE-Attack/tree/master/TA0001-Initial%20access/T1078-Valid%20accounts
+- https://winaero.com/enable-openssh-server-windows-10/
+- https://docs.microsoft.com/en-us/windows-server/administration/openssh/openssh_install_firstuse
+- https://virtualizationreview.com/articles/2020/05/21/ssh-server-on-windows-10.aspx
+- https://www.microsoft.com/en-us/security/blog/2022/10/18/defenders-beware-a-case-for-post-ransomware-investigations/
+- https://github.com/mdecrevoisier/SIGMA-detection-rules
+author: mdecrevoisier
+date: 2026/05/04
+modified: 2026/05/04
+tags:
+- TA0000
+- attack.t1078
+- attack.valid_account
+logsource:
+  product: windows
+  service: security
+detection:
+  selection_event:
+    EventID: 4624
+    ProcessName|endswith: \sshd.exe
+  filter_user:
+    TargetUserSid|startswith: S-1-5-111-
+  filter_ssh_servers:
+    Hostname: '%win_ssh_servers%'
+  condition: selection_event and not (filter_user or filter_ssh_servers)
+fields:
+- Hostname
+- EventID
+- ProcessName
+- TargetUserSid
+unique_fields:
+- Hostname
+falsepositives:
+- Normal administrator activity
+level: medium
+x_source_repository: https://github.com/mdecrevoisier/SIGMA-detection-rules
+x_source_commit: ab15e29fcdbed297e305e2602881b8654946592c
+x_source_file: windows-openssh/win-os-OpenSSH success login.yaml
+x_legacy_id: winlog-9000-0154
+x_legacy_file: engine/rules/winlog/sigma_ref/9000-0154-success_login_attempt_on_a_windows_openssh_server.yml

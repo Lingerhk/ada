@@ -1,0 +1,33 @@
+title: Hidden account creation with fast deletion Multi Event
+id: flow-0048
+status: experimental
+rule_origin: public
+enable: true
+description: Correlates rapid account creation and deletion events for hidden account activity.
+references:
+- https://github.com/mdecrevoisier/SIGMA-detection-rules
+author: mdecrevoisier
+date: 2026/05/04
+modified: 2026/05/05
+tags:
+- TA0003
+- attack.t1136
+- attack.persistence
+logsource: flow
+detection:
+  event_type: multi_eve
+  win_size: 5m
+  sorted: true
+  sigma_rules:
+  - winlog-0214
+  - winlog-0332
+  match_by: $s1.Hostname == $s2.Hostname
+level: medium
+unique_filter:
+- $s1.Hostname
+- ttl_1800
+x_source_repository: https://github.com/mdecrevoisier/SIGMA-detection-rules
+x_source_commit: ab15e29fcdbed297e305e2602881b8654946592c
+x_source_file: windows-os/win-os-hidden account creation.yaml
+x_legacy_id: flow-9000-0048
+x_legacy_file: engine/rules/flow/sigma_ref/9000-0048-hidden_account_creation_multi_event.yml

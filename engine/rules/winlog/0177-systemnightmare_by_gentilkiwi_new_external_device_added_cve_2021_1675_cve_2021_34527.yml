@@ -1,0 +1,47 @@
+title: SystemNightmare by GentilKiwi - New external device added (CVE-2021-1675 / CVE-2021-34527)
+id: winlog-0177
+status: experimental
+rule_origin: public
+description: Detects scenarios where an attacker exploit the PrintNightmare vulnerability by abusing the Windows print spooler
+  using the service exposed by Gentilkiwi
+references:
+- https://github.com/mdecrevoisier/EVTX-to-MITRE-Attack/tree/master/TA0004-Privilege%20Escalation/T1574-DLL%20side-loading
+- https://github.com/GossiTheDog/SystemNightmare
+- https://github.com/outflanknl/PrintNightmare
+- https://github.com/cube0x0/CVE-2021-1675
+- https://www.theregister.com/2021/09/21/microsoft_printnightmare/
+- https://www.exabeam.com/information-security/detecting-the-printnightmare-cve-2021-1675-34527-vulnerability-using-exabeam/
+- https://github.com/mdecrevoisier/SIGMA-detection-rules
+author: mdecrevoisier
+date: 2026/05/04
+modified: 2026/05/04
+tags:
+- TA0004
+- attack.t1574.002
+- attack.t1547.010
+- attack.privilege_escalation
+logsource:
+  product: windows
+  service: security
+detection:
+  selection:
+    EventID: 6416
+    DeviceDescription|contains:
+    - printnightmare
+    - gentil
+    - kiwi
+  condition: selection
+fields:
+- Hostname
+- DeviceDescription
+- EventID
+unique_fields:
+- Hostname
+falsepositives:
+- pentest
+level: high
+x_source_repository: https://github.com/mdecrevoisier/SIGMA-detection-rules
+x_source_commit: ab15e29fcdbed297e305e2602881b8654946592c
+x_source_file: windows-os/win-os-SystemNightmare by GentilKiwi - new device added (native).yaml
+x_legacy_id: winlog-9000-0175
+x_legacy_file: engine/rules/winlog/sigma_ref/9000-0175-systemnightmare_by_gentilkiwi_new_external_device_added_cve_2021_1675_cv.yml

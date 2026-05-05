@@ -1,0 +1,44 @@
+title: NTDS Or Volume Shadow Copy Utility Execution
+id: winlog-0023
+status: test
+rule_origin: internal
+description: Detects process creation (4688) for utilities often used to access NTDS.dit or supporting files, including vssadmin.exe,
+  ntdsutil.exe, diskshadow.exe, and cscript.exe. Such activity can indicate credential dumping preparation on a domain controller.
+references:
+- https://learn.microsoft.com/en-us/windows/security/threat-protection/auditing/event-4688
+- https://attack.mitre.org/techniques/T1003/003/
+author: ADA default rules
+date: 2017/03/09
+modified: 2026/05/05
+tags:
+- TA0006
+- attack.t1003.003
+- attack.credential_access
+logsource: winlog
+detection:
+  selection_source:
+    Channel: Security
+    EventID: 4688
+    NewProcessName|endswith:
+    - vssadmin.exe
+    - ntdsutil.exe
+    - diskshadow.exe
+    - cscript.exe
+  filter_ignore:
+    CommandLine|contains:
+    - '0xffffffff'
+    - npcap
+  condition: selection_source and not filter_ignore
+fields:
+- Hostname
+- CommandLine
+- NewProcessName
+- ParentProcessName
+- SubjectUserName
+- SubjectUserSid
+unique_fields:
+- Hostname
+- SubjectUserName
+level: high
+x_legacy_id: winlog-0103-0017
+x_legacy_file: engine/rules/winlog/0103-0017-NTDS_certificate_dump.yml

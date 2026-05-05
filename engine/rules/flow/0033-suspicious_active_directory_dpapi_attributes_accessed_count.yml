@@ -1,0 +1,30 @@
+title: Suspicious Active Directory DPAPI attributes accessed Count
+id: flow-0033
+status: experimental
+rule_origin: public
+enable: true
+description: ''
+references:
+- https://github.com/mdecrevoisier/SIGMA-detection-rules
+author: mdecrevoisier
+date: 2026/05/04
+modified: 2026/05/04
+tags:
+- TA0000
+logsource: flow
+detection:
+  event_type: count
+  win_size: 30m
+  sorted: false
+  sigma_rules:
+  - winlog-0025
+  match_by: $s1.ObjectName._count >= 5
+level: high
+unique_filter:
+- $s1.Hostname
+- ttl_1800
+x_source_repository: https://github.com/mdecrevoisier/SIGMA-detection-rules
+x_source_commit: ab15e29fcdbed297e305e2602881b8654946592c
+x_source_file: windows-active_directory/win-ad-DPAPI attribute accessed (DCSync, Mimikatz, RiskySPN).yaml
+x_legacy_id: flow-9000-0032
+x_legacy_file: engine/rules/flow/sigma_ref/9000-0032-suspicious_active_directory_dpapi_attributes_accessed_count_value_count.yml

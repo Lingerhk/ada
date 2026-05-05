@@ -1,0 +1,47 @@
+title: New member added to an "OCS/Lync/Skype for Business" administration group (high risk)
+id: winlog-0148
+status: experimental
+rule_origin: public
+description: Detects scenarios where a new member is added to a sensitive administration group related to OCS/Lync/Skype for
+  Business in order to scan topology, infiltrate servers and move laterally.
+references:
+- https://docs.microsoft.com/en-us/previous-versions/office/lync-server-2013/lync-server-2013-planning-for-role-based-access-control
+- https://docs.microsoft.com/en-us/skypeforbusiness/schema-reference/active-directory-schema-extensions-classes-and-attributes/changes-made-by-forest-preparation
+- https://blog.insideo365.com/2012/11/a-lync-administrator-access-refresher/
+- https://github.com/mdecrevoisier/SIGMA-detection-rules
+author: mdecrevoisier
+date: 2026/05/04
+modified: 2026/05/04
+tags:
+- TA0003
+- attack.t1098
+- attack.persistence
+logsource:
+  product: windows
+  service: security
+detection:
+  selection:
+    EventID:
+    - 4728
+    - 4756
+    - 4732
+    TargetUserName:
+    - CSAdministrator
+    - CSServerAdministrator
+    - RTCUniversalServerAdmins
+  condition: selection
+fields:
+- Hostname
+- EventID
+- TargetUserName
+unique_fields:
+- Hostname
+falsepositives:
+- OCS/Lync/Skype administrator updating server configuration or topology
+- OCS/Lync/Skype upgrade or migration
+level: high
+x_source_repository: https://github.com/mdecrevoisier/SIGMA-detection-rules
+x_source_commit: ab15e29fcdbed297e305e2602881b8654946592c
+x_source_file: windows-lync-skype/win-skype-group membership change (high risk).yaml
+x_legacy_id: winlog-9000-0141
+x_legacy_file: engine/rules/winlog/sigma_ref/9000-0141-new_member_added_to_an_ocs_lync_skype_for_business_administration_group.yml

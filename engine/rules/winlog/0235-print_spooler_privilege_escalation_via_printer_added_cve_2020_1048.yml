@@ -1,0 +1,54 @@
+title: Print spooler privilege escalation via printer added (CVE-2020-1048)
+id: winlog-0235
+status: experimental
+rule_origin: public
+description: Detects scenarios where an attacker abuse the printer spooler features to load a DLL. The attack is composed
+  by 4 steps > 1) create a printer that points to a missing DLL 2) print to that port 3) crash the printer spool 4) have his
+  original DLL registered for privilege escalation.
+references:
+- https://github.com/mdecrevoisier/SIGMA-detection-rules
+author: Emir Erdogan (shortly adapted by mdecrevoisier)
+date: 2026/05/04
+modified: 2026/05/04
+tags:
+- TA0004
+- attack.t1547.010
+- attack.privilege_escalation
+logsource:
+  product: windows
+  category:
+  - ps_module
+  - ps_script
+detection:
+  selection_powershell_modern:
+    EventID: 4103
+    Payload|contains|all:
+    - Add-PrinterPort
+    - Name
+    Payload|contains:
+    - .exe
+    - .dll
+  selection_powershell_block:
+    EventID: 4104
+    ScriptBlockText|contains|all:
+    - Add-PrinterPort
+    - Name
+    ScriptBlockText|contains:
+    - .exe
+    - .dll
+  condition: selection_powershell_modern or selection_powershell_block
+fields:
+- Hostname
+- EventID
+- Payload
+- ScriptBlockText
+unique_fields:
+- Hostname
+falsepositives:
+- unknown
+level: high
+x_source_repository: https://github.com/mdecrevoisier/SIGMA-detection-rules
+x_source_commit: ab15e29fcdbed297e305e2602881b8654946592c
+x_source_file: windows-os/win-os-print spooler privilege escalation (CVE-2020-1048).yaml
+x_legacy_id: winlog-9000-0238
+x_legacy_file: engine/rules/winlog/sigma_ref/9000-0238-print_spooler_privilege_escalation_via_printer_added_cve_2020_1048.yml

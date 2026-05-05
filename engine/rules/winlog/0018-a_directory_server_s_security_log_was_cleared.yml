@@ -1,0 +1,30 @@
+title: Security Audit Log Cleared
+id: winlog-0018
+status: test
+rule_origin: internal
+description: Detects Security audit log clearing (Event ID 1102). This action is rare in normal operations and should be investigated
+  because it can indicate attempts to remove evidence.
+references:
+- https://learn.microsoft.com/en-us/windows/security/threat-protection/auditing/event-1102
+- https://attack.mitre.org/techniques/T1070/001/
+author: ADA default rules
+date: 2017/03/09
+modified: 2026/05/05
+tags:
+- TA0005
+- attack.t1070.001
+- attack.defense_evasion
+logsource: winlog
+detection:
+  selection_source:
+    Channel: Security
+    EventID: 1102
+  condition: selection_source
+fields:
+- Hostname
+- SourceName
+unique_fields:
+- Hostname
+level: high
+x_legacy_id: winlog-0103-0012
+x_legacy_file: engine/rules/winlog/0103-0012-dc_server_seclog_cleared.yml

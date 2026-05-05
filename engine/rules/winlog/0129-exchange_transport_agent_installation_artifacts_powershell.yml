@@ -1,0 +1,49 @@
+title: Exchange transport agent installation artifacts (PowerShell)
+id: winlog-0129
+status: experimental
+rule_origin: public
+description: Detects scenarios where an attacker attempts to load an artifact in the Exchange transport agent.
+references:
+- https://github.com/mdecrevoisier/EVTX-to-MITRE-Attack/tree/master/TA0003-Persistence/T1505-Server%20Software%20Component
+- https://speakerdeck.com/heirhabarov/hunting-for-persistence-via-microsoft-exchange-server-or-outlook
+- https://www.welivesecurity.com/wp-content/uploads/2019/05/ESET-LightNeuron.pdf
+- https://github.com/mdecrevoisier/SIGMA-detection-rules
+author: mdecrevoisier
+date: 2026/05/04
+modified: 2026/05/04
+tags:
+- TA0003
+- attack.t1505.002
+- attack.persistence
+logsource:
+  product: windows
+  category:
+  - ps_module
+  - ps_script
+detection:
+  selection_powershell_modern:
+    EventID: 4103
+    Payload|contains:
+    - Enable-TransportAgent
+    - Install-TransportAgent
+  selection_powershell_block:
+    EventID: 4104
+    ScriptBlockText|contains:
+    - Enable-TransportAgent
+    - Install-TransportAgent
+  condition: 1 of selection*
+fields:
+- Hostname
+- EventID
+- Payload
+- ScriptBlockText
+unique_fields:
+- Hostname
+falsepositives:
+- rare administrator change
+level: high
+x_source_repository: https://github.com/mdecrevoisier/SIGMA-detection-rules
+x_source_commit: ab15e29fcdbed297e305e2602881b8654946592c
+x_source_file: windows-exchange/win-exchange-transport agent artifact (PowerShell).yaml
+x_legacy_id: winlog-9000-0114
+x_legacy_file: engine/rules/winlog/sigma_ref/9000-0114-exchange_transport_agent_installation_artifacts_powershell.yml

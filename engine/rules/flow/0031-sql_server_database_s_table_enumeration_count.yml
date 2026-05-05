@@ -1,0 +1,34 @@
+title: SQL Server database's table enumeration Count
+id: flow-0031
+status: experimental
+rule_origin: public
+enable: true
+description: Detects scenarios where an attacker attempts to enumerate local SQL Server tables (specially Veeam Backup).
+references:
+- https://labs.withsecure.com/publications/fin7-target-veeam-servers
+- https://blog.checkymander.com/red%20team/veeam/decrypt-veeam-passwords/
+- https://github.com/mdecrevoisier/SIGMA-detection-rules
+author: mdecrevoisier
+date: 2026/05/04
+modified: 2026/05/04
+tags:
+- TA0007
+- attack.t1518
+- attack.discovery
+logsource: flow
+detection:
+  event_type: count
+  win_size: 5m
+  sorted: false
+  sigma_rules:
+  - winlog-0323
+  match_by: $s1._count > 20
+level: medium
+unique_filter:
+- $s1.Hostname
+- ttl_1800
+x_source_repository: https://github.com/mdecrevoisier/SIGMA-detection-rules
+x_source_commit: ab15e29fcdbed297e305e2602881b8654946592c
+x_source_file: windows-sql_server/sql_server-table enumeration.yaml
+x_legacy_id: flow-9000-0029
+x_legacy_file: engine/rules/flow/sigma_ref/9000-0029-sql_server_database_s_table_enumeration_count.yml

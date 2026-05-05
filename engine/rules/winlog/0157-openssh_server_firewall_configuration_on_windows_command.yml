@@ -1,0 +1,52 @@
+title: OpenSSH server firewall configuration on Windows (command)
+id: winlog-0157
+status: experimental
+rule_origin: public
+description: Detects scenarios where an attacker configure the Windows firewall to allow incoming connections to perform stealthy
+  lateral movement.
+references:
+- https://github.com/mdecrevoisier/EVTX-to-MITRE-Attack/tree/master/TA0008-Lateral%20Movement/T1021.004-Remote%20Service%20SSH
+- https://winaero.com/enable-openssh-server-windows-10/
+- https://docs.microsoft.com/en-us/windows-server/administration/openssh/openssh_install_firstuse
+- https://virtualizationreview.com/articles/2020/05/21/ssh-server-on-windows-10.aspx
+- https://github.com/mdecrevoisier/SIGMA-detection-rules
+author: mdecrevoisier
+date: 2026/05/04
+modified: 2026/05/04
+tags:
+- TA0005
+- attack.t1562.004
+- attack.defense_evasion
+logsource:
+  product: windows
+  category: process_creation
+detection:
+  selection_event:
+    EventID: 4688
+  selection_netsh_adv:
+    CommandLine|contains|all:
+    - netsh
+    - advfirewall
+    - localport=
+    - '22'
+  selection_netsh:
+    CommandLine|contains|all:
+    - netsh
+    - firewall
+    - portopening
+    - '22'
+  condition: selection_event and (selection_netsh_adv or selection_netsh)
+fields:
+- Hostname
+- CommandLine
+- EventID
+unique_fields:
+- Hostname
+falsepositives:
+- Unknown
+level: high
+x_source_repository: https://github.com/mdecrevoisier/SIGMA-detection-rules
+x_source_commit: ab15e29fcdbed297e305e2602881b8654946592c
+x_source_file: windows-openssh/win-os-OpenSSH server firewall configuration (command).yaml
+x_legacy_id: winlog-9000-0150
+x_legacy_file: engine/rules/winlog/sigma_ref/9000-0150-openssh_server_firewall_configuration_on_windows_command.yml

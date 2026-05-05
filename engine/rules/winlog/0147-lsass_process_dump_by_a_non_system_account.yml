@@ -1,0 +1,55 @@
+title: LSASS process dump by a non system account
+id: winlog-0147
+status: experimental
+rule_origin: public
+description: Detects scenarios where an attacker will dump the LSASS memory content using tools like Mimikatz, ProcDump, TaskMgr,
+  ...
+references:
+- https://github.com/mdecrevoisier/EVTX-to-MITRE-Attack/tree/master/TA0006-Credential%20Access/T1003-Credential%20dumping
+- https://github.com/mdecrevoisier/SIGMA-detection-rules
+author: mdecrevoisier
+date: 2026/05/04
+modified: 2026/05/04
+tags:
+- TA0006
+- attack.t1003.001
+- attack.credential_access
+logsource:
+  product: windows
+  service: security
+detection:
+  selection:
+    EventID:
+    - 4656
+    - 4663
+    ObjectType: Process
+    ObjectServer: Security
+    ObjectName|endswith: \System32\lsass.exe
+  filter:
+    SubjectUserName|endswith: $
+    ProcessName:
+    - '*\\AppData\Local\Google\Chrome\User Data\SwReporter\\*\software_reporter_tool.exe'
+    - '*\ProgramData\Microsoft\Windows Defender\Platform\*'
+    - '*\Program Files\Windows Defender Advanced Threat Protection\*'
+    - '*\system32\csrss.exe'
+    - '*\system32\wininit.exe'
+    - '*\Windows\System32\rundll32.exe'
+  condition: selection and not filter
+fields:
+- Hostname
+- EventID
+- ObjectName
+- ObjectServer
+- ObjectType
+- ProcessName
+- SubjectUserName
+unique_fields:
+- Hostname
+falsepositives:
+- Antivirus, security products, browsers
+level: high
+x_source_repository: https://github.com/mdecrevoisier/SIGMA-detection-rules
+x_source_commit: ab15e29fcdbed297e305e2602881b8654946592c
+x_source_file: windows-lsass/win-os-LSASS process accessed by a non system account.yaml
+x_legacy_id: winlog-9000-0140
+x_legacy_file: engine/rules/winlog/sigma_ref/9000-0140-lsass_process_dump_by_a_non_system_account.yml

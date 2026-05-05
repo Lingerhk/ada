@@ -1,0 +1,43 @@
+title: Suspicious computer account created by a computer account
+id: winlog-0057
+status: experimental
+rule_origin: public
+description: Detects scenarios where an attacker abuse MachineAccountQuota privilege and pre-create a computer object for
+  abusing RBCD delegation.
+references:
+- https://dirkjanm.io/worst-of-both-worlds-ntlm-relaying-and-kerberos-delegation/
+- https://github.com/mdecrevoisier/SIGMA-detection-rules
+author: mdecrevoisier
+date: 2026/05/04
+modified: 2026/05/04
+tags:
+- TA0003
+- attack.t1136
+- attack.persistence
+logsource:
+  product: windows
+  service: security
+detection:
+  selection:
+    EventID: 4741
+    SubjectUserName|endswith: $
+    SubjectUserSid|startswith: S-1-5-21-
+    TargetUserName|endswith: $
+  condition: selection
+fields:
+- Hostname
+- EventID
+- SubjectUserName
+- SubjectUserSid
+- TargetUserName
+unique_fields:
+- Hostname
+falsepositives:
+- Offline domain join host
+- Windows Autopilot Hybrid Azure AD Join
+level: high
+x_source_repository: https://github.com/mdecrevoisier/SIGMA-detection-rules
+x_source_commit: ab15e29fcdbed297e305e2602881b8654946592c
+x_source_file: windows-active_directory/win-ad-computer account created by a computer account.yaml
+x_legacy_id: winlog-9000-0033
+x_legacy_file: engine/rules/winlog/sigma_ref/9000-0033-suspicious_computer_account_created_by_a_computer_account.yml

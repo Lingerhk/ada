@@ -1,0 +1,42 @@
+title: Suspicious dump file transfered via SMB share
+id: winlog-0200
+status: experimental
+rule_origin: public
+description: Detects scenarios where an attacker would access and/or transfer a dump file containing potential sensitive information
+  (LSASS dump).
+references:
+- https://github.com/mdecrevoisier/EVTX-to-MITRE-Attack/tree/master/TA0006-Credential%20Access/T1003-Credential%20dumping
+- https://github.com/mdecrevoisier/SIGMA-detection-rules
+author: mdecrevoisier
+date: 2026/05/04
+modified: 2026/05/04
+tags:
+- TA0006
+- attack.t1003.001
+- attack.credential_access
+logsource:
+  product: windows
+  service: security
+detection:
+  selection:
+    EventID: 5145
+    RelativeTargetName|endswith:
+    - .dmp
+    - .dump
+  filter:
+    RelativeTargetName|startswith: Windows
+  condition: selection and not filter
+fields:
+- Hostname
+- EventID
+- RelativeTargetName
+unique_fields:
+- Hostname
+falsepositives:
+- none
+level: high
+x_source_repository: https://github.com/mdecrevoisier/SIGMA-detection-rules
+x_source_commit: ab15e29fcdbed297e305e2602881b8654946592c
+x_source_file: windows-os/win-os-dump file transfered over SMB share.yaml
+x_legacy_id: winlog-9000-0201
+x_legacy_file: engine/rules/winlog/sigma_ref/9000-0201-suspicious_dump_file_transfered_via_smb_share.yml

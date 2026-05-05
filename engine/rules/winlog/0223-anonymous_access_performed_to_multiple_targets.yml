@@ -1,0 +1,49 @@
+title: Anonymous access performed to multiple targets
+id: winlog-0223
+status: experimental
+rule_origin: public
+description: Detects scenarios where an attacker would attempt to enumerate hosts and collect relevant information using anonymous
+  access. Vulnerability scanners, enumeration software or tool like CrackMapexec may generate such behavior.
+references:
+- https://medium.com/@Shorty420/enumerating-ad-98e0821c4c78
+- https://book.hacktricks.xyz/pentesting/pentesting-smb
+- https://0xdf.gitlab.io/2018/12/02/pwk-notes-smb-enumeration-checklist-update1.html
+- https://github.com/mdecrevoisier/SIGMA-detection-rules
+author: mdecrevoisier
+date: 2026/05/04
+modified: 2026/05/04
+tags:
+- TA0007
+- attack.t1046
+- attack.discovery
+logsource:
+  product: windows
+  service: security
+detection:
+  selection:
+    EventID: 4624
+    TargetUserSid: S-1-5-7
+    LogonType: 3
+  filter:
+    IpAddress:
+    - '%vulnerability_scanners%'
+    - 127.0.0.1
+    - ::1
+  condition: selection and not filter
+  timeframe: 15m
+fields:
+- Hostname
+- EventID
+- IpAddress
+- LogonType
+- TargetUserSid
+unique_fields:
+- IpAddress
+falsepositives:
+- VAS scanners, pentest
+level: high
+x_source_repository: https://github.com/mdecrevoisier/SIGMA-detection-rules
+x_source_commit: ab15e29fcdbed297e305e2602881b8654946592c
+x_source_file: windows-os/win-os-login with anonymous access on multiple hosts.yaml
+x_legacy_id: winlog-9000-0224
+x_legacy_file: engine/rules/winlog/sigma_ref/9000-0224-anonymous_access_performed_to_multiple_targets.yml

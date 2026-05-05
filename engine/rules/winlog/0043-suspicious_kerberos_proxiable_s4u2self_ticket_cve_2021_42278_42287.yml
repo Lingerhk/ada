@@ -1,0 +1,56 @@
+title: Suspicious Kerberos proxiable/S4U2self ticket (CVE-2021-42278/42287)
+id: winlog-0043
+status: experimental
+rule_origin: public
+description: Detects scenarios where an attacker attempts to request a proxiable ticket. This action may trigger while attempting
+  to identify a vulnerable target or using some offsensive Kerberos tools like Kerbrute, Impacket...
+references:
+- https://github.com/mdecrevoisier/EVTX-to-MITRE-Attack/tree/master/TA0006-Credential%20Access/T1558-Steal%20or%20Forge%20Kerberos%20Tickets
+- https://exploit.ph/cve-2021-42287-cve-2021-42278-weaponisation.html
+- https://www.thehacker.recipes/ad/movement/kerberos/samaccountname-spoofing
+- https://support.microsoft.com/en-us/topic/kb5008380-authentication-updates-cve-2021-42287-9dafac11-e0d0-4cb8-959a-143bd0201041
+- https://github.com/WazeHell/sam-the-admin
+- https://github.com/cube0x0/noPac
+- https://github.com/ly4k/Pachine
+- https://www.jpcert.or.jp/english/pub/sr/20170612ac-ir_research_en.pdf
+- https://github.com/mdecrevoisier/SIGMA-detection-rules
+author: mdecrevoisier
+date: 2026/05/04
+modified: 2026/05/04
+tags:
+- TA0006
+- attack.t1558
+- attack.t1068
+- attack.credential_access
+- attack.privilege_escalation
+logsource:
+  product: windows
+  service: security
+detection:
+  selection:
+    EventID: 4768
+    Status|contains: '0x0'
+    ServiceSid|endswith: '-502'
+    TicketOptions: '0x50800000'
+  filter:
+  - IpAddress: '%domain_controllers_ips%'
+  - TargetUserName: '%account_allowed_proxy%'
+  condition: selection and not filter
+fields:
+- Hostname
+- EventID
+- IpAddress
+- ServiceSid
+- Status
+- TargetUserName
+- TicketOptions
+unique_fields:
+- Hostname
+falsepositives:
+- Applications or services performing delegation activities
+level: high
+x_source_repository: https://github.com/mdecrevoisier/SIGMA-detection-rules
+x_source_commit: ab15e29fcdbed297e305e2602881b8654946592c
+x_source_file: windows-active_directory/win-ad-Kerberos suspicious proxiable ticket.yaml
+x_legacy_id: winlog-9000-0019
+x_legacy_file: engine/rules/winlog/sigma_ref/9000-0019-suspicious_kerberos_proxiable_s4u2self_ticket_cve_2021_42278_42287.yml
