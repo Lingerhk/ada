@@ -6,7 +6,6 @@ import (
 	"ada/engine/flow"
 	"ada/engine/sigma"
 	"ada/infra/base"
-	"ada/infra/license"
 	"ada/infra/mongo"
 	"context"
 	"path/filepath"
@@ -48,7 +47,6 @@ type EngineWorker struct {
 	cancel  context.CancelFunc
 
 	mu      sync.RWMutex // protects ruleset/Flowset and state
-	pending bool         // 如果license校验不过，该值为true(engine处于不处理数据状态)
 	stopped bool
 
 	sigmaWorkers int
@@ -372,14 +370,10 @@ func (e *EngineWorker) FlowMatcher() {
 		time.Sleep(1 * time.Second)
 
 		e.mu.RLock()
-		pending := e.pending
 		stopped := e.stopped
 		flowset := e.Flowset
 		e.mu.RUnlock()
 
-		if pending {
-			continue
-		}
 		if stopped {
 			return
 		}
@@ -478,26 +472,6 @@ func (e *EngineWorker) SigmaMatcher() {
 	}
 }
 
-func (e *EngineWorker) RuntimeCheck() {
-	checkTicker := time.NewTicker(30 * time.Second)
-	defer checkTicker.Stop()
-
-	for {
-		select {
-		case <-e.ctx.Done():
-			e.Stop()
-			return
-		case <-checkTicker.C:
-			{
-				if e.expired() {
-					e.Stop()
-					return
-				}
-			}
-		}
-	}
-}
-
 // RuleReloader listens for reload signals from Redis pub/sub
 func (e *EngineWorker) RuleReloader() {
 	ctx := context.Background()
@@ -529,28 +503,4 @@ func (e *EngineWorker) RuleReloader() {
 			}
 		}
 	}
-}
-
-func (e *EngineWorker) expired() bool {
-	e.mu.Lock()
-	defer e.mu.Unlock()
-
-	lic, err := license.NewAdaLicense(e.redisCli)
-	if err != nil {
-		//logger.Errorf("init license err:%v", err) // TODO: 在release版本开启
-		e.pending = true
-		return false
-	}
-
-	if !lic.Expired() {
-		e.pending = false
-	} else {
-		e.pending = true
-	}
-
-	if lic.DelayExpired() {
-		return true
-	}
-
-	return false
 }

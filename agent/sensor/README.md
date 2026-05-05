@@ -19,6 +19,7 @@ go build enc_cfg.go
 ```shell
 # 将cp ada_sensor.exe /path/package/
 # 将cp sensor.cfg /path/package/
+# 将完整 TShark runtime 复制到 /path/package/tshark/
 # 其他模块如有更新也需要更新到package目录
 C:\Users\admin\ada\agent\package
 ```

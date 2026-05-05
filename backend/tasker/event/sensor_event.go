@@ -140,6 +140,10 @@ func (s *SensorEvent) register(regMsg sCommon.AdaMessage) {
 	sensorInfo["dc_hostname"] = sensor.DCHostName
 	sensorInfo["pkt_plugin_switch"] = sensor.PktPluginSwitch
 	sensorInfo["log_plugin_switch"] = sensor.LogPluginSwitch
+	sensorInfo["tshark_plugin_switch"] = "false"
+	sensorInfo["tshark_capture_filter"] = ""
+	sensorInfo["tshark_display_filter"] = ""
+	sensorInfo["tshark_bind_net_iface"] = ""
 	sensorInfo["rpcfw_plugin_switch"] = sensor.RpcFwPluginSwitch
 	sensorInfo["ldapfw_plugin_switch"] = sensor.LdapFwPluginSwitch
 	sensorInfo["ldapfw_plugin_switch"] = sensor.LdapFwPluginSwitch
@@ -264,6 +268,9 @@ func (s *SensorEvent) state(stateMsg sCommon.AdaMessage) {
 	sensorInfo["version"] = sensor.Version
 	sensorInfo["timestamp"] = sensor.Timestamp
 	sensorInfo["last_online_tm"] = sensor.LastOnlineTm
+	if val, ok := stateMsg.Data["tshark_status"]; ok {
+		sensorInfo["tshark_status"] = val
+	}
 	err = s.redisCli.HMSet(ctx, cache.SensorIDKey(sensor.ID), sensorInfo).Err()
 	if err != nil {
 		logger.Errorf("set sensor info into redis err:%v", err)

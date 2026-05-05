@@ -14,11 +14,12 @@ var (
 
 func (p *Plugin) getPluginStatus() (map[string]bool, error) {
 	statusMap := map[string]bool{
-		common.SensorSvcName:   false,
-		common.PlugRpcFwName:   false,
-		common.PlugLdapFwName:  false,
-		common.PlugPktName:     false,
-		common.PlugEvtName:     false,
+		common.SensorSvcName:  false,
+		common.PlugRpcFwName:  false,
+		common.PlugLdapFwName: false,
+		common.PlugPktName:    false,
+		common.PlugEvtName:    false,
+		common.PlugTsharkName: false,
 	}
 	return statusMap, nil
 }
