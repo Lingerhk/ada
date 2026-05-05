@@ -10,18 +10,21 @@ import (
 	"crypto/md5"
 	"encoding/hex"
 	"encoding/json"
+	"errors"
 	"flag"
 	"fmt"
 	"io"
 	"net/http"
 	"os"
 	"path/filepath"
+	"sort"
 	"strings"
 	"sync"
 	"time"
 
 	logger "github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/v2/bson"
+	"go.mongodb.org/mongo-driver/v2/x/mongo/driver/connstring"
 	"gopkg.in/yaml.v3"
 )
 
@@ -43,6 +46,7 @@ const (
 	DefaultMongoUser   = "user_ada"
 	DefaultMongoPasswd = "XEl44B4p3hFurztFMo38"
 	DefaultMongoDbName = "db_ada"
+	DefaultMongoURI    = ""
 )
 
 // RuleVersionInfo represents the version information in latest.json
@@ -102,6 +106,7 @@ type Server struct {
 	mongoUser      string
 	mongoPasswd    string
 	mongoDbName    string
+	mongoURI       string
 }
 
 func main() {
@@ -116,6 +121,7 @@ func main() {
 		mongoUser     string
 		mongoPasswd   string
 		mongoDbName   string
+		mongoURI      string
 	)
 
 	flag.IntVar(&port, "port", DefaultPort, "Server port")
@@ -128,6 +134,7 @@ func main() {
 	flag.StringVar(&mongoUser, "mongo-user", DefaultMongoUser, "MongoDB user")
 	flag.StringVar(&mongoPasswd, "mongo-passwd", DefaultMongoPasswd, "MongoDB password")
 	flag.StringVar(&mongoDbName, "mongo-db", DefaultMongoDbName, "MongoDB database name")
+	flag.StringVar(&mongoURI, "mongo-uri", DefaultMongoURI, "MongoDB URI (overrides mongo-host/user/passwd)")
 
 	flag.Parse()
 
@@ -164,17 +171,8 @@ func main() {
 		mongoUser:      mongoUser,
 		mongoPasswd:    mongoPasswd,
 		mongoDbName:    mongoDbName,
+		mongoURI:       mongoURI,
 	}
-
-	// Initialize MongoDB connection
-	if err := server.initMongoDB(); err != nil {
-		logger.Fatalf("Failed to initialize MongoDB: %v", err)
-	}
-	defer func() {
-		if server.mongoCli != nil {
-			server.mongoCli.Disconnect(server.shutdownCtx)
-		}
-	}()
 
 	// Ensure directories exist
 	for _, dir := range []string{packageDir, uploadDir, logDir} {
@@ -184,6 +182,11 @@ func main() {
 	}
 
 	if genPackage {
+		if err := server.initMongoDB(); err != nil {
+			logger.Fatalf("Failed to initialize MongoDB: %v", err)
+		}
+		defer server.mongoCli.Disconnect(server.shutdownCtx)
+
 		// Generate package and exit
 		logger.Info("Generating rule package...")
 		if err := server.generateRulePackage(); err != nil {
@@ -246,16 +249,33 @@ func main() {
 // initMongoDB initializes the MongoDB connection
 func (s *Server) initMongoDB() error {
 	mongoCli := mongo.NewMongoSession()
-	MongoURL := fmt.Sprintf("mongodb://%s:%s@%s/?authSource=%s",
-		s.mongoUser, s.mongoPasswd, s.mongoHost, s.mongoDbName)
+	mongoURL := s.mongoURI
+	dbName := s.mongoDbName
+	if mongoURL != "" {
+		cs, err := connstring.Parse(mongoURL)
+		if err != nil {
+			return fmt.Errorf("failed to parse MongoDB URI: %w", err)
+		}
+		if cs.Database != "" {
+			dbName = cs.Database
+		}
+	} else {
+		mongoURL = fmt.Sprintf("mongodb://%s:%s@%s/?authSource=%s",
+			s.mongoUser, s.mongoPasswd, s.mongoHost, s.mongoDbName)
+	}
 
-	err := mongoCli.Connect(s.shutdownCtx, MongoURL, s.mongoDbName)
+	err := mongoCli.Connect(s.shutdownCtx, mongoURL, dbName)
 	if err != nil {
 		return fmt.Errorf("failed to connect to MongoDB: %w", err)
 	}
 
 	s.mongoCli = mongoCli
-	logger.Infof("Connected to MongoDB at %s, database: %s", s.mongoHost, s.mongoDbName)
+	s.mongoDbName = dbName
+	if s.mongoURI != "" {
+		logger.Infof("Connected to MongoDB by URI, database: %s", s.mongoDbName)
+	} else {
+		logger.Infof("Connected to MongoDB at %s, database: %s", s.mongoHost, s.mongoDbName)
+	}
 	return nil
 }
 
@@ -405,10 +425,8 @@ func (s *Server) handleUpload(w http.ResponseWriter, r *http.Request) {
 	// Limit upload size
 	r.Body = http.MaxBytesReader(w, r.Body, DefaultMaxUploadSize*1024*1024)
 
-	// Read the uploaded file
-	file, _, err := r.FormFile("file")
-	if err != nil {
-		// Try reading as direct body
+	contentType := strings.ToLower(r.Header.Get("Content-Type"))
+	if !strings.HasPrefix(contentType, "multipart/form-data") {
 		body, err := io.ReadAll(r.Body)
 		if err != nil {
 			http.Error(w, "Failed to read upload", http.StatusBadRequest)
@@ -430,10 +448,19 @@ func (s *Server) handleUpload(w http.ResponseWriter, r *http.Request) {
 		// Process the uploaded package
 		if err := s.processUploadedPackage(uploadPath, r.RemoteAddr); err != nil {
 			logger.Errorf("Failed to process uploaded package: %v", err)
+			http.Error(w, fmt.Sprintf("Failed to process upload: %v", err), http.StatusBadRequest)
+			return
 		}
 
 		w.WriteHeader(http.StatusCreated)
 		fmt.Fprintf(w, "Upload successful: %s\n", filepath.Base(uploadPath))
+		return
+	}
+
+	// Read the uploaded multipart file.
+	file, _, err := r.FormFile("file")
+	if err != nil {
+		http.Error(w, "Failed to read multipart file", http.StatusBadRequest)
 		return
 	}
 	defer file.Close()
@@ -460,75 +487,418 @@ func (s *Server) handleUpload(w http.ResponseWriter, r *http.Request) {
 	// Process the uploaded package
 	if err := s.processUploadedPackage(uploadPath, r.RemoteAddr); err != nil {
 		logger.Errorf("Failed to process uploaded package: %v", err)
+		http.Error(w, fmt.Sprintf("Failed to process upload: %v", err), http.StatusBadRequest)
+		return
 	}
 
 	w.WriteHeader(http.StatusCreated)
 	fmt.Fprintf(w, "Upload successful: %s\n", filepath.Base(uploadPath))
 }
 
-// processUploadedPackage extracts and logs information from uploaded package
+// processUploadedPackage validates an uploaded rule package, merges it into the
+// current latest package, and publishes a new latest.json/latest.zip pair.
 func (s *Server) processUploadedPackage(zipPath, remoteAddr string) error {
-	// Extract desc.json to read metadata
+	tmpDir, err := os.MkdirTemp(s.uploadDir, "process_*")
+	if err != nil {
+		return fmt.Errorf("failed to create temp dir: %w", err)
+	}
+	defer os.RemoveAll(tmpDir)
+
+	if err := extractZipSecure(zipPath, tmpDir); err != nil {
+		return err
+	}
+
+	descPath, packageRoot, err := findPackageDescriptor(tmpDir)
+	if err != nil {
+		return err
+	}
+
+	data, err := os.ReadFile(descPath)
+	if err != nil {
+		return fmt.Errorf("failed to read desc.json: %w", err)
+	}
+
+	var uploadDesc UploadDescriptor
+	if err := json.Unmarshal(data, &uploadDesc); err != nil {
+		return fmt.Errorf("failed to parse desc.json: %w", err)
+	}
+
+	totalRules := len(uploadDesc.Flow) + len(uploadDesc.WinLog) + len(uploadDesc.PktLog)
+	if totalRules == 0 {
+		return errors.New("uploaded package has no rules in desc.json")
+	}
+
+	logger.Infof("Upload metadata: version=%s, client_version=%s, client_trait=%s, flow=%d, winlog=%d, pktlog=%d",
+		uploadDesc.Version,
+		uploadDesc.ClientVersion,
+		uploadDesc.ClientTrait,
+		len(uploadDesc.Flow),
+		len(uploadDesc.WinLog),
+		len(uploadDesc.PktLog))
+
+	publishedVersion, err := s.mergeUploadedPackage(packageRoot, &uploadDesc.RuleDescriptor)
+	if err != nil {
+		return err
+	}
+
+	logEntry := map[string]any{
+		"_log_type":         "upload",
+		"timestamp":         time.Now().Format(time.RFC3339),
+		"remote_ip":         remoteAddr,
+		"client_version":    uploadDesc.ClientVersion,
+		"client_trait":      uploadDesc.ClientTrait,
+		"package_file":      filepath.Base(zipPath),
+		"published_version": publishedVersion,
+		"rules_count": map[string]int{
+			"flow":   len(uploadDesc.Flow),
+			"winlog": len(uploadDesc.WinLog),
+			"pktlog": len(uploadDesc.PktLog),
+		},
+	}
+
+	select {
+	case s.logQueue <- logEntry:
+	default:
+		logger.Warnf("Log queue full, dropping upload log entry")
+	}
+
+	return nil
+}
+
+func extractZipSecure(zipPath, destDir string) error {
 	r, err := zip.OpenReader(zipPath)
 	if err != nil {
 		return fmt.Errorf("failed to open zip: %w", err)
 	}
 	defer r.Close()
 
+	cleanDest, err := filepath.Abs(destDir)
+	if err != nil {
+		return err
+	}
+
 	for _, f := range r.File {
-		if f.Name == "desc.json" || strings.HasSuffix(f.Name, "/desc.json") {
-			rc, err := f.Open()
-			if err != nil {
-				return fmt.Errorf("failed to open desc.json: %w", err)
+		cleanName := filepath.Clean(filepath.FromSlash(f.Name))
+		if cleanName == "." || filepath.IsAbs(cleanName) || strings.HasPrefix(cleanName, ".."+string(os.PathSeparator)) || cleanName == ".." {
+			return fmt.Errorf("unsafe zip path: %s", f.Name)
+		}
+
+		target := filepath.Join(cleanDest, cleanName)
+		cleanTarget, err := filepath.Abs(target)
+		if err != nil {
+			return err
+		}
+		if cleanTarget != cleanDest && !strings.HasPrefix(cleanTarget, cleanDest+string(os.PathSeparator)) {
+			return fmt.Errorf("zip path escapes destination: %s", f.Name)
+		}
+
+		if f.FileInfo().IsDir() {
+			if err := os.MkdirAll(cleanTarget, 0755); err != nil {
+				return err
 			}
-			defer rc.Close()
+			continue
+		}
 
-			data, err := io.ReadAll(rc)
-			if err != nil {
-				return fmt.Errorf("failed to read desc.json: %w", err)
-			}
+		if err := os.MkdirAll(filepath.Dir(cleanTarget), 0755); err != nil {
+			return err
+		}
 
-			var uploadDesc UploadDescriptor
-			if err := json.Unmarshal(data, &uploadDesc); err != nil {
-				return fmt.Errorf("failed to parse desc.json: %w", err)
-			}
+		rc, err := f.Open()
+		if err != nil {
+			return fmt.Errorf("failed to open zip entry %s: %w", f.Name, err)
+		}
 
-			// Log upload information
-			logger.Infof("Upload metadata: version=%s, client_version=%s, client_trait=%s, flow=%d, winlog=%d, pktlog=%d",
-				uploadDesc.Version,
-				uploadDesc.ClientVersion,
-				uploadDesc.ClientTrait,
-				len(uploadDesc.Flow),
-				len(uploadDesc.WinLog),
-				len(uploadDesc.PktLog))
+		out, err := os.OpenFile(cleanTarget, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, f.FileInfo().Mode())
+		if err != nil {
+			rc.Close()
+			return fmt.Errorf("failed to create %s: %w", cleanTarget, err)
+		}
 
-			// Queue upload log asynchronously
-			logEntry := map[string]any{
-				"_log_type":      "upload",
-				"timestamp":      time.Now().Format(time.RFC3339),
-				"remote_ip":      remoteAddr,
-				"client_version": uploadDesc.ClientVersion,
-				"client_trait":   uploadDesc.ClientTrait,
-				"package_file":   filepath.Base(zipPath),
-				"rules_count": map[string]int{
-					"flow":   len(uploadDesc.Flow),
-					"winlog": len(uploadDesc.WinLog),
-					"pktlog": len(uploadDesc.PktLog),
-				},
-			}
-
-			select {
-			case s.logQueue <- logEntry:
-				// Log queued successfully
-			default:
-				logger.Warnf("Log queue full, dropping upload log entry")
-			}
-
-			return nil
+		_, copyErr := io.Copy(out, rc)
+		closeErr := out.Close()
+		rc.Close()
+		if copyErr != nil {
+			return fmt.Errorf("failed to extract %s: %w", f.Name, copyErr)
+		}
+		if closeErr != nil {
+			return closeErr
 		}
 	}
 
-	return fmt.Errorf("desc.json not found in uploaded package")
+	return nil
+}
+
+func findPackageDescriptor(root string) (descPath, packageRoot string, err error) {
+	err = filepath.WalkDir(root, func(path string, entry os.DirEntry, walkErr error) error {
+		if walkErr != nil {
+			return walkErr
+		}
+		if entry.IsDir() || entry.Name() != "desc.json" {
+			return nil
+		}
+		descPath = path
+		packageRoot = filepath.Dir(path)
+		return filepath.SkipAll
+	})
+	if err != nil {
+		return "", "", err
+	}
+	if descPath == "" {
+		return "", "", errors.New("desc.json not found in package")
+	}
+	return descPath, packageRoot, nil
+}
+
+func descriptorMaps(desc RuleDescriptor) (map[string]RuleMetadata, map[string]RuleMetadata, map[string]RuleMetadata) {
+	flow := make(map[string]RuleMetadata, len(desc.Flow))
+	pktlog := make(map[string]RuleMetadata, len(desc.PktLog))
+	winlog := make(map[string]RuleMetadata, len(desc.WinLog))
+	for _, meta := range desc.Flow {
+		flow[meta.ID] = meta
+	}
+	for _, meta := range desc.PktLog {
+		pktlog[meta.ID] = meta
+	}
+	for _, meta := range desc.WinLog {
+		winlog[meta.ID] = meta
+	}
+	return flow, pktlog, winlog
+}
+
+func sortedMetadata(m map[string]RuleMetadata) []RuleMetadata {
+	out := make([]RuleMetadata, 0, len(m))
+	for _, meta := range m {
+		out = append(out, meta)
+	}
+	sort.Slice(out, func(i, j int) bool {
+		return out[i].ID < out[j].ID
+	})
+	return out
+}
+
+func copyDirContents(srcDir, dstDir string) error {
+	if _, err := os.Stat(srcDir); os.IsNotExist(err) {
+		return nil
+	}
+	return filepath.Walk(srcDir, func(path string, info os.FileInfo, err error) error {
+		if err != nil {
+			return err
+		}
+		relPath, err := filepath.Rel(srcDir, path)
+		if err != nil {
+			return err
+		}
+		dstPath := filepath.Join(dstDir, relPath)
+		if info.IsDir() {
+			return os.MkdirAll(dstPath, 0755)
+		}
+		return copyFile(path, dstPath)
+	})
+}
+
+func findRuleFileForMeta(packageRoot, ruleType string, meta RuleMetadata) (string, string, error) {
+	candidates := make([]string, 0, 4)
+	if meta.Filename != "" {
+		candidates = append(candidates, filepath.Join(packageRoot, ruleType, meta.Filename))
+	}
+	candidates = append(candidates,
+		filepath.Join(packageRoot, ruleType, fmt.Sprintf("%s.yml", sanitizeFilename(meta.ID))),
+		filepath.Join(packageRoot, ruleType, fmt.Sprintf("%s.yaml", sanitizeFilename(meta.ID))),
+	)
+	for _, candidate := range candidates {
+		if info, err := os.Stat(candidate); err == nil && !info.IsDir() {
+			return candidate, filepath.Base(candidate), nil
+		}
+	}
+
+	matches, err := filepath.Glob(filepath.Join(packageRoot, ruleType, fmt.Sprintf("*%s*.yml", sanitizeFilename(meta.ID))))
+	if err != nil {
+		return "", "", err
+	}
+	if len(matches) == 0 {
+		matches, err = filepath.Glob(filepath.Join(packageRoot, ruleType, fmt.Sprintf("*%s*.yaml", sanitizeFilename(meta.ID))))
+		if err != nil {
+			return "", "", err
+		}
+	}
+	if len(matches) == 0 {
+		return "", "", fmt.Errorf("rule file not found for %s/%s", ruleType, meta.ID)
+	}
+	sort.Strings(matches)
+	return matches[0], filepath.Base(matches[0]), nil
+}
+
+func normalizeRuleMetadata(packageRoot, ruleType string, meta RuleMetadata) (RuleMetadata, string, error) {
+	srcPath, filename, err := findRuleFileForMeta(packageRoot, ruleType, meta)
+	if err != nil {
+		return RuleMetadata{}, "", err
+	}
+
+	data, err := os.ReadFile(srcPath)
+	if err != nil {
+		return RuleMetadata{}, "", err
+	}
+
+	meta.Filename = filename
+	meta.MD5 = calculateStringMD5(string(data))
+	if meta.UpdateTm == 0 {
+		meta.UpdateTm = time.Now().Unix()
+	}
+
+	if meta.DetectionMD5 == "" {
+		var rule map[string]any
+		if err := yaml.Unmarshal(data, &rule); err == nil {
+			if detection, ok := rule["detection"]; ok {
+				if detectionData, err := json.Marshal(detection); err == nil {
+					meta.DetectionMD5 = calculateStringMD5(string(detectionData))
+				}
+			}
+		}
+	}
+
+	return meta, srcPath, nil
+}
+
+func mergeRuleType(packageRoot, dstRoot, ruleType string, metas []RuleMetadata, dst map[string]RuleMetadata) error {
+	dstDir := filepath.Join(dstRoot, ruleType)
+	if err := os.MkdirAll(dstDir, 0755); err != nil {
+		return err
+	}
+
+	for _, meta := range metas {
+		if meta.ID == "" {
+			return fmt.Errorf("empty rule id in %s descriptor", ruleType)
+		}
+		normalized, srcPath, err := normalizeRuleMetadata(packageRoot, ruleType, meta)
+		if err != nil {
+			return err
+		}
+		dstPath := filepath.Join(dstDir, normalized.Filename)
+		if err := copyFile(srcPath, dstPath); err != nil {
+			return err
+		}
+		dst[normalized.ID] = normalized
+	}
+
+	return nil
+}
+
+func (s *Server) mergeUploadedPackage(uploadRoot string, uploadDesc *RuleDescriptor) (string, error) {
+	version := fmt.Sprintf("%d", time.Now().Unix())
+	packageName := fmt.Sprintf("ada_rule_%s", version)
+
+	workDir, err := os.MkdirTemp(s.packageDir, "merge_*")
+	if err != nil {
+		return "", fmt.Errorf("failed to create merge temp dir: %w", err)
+	}
+	defer os.RemoveAll(workDir)
+
+	mergeRoot := filepath.Join(workDir, packageName)
+	for _, dir := range []string{"flow", "pktlog", "winlog"} {
+		if err := os.MkdirAll(filepath.Join(mergeRoot, dir), 0755); err != nil {
+			return "", err
+		}
+	}
+
+	var currentDesc RuleDescriptor
+	latestZipPath := filepath.Join(s.packageDir, "latest.zip")
+	if _, err := os.Stat(latestZipPath); err == nil {
+		currentExtractDir := filepath.Join(workDir, "current")
+		if err := os.MkdirAll(currentExtractDir, 0755); err != nil {
+			return "", err
+		}
+		if err := extractZipSecure(latestZipPath, currentExtractDir); err != nil {
+			return "", fmt.Errorf("failed to extract current latest.zip: %w", err)
+		}
+		currentDescPath, currentRoot, err := findPackageDescriptor(currentExtractDir)
+		if err != nil {
+			return "", fmt.Errorf("failed to read current package descriptor: %w", err)
+		}
+		data, err := os.ReadFile(currentDescPath)
+		if err != nil {
+			return "", err
+		}
+		if err := json.Unmarshal(data, &currentDesc); err != nil {
+			return "", fmt.Errorf("failed to parse current desc.json: %w", err)
+		}
+		for _, dir := range []string{"flow", "pktlog", "winlog"} {
+			if err := copyDirContents(filepath.Join(currentRoot, dir), filepath.Join(mergeRoot, dir)); err != nil {
+				return "", err
+			}
+		}
+	} else if !os.IsNotExist(err) {
+		return "", err
+	}
+
+	flowMap, pktlogMap, winlogMap := descriptorMaps(currentDesc)
+	if err := mergeRuleType(uploadRoot, mergeRoot, "flow", uploadDesc.Flow, flowMap); err != nil {
+		return "", err
+	}
+	if err := mergeRuleType(uploadRoot, mergeRoot, "pktlog", uploadDesc.PktLog, pktlogMap); err != nil {
+		return "", err
+	}
+	if err := mergeRuleType(uploadRoot, mergeRoot, "winlog", uploadDesc.WinLog, winlogMap); err != nil {
+		return "", err
+	}
+
+	mergedDesc := RuleDescriptor{
+		Version: version,
+		Flow:    sortedMetadata(flowMap),
+		PktLog:  sortedMetadata(pktlogMap),
+		WinLog:  sortedMetadata(winlogMap),
+	}
+
+	descData, err := json.MarshalIndent(mergedDesc, "", "  ")
+	if err != nil {
+		return "", err
+	}
+	if err := os.WriteFile(filepath.Join(mergeRoot, "desc.json"), descData, 0644); err != nil {
+		return "", err
+	}
+
+	zipPath := filepath.Join(s.packageDir, packageName+".zip")
+	if err := s.createZipArchive(mergeRoot, zipPath, packageName); err != nil {
+		return "", err
+	}
+
+	if err := s.publishLatest(zipPath, version); err != nil {
+		return "", err
+	}
+
+	logger.Infof("Published merged rule package version=%s flow=%d winlog=%d pktlog=%d",
+		version, len(mergedDesc.Flow), len(mergedDesc.WinLog), len(mergedDesc.PktLog))
+
+	return version, nil
+}
+
+func (s *Server) publishLatest(zipPath, version string) error {
+	zipMD5, err := calculateFileMD5(zipPath)
+	if err != nil {
+		return fmt.Errorf("failed to calculate package md5: %w", err)
+	}
+
+	versionData, err := json.MarshalIndent(RuleVersionInfo{Version: version, MD5: zipMD5}, "", "  ")
+	if err != nil {
+		return err
+	}
+
+	latestZipTmp := filepath.Join(s.packageDir, "latest.zip.tmp")
+	latestJSONTmp := filepath.Join(s.packageDir, "latest.json.tmp")
+	if err := copyFile(zipPath, latestZipTmp); err != nil {
+		return err
+	}
+	if err := os.WriteFile(latestJSONTmp, versionData, 0644); err != nil {
+		return err
+	}
+	if err := os.Rename(latestZipTmp, filepath.Join(s.packageDir, "latest.zip")); err != nil {
+		return err
+	}
+	if err := os.Rename(latestJSONTmp, filepath.Join(s.packageDir, "latest.json")); err != nil {
+		return err
+	}
+
+	logger.Infof("Updated latest.json/latest.zip version=%s md5=%s", version, zipMD5)
+	return nil
 }
 
 // generateRulePackage generates a rule package from MongoDB
@@ -571,6 +941,7 @@ func (s *Server) generateRulePackage() error {
 	}
 
 	// Generate desc.json
+	sortDescriptor(&descriptor)
 	descData, err := json.MarshalIndent(descriptor, "", "  ")
 	if err != nil {
 		return fmt.Errorf("failed to marshal descriptor: %w", err)
@@ -587,54 +958,21 @@ func (s *Server) generateRulePackage() error {
 		return fmt.Errorf("failed to create zip: %w", err)
 	}
 
-	// Calculate MD5 of ZIP file
-	zipMD5, err := calculateFileMD5(zipPath)
-	if err != nil {
-		return fmt.Errorf("failed to calculate MD5: %w", err)
-	}
-
-	// Generate latest.json
-	versionInfo := RuleVersionInfo{
-		Version: version,
-		MD5:     zipMD5,
-	}
-
-	versionData, err := json.MarshalIndent(versionInfo, "", "  ")
-	if err != nil {
-		return fmt.Errorf("failed to marshal version info: %w", err)
-	}
-
-	latestJSONPath := filepath.Join(s.packageDir, "latest.json")
-	if err := os.WriteFile(latestJSONPath, versionData, 0644); err != nil {
-		return fmt.Errorf("failed to write latest.json: %w", err)
-	}
-
-	// Copy/link to latest.zip
-	latestZipPath := filepath.Join(s.packageDir, "latest.zip")
-	os.Remove(latestZipPath) // Remove old link/file
-
-	// Copy file
-	src, err := os.Open(zipPath)
-	if err != nil {
-		return err
-	}
-	defer src.Close()
-
-	dst, err := os.Create(latestZipPath)
-	if err != nil {
-		return err
-	}
-	defer dst.Close()
-
-	if _, err := io.Copy(dst, src); err != nil {
+	if err := s.publishLatest(zipPath, version); err != nil {
 		return err
 	}
 
-	logger.Infof("Generated package: %s (MD5: %s)", packageName+".zip", zipMD5)
+	logger.Infof("Generated package: %s", packageName+".zip")
 	logger.Infof("Flow rules: %d, Winlog rules: %d, Pktlog rules: %d",
 		len(descriptor.Flow), len(descriptor.WinLog), len(descriptor.PktLog))
 
 	return nil
+}
+
+func sortDescriptor(desc *RuleDescriptor) {
+	sort.Slice(desc.Flow, func(i, j int) bool { return desc.Flow[i].ID < desc.Flow[j].ID })
+	sort.Slice(desc.PktLog, func(i, j int) bool { return desc.PktLog[i].ID < desc.PktLog[j].ID })
+	sort.Slice(desc.WinLog, func(i, j int) bool { return desc.WinLog[i].ID < desc.WinLog[j].ID })
 }
 
 // processActivityRulesFromMongoDB processes AlertActivityRule documents from MongoDB and splits them into pktlog/winlog
@@ -648,10 +986,21 @@ func (s *Server) processActivityRulesFromMongoDB(pktlogDir, winlogDir string, pk
 	}
 
 	logger.Infof("Found %d activity rules in MongoDB", len(activityRules))
+	sort.Slice(activityRules, func(i, j int) bool {
+		return activityRules[i].ID < activityRules[j].ID
+	})
 
 	for _, rule := range activityRules {
+		ruleCopy := rule
+		if !ruleCopy.CreateTm.IsZero() {
+			ruleCopy.RuleDate = ruleCopy.CreateTm.Format("2006/01/02")
+		}
+		if !ruleCopy.UpdateTm.IsZero() {
+			ruleCopy.RuleModified = ruleCopy.UpdateTm.Format("2006/01/02")
+		}
+
 		// Convert rule to YAML
-		ruleBytes, err := yaml.Marshal(&rule)
+		ruleBytes, err := yaml.Marshal(&ruleCopy)
 		if err != nil {
 			logger.Errorf("Failed to marshal activity rule %s: %v", rule.ID, err)
 			continue
@@ -664,13 +1013,15 @@ func (s *Server) processActivityRulesFromMongoDB(pktlogDir, winlogDir string, pk
 		var dstDir string
 		var metaList *[]RuleMetadata
 
-		if strings.Contains(rule.Logsource, "winlog") || strings.Contains(rule.Logsource, "windows") {
+		if strings.HasPrefix(rule.ID, "winlog-") || strings.Contains(rule.Logsource, "winlog") || strings.Contains(rule.Logsource, "windows") {
 			dstDir = winlogDir
 			metaList = winlogMeta
-		} else {
-			// Default to pktlog for other sources
+		} else if strings.HasPrefix(rule.ID, "pktlog-") || strings.Contains(rule.Logsource, "pktlog") {
 			dstDir = pktlogDir
 			metaList = pktlogMeta
+		} else {
+			logger.Warnf("Skipping activity rule %s with unknown type/logsource %q", rule.ID, rule.Logsource)
+			continue
 		}
 
 		dstPath := filepath.Join(dstDir, filename)
@@ -716,10 +1067,21 @@ func (s *Server) processFlowRulesFromMongoDB(dstDir string, metaList *[]RuleMeta
 	}
 
 	logger.Infof("Found %d alert rules in MongoDB", len(alertRules))
+	sort.Slice(alertRules, func(i, j int) bool {
+		return alertRules[i].ID < alertRules[j].ID
+	})
 
 	for _, rule := range alertRules {
+		ruleCopy := rule
+		if !ruleCopy.CreateTm.IsZero() {
+			ruleCopy.RuleDate = ruleCopy.CreateTm.Format("2006/01/02")
+		}
+		if !ruleCopy.UpdateTm.IsZero() {
+			ruleCopy.RuleModified = ruleCopy.UpdateTm.Format("2006/01/02")
+		}
+
 		// Convert rule to YAML
-		ruleBytes, err := yaml.Marshal(&rule)
+		ruleBytes, err := yaml.Marshal(&ruleCopy)
 		if err != nil {
 			logger.Errorf("Failed to marshal alert rule %s: %v", rule.ID, err)
 			continue
