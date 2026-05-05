@@ -42,17 +42,26 @@ func GetAlertCountsByLevel(e *config.Env, domains []string) (map[string]int32, e
 	result := make(map[string]int32)
 	tb := (&model.AlertEventESDB{}).CollectName()
 
-	// Query for unprocessed alerts (event_status = 0)
-	query := bson.D{
-		{Key: "event_status", Value: 0},
+	now := time.Now()
+	start := time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, now.Location())
+	end := start.AddDate(0, 0, 1)
+	startMs := start.UnixMilli()
+	endMs := end.UnixMilli()
+
+	queryParts := bson.A{
+		bson.M{"event_status": 0},
+		bson.M{"$or": bson.A{
+			bson.M{"start_ts": bson.M{"$gte": startMs, "$lt": endMs}},
+			bson.M{"create_tm": bson.M{"$gte": start, "$lt": end}},
+		}},
 	}
 
-	// Filter by domains if specified
-	if len(domains) > 0 {
-		query = append(query, bson.E{Key: "dc_hostname", Value: bson.D{{Key: "$in", Value: domains}}})
+	if domainFilter, ok := domainHostnameFilter(domains); ok {
+		queryParts = append(queryParts, domainFilter)
 	}
 
-	// Get all alert events
+	query := bson.M{"$and": queryParts}
+
 	var alerts []model.AlertEventESDB
 	err := e.MongoCli.FindAll(e.MongoContext(), tb, query, &alerts)
 	if err != nil {
@@ -66,15 +75,9 @@ func GetAlertCountsByLevel(e *config.Env, domains []string) (map[string]int32, e
 		levelCounts[alert.Level]++
 	}
 
-	// Convert to string keys: "high"=2, "medium"=3, "low"=4/5
 	for level, count := range levelCounts {
-		switch level {
-		case 2:
-			result["high"] = count
-		case 3:
-			result["medium"] = count
-		case 4, 5:
-			result["low"] += count
+		if key, ok := alertLevelKey(level); ok {
+			result[key] += count
 		}
 	}
 
@@ -100,19 +103,8 @@ func GetAlertTrendByMonth(e *config.Env, domains []string, year int) (*AlertTren
 		}},
 	}
 	if len(domains) > 0 {
-		domainFilters := make(bson.A, 0, len(domains))
-		for _, domain := range domains {
-			if domain == "" {
-				continue
-			}
-			domainFilters = append(domainFilters, bson.M{
-				"dc_hostname": bson.M{
-					"$regex": bson.Regex{Pattern: ".*" + regexp.QuoteMeta(domain) + "$", Options: "i"},
-				},
-			})
-		}
-		if len(domainFilters) > 0 {
-			queryParts = append(queryParts, bson.M{"$or": domainFilters})
+		if domainFilter, ok := domainHostnameFilter(domains); ok {
+			queryParts = append(queryParts, domainFilter)
 		}
 	}
 
@@ -242,6 +234,38 @@ func matchDomain(hostname string, domains []string) string {
 		}
 	}
 	return ""
+}
+
+func domainHostnameFilter(domains []string) (bson.M, bool) {
+	domainFilters := make(bson.A, 0, len(domains))
+	for _, domain := range domains {
+		normalizedDomain := strings.TrimSpace(domain)
+		if normalizedDomain == "" {
+			continue
+		}
+		domainFilters = append(domainFilters, bson.M{
+			"dc_hostname": bson.M{
+				"$regex": bson.Regex{Pattern: ".*" + regexp.QuoteMeta(normalizedDomain) + "$", Options: "i"},
+			},
+		})
+	}
+	if len(domainFilters) == 0 {
+		return nil, false
+	}
+	return bson.M{"$or": domainFilters}, true
+}
+
+func alertLevelKey(level int32) (string, bool) {
+	switch level {
+	case 5, 4:
+		return "high", true
+	case 3:
+		return "medium", true
+	case 2:
+		return "low", true
+	default:
+		return "", false
+	}
 }
 
 func fillDomainRiskSeries(trend *AlertTrendByMonth, riskByDomain map[string]*domainRisk) {
