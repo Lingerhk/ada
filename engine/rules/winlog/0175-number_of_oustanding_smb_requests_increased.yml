@@ -1,0 +1,42 @@
+title: Number of oustanding SMB requests increased
+id: winlog-0175
+status: experimental
+rule_origin: public
+description: Detects scenarios where an attacker (specially Blackcat) increase the number of oufstanding requests to distribute
+  malware payloads.
+references:
+- https://www.microsoft.com/en-us/security/blog/2022/06/13/the-many-lives-of-blackcat-ransomware/
+- https://learn.microsoft.com/en-us/previous-versions/windows/it-pro/windows-2000-server/cc960259(v=technet.10)
+- https://github.com/mdecrevoisier/SIGMA-detection-rules
+author: mdecrevoisier
+date: 2026/05/04
+modified: 2026/05/04
+tags:
+- TA0003
+- attack.t1021.002
+- attack.persistence
+logsource:
+  product: windows
+  category: process_creation
+detection:
+  selection:
+    NewProcessName|endswith: \reg.exe
+    CommandLine|contains|all:
+    - REG ADD
+    - \SYSTEM\CurrentControlSet\Services\LanmanServer\Parameters
+    - MaxMpxCt
+  condition: selection
+fields:
+- Hostname
+- CommandLine
+- NewProcessName
+unique_fields:
+- Hostname
+falsepositives:
+- system administrator activity or debugging
+level: medium
+x_source_repository: https://github.com/mdecrevoisier/SIGMA-detection-rules
+x_source_commit: ab15e29fcdbed297e305e2602881b8654946592c
+x_source_file: windows-os/win-os-SMB outstanding connection increase (command).yaml
+x_legacy_id: winlog-9000-0173
+x_legacy_file: engine/rules/winlog/sigma_ref/9000-0173-number_of_oustanding_smb_requests_increased.yml

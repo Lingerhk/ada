@@ -1,0 +1,49 @@
+title: Service creation (PowerShell)
+id: winlog-0293
+status: experimental
+rule_origin: public
+description: Detects scenarios where an attacker attempts to create a service for persistence.
+references:
+- https://github.com/mdecrevoisier/EVTX-to-MITRE-Attack/tree/master/TA0003-Persistence/T1543.003-Create%20or%20Modify%20System%20Process-Windows%20Service
+- https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.management/new-service?view=powershell-7.1
+- https://github.com/mdecrevoisier/SIGMA-detection-rules
+author: mdecrevoisier
+date: 2026/05/04
+modified: 2026/05/04
+tags:
+- TA0003
+- attack.t1543.003
+- attack.persistence
+logsource:
+  product: windows
+  category:
+  - ps_module
+  - ps_script
+detection:
+  selection2_powershell_modern:
+    EventID: 4103
+    Payload|contains|all:
+    - New-Service
+    - Name
+  selection3_powershell_block:
+    EventID: 4104
+    ScriptBlockText|contains|all:
+    - New-Service
+    - Name
+  condition: 1 of selection*
+fields:
+- Hostname
+- EventID
+- Payload
+- ScriptBlockText
+unique_fields:
+- Hostname
+falsepositives:
+- administrator deplying service
+- new application installation
+level: high
+x_source_repository: https://github.com/mdecrevoisier/SIGMA-detection-rules
+x_source_commit: ab15e29fcdbed297e305e2602881b8654946592c
+x_source_file: windows-services/win-os-service creation (PowerShell).yaml
+x_legacy_id: winlog-9000-0306
+x_legacy_file: engine/rules/winlog/sigma_ref/9000-0306-service_creation_powershell.yml

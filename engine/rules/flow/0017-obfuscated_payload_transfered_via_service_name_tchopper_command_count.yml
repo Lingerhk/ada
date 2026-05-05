@@ -1,0 +1,35 @@
+title: Obfuscated payload transfered via service name - Tchopper (command) Count
+id: flow-0017
+status: experimental
+rule_origin: public
+enable: true
+description: Detects scenarios where an attacker uses the Tchopper tool by abusing the display name of a service as a placeholder
+  to upload an obfuscated payload. With this command, attacker appends the current service name to a file.
+references:
+- https://github.com/mdecrevoisier/EVTX-to-MITRE-Attack/tree/master/TA0005-Defense%20Evasion/T1027-Obfuscated%20Files%20or%20Information
+- https://github.com/lawrenceamer/TChopper
+- https://github.com/mdecrevoisier/SIGMA-detection-rules
+author: mdecrevoisier
+date: 2026/05/04
+modified: 2026/05/04
+tags:
+- TA0005
+- attack.t1027
+- attack.defense_evasion
+logsource: flow
+detection:
+  event_type: count
+  win_size: 20m
+  sorted: false
+  sigma_rules:
+  - winlog-0233
+  match_by: $s1.EventRecordID._count > 50
+level: high
+unique_filter:
+- $s1.Hostname
+- ttl_1800
+x_source_repository: https://github.com/mdecrevoisier/SIGMA-detection-rules
+x_source_commit: ab15e29fcdbed297e305e2602881b8654946592c
+x_source_file: windows-os/win-os-payload obfuscated transfer via service name - Tchopper (command).yaml
+x_legacy_id: flow-9000-0015
+x_legacy_file: engine/rules/flow/sigma_ref/9000-0015-obfuscated_payload_transfered_via_service_name_tchopper_command_count.yml

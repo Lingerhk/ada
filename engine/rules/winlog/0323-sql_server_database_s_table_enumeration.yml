@@ -1,0 +1,44 @@
+title: SQL Server database's table enumeration
+id: winlog-0323
+status: experimental
+rule_origin: public
+description: Detects scenarios where an attacker attempts to enumerate local SQL Server tables (specially Veeam Backup).
+references:
+- https://labs.withsecure.com/publications/fin7-target-veeam-servers
+- https://blog.checkymander.com/red%20team/veeam/decrypt-veeam-passwords/
+- https://github.com/mdecrevoisier/SIGMA-detection-rules
+author: mdecrevoisier
+date: 2026/05/04
+modified: 2026/05/04
+tags:
+- TA0007
+- attack.t1518
+- attack.discovery
+logsource:
+  product: windows
+  category: process_creation
+detection:
+  selection:
+    NewProcessName|endswith: \sqlcmd.exe
+    CommandLine|contains:
+    - select
+    - use
+    - top
+    - from
+  condition: selection
+  timeframe: 5m
+fields:
+- Hostname
+- CommandLine
+- NewProcessName
+unique_fields:
+- Hostname
+falsepositives:
+- maintenance script
+- backup process
+level: medium
+x_source_repository: https://github.com/mdecrevoisier/SIGMA-detection-rules
+x_source_commit: ab15e29fcdbed297e305e2602881b8654946592c
+x_source_file: windows-sql_server/sql_server-table enumeration.yaml
+x_legacy_id: winlog-9000-0337
+x_legacy_file: engine/rules/winlog/sigma_ref/9000-0337-sql_server_database_s_table_enumeration.yml

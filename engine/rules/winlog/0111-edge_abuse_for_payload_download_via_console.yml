@@ -1,0 +1,53 @@
+title: Edge abuse for payload download via console
+id: winlog-0111
+status: experimental
+rule_origin: public
+description: Detects scenarios where an attacker attemptes to download a payload directly via console.
+references:
+- https://github.com/mdecrevoisier/EVTX-to-MITRE-Attack/tree/master/TA0002-Execution/T1204-User%20execution
+- https://twitter.com/mrd0x/status/1478116126005641220?t=i4vTR5m1ocBY6oHZfjdn1Q&s=09
+- https://github.com/mdecrevoisier/SIGMA-detection-rules
+author: mdecrevoisier
+date: 2026/05/04
+modified: 2026/05/04
+tags:
+- TA0002
+- attack.t1204
+- attack.execution
+logsource:
+  product: windows
+  category: process_creation
+detection:
+  selection:
+    EventID: 4688
+    Version: 2
+    ParentProcessName|endswith:
+    - \cmd.exe
+    - \powershell.exe
+    - \pwsh.exe
+    - \powershell_ise.exe
+    NewProcessName|endswith: \msedge.exe
+    CommandLine|contains:
+    - http://
+    - https://
+    - ftp://
+    - www.
+  condition: selection
+fields:
+- Hostname
+- CommandLine
+- EventID
+- NewProcessName
+- ParentProcessName
+- Version
+unique_fields:
+- Hostname
+falsepositives:
+- Shortcuts to website (--pin-url)
+- Websites launched from console
+level: high
+x_source_repository: https://github.com/mdecrevoisier/SIGMA-detection-rules
+x_source_commit: ab15e29fcdbed297e305e2602881b8654946592c
+x_source_file: windows-browser/win-browser-Edge abuse to download payload via console.yaml
+x_legacy_id: winlog-9000-0089
+x_legacy_file: engine/rules/winlog/sigma_ref/9000-0089-edge_abuse_for_payload_download_via_console.yml

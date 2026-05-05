@@ -1,0 +1,47 @@
+title: SQL Server - Connection attempt using a disabled account
+id: winlog-0316
+status: experimental
+rule_origin: public
+description: Detects scenarios where an attacker attempts authenticate to the database using a disabled user accont
+references:
+- https://github.com/mdecrevoisier/EVTX-to-MITRE-Attack/tree/master/TA0001-Initial%20access/T1078-Valid%20accounts
+- https://www.eraofdata.com/sql-server/connectivity/login-failures/
+- https://docs.microsoft.com/en-us/previous-versions/sql/sql-server-2008-r2/ms366351(v=sql.105)
+- https://github.com/mdecrevoisier/SIGMA-detection-rules
+author: mdecrevoisier
+date: 2026/05/04
+modified: 2026/05/04
+tags:
+- TA0000
+- attack.t1078
+- attack.valid_account
+logsource:
+  product: mssql
+  category: application
+detection:
+  selection_basic:
+    EventID: 18470
+  selection_advanced:
+    EventID: 33205
+    action_id:
+    - LGFL
+    - LGIF
+    class_type: LX
+    additional_information|contains: <state>7</state>
+  condition: selection_basic or selection_advanced
+fields:
+- Hostname
+- EventID
+- action_id
+- additional_information
+- class_type
+unique_fields:
+- Hostname
+falsepositives:
+- Miss configured accounts or scripts
+level: medium
+x_source_repository: https://github.com/mdecrevoisier/SIGMA-detection-rules
+x_source_commit: ab15e29fcdbed297e305e2602881b8654946592c
+x_source_file: windows-sql_server/sql_server-failed login with disabled user.yaml
+x_legacy_id: winlog-9000-0330
+x_legacy_file: engine/rules/winlog/sigma_ref/9000-0330-sql_server_connection_attempt_using_a_disabled_account.yml

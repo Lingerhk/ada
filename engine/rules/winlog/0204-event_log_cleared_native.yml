@@ -1,0 +1,37 @@
+title: Event log cleared (native)
+id: winlog-0204
+status: experimental
+rule_origin: public
+description: Detects scenarios where an attacker cleared the event logs.
+references:
+- https://github.com/mdecrevoisier/EVTX-to-MITRE-Attack/tree/master/TA0005-Defense%20Evasion/T1070.001-Clear%20Windows%20event%20logs
+- https://github.com/mdecrevoisier/SIGMA-detection-rules
+author: mdecrevoisier
+date: 2026/05/04
+modified: 2026/05/04
+tags:
+- TA0005
+- attack.t1070.001
+- attack.defense_evasion
+logsource:
+  product: windows
+  service: security, system
+detection:
+  selection:
+    EventID:
+    - 1102
+    - 104
+  condition: selection
+fields:
+- Hostname
+- EventID
+unique_fields:
+- Hostname
+falsepositives:
+- Exchange Servers
+level: high
+x_source_repository: https://github.com/mdecrevoisier/SIGMA-detection-rules
+x_source_commit: ab15e29fcdbed297e305e2602881b8654946592c
+x_source_file: windows-os/win-os-event log cleared (native).yaml
+x_legacy_id: winlog-9000-0205
+x_legacy_file: engine/rules/winlog/sigma_ref/9000-0205-event_log_cleared_native.yml

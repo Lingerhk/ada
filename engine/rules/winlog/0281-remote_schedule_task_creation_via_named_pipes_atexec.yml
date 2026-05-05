@@ -1,0 +1,45 @@
+title: Remote schedule task creation via named pipes (ATexec)
+id: winlog-0281
+status: experimental
+rule_origin: public
+description: Detects scenarios where an attacker remotely creates a scheduled task over named pipes to execute commands or
+  elevate privileges.
+references:
+- https://github.com/mdecrevoisier/EVTX-to-MITRE-Attack/tree/master/TA0002-Execution/T1053.005-Scheduled%20Task
+- https://github.com/SecureAuthCorp/impacket/blob/master/examples/atexec.py
+- https://u0041.co/blog/post/1
+- https://blog.menasec.net/2019/03/threat-hunting-25-scheduled-tasks-for.html
+- https://github.com/mdecrevoisier/SIGMA-detection-rules
+author: mdecrevoisier
+date: 2026/05/04
+modified: 2026/05/04
+tags:
+- TA0002
+- attack.t1053.005
+- attack.execution
+logsource:
+  product: windows
+  service: security
+detection:
+  selection:
+    EventID: 5145
+    ShareName: \\*\IPC$
+    RelativeTargetName: atsvc
+    AccessList|contains: '%%4417'
+  condition: selection
+fields:
+- Hostname
+- AccessList
+- EventID
+- RelativeTargetName
+- ShareName
+unique_fields:
+- Hostname
+falsepositives:
+- Administrator activity, backup solutions
+level: medium
+x_source_repository: https://github.com/mdecrevoisier/SIGMA-detection-rules
+x_source_commit: ab15e29fcdbed297e305e2602881b8654946592c
+x_source_file: windows-scheduled_task/win-os-scheduled task remote creation via named pipes (ATexec).yaml
+x_legacy_id: winlog-9000-0294
+x_legacy_file: engine/rules/winlog/sigma_ref/9000-0294-remote_schedule_task_creation_via_named_pipes_atexec.yml

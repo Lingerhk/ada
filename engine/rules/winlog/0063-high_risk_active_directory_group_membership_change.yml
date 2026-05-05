@@ -1,0 +1,48 @@
+title: High risk Active Directory group membership change
+id: winlog-0063
+status: experimental
+rule_origin: public
+description: Detects scenarios where a suspicious group membership is changed.
+references:
+- https://github.com/mdecrevoisier/EVTX-to-MITRE-Attack/tree/master/TA0003-Persistence/T1098.xxx-Account%20manipulation
+- https://ss64.com/nt/syntax-groups.html
+- https://docs.microsoft.com/en-us/windows/security/identity-protection/access-control/security-identifiers
+- https://github.com/mdecrevoisier/SIGMA-detection-rules
+author: mdecrevoisier
+date: 2026/05/04
+modified: 2026/05/04
+tags:
+- TA0003
+- attack.t1098
+- attack.persistence
+logsource:
+  product: windows
+  service: security
+detection:
+  selection:
+    EventID:
+    - 4728
+    - 4756
+    TargetSid|startswith: S-1-5-21-
+    TargetSid|endswith:
+    - '-512'
+    - '-518'
+    - '-519'
+    - '-520'
+    - '-526'
+    - '-527'
+  condition: selection
+fields:
+- Hostname
+- EventID
+- TargetSid
+unique_fields:
+- Hostname
+falsepositives:
+- Administrator activity
+level: high
+x_source_repository: https://github.com/mdecrevoisier/SIGMA-detection-rules
+x_source_commit: ab15e29fcdbed297e305e2602881b8654946592c
+x_source_file: windows-active_directory/win-ad-domain group membership change (high risk).yaml
+x_legacy_id: winlog-9000-0039
+x_legacy_file: engine/rules/winlog/sigma_ref/9000-0039-high_risk_active_directory_group_membership_change.yml

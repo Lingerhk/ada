@@ -1,0 +1,41 @@
+title: Task Manager used for LSASS dump (kernel)
+id: winlog-0146
+status: experimental
+rule_origin: public
+description: Detects scenarios where an attacker attempt to dump the LSASS process via the Task Manager.
+references:
+- https://superuser.com/questions/753556/taskmgr-exe-called-with-an-argument-by-windows-7
+- https://twitter.com/Cyb3rSn0rlax/status/1462900723402817538?t=oMj76JVcPG72ZIlpVxucPw&s=09
+- https://thedfirreport.com/2021/12/13/diavol-ransomware/
+- https://github.com/mdecrevoisier/SIGMA-detection-rules
+author: mdecrevoisier
+date: 2026/05/04
+modified: 2026/05/04
+tags:
+- TA0006
+- attack.t1003.001
+- attack.credential_access
+logsource:
+  product: windows
+  service: security
+detection:
+  selection:
+    EventID: 4663
+    ProcessName|endswith: \taskmgr.exe
+    ObjectName|endswith: \lsass.exe
+  condition: selection
+fields:
+- Hostname
+- EventID
+- ObjectName
+- ProcessName
+unique_fields:
+- Hostname
+falsepositives:
+- None
+level: high
+x_source_repository: https://github.com/mdecrevoisier/SIGMA-detection-rules
+x_source_commit: ab15e29fcdbed297e305e2602881b8654946592c
+x_source_file: windows-lsass/win-os-LSASS dump via Task Manager (kernel).yaml
+x_legacy_id: winlog-9000-0139
+x_legacy_file: engine/rules/winlog/sigma_ref/9000-0139-task_manager_used_for_lsass_dump_kernel.yml

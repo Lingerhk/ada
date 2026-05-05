@@ -1,0 +1,30 @@
+title: Kerberos Logon Followed By SAMR Group Enumeration
+id: flow-0002
+status: experimental
+rule_origin: internal
+enable: true
+description: Correlates a successful Kerberos network logon with subsequent SAMR group enumeration from the same host and
+  account within 60 seconds. This sequence can indicate post-authentication domain discovery.
+references:
+- https://learn.microsoft.com/en-us/windows/security/threat-protection/auditing/event-4624
+- https://learn.microsoft.com/en-us/windows/security/threat-protection/auditing/event-4661
+- https://attack.mitre.org/techniques/T1069/002/
+author: ADA default rules
+date: 2021/12/12
+modified: 2026/05/05
+tags:
+- TA0007
+- attack.t1069.002
+- attack.discovery
+logsource: flow
+detection:
+  event_type: multi_eve
+  win_size: 60s
+  sorted: false
+  sigma_rules:
+  - winlog-0001
+  - winlog-0006
+  match_by: $s1.TargetUserName == $s2.SubjectUserName AND $s1.Hostname == $s2.Hostname
+level: high
+x_legacy_id: flow-0002
+x_legacy_file: engine/rules/flow/0002-samr_sensitive_info_discovery.yml

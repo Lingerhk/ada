@@ -1,0 +1,58 @@
+title: PipeShell exfiltration over named pipes
+id: winlog-0173
+status: experimental
+rule_origin: public
+description: Detects scenarios where an attacker establishes "PipeShell" connection(s) between a server and client(s) in order
+  to move laterally or exfiltrate data. The server side will trigger "ServerStream" IOCs meanwhile the client side will trigger
+  "ClientStream" IOCs. The rule works based on this condition, where at least 2 hosts need to trigger one of the condition.
+references:
+- https://github.com/mdecrevoisier/EVTX-to-MITRE-Attack/tree/master/TA0002-Execution/T1059.001-PowerShell
+- https://github.com/threatexpress/invoke-pipeshell
+- https://github.com/p3nt4/Invoke-Piper/blob/master/Invoke-Piper.psm1
+- https://sudonull.com/post/25207-Using-Pipes-for-Pivoting
+- https://codewhitesec.blogspot.com/2020/01/cve-2019-19470-rumble-in-pipe.html
+- https://decoder.cloud/2019/03/06/windows-named-pipes-impersonation/
+- https://www.powershellgallery.com/packages/PSNamedPipe/1.0.0.19/Content/Public%5CNew-PSNamedPipeServer.ps1
+- https://github.com/mdecrevoisier/SIGMA-detection-rules
+author: mdecrevoisier
+date: 2026/05/04
+modified: 2026/05/04
+tags:
+- TA0002
+- attack.t1059.001
+- attack.execution
+- attack.exfiltration
+logsource:
+  product: windows
+  category:
+  - ps_module
+  - ps_script
+detection:
+  SERVER_powershell_modern:
+    EventID: 4103
+    Payload|contains: System.IO.Pipes.NamedPipeServerStream
+  SERVER_powershell_block:
+    EventID: 4104
+    ScriptBlockText|contains: System.IO.Pipes.NamedPipeServerStream
+  CLIENT_spowershell_modern:
+    EventID: 4103
+    Payload|contains: System.IO.Pipes.NamedPipeClientStream
+  CLIENT_powershell_block:
+    EventID: 4104
+    ScriptBlockText|contains: System.IO.Pipes.NamedPipeClientStream
+  condition: (1 of SERVER*) AND (1 of CLIENT*)
+  timeframe: 5m
+fields:
+- Hostname
+- EventID
+- Payload
+- ScriptBlockText
+unique_fields: []
+falsepositives:
+- packet manager
+level: medium
+x_source_repository: https://github.com/mdecrevoisier/SIGMA-detection-rules
+x_source_commit: ab15e29fcdbed297e305e2602881b8654946592c
+x_source_file: windows-os/win-os-PipeShell exfiltration over named pipes (PowerShell).yaml
+x_legacy_id: winlog-9000-0170
+x_legacy_file: engine/rules/winlog/sigma_ref/9000-0170-pipeshell_exfiltration_over_named_pipes.yml

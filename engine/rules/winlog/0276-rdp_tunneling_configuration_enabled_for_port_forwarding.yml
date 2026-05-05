@@ -1,0 +1,61 @@
+title: RDP tunneling configuration enabled for port forwarding
+id: winlog-0276
+status: experimental
+rule_origin: public
+description: Detects scenarios where an attacker configure port forwarding on a host to redirect traffic to a C&C target.
+references:
+- https://github.com/mdecrevoisier/EVTX-to-MITRE-Attack/tree/master/TA0011-Command%20and%20Control/T1090-Proxy
+- https://www.mandiant.com/resources/bypassing-network-restrictions-through-rdp-tunneling
+- https://embracethered.com/blog/posts/2020/windows-port-forward/
+- https://davidhamann.de/2019/06/20/setting-up-portproxy-netsh/
+- https://parsiya.net/blog/2016-06-07-windows-netsh-interface-portproxy/
+- https://www.real-sec.com/2019/04/bypassing-network-restrictions-through-rdp-tunneling/
+- https://media.defense.gov/2023/May/24/2003229517/-1/-1/0/CSA_Living_off_the_Land.PDF
+- https://www.microsoft.com/en-us/security/blog/2023/05/24/volt-typhoon-targets-us-critical-infrastructure-with-living-off-the-land-techniques/
+- https://practicalsecurityanalytics.com/how-to-leverage-internal-proxies-for-lateral-movement-firewall-evasion-and-trust-exploitation/
+- https://www.volexity.com/blog/2024/11/22/the-nearest-neighbor-attack-how-a-russian-apt-weaponized-nearby-wi-fi-networks-for-covert-access/
+- https://github.com/mdecrevoisier/SIGMA-detection-rules
+author: mdecrevoisier
+date: 2026/05/04
+modified: 2026/05/04
+tags:
+- TA0011
+- attack.t1572
+- attack.t1021.001
+- attack.command_and_control
+- attack.lateral_movement
+logsource:
+  product: windows
+  category: process_creation
+detection:
+  selection_event:
+    NewProcessName|endswith: \netsh.exe
+  selection_command:
+    Commandline|contains|all:
+    - interface
+    - portproxy
+    Commandline|contains:
+    - add
+    - reset
+  selection_obfuscated:
+    Commandline|contains|all:
+    - 'i '
+    - 'p '
+    Commandline|contains:
+    - 'a '
+    - 'r '
+  condition: selection_event and (selection_command or selection_obfuscated)
+fields:
+- Hostname
+- Commandline
+- NewProcessName
+unique_fields:
+- Hostname
+falsepositives:
+- Administrator activity
+level: high
+x_source_repository: https://github.com/mdecrevoisier/SIGMA-detection-rules
+x_source_commit: ab15e29fcdbed297e305e2602881b8654946592c
+x_source_file: windows-rdp/win-rdp-tunneling configuration enabled for port forwarding (command).yaml
+x_legacy_id: winlog-9000-0287
+x_legacy_file: engine/rules/winlog/sigma_ref/9000-0287-rdp_tunneling_configuration_enabled_for_port_forwarding.yml

@@ -1,0 +1,41 @@
+title: Massive service failures - Tchopper
+id: winlog-0298
+status: experimental
+rule_origin: public
+description: Detects scenarios where an attacker uses the Tchopper tool by abusing the display name of a service as a placeholder
+  to upload an obfuscated payload. Service name may come with very high entropy.
+references:
+- https://github.com/mdecrevoisier/EVTX-to-MITRE-Attack/tree/master/TA0002-Execution/T1569.002-Service%20execution
+- https://github.com/lawrenceamer/TChopper
+- https://github.com/mdecrevoisier/SIGMA-detection-rules
+author: mdecrevoisier
+date: 2026/05/04
+modified: 2026/05/04
+tags:
+- TA0002
+- attack.t1569
+- attack.execution
+logsource:
+  product: windows
+  service: system
+detection:
+  selection:
+    EventID:
+    - 7000
+    - 7009
+  condition: selection
+  timeframe: 20m
+fields:
+- Hostname
+- EventID
+- EventRecordID
+unique_fields:
+- Hostname
+falsepositives:
+- Missconfigured services
+level: high
+x_source_repository: https://github.com/mdecrevoisier/SIGMA-detection-rules
+x_source_commit: ab15e29fcdbed297e305e2602881b8654946592c
+x_source_file: windows-services/win-os-service massive failures - Tchopper (native).yaml
+x_legacy_id: winlog-9000-0312
+x_legacy_file: engine/rules/winlog/sigma_ref/9000-0312-massive_service_failures_tchopper.yml

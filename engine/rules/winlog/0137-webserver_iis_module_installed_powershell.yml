@@ -1,0 +1,50 @@
+title: Webserver IIS module installed (PowerShell)
+id: winlog-0137
+status: experimental
+rule_origin: public
+description: Detects scenarios where an attacker attempts to deploy an IIS module via PowerShell.
+references:
+- https://www.splunk.com/en_us/blog/security/fantastic-iis-modules-and-how-to-find-them.html
+- https://learn.microsoft.com/en-us/powershell/module/webadministration/new-webglobalmodule?view=windowsserver2022-ps
+- https://github.com/mdecrevoisier/SIGMA-detection-rules
+author: mdecrevoisier
+date: 2026/05/04
+modified: 2026/05/04
+tags:
+- TA0003
+- attack.t1505.004
+- attack.persistence
+logsource:
+  product: windows
+  category:
+  - ps_module
+  - ps_script
+detection:
+  selection_powershell_modern:
+    EventID: 4103
+    Payload|contains|all:
+    - New-WebGlobalModule
+    - -Image
+    - .dll
+  selection_powershell_block:
+    EventID: 4104
+    ScriptBlockText|contains|all:
+    - New-WebGlobalModule
+    - -Image
+    - .dll
+  condition: 1 of selection*
+fields:
+- Hostname
+- EventID
+- Payload
+- ScriptBlockText
+unique_fields:
+- Hostname
+falsepositives:
+- New modules deployed on IIS Web servers, but also Exchange and ADCS servers
+level: high
+x_source_repository: https://github.com/mdecrevoisier/SIGMA-detection-rules
+x_source_commit: ab15e29fcdbed297e305e2602881b8654946592c
+x_source_file: windows-iis/win-iis-web module loaded (PowerShell).yaml
+x_legacy_id: winlog-9000-0127
+x_legacy_file: engine/rules/winlog/sigma_ref/9000-0127-webserver_iis_module_installed_powershell.yml

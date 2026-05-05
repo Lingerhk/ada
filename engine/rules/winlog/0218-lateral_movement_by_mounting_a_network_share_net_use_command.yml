@@ -1,0 +1,48 @@
+title: Lateral movement by mounting a network share - net use (command)
+id: winlog-0218
+status: experimental
+rule_origin: public
+description: Detects scenarios where an attacker attempts to move laterally by mounting a network share using compromised
+  user credentials.
+references:
+- https://github.com/mdecrevoisier/EVTX-to-MITRE-Attack/tree/master/TA0008-Lateral%20Movement/T1021.002%20-SMB%20Windows%20Admin%20Shares
+- https://imphash.medium.com/detecting-lateral-movement-101-tracking-movement-smb-windows-admin-shares-through-windows-log-6005e3ba6980
+- https://stealthbits.com/blog/how-to-detect-pass-the-hash-attacks/
+- https://attack.mitre.org/software/S0039/
+- https://github.com/mdecrevoisier/SIGMA-detection-rules
+author: mdecrevoisier
+date: 2026/05/04
+modified: 2026/05/04
+tags:
+- TA0008
+- attack.t1021.002
+- attack.lateral_movement
+logsource:
+  product: windows
+  service: security
+detection:
+  selection_command:
+    EventID: 4688
+    NewProcessName|endswith:
+    - \net1.exe
+    - \net.exe
+    CommandLine|contains|all:
+    - net
+    - use
+    - '/user:'
+  condition: selection_command
+fields:
+- Hostname
+- CommandLine
+- EventID
+- NewProcessName
+unique_fields:
+- Hostname
+falsepositives:
+- Administrator activity
+level: medium
+x_source_repository: https://github.com/mdecrevoisier/SIGMA-detection-rules
+x_source_commit: ab15e29fcdbed297e305e2602881b8654946592c
+x_source_file: windows-os/win-os-lateral movement by mounting a network share (command).yaml
+x_legacy_id: winlog-9000-0219
+x_legacy_file: engine/rules/winlog/sigma_ref/9000-0219-lateral_movement_by_mounting_a_network_share_net_use_command.yml

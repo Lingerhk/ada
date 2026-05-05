@@ -1,0 +1,39 @@
+title: KrbRelayUp service installation (native)
+id: winlog-0285
+status: experimental
+rule_origin: public
+description: Detects scenarios where an attacker attempts to escalate privileges while abusing KrbRelayUp attack.
+references:
+- https://github.com/mdecrevoisier/EVTX-to-MITRE-Attack/tree/master/TA0002-Execution/T1569.002-Service%20execution
+- https://www.hub.trimarcsecurity.com/post/webcast-top-10-ways-to-improve-active-directory-security-quickly
+- https://github.com/Dec0ne/KrbRelayUp/blob/main/README.md
+- https://github.com/mdecrevoisier/SIGMA-detection-rules
+author: mdecrevoisier
+date: 2026/05/04
+modified: 2026/05/04
+tags:
+- TA0002
+- attack.t1569
+- attack.execution
+logsource:
+  product: windows
+  service: system
+detection:
+  selection:
+    EventID: 7045
+    ServiceName: KrbSCM
+  condition: selection
+fields:
+- Hostname
+- EventID
+- ServiceName
+unique_fields:
+- Hostname
+falsepositives:
+- None
+level: high
+x_source_repository: https://github.com/mdecrevoisier/SIGMA-detection-rules
+x_source_commit: ab15e29fcdbed297e305e2602881b8654946592c
+x_source_file: windows-services/win-os-service KrbRelay deployed (native).yaml
+x_legacy_id: winlog-9000-0298
+x_legacy_file: engine/rules/winlog/sigma_ref/9000-0298-krbrelayup_service_installation_native.yml

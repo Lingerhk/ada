@@ -1,0 +1,51 @@
+title: Suspicious anonymous login (domain specified)
+id: winlog-0221
+status: experimental
+rule_origin: public
+description: Detects scenarios where a suspicious anonymous login is performed during discovery phases.
+references:
+- https://github.com/mdecrevoisier/EVTX-to-MITRE-Attack/tree/master/TA0007-Discovery/T1046-Network%20Service%20Scanning
+- https://github.com/login-securite/DonPAPI
+- https://github.com/mdecrevoisier/SIGMA-detection-rules
+author: mdecrevoisier
+date: 2026/05/04
+modified: 2026/05/04
+tags:
+- TA0007
+- attack.t1046
+- attack.discovery
+logsource:
+  product: windows
+  service: security
+detection:
+  selection:
+    EventID: 4624
+    TargetUserSid: S-1-5-7
+    LogonType: 3
+    AuthenticationPackageName: NTLM
+  filter:
+  - IpAddress:
+    - '%vulnerability_scanners%'
+  - TargetDomainName:
+    - NT AUTHORITY
+    - AUTORITE NT
+    - NT AUTHORITÄT
+  condition: selection and not filter
+fields:
+- Hostname
+- AuthenticationPackageName
+- EventID
+- IpAddress
+- LogonType
+- TargetDomainName
+- TargetUserSid
+unique_fields:
+- Hostname
+falsepositives:
+- None
+level: high
+x_source_repository: https://github.com/mdecrevoisier/SIGMA-detection-rules
+x_source_commit: ab15e29fcdbed297e305e2602881b8654946592c
+x_source_file: windows-os/win-os-login anonymous suspicious.yaml
+x_legacy_id: winlog-9000-0222
+x_legacy_file: engine/rules/winlog/sigma_ref/9000-0222-suspicious_anonymous_login_domain_specified.yml

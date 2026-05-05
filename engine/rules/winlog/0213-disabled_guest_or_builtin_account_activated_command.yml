@@ -1,0 +1,50 @@
+title: Disabled guest or builtin account activated (command)
+id: winlog-0213
+status: experimental
+rule_origin: public
+description: Detects scenarios where an attacker enables a disabled builtin account via command line.
+references:
+- https://thedfirreport.com/2021/11/15/exchange-exploit-leads-to-domain-wide-ransomware/
+- https://github.com/mdecrevoisier/SIGMA-detection-rules
+author: mdecrevoisier
+date: 2026/05/04
+modified: 2026/05/04
+tags:
+- TA0003
+- attack.t1098
+- attack.persistence
+logsource:
+  product: windows
+  category: process_creation
+detection:
+  selection:
+    EventID: 4688
+    NewProcessName|endswith:
+    - \net1.exe
+    - \net.exe
+    CommandLine|contains|all:
+    - user
+    - active
+    - 'yes'
+    CommandLine|contains:
+    - Guest
+    - DefaultAccount
+    - support_388945a0
+    - HelpAssistant
+    - WDAGUtilityAccount
+  condition: selection
+fields:
+- Hostname
+- CommandLine
+- EventID
+- NewProcessName
+unique_fields:
+- Hostname
+falsepositives:
+- None
+level: high
+x_source_repository: https://github.com/mdecrevoisier/SIGMA-detection-rules
+x_source_commit: ab15e29fcdbed297e305e2602881b8654946592c
+x_source_file: windows-os/win-os-guest account activated (command).yaml
+x_legacy_id: winlog-9000-0214
+x_legacy_file: engine/rules/winlog/sigma_ref/9000-0214-disabled_guest_or_builtin_account_activated_command.yml

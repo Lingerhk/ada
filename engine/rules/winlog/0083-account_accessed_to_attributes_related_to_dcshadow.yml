@@ -1,0 +1,52 @@
+title: Account accessed to attributes related to DCshadow
+id: winlog-0083
+status: experimental
+rule_origin: public
+description: Detects scenarios where an attacker accessed attributes related to DCshadow attack in order to create a fake
+  domain controller.
+references:
+- https://github.com/mdecrevoisier/EVTX-to-MITRE-Attack/tree/master/TA0005-Defense%20Evasion/T1207-Rogue%20domain%20controller
+- https://www.ired.team/offensive-security-experiments/active-directory-kerberos-abuse/t1207-creating-rogue-domain-controllers-with-dcshadow
+- https://medium.com/@maarten.goet/dcshadow-detecting-a-rogue-domain-controller-replicating-malicious-changes-to-your-active-1e22440df9ad
+- https://github.com/AlsidOfficial/UncoverDCShadow
+- https://github.com/shellster/DCSYNCMonitor
+- https://blog.alsid.eu/dcshadow-explained-4510f52fc19d
+- https://stealthbits.com/blog/detecting-dcshadow-with-event-logs/
+- https://www.labofapenetrationtester.com/2018/05/dcshadow-sacl.html
+- https://blog.stealthbits.com/creating-persistence-with-dcshadow/
+- https://book.hacktricks.xyz/windows/active-directory-methodology/dcshadow
+- https://github.com/mdecrevoisier/SIGMA-detection-rules
+author: mdecrevoisier
+date: 2026/05/04
+modified: 2026/05/04
+tags:
+- TA0005
+- attack.t1207
+- attack.defense_evasion
+logsource:
+  product: windows
+  service: security
+detection:
+  selection:
+    EventID: 4662
+    Properties|contains:
+    - 1131f6ac-9c07-11d1-f79f-00c04fc2dcd2
+    - 9923a32a-3607-11d2-b9be-0000f87a36b2
+  filter:
+    SubjectUserName|endswith: $
+  condition: selection and not filter
+fields:
+- Hostname
+- EventID
+- Properties
+- SubjectUserName
+unique_fields:
+- Hostname
+falsepositives:
+- new domain controller registration
+level: high
+x_source_repository: https://github.com/mdecrevoisier/SIGMA-detection-rules
+x_source_commit: ab15e29fcdbed297e305e2602881b8654946592c
+x_source_file: windows-active_directory/win-ad-sensitive attributes accessed (DCshadow).yaml
+x_legacy_id: winlog-9000-0059
+x_legacy_file: engine/rules/winlog/sigma_ref/9000-0059-account_accessed_to_attributes_related_to_dcshadow.yml

@@ -1,0 +1,45 @@
+title: Remote service creation via named pipes
+id: winlog-0306
+status: experimental
+rule_origin: public
+description: Detects scenarios where an attacker remotely creates a service over named pipes. Tools like Tchopper or CrackMapExec
+  can trigger this rule.
+references:
+- https://github.com/mdecrevoisier/EVTX-to-MITRE-Attack/tree/master/TA0002-Execution/T1569.002-Service%20execution
+- https://github.com/mdecrevoisier/SIGMA-detection-rules
+author: mdecrevoisier
+date: 2026/05/04
+modified: 2026/05/04
+tags:
+- TA0002
+- attack.t1569
+- attack.execution
+logsource:
+  product: windows
+  service: security
+detection:
+  selection:
+    EventID: 5145
+    ShareName: \\*\IPC$
+    RelativeTargetName: svcctl
+    AccessList|contains: '%%4417'
+  filter:
+    SubjectUserName|endswith: $
+  condition: selection and not filter
+fields:
+- Hostname
+- AccessList
+- EventID
+- RelativeTargetName
+- ShareName
+- SubjectUserName
+unique_fields:
+- Hostname
+falsepositives:
+- Administrator activity, backup solutions
+level: medium
+x_source_repository: https://github.com/mdecrevoisier/SIGMA-detection-rules
+x_source_commit: ab15e29fcdbed297e305e2602881b8654946592c
+x_source_file: windows-services/win-os-service remote creation via named pipes.yaml
+x_legacy_id: winlog-9000-0320
+x_legacy_file: engine/rules/winlog/sigma_ref/9000-0320-remote_service_creation_via_named_pipes.yml

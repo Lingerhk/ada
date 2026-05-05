@@ -1,0 +1,42 @@
+title: Active Directory PowerShell module called from a non administrative host
+id: winlog-0049
+status: experimental
+rule_origin: public
+description: Detects scenarios where an attacker attempts to load the Active Directory PowerShell module on a non administrative
+  host in order to enumerate users, groups, ... Also note that no user information is reported by this event ID and that some
+  correation would be required.
+references:
+- https://github.com/mdecrevoisier/EVTX-to-MITRE-Attack/tree/master/TA0007-Discovery/T1087-Account%20discovery
+- https://github.com/mdecrevoisier/SIGMA-detection-rules
+author: mdecrevoisier
+date: 2026/05/04
+modified: 2026/05/04
+tags:
+- TA0007
+- attack.t1087.002
+- attack.discovery
+logsource:
+  product: windows
+  service: security
+detection:
+  selection:
+    EventID: 600
+    ProviderName: ActiveDirectory
+  filter:
+  - Hostname: '%admin_workstation%'
+  - Hostname: '%domain_controllers%'
+  condition: selection and not filter
+fields:
+- Hostname
+- EventID
+- ProviderName
+unique_fields:
+- Hostname
+falsepositives:
+- Adminitrative host, jump host, domain controllers, Exchange servers, application interacting with Active Directory modules
+level: medium
+x_source_repository: https://github.com/mdecrevoisier/SIGMA-detection-rules
+x_source_commit: ab15e29fcdbed297e305e2602881b8654946592c
+x_source_file: windows-active_directory/win-ad-PowerShell Active Directory module called from a non administrative host.yaml
+x_legacy_id: winlog-9000-0025
+x_legacy_file: engine/rules/winlog/sigma_ref/9000-0025-active_directory_powershell_module_called_from_a_non_administrative_host.yml

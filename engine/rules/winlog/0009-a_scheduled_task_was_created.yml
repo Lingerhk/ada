@@ -1,0 +1,45 @@
+title: Scheduled Task Created
+id: winlog-0009
+status: test
+rule_origin: internal
+description: Detects scheduled task creation using either Security event 4698 or Task Scheduler Operational event 106, excluding
+  known benign update tasks. Newly created tasks are often used for persistence or remote execution.
+references:
+- https://learn.microsoft.com/en-us/windows/security/threat-protection/auditing/event-4698
+- https://attack.mitre.org/techniques/T1053/005/
+author: ADA default rules
+date: 2017/03/09
+modified: 2026/05/05
+tags:
+- TA0003
+- TA0004
+- attack.t1053.005
+- attack.persistence
+- attack.privilege_escalation
+logsource: winlog
+detection:
+  selection_security:
+    Channel: Security
+    EventID: 4698
+  selection_taskscheduler:
+    Channel: Microsoft-Windows-TaskScheduler/Operational
+    EventID: 106
+  filter_ignore:
+    TaskName|contains:
+    - UpdateOrchestrator
+    - GoogleUpdater
+    - CreateExplorerShellUnelevatedTask
+    - Windows Defender Scheduled Scan
+  condition: (selection_security or selection_taskscheduler) and not filter_ignore
+fields:
+- Hostname
+- SubjectUserName
+- SubjectUserSid
+- TaskName
+- UserName
+unique_fields:
+- Hostname
+- SubjectUserName
+level: medium
+x_legacy_id: winlog-0103-0003
+x_legacy_file: engine/rules/winlog/0103-0003-scheduled_task_created.yml

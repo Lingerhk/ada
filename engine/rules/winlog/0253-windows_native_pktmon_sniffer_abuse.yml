@@ -1,0 +1,43 @@
+title: Windows native Pktmon sniffer abuse
+id: winlog-0253
+status: experimental
+rule_origin: public
+description: Detects scenarios where an attacker use the Windows sniffer Pktmon in order to capture sensitive information
+  or credentials.
+references:
+- https://github.com/mdecrevoisier/EVTX-to-MITRE-Attack/tree/master/TA0006-Credential%20Access/T1040-Traffic%20sniffing
+- https://dev.to/qainsights/windows-network-sniffer-pktmon-2576
+- https://docs.microsoft.com/en-us/windows-server/networking/technologies/pktmon/pktmon
+- https://github.com/mdecrevoisier/SIGMA-detection-rules
+author: mdecrevoisier
+date: 2026/05/04
+modified: 2026/05/04
+tags:
+- TA0006
+- attack.t1040
+- attack.credential_access
+logsource:
+  product: windows
+  category: process_creation
+detection:
+  selection:
+    NewProcessName|endswith: \PktMon.exe
+    CommandLine|contains|all:
+    - pktmon
+    - filter
+    - add
+  condition: selection
+fields:
+- Hostname
+- CommandLine
+- NewProcessName
+unique_fields:
+- Hostname
+falsepositives:
+- Administrator network troubleshooting
+level: medium
+x_source_repository: https://github.com/mdecrevoisier/SIGMA-detection-rules
+x_source_commit: ab15e29fcdbed297e305e2602881b8654946592c
+x_source_file: windows-os/win-os-sniffer Pktmon abuse (command).yaml
+x_legacy_id: winlog-9000-0258
+x_legacy_file: engine/rules/winlog/sigma_ref/9000-0258-windows_native_pktmon_sniffer_abuse.yml

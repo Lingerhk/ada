@@ -1,25 +1,32 @@
-title: Sensitive User Login
+title: Sensitive User NTLM Network Logon
 id: flow-0005
 status: experimental
-description: flow test description
+rule_origin: internal
+enable: true
+description: Correlates successful NTLM network logons against the configured sensitive-user cache. This rule promotes high-value
+  account activity into a dedicated alerting path.
 references:
-    - https://www.test.com
-author: test
+- https://learn.microsoft.com/en-us/windows/security/threat-protection/auditing/event-4624
+- https://attack.mitre.org/techniques/T1078/
+author: ADA default rules
 date: 2021/12/12
-modified: 2023/02/14
+modified: 2026/05/05
 tags:
-    - TA0007
-    - attack.t2056.002
+- TA0001
+- attack.t1078
+- attack.initial_access
 logsource: flow
 detection:
-    event_type: multi_eve
-    win_size: 5s
-    sigma_rules:
-        - "winlog-0104-0001" # event_log1, this is $s1, 4624 login
-    match_by: "$s1.TargetUserName in $v.cache.key_ada:engine:%s:sensitive_users($s1.TargetDomainName)" # 支持对应到domain
+  event_type: multi_eve
+  win_size: 5s
+  sigma_rules:
+  - winlog-0024
+  match_by: $s1.TargetUserName in $v.cache.key_ada:engine:%s:sensitive_users($s1.TargetDomainName)
 unique_filter:
-    - $s1.TargetDomainName
-    - $s1.TargetUserName
-    - $s1.IpAddress
-    - ttl_0 # 如果存在ttl_xx，则设置ttl
+- $s1.TargetDomainName
+- $s1.TargetUserName
+- $s1.IpAddress
+- ttl_0
 level: medium
+x_legacy_id: flow-0005
+x_legacy_file: engine/rules/flow/0005-sensitive_user_login.yml

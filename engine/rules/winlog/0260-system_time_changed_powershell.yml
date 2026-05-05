@@ -1,0 +1,49 @@
+title: System time changed (PowerShell)
+id: winlog-0260
+status: experimental
+rule_origin: public
+description: Detects scenarios where an attacker attempts to change the system time to evade defense.
+references:
+- https://github.com/mdecrevoisier/EVTX-to-MITRE-Attack/tree/master/TA0005-Defense%20Evasion/T1070.006-Timestomp
+- https://blog.menasec.net/2019/02/threat-hunting-19-suspicious-system.html
+- https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.utility/set-date
+- https://github.com/mdecrevoisier/SIGMA-detection-rules
+author: mdecrevoisier
+date: 2026/05/04
+modified: 2026/05/04
+tags:
+- TA0005
+- attack.t1070.006
+- attack.defense_evasion
+logsource:
+  product: windows
+  category:
+  - ps_module
+  - ps_script
+detection:
+  selection_powershell_modern:
+    EventID: 4103
+    Payload|contains:
+    - -Date
+    - -Adjust
+  selection_powershell_block:
+    EventID: 4104
+    ScriptBlockText|contains:
+    - -Date
+    - -Adjust
+  condition: selection_powershell_modern or selection_powershell_block
+fields:
+- Hostname
+- EventID
+- Payload
+- ScriptBlockText
+unique_fields:
+- Hostname
+falsepositives:
+- None
+level: medium
+x_source_repository: https://github.com/mdecrevoisier/SIGMA-detection-rules
+x_source_commit: ab15e29fcdbed297e305e2602881b8654946592c
+x_source_file: windows-os/win-os-time changed (PowerShell).yaml
+x_legacy_id: winlog-9000-0267
+x_legacy_file: engine/rules/winlog/sigma_ref/9000-0267-system_time_changed_powershell.yml

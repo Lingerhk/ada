@@ -1,0 +1,37 @@
+title: Hidden account fast deletion source
+id: winlog-0332
+status: experimental
+rule_origin: public
+description: Source deletion event for the hidden account creation multi-event flow rule.
+references:
+- https://github.com/mdecrevoisier/SIGMA-detection-rules
+author: mdecrevoisier
+date: 2026/05/04
+modified: 2026/05/05
+tags:
+- TA0003
+- attack.t1136
+- attack.persistence
+logsource:
+  product: windows
+  service: security
+detection:
+  selection_delete:
+    EventID: 4726
+  filter:
+    Hostname: '%domain_controllers%'
+  condition: selection_delete and not filter
+fields:
+- Hostname
+- EventID
+unique_fields:
+- Hostname
+falsepositives:
+- Administrator activity
+level: medium
+x_source_repository: https://github.com/mdecrevoisier/SIGMA-detection-rules
+x_source_commit: ab15e29fcdbed297e305e2602881b8654946592c
+x_source_file: windows-os/win-os-hidden account creation.yaml
+x_source_component: selection_delete
+x_legacy_id: winlog-9000-0348
+x_legacy_file: engine/rules/winlog/sigma_ref/9000-0348-hidden_account_deletion_source.yml

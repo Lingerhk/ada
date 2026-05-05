@@ -1,0 +1,34 @@
+title: User files dump via network share (DonPapi, Lazagne) Count
+id: flow-0022
+status: experimental
+rule_origin: public
+enable: true
+description: Detects scenarios where an attacker attempt to dump user profile information via network share.
+references:
+- https://github.com/mdecrevoisier/EVTX-to-MITRE-Attack/tree/master/TA0006-Credential%20Access/T1555-Credentials%20from%20Password%20Stores
+- https://github.com/login-securite/DonPAPI
+- https://github.com/mdecrevoisier/SIGMA-detection-rules
+author: mdecrevoisier
+date: 2026/05/04
+modified: 2026/05/04
+tags:
+- TA0006
+- attack.t1555
+- attack.credential_access
+logsource: flow
+detection:
+  event_type: count
+  win_size: 5m
+  sorted: false
+  sigma_rules:
+  - winlog-0266
+  match_by: $s1.RelativeTargetName._count > 15
+level: high
+unique_filter:
+- $s1.Hostname
+- ttl_1800
+x_source_repository: https://github.com/mdecrevoisier/SIGMA-detection-rules
+x_source_commit: ab15e29fcdbed297e305e2602881b8654946592c
+x_source_file: windows-os/win-os-user files dump via share (DonPapi, Lazagne).yaml
+x_legacy_id: flow-9000-0020
+x_legacy_file: engine/rules/flow/sigma_ref/9000-0020-user_files_dump_via_network_share_donpapi_lazagne_count.yml

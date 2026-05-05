@@ -1,0 +1,46 @@
+title: DoT (DNS over TLS) activation (command)
+id: winlog-0164
+status: stable
+rule_origin: public
+description: Detects scenarios where an attacker attempts to enable DNS over TLS in order to evade detection for command and
+  control purposes.
+references:
+- https://techcommunity.microsoft.com/t5/networking-blog/dns-over-tls-available-to-windows-insiders/ba-p/3565859
+- http://woshub.com/enable-dns-over-https-windows/
+- https://github.com/mdecrevoisier/SIGMA-detection-rules
+author: mdecrevoisier
+date: 2026/05/04
+modified: 2026/05/04
+tags:
+- TA0005
+- attack.t1071.004
+- attack.defense_evasion
+- attack.command_and_control
+logsource:
+  product: windows
+  category: process_creation
+detection:
+  selection_baseline:
+    EventID: 4688
+    NewProcessName|endswith: \netsh.exe
+    CommandLine|contains: add
+  selection_enable:
+    CommandLine|contains: dot=yes
+  selection_add_server:
+    CommandLine|contains: dothost=
+  condition: selection_baseline and (selection_enable OR selection_add_server)
+fields:
+- Hostname
+- CommandLine
+- EventID
+- NewProcessName
+unique_fields:
+- Hostname
+falsepositives:
+- Legitimate DoT activation by administrators
+level: medium
+x_source_repository: https://github.com/mdecrevoisier/SIGMA-detection-rules
+x_source_commit: ab15e29fcdbed297e305e2602881b8654946592c
+x_source_file: windows-os/win-os-DoT (DNS over TLS) activation (command).yaml
+x_legacy_id: winlog-9000-0159
+x_legacy_file: engine/rules/winlog/sigma_ref/9000-0159-dot_dns_over_tls_activation_command.yml

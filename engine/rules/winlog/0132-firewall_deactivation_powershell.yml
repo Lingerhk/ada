@@ -1,0 +1,53 @@
+title: Firewall deactivation (PowerShell)
+id: winlog-0132
+status: experimental
+rule_origin: public
+description: Detects scenarios where an attacker disabled the Windows Firewall to evade defense.
+references:
+- https://github.com/mdecrevoisier/EVTX-to-MITRE-Attack/tree/master/TA0005-Defense%20Evasion/T1562.004-Impair%20Defenses-Disable%20or%20Modify%20System%20Firewall
+- https://www.alitajran.com/disable-windows-firewall-with-powershell/
+- https://docs.microsoft.com/en-us/powershell/module/netsecurity/set-netfirewallprofile?view=windowsserver2019-ps
+- https://github.com/mdecrevoisier/SIGMA-detection-rules
+author: mdecrevoisier
+date: 2026/05/04
+modified: 2026/05/04
+tags:
+- TA0005
+- attack.t1562.004
+- attack.defense_evasion
+logsource:
+  product: windows
+  category:
+  - ps_module
+  - ps_script
+detection:
+  selection_powershell_modern:
+    EventID: 4103
+    Payload|contains|all:
+    - Set-NetFirewallProfile
+    - Profile
+    - Enabled
+    - 'False'
+  selection_powershell_block:
+    EventID: 4104
+    ScriptBlockText|contains|all:
+    - Set-NetFirewallProfile
+    - Profile
+    - Enabled
+    - 'False'
+  condition: selection_powershell_modern or selection_powershell_block
+fields:
+- Hostname
+- EventID
+- Payload
+- ScriptBlockText
+unique_fields:
+- Hostname
+falsepositives:
+- None
+level: high
+x_source_repository: https://github.com/mdecrevoisier/SIGMA-detection-rules
+x_source_commit: ab15e29fcdbed297e305e2602881b8654946592c
+x_source_file: windows-firewall/win-os-firewall deactivation (PowerShell).yaml
+x_legacy_id: winlog-9000-0119
+x_legacy_file: engine/rules/winlog/sigma_ref/9000-0119-firewall_deactivation_powershell.yml

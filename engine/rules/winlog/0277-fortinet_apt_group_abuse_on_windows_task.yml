@@ -1,0 +1,39 @@
+title: Fortinet APT group abuse on Windows (task)
+id: winlog-0277
+status: experimental
+rule_origin: public
+description: Detects scenarios where APT actors exploits Fortinet vulnerabilities to gain access into Windows infrastructure.
+references:
+- https://github.com/mdecrevoisier/EVTX-to-MITRE-Attack/tree/master/EVTX_full_APT_attack_steps
+- https://www.aha.org/system/files/media/file/2021/05/fbi-flash-tlp-white-apt-actors-exploiting-fortinet-vulnerabilities-to-gain-access-for-malicious-activity-5-27-21.pdf
+- https://www.securityweek.com/fbi-shares-iocs-apt-attacks-exploiting-fortinet-vulnerabilities
+- https://github.com/mdecrevoisier/SIGMA-detection-rules
+author: mdecrevoisier
+date: 2026/05/04
+modified: 2026/05/04
+tags:
+- TA0002
+- attack.t1053.005
+- attack.execution
+logsource:
+  product: windows
+  service: security
+detection:
+  selection:
+    EventID: 4698
+    TaskName|endswith: \SynchronizeTimeZone
+  condition: selection
+fields:
+- Hostname
+- EventID
+- TaskName
+unique_fields:
+- Hostname
+falsepositives:
+- None
+level: high
+x_source_repository: https://github.com/mdecrevoisier/SIGMA-detection-rules
+x_source_commit: ab15e29fcdbed297e305e2602881b8654946592c
+x_source_file: windows-scheduled_task/win-os-Fortinet APT group abuse on Windows (task).yaml
+x_legacy_id: winlog-9000-0290
+x_legacy_file: engine/rules/winlog/sigma_ref/9000-0290-fortinet_apt_group_abuse_on_windows_task.yml

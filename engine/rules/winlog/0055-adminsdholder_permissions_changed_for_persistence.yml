@@ -1,0 +1,48 @@
+title: AdminSDHolder permissions changed for persistence
+id: winlog-0055
+status: experimental
+rule_origin: public
+description: Detects scenarios where an attacker changes permissions on the AdminSDHolder container to establish persistence.
+references:
+- https://github.com/mdecrevoisier/EVTX-to-MITRE-Attack/tree/master/TA0003-Persistence/T1546-Event%20Triggered%20Execution
+- https://adsecurity.org/?p=1906
+- https://stealthbits.com/blog/20170619persistence-using-adminsdholder-and-sdprop/
+- https://attack.stealthbits.com/adminsdholder-modification-ad-persistence
+- https://adds-security.blogspot.com/2017/08/adminsdholder-backdoor-via-substitution.html
+- https://www.netwrix.com/adminsdholder_modification_ad_persistence.html
+- https://www.sentinelone.com/blog/protecting-your-active-directory-from-adminsdholder-attacks/
+- https://pentestlab.blog/2022/01/04/domain-persistence-adminsdholder/
+- https://github.com/mdecrevoisier/SIGMA-detection-rules
+author: mdecrevoisier
+date: 2026/05/04
+modified: 2026/05/04
+tags:
+- TA0003
+- attack.t1546
+- attack.persistence
+logsource:
+  product: windows
+  service: security
+detection:
+  selection:
+    EventID: 5136
+    OperationType: '%%14674'
+    AttributeLDAPDisplayName: nTSecurityDescriptor
+    ObjectDN|startswith: CN=AdminSDHolder,CN=System,*
+  condition: selection
+fields:
+- Hostname
+- AttributeLDAPDisplayName
+- EventID
+- ObjectDN
+- OperationType
+unique_fields:
+- Hostname
+falsepositives:
+- Unknown
+level: high
+x_source_repository: https://github.com/mdecrevoisier/SIGMA-detection-rules
+x_source_commit: ab15e29fcdbed297e305e2602881b8654946592c
+x_source_file: windows-active_directory/win-ad-adminsdholder permissions changed.yaml
+x_legacy_id: winlog-9000-0031
+x_legacy_file: engine/rules/winlog/sigma_ref/9000-0031-adminsdholder_permissions_changed_for_persistence.yml

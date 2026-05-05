@@ -1,0 +1,43 @@
+title: Scheduled task enumerated
+id: winlog-0280
+status: experimental
+rule_origin: public
+description: Detects scenarios where an attacker enumerates scheduled task configuration.
+references:
+- https://github.com/mdecrevoisier/EVTX-to-MITRE-Attack/tree/master/TA0007-Discovery/T1016-System%20Network%20Configuration%20Discovery
+- https://strontic.github.io/xcyclopedia/library/schtasks.exe-5BD86A7193D38880F339D4AFB1F9B63A.html
+- https://enigma0x3.net/2016/05/25/userland-persistence-with-scheduled-tasks-and-com-handler-hijacking/
+- https://github.com/mdecrevoisier/SIGMA-detection-rules
+author: mdecrevoisier
+date: 2026/05/04
+modified: 2026/05/04
+tags:
+- TA0007
+- attack.t1016
+- attack.discovery
+logsource:
+  product: windows
+  category: process_creation
+detection:
+  selection:
+    EventID: 4688
+    NewProcessName|endswith: \schtasks.exe
+    CommandLine|contains|all:
+    - schtasks
+    - query
+  condition: selection
+fields:
+- Hostname
+- CommandLine
+- EventID
+- NewProcessName
+unique_fields:
+- Hostname
+falsepositives:
+- Administrator checking task status
+level: medium
+x_source_repository: https://github.com/mdecrevoisier/SIGMA-detection-rules
+x_source_commit: ab15e29fcdbed297e305e2602881b8654946592c
+x_source_file: windows-scheduled_task/win-os-scheduled task enumeration (command).yaml
+x_legacy_id: winlog-9000-0293
+x_legacy_file: engine/rules/winlog/sigma_ref/9000-0293-scheduled_task_enumerated.yml

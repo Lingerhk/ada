@@ -1,0 +1,47 @@
+title: Detection of default a Windows host name in login attempts
+id: winlog-0224
+status: experimental
+rule_origin: public
+description: Detects scenarios where a default Windows host name pattern (WIN-...) is detected during a login attempt. Having
+  a host with a default name may be an indicator of a fresh machine deployed by an attacker to evade detection and perform
+  malicious activities.
+references:
+- https://cybercx.com.au/blog/akira-ransomware/
+- https://www.techtarget.com/searchenterprisedesktop/blog/Windows-Enterprise-Desktop/Win10-ComputerName-Generation
+- https://github.com/mdecrevoisier/SIGMA-detection-rules
+author: mdecrevoisier
+date: 2026/05/04
+modified: 2026/05/04
+tags:
+- TA0005
+- attack.t1564.006
+- attack.defense_evasion
+logsource:
+  product: windows
+  service: security
+detection:
+  selection:
+    EventID:
+    - 4624
+    - 4625
+    - 4776
+    WorkstationName|startswith:
+    - WIN-
+    - DESKTOP-
+    - PC-
+    - WORKSTATION-
+  condition: selection
+fields:
+- Hostname
+- EventID
+- WorkstationName
+unique_fields:
+- Hostname
+falsepositives:
+- companies using these default patterns
+level: medium
+x_source_repository: https://github.com/mdecrevoisier/SIGMA-detection-rules
+x_source_commit: ab15e29fcdbed297e305e2602881b8654946592c
+x_source_file: windows-os/win-os-login with default machine name.yaml
+x_legacy_id: winlog-9000-0225
+x_legacy_file: engine/rules/winlog/sigma_ref/9000-0225-detection_of_default_a_windows_host_name_in_login_attempts.yml

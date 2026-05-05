@@ -1,0 +1,46 @@
+title: Mimikatz driver deployed via service
+id: winlog-0168
+status: experimental
+rule_origin: public
+description: Detects scenarios where an attacker installs the Mimikatz driver to bypass the LSA protected mode (RunAsPPL)
+  and dump LSASS process content.
+references:
+- https://github.com/mdecrevoisier/EVTX-to-MITRE-Attack/tree/master/TA0003-Persistence/T1543.003-Create%20or%20Modify%20System%20Process-Windows%20Service
+- https://posts.specterops.io/mimidrv-in-depth-4d273d19e148?gi=a5033fbeb71d
+- https://gorkemkaradeniz.medium.com/defeating-runasppl-utilizing-vulnerable-drivers-to-read-lsass-with-mimikatz-28f4b50b1de5
+- https://github.com/mdecrevoisier/SIGMA-detection-rules
+author: mdecrevoisier
+date: 2026/05/04
+modified: 2026/05/04
+tags:
+- TA0004
+- attack.t1543.003
+- attack.privilege_escalation
+logsource:
+  product: windows
+  service:
+  - system
+  - security
+detection:
+  selection:
+    EventID:
+    - 4697
+    - 7045
+    ServiceName|contains:
+    - mimidrv
+    - mimikatz
+  condition: selection
+fields:
+- Hostname
+- EventID
+- ServiceName
+unique_fields:
+- Hostname
+falsepositives:
+- None
+level: high
+x_source_repository: https://github.com/mdecrevoisier/SIGMA-detection-rules
+x_source_commit: ab15e29fcdbed297e305e2602881b8654946592c
+x_source_file: windows-os/win-os-Mimikatz driver deployed via service.yaml
+x_legacy_id: winlog-9000-0163
+x_legacy_file: engine/rules/winlog/sigma_ref/9000-0163-mimikatz_driver_deployed_via_service.yml

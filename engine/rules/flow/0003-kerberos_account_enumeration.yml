@@ -1,0 +1,27 @@
+title: Kerberos Account Enumeration Burst
+id: flow-0003
+status: experimental
+rule_origin: internal
+enable: true
+description: Correlates five failed Kerberos TGT request events in a 10-second window. Bursts of failed Kerberos requests
+  can indicate automated account enumeration or Kerberos brute-force tooling.
+references:
+- https://learn.microsoft.com/en-us/windows/security/threat-protection/auditing/event-4768
+- https://attack.mitre.org/techniques/T1087/002/
+author: ADA default rules
+date: 2021/12/12
+modified: 2026/05/05
+tags:
+- TA0007
+- attack.t1087.002
+- attack.discovery
+logsource: flow
+detection:
+  event_type: count
+  win_size: 10s
+  sigma_rules:
+  - winlog-0004
+  match_by: $s1._count == 5
+level: medium
+x_legacy_id: flow-0003
+x_legacy_file: engine/rules/flow/0003-kerberos_account_enum.yml

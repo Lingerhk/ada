@@ -1,0 +1,43 @@
+title: SQL Server - Member got new privileges added on a database
+id: winlog-0319
+status: experimental
+rule_origin: public
+description: Detects scenarios where an attacker grants new privileges on a database level
+references:
+- https://github.com/mdecrevoisier/EVTX-to-MITRE-Attack/tree/master/TA0003-Persistence/T1098.xxx-Account%20manipulation
+- https://docs.microsoft.com/en-us/sql/relational-databases/security/auditing/sql-server-audit-action-groups-and-actions
+- https://docs.microsoft.com/en-us/sql/relational-databases/security/authentication-access/server-level-roles
+- https://github.com/mdecrevoisier/SIGMA-detection-rules
+author: mdecrevoisier
+date: 2026/05/04
+modified: 2026/05/04
+tags:
+- TA0000
+- attack.t1098
+- attack.account_manipulation
+logsource:
+  product: mssql
+  category: application
+detection:
+  selection:
+    EventID: 33205
+    action_id:
+    - G
+    - GWG
+    class_type: DB
+  condition: selection
+fields:
+- Hostname
+- EventID
+- action_id
+- class_type
+unique_fields:
+- Hostname
+falsepositives:
+- DBA activity
+level: medium
+x_source_repository: https://github.com/mdecrevoisier/SIGMA-detection-rules
+x_source_commit: ab15e29fcdbed297e305e2602881b8654946592c
+x_source_file: windows-sql_server/sql_server-member got new privileges on a database.yaml
+x_legacy_id: winlog-9000-0333
+x_legacy_file: engine/rules/winlog/sigma_ref/9000-0333-sql_server_member_got_new_privileges_added_on_a_database.yml

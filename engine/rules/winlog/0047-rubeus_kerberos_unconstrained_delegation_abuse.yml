@@ -1,0 +1,50 @@
+title: Rubeus Kerberos unconstrained delegation abuse
+id: winlog-0047
+status: experimental
+rule_origin: public
+description: Detects scenarios where an attacker abuse Kerberos unconstrained delegation for domain persistence.
+references:
+- https://dirkjanm.io/krbrelayx-unconstrained-delegation-abuse-toolkit/
+- https://www.harmj0y.net/blog/activedirectory/s4u2pwnage/
+- https://shenaniganslabs.io/2019/01/28/Wagging-the-Dog.html
+- https://www.ired.team/offensive-security-experiments/active-directory-kerberos-abuse/abusing-kerberos-constrained-delegation
+- https://www.guidepointsecurity.com/delegating-like-a-boss-abusing-kerberos-delegation-in-active-directory/
+- https://stealthbits.com/blog/what-is-kerberos-delegation-an-overview-of-kerberos-delegation/
+- https://www.thehacker.recipes/ad/movement/kerberos/delegations#talk
+- https://github.com/mdecrevoisier/SIGMA-detection-rules
+author: mdecrevoisier
+date: 2026/05/04
+modified: 2026/05/04
+tags:
+- TA0006
+- attack.t1558
+- attack.credential_access
+logsource:
+  product: windows
+  service: security
+detection:
+  selection:
+    EventID: 4769
+    TransmittedServices|contains: '@'
+    ServiceSid|endswith: '-502'
+  filter:
+  - TargetUserName: '%allowed_unconstrained_accounts%'
+  - IpAddress: '%domain_controllers_ips%'
+  condition: selection and not filter
+fields:
+- Hostname
+- EventID
+- IpAddress
+- ServiceSid
+- TargetUserName
+- TransmittedServices
+unique_fields:
+- Hostname
+falsepositives:
+- Accounts with unconstrained delegation enabled
+level: high
+x_source_repository: https://github.com/mdecrevoisier/SIGMA-detection-rules
+x_source_commit: ab15e29fcdbed297e305e2602881b8654946592c
+x_source_file: windows-active_directory/win-ad-Kerberos unconstrained domain persistence.yaml
+x_legacy_id: winlog-9000-0023
+x_legacy_file: engine/rules/winlog/sigma_ref/9000-0023-rubeus_kerberos_unconstrained_delegation_abuse.yml

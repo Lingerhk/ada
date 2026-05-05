@@ -1,0 +1,52 @@
+title: Windows Subsystem for Linux (WSL) installation (PowerShell)
+id: winlog-0327
+status: experimental
+rule_origin: public
+description: Detects scenarios where an attacker enables the WSL to cary out malicious activities in a virtual instance to
+  avoid detection.
+references:
+- https://www.hackers-arise.com/post/linux-basics-for-hackers-part-13-the-windows-subsystem-for-linux-wsl
+- https://linuxhint.com/enable-wsl-optional-component/
+- https://blog.lumen.com/no-longer-just-theory-black-lotus-labs-uncovers-linux-executables-deployed-as-stealth-windows-loaders/
+- https://learn.microsoft.com/en-us/windows/wsl/
+- https://github.com/mdecrevoisier/SIGMA-detection-rules
+author: mdecrevoisier
+date: 2026/05/04
+modified: 2026/05/04
+tags:
+- TA0005
+- attack.t1564.006
+- attack.defense_evasion
+logsource:
+  product: windows
+  category:
+  - ps_module
+  - ps_script
+detection:
+  selection2_powershell_modern:
+    EventID: 4103
+    Payload|contains:
+    - Enable-windowsOptionalFeature
+    - Microsoft-Windows-Subsystem-Linux
+  selection3_powershell_block:
+    EventID: 4104
+    ScriptBlockText|contains:
+    - Enable-windowsOptionalFeature
+    - Microsoft-Windows-Subsystem-Linux
+  condition: 1 of selection*
+fields:
+- Hostname
+- EventID
+- Payload
+- ScriptBlockText
+unique_fields:
+- Hostname
+falsepositives:
+- developer computer (with Visual Studio Code)
+- administrator activity
+level: medium
+x_source_repository: https://github.com/mdecrevoisier/SIGMA-detection-rules
+x_source_commit: ab15e29fcdbed297e305e2602881b8654946592c
+x_source_file: windows-wsl/win-os-Linux Subsystem (WSL) installation (PowerShell).yaml
+x_legacy_id: winlog-9000-0342
+x_legacy_file: engine/rules/winlog/sigma_ref/9000-0342-windows_subsystem_for_linux_wsl_installation_powershell.yml

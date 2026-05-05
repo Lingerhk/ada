@@ -1,0 +1,37 @@
+title: OCSP responder security settings changed
+id: winlog-0270
+status: experimental
+rule_origin: public
+description: Detects scenarios where an attacker would attempt to escalate privileges by changing the security settings of
+  the responder.
+references:
+- https://github.com/mdecrevoisier/EVTX-to-MITRE-Attack/tree/master/TA0005-Defense%20Evasion/T1222.001-File%20and%20Directory%20Permissions%20Modification
+- https://www.ultimatewindowssecurity.com/securitylog/encyclopedia/event.aspx?eventID=5124
+- https://github.com/mdecrevoisier/SIGMA-detection-rules
+author: mdecrevoisier
+date: 2026/05/04
+modified: 2026/05/04
+tags:
+- TA0005
+- attack.t1222
+- attack.defense_evasion
+logsource:
+  product: windows
+  service: security
+detection:
+  selection:
+    EventID: 5124
+  condition: selection
+fields:
+- Hostname
+- EventID
+unique_fields:
+- Hostname
+falsepositives:
+- Rare PKI/ADCS/OSCP admin changes
+level: high
+x_source_repository: https://github.com/mdecrevoisier/SIGMA-detection-rules
+x_source_commit: ab15e29fcdbed297e305e2602881b8654946592c
+x_source_file: windows-pki-ocsp/win-ocsp-security settings changed.yaml
+x_legacy_id: winlog-9000-0277
+x_legacy_file: engine/rules/winlog/sigma_ref/9000-0277-ocsp_responder_security_settings_changed.yml

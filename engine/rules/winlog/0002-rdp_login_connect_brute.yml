@@ -1,0 +1,31 @@
+title: RDP Listener Connection Received
+id: winlog-0002
+status: experimental
+rule_origin: internal
+description: Detects an inbound Remote Desktop listener connection recorded by Microsoft-Windows-TerminalServices-RemoteConnectionManager
+  event 261. This event is useful as the first observable RDP connection signal before authentication result events are emitted.
+references:
+- https://learn.microsoft.com/en-us/windows-server/remote/remote-desktop-services/remote-desktop-services-overview
+- https://attack.mitre.org/techniques/T1021/001/
+author: ADA default rules
+date: 2021/12/12
+modified: 2026/05/05
+tags:
+- TA0008
+- attack.t1021.001
+- attack.lateral_movement
+logsource: winlog
+detection:
+  selection1:
+    Channel: Microsoft-Windows-TerminalServices-RemoteConnectionManager/Operational
+    EventID: 261
+  condition: selection1
+fields:
+- Hostname
+- AccountName
+unique_fields:
+- Hostname
+- AccountName
+level: info
+x_legacy_id: winlog-0101-0001
+x_legacy_file: engine/rules/winlog/0101-0001-rdp_login_conn.yml

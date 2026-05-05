@@ -1,0 +1,42 @@
+title: Lateral movement detection (based on "special groups" feature)
+id: winlog-0219
+status: experimental
+rule_origin: public
+description: Detects scenarios where a user of a predefined set of group(s) logs on a target machine.
+references:
+- https://github.com/mdecrevoisier/EVTX-to-MITRE-Attack/tree/master/TA0005-Defense%20Evasion/T1078.002-Valid%20accounts-Domain%20accounts
+- https://docs.microsoft.com/en-us/windows/security/threat-protection/auditing/event-4964
+- https://docs.microsoft.com/en-us/windows/security/threat-protection/auditing/event-4908
+- https://docs.microsoft.com/fr-fr/archive/blogs/jepayne/tracking-lateral-movement-part-one-special-groups-and-specific-service-accounts
+- https://techcommunity.microsoft.com/t5/ask-the-directory-services-team/special-groups-auditing-via-group-policy-preferences/ba-p/395095
+- https://i.blackhat.com/us-18/Wed-August-8/us-18-Metcalf-From-Workstation-To-Domain-Admin-Why-Secure-Administration-Isnt-Secure.pdf
+- https://github.com/mdecrevoisier/SIGMA-detection-rules
+author: mdecrevoisier
+date: 2026/05/04
+modified: 2026/05/04
+tags:
+- TA0005
+- attack.t1078
+- attack.t1021.002
+- attack.defense_evasion
+- attack.lateral_movement
+logsource:
+  product: windows
+  service: security
+detection:
+  selection:
+    EventID: 4964
+  condition: selection
+fields:
+- Hostname
+- EventID
+unique_fields:
+- Hostname
+falsepositives:
+- Normal activity of a user member of a monitored group
+level: medium
+x_source_repository: https://github.com/mdecrevoisier/SIGMA-detection-rules
+x_source_commit: ab15e29fcdbed297e305e2602881b8654946592c
+x_source_file: windows-os/win-os-lateral movement detection (special groups).yaml
+x_legacy_id: winlog-9000-0220
+x_legacy_file: engine/rules/winlog/sigma_ref/9000-0220-lateral_movement_detection_based_on_special_groups_feature.yml

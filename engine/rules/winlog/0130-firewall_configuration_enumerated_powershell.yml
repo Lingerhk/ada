@@ -1,0 +1,51 @@
+title: Firewall configuration enumerated (PowerShell)
+id: winlog-0130
+status: experimental
+rule_origin: public
+description: Detects scenarios where an attacker attempts to extract current Windows firewall configuration to prepare an
+  attack.
+references:
+- https://github.com/mdecrevoisier/EVTX-to-MITRE-Attack/tree/master/TA0007-Discovery/T1016-System%20Network%20Configuration%20Discovery
+- https://docs.microsoft.com/en-us/powershell/module/netsecurity/get-netfirewallprofile?view=windowsserver2019-ps
+- https://github.com/mdecrevoisier/SIGMA-detection-rules
+author: mdecrevoisier
+date: 2026/05/04
+modified: 2026/05/04
+tags:
+- TA0007
+- attack.t1016
+- attack.discovery
+logsource:
+  product: windows
+  category:
+  - ps_module
+  - ps_script
+detection:
+  selection_powershell_modern:
+    EventID: 4103
+    Payload|contains:
+    - Get-NetFirewallProfile
+    - Get-NetFirewallRule
+    - Get-NetFirewallSetting
+  selection_powershell_block:
+    EventID: 4104
+    ScriptBlockText|contains:
+    - Get-NetFirewallProfile
+    - Get-NetFirewallRule
+    - Get-NetFirewallSetting
+  condition: selection_powershell_modern or selection_powershell_block
+fields:
+- Hostname
+- EventID
+- Payload
+- ScriptBlockText
+unique_fields:
+- Hostname
+falsepositives:
+- Administrator activity
+level: medium
+x_source_repository: https://github.com/mdecrevoisier/SIGMA-detection-rules
+x_source_commit: ab15e29fcdbed297e305e2602881b8654946592c
+x_source_file: windows-firewall/win-os-firewall configuration enumerated (PowerShell).yaml
+x_legacy_id: winlog-9000-0117
+x_legacy_file: engine/rules/winlog/sigma_ref/9000-0117-firewall_configuration_enumerated_powershell.yml

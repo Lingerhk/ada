@@ -1,0 +1,44 @@
+title: Certutil root certificate installation
+id: winlog-0195
+status: experimental
+rule_origin: public
+description: Detects scenarios where an attacker attempts to alter certificate chain validation by installing a root CA.
+references:
+- https://twitter.com/Alh4zr3d/status/1592925753984880641
+- https://specterops.io/wp-content/uploads/sites/3/2022/06/Certified_Pre-Owned.pdf
+- https://posts.specterops.io/code-signing-certificate-cloning-attacks-and-defenses-6f98657fc6ec
+- https://learn.microsoft.com/en-us/troubleshoot/windows-server/windows-security/import-third-party-ca-to-enterprise-ntauth-store#method-2---import-a-certificate-by-using-certutilexe
+- https://strontic.github.io/xcyclopedia/library/certutil.exe-138DC8312317ED386C1CB62E19EA9269.html
+- https://github.com/mdecrevoisier/SIGMA-detection-rules
+author: mdecrevoisier
+date: 2026/05/04
+modified: 2026/05/04
+tags:
+- TA0005
+- attack.t1553.004
+- attack.defense_evasion
+logsource:
+  product: windows
+  category: process_creation
+detection:
+  selection:
+    NewProcessName|endswith: \certutil.exe
+    Commandline|contains|all:
+    - -dspublish
+    - .crt
+    - NTAuthCA
+  condition: selection
+fields:
+- Hostname
+- Commandline
+- NewProcessName
+unique_fields:
+- Hostname
+falsepositives:
+- Administrator manually adding a root CA
+level: high
+x_source_repository: https://github.com/mdecrevoisier/SIGMA-detection-rules
+x_source_commit: ab15e29fcdbed297e305e2602881b8654946592c
+x_source_file: windows-os/win-os-certificate CA installation (command).yaml
+x_legacy_id: winlog-9000-0195
+x_legacy_file: engine/rules/winlog/sigma_ref/9000-0195-certutil_root_certificate_installation.yml

@@ -1,0 +1,44 @@
+title: Service abuse with malicious ImagePath (Reg via command)
+id: winlog-0291
+status: experimental
+rule_origin: public
+description: Detects scenarios where an attacker modify the original service executable path with a malicious one.
+references:
+- https://github.com/mdecrevoisier/EVTX-to-MITRE-Attack/tree/master/TA0003-Persistence/T1543.003-Create%20or%20Modify%20System%20Process-Windows%20Service
+- https://docs.microsoft.com/en-us/previous-versions/windows/it-pro/windows-server-2012-r2-and-2012/cc742019(v=ws.11)
+- https://pentestlab.blog/2020/01/22/persistence-modify-existing-service/
+- https://github.com/mdecrevoisier/SIGMA-detection-rules
+author: mdecrevoisier
+date: 2026/05/04
+modified: 2026/05/04
+tags:
+- TA0003
+- attack.t1574.010
+- attack.persistence
+logsource:
+  product: windows
+  category: process_creation
+detection:
+  selection:
+    EventID: 4688
+    NewProcessName|endswith: \reg.exe
+    CommandLine|contains|all:
+    - REG ADD
+    - \SYSTEM\CurrentControlSet\Services\
+    - ImagePath
+  condition: selection
+fields:
+- Hostname
+- CommandLine
+- EventID
+- NewProcessName
+unique_fields:
+- Hostname
+falsepositives:
+- administrator reconfiguring service
+level: high
+x_source_repository: https://github.com/mdecrevoisier/SIGMA-detection-rules
+x_source_commit: ab15e29fcdbed297e305e2602881b8654946592c
+x_source_file: windows-services/win-os-service abuse with malicious ImagePath (Reg via command).yaml
+x_legacy_id: winlog-9000-0304
+x_legacy_file: engine/rules/winlog/sigma_ref/9000-0304-service_abuse_with_malicious_imagepath_reg_via_command.yml

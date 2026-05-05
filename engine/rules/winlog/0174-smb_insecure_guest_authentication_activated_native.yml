@@ -1,0 +1,44 @@
+title: SMB insecure guest authentication activated (native)
+id: winlog-0174
+status: experimental
+rule_origin: public
+description: Detects scenarios where an attacker attempts to enable insecure guest authentication in order to access a remote
+  storage device (NAS) in order to perform some data exfiltration or lateral movement.
+references:
+- https://learn.microsoft.com/en-us/windows-hardware/customize/desktop/unattend/microsoft-windows-workstationservice-allowinsecureguestauth
+- https://github.com/mdecrevoisier/SIGMA-detection-rules
+author: mdecrevoisier
+date: 2026/05/04
+modified: 2026/05/04
+tags:
+- TA0008
+- attack.t1021.002
+- attack.t1562.010
+- attack.lateral_movement
+- attack.defense_evasion
+logsource:
+  product: windows
+  service: security
+detection:
+  selection:
+    Channel: Microsoft-Windows-SMBClient/Security
+    EventID: 31018
+    RegName: AllowInsecureGuestAuth
+    RegValue: 1
+  condition: selection
+fields:
+- Hostname
+- Channel
+- EventID
+- RegName
+- RegValue
+unique_fields:
+- Hostname
+falsepositives:
+- Admin activity (backup configuration)
+level: medium
+x_source_repository: https://github.com/mdecrevoisier/SIGMA-detection-rules
+x_source_commit: ab15e29fcdbed297e305e2602881b8654946592c
+x_source_file: windows-os/win-os-SMB insecure guest authentication activated (native).yaml
+x_legacy_id: winlog-9000-0172
+x_legacy_file: engine/rules/winlog/sigma_ref/9000-0172-smb_insecure_guest_authentication_activated_native.yml

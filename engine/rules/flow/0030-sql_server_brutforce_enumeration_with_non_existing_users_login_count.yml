@@ -1,0 +1,36 @@
+title: SQL Server - Brutforce enumeration with non existing users (login) Count
+id: flow-0030
+status: experimental
+rule_origin: public
+enable: true
+description: Detects scenarios where an attacker attempts to enumerate potential existing SQL users, resulting in failed logins
+  with unexisting or invalid accounts.
+references:
+- https://github.com/mdecrevoisier/EVTX-to-MITRE-Attack/tree/master/TA0006-Credential%20Access/T1110.xxx-Brut%20force
+- https://www.eraofdata.com/sql-server/connectivity/login-failures/
+- https://docs.microsoft.com/en-us/previous-versions/sql/sql-server-2008-r2/ms366351(v=sql.105)
+- https://github.com/mdecrevoisier/SIGMA-detection-rules
+author: mdecrevoisier
+date: 2026/05/04
+modified: 2026/05/04
+tags:
+- TA0006
+- attack.t1110
+- attack.credential_access
+logsource: flow
+detection:
+  event_type: count
+  win_size: 30m
+  sorted: false
+  sigma_rules:
+  - winlog-0313
+  match_by: $s1.server_principal_name._count > 20
+level: high
+unique_filter:
+- $s1.Hostname
+- ttl_1800
+x_source_repository: https://github.com/mdecrevoisier/SIGMA-detection-rules
+x_source_commit: ab15e29fcdbed297e305e2602881b8654946592c
+x_source_file: windows-sql_server/sql_server-brutforce enumeration with unexisting users.yaml
+x_legacy_id: flow-9000-0028
+x_legacy_file: engine/rules/flow/sigma_ref/9000-0028-sql_server_brutforce_enumeration_with_non_existing_users_login_count.yml

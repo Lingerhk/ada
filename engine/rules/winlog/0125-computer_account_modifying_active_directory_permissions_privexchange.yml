@@ -1,0 +1,46 @@
+title: Computer account modifying Active Directory permissions (PrivExchange)
+id: winlog-0125
+status: experimental
+rule_origin: public
+description: Detects scenarios where an attacker compromise a server with high privileges to perform permissions changes.
+  PrivExchange attack can be detected using this rule.
+references:
+- https://github.com/mdecrevoisier/EVTX-to-MITRE-Attack/tree/master/TA0005-Defense%20Evasion/T1222.001-File%20and%20Directory%20Permissions%20Modification
+- https://dirkjanm.io/abusing-exchange-one-api-call-away-from-domain-admin/
+- https://github.com/mdecrevoisier/SIGMA-detection-rules
+author: mdecrevoisier
+date: 2026/05/04
+modified: 2026/05/04
+tags:
+- TA0005
+- attack.t1222.001
+- attack.defense_evasion
+logsource:
+  product: windows
+  service: security
+detection:
+  selection:
+    EventID: 5136
+    AttributeLDAPDisplayName: ntSecurityDescriptor
+    OperationType: '%%14674'
+    SubjectUserName:
+    - srvexchange01$
+    - srvexchange02$
+    - srvexchange03$
+  condition: selection
+fields:
+- Hostname
+- AttributeLDAPDisplayName
+- EventID
+- OperationType
+- SubjectUserName
+unique_fields:
+- Hostname
+falsepositives:
+- Unknown
+level: high
+x_source_repository: https://github.com/mdecrevoisier/SIGMA-detection-rules
+x_source_commit: ab15e29fcdbed297e305e2602881b8654946592c
+x_source_file: windows-exchange/win-exchange-computer account modifying AD permissions (PrivExchange).yaml
+x_legacy_id: winlog-9000-0110
+x_legacy_file: engine/rules/winlog/sigma_ref/9000-0110-computer_account_modifying_active_directory_permissions_privexchange.yml

@@ -1,0 +1,33 @@
+title: SAMR Domain Group Enumeration
+id: winlog-0006
+status: experimental
+rule_origin: internal
+description: Detects Security Account Manager Remote Protocol activity that requests a handle to a SAM_GROUP object (Event
+  ID 4661). This can indicate domain group discovery through SAMR enumeration.
+references:
+- https://learn.microsoft.com/en-us/windows/security/threat-protection/auditing/event-4661
+- https://attack.mitre.org/techniques/T1069/002/
+author: ADA default rules
+date: 2021/12/12
+modified: 2026/05/05
+tags:
+- TA0007
+- attack.t1069.002
+- attack.discovery
+logsource: winlog
+detection:
+  selection1:
+    Channel: Security
+    EventID: 4661
+    ObjectType: SAM_GROUP
+  condition: selection1
+fields:
+- Hostname
+- SubjectUserName
+- SubjectUserSid
+unique_fields:
+- Hostname
+- SubjectUserName
+level: medium
+x_legacy_id: winlog-0102-0001
+x_legacy_file: engine/rules/winlog/0102-0001-samr_info_discovery.yml

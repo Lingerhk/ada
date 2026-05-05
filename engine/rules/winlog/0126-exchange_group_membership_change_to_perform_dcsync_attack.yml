@@ -1,0 +1,47 @@
+title: Exchange group membership change to perform DCsync attack
+id: winlog-0126
+status: experimental
+rule_origin: public
+description: Detects scenarios where an attacker adds its account into a sensitive Exchange group to obtain "Replicating Directory
+  Changes /all" and perform DCsync attack.
+references:
+- https://adsecurity.org/?p=4119
+- https://pentestlab.blog/2019/09/12/microsoft-exchange-acl/
+- https://github.com/mdecrevoisier/EVTX-to-MITRE-Attack/tree/master/TA0006-Credential%20Access
+- https://blog.fox-it.com/2018/04/26/escalating-privileges-with-acls-in-active-directory/
+- https://github.com/mdecrevoisier/SIGMA-detection-rules
+author: mdecrevoisier
+date: 2026/05/04
+modified: 2026/05/04
+tags:
+- TA0006
+- attack.t1003.006
+- attack.credential_access
+logsource:
+  product: windows
+  service: security
+detection:
+  selection:
+    EventID:
+    - 4728
+    - 4756
+    - 4732
+    TargetUserName:
+    - Exchange Trusted Subsystem
+    - Exchange Windows Permissions
+  condition: selection
+fields:
+- Hostname
+- EventID
+- TargetUserName
+unique_fields:
+- Hostname
+falsepositives:
+- Exchange administrator updating server configuration
+- Exchange upgrade or migration
+level: high
+x_source_repository: https://github.com/mdecrevoisier/SIGMA-detection-rules
+x_source_commit: ab15e29fcdbed297e305e2602881b8654946592c
+x_source_file: windows-exchange/win-exchange-group change DCsync attack.yaml
+x_legacy_id: winlog-9000-0111
+x_legacy_file: engine/rules/winlog/sigma_ref/9000-0111-exchange_group_membership_change_to_perform_dcsync_attack.yml

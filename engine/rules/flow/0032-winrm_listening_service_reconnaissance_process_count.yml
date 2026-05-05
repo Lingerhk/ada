@@ -1,0 +1,41 @@
+title: WinRM listening service reconnaissance (process) Count
+id: flow-0032
+status: experimental
+rule_origin: public
+enable: true
+description: Detects scenarios where an attacker enumerates different remote WinRM listeners for lateral movement purposes.
+references:
+- https://www.rapid7.com/blog/post/2012/11/08/abusing-windows-remote-management-winrm-with-metasploit/
+- https://securethelogs.com/2019/08/30/hacking-windows-remote-management-winrm/
+- https://www.ired.team/offensive-security/lateral-movement/winrs-for-lateral-movement
+- https://www.redcanary.com/blog/lateral-movement-winrm-wmi/
+- https://bohops.com/2020/05/12/ws-management-com-another-approach-for-winrm-lateral-movement/
+- https://threathunterplaybook.com/notebooks/windows/02_execution/WIN-190511223310.html
+- https://jpcertcc.github.io/ToolAnalysisResultSheet/details/WinRM.htm
+- https://github.com/bohops/WSMan-WinRM
+- https://github.com/mez-0/CSharpWinRM
+- https://github.com/antonioCoco/RogueWinRM
+- https://github.com/mdecrevoisier/SIGMA-detection-rules
+author: mdecrevoisier
+date: 2026/05/04
+modified: 2026/05/04
+tags:
+- TA0008
+- attack.t1021.006
+- attack.lateral_movement
+logsource: flow
+detection:
+  event_type: count
+  win_size: 15m
+  sorted: false
+  sigma_rules:
+  - winlog-0325
+  match_by: $s1.Hostname._count > 30
+level: medium
+unique_filter:
+- ttl_1800
+x_source_repository: https://github.com/mdecrevoisier/SIGMA-detection-rules
+x_source_commit: ab15e29fcdbed297e305e2602881b8654946592c
+x_source_file: windows-winrm/win-winrm-listening service reconnaissance (process).yaml
+x_legacy_id: flow-9000-0031
+x_legacy_file: engine/rules/flow/sigma_ref/9000-0031-winrm_listening_service_reconnaissance_process_count.yml

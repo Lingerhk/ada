@@ -1,0 +1,33 @@
+title: Anonymous login RottenPotatoNG Multi Event
+id: flow-0049
+status: experimental
+rule_origin: public
+enable: true
+description: Correlates local anonymous NTLM login and SYSTEM cmd.exe process creation for RottenPotatoNG activity.
+references:
+- https://github.com/mdecrevoisier/SIGMA-detection-rules
+author: mdecrevoisier
+date: 2026/05/04
+modified: 2026/05/05
+tags:
+- TA0004
+- attack.t1134
+- attack.privilege_escalation
+logsource: flow
+detection:
+  event_type: multi_eve
+  win_size: 5m
+  sorted: false
+  sigma_rules:
+  - winlog-0220
+  - winlog-0333
+  match_by: $s1.Hostname == $s2.Hostname
+level: high
+unique_filter:
+- $s1.Hostname
+- ttl_1800
+x_source_repository: https://github.com/mdecrevoisier/SIGMA-detection-rules
+x_source_commit: ab15e29fcdbed297e305e2602881b8654946592c
+x_source_file: windows-os/win-os-login anonymous (RottenPotatoNG).yaml
+x_legacy_id: flow-9000-0049
+x_legacy_file: engine/rules/flow/sigma_ref/9000-0049-rottenpotatong_multi_event.yml

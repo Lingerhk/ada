@@ -1,0 +1,50 @@
+title: SharpHound host enumeration over Kerberos
+id: winlog-0054
+status: experimental
+rule_origin: public
+description: Detect if a source host is requesting multiple Kerberos Service tickets (TGS) for different assets in a short
+  period of time.
+references:
+- https://docs.microsoft.com/en-us/windows/security/threat-protection/auditing/event-4769
+- https://github.com/mdecrevoisier/EVTX-to-MITRE-Attack/tree/master/TA0007-Discovery/T1087-Account%20discovery
+- https://www.splunk.com/en_us/blog/security/sharing-is-not-caring-hunting-for-file-share-discovery.html
+- https://github.com/mdecrevoisier/SIGMA-detection-rules
+author: mdecrevoisier
+date: 2026/05/04
+modified: 2026/05/04
+tags:
+- TA0007
+- attack.t1069.002
+- attack.t1087.002
+- attack.discovery
+logsource:
+  product: windows
+  service: security
+detection:
+  selection:
+    EventID: 4769
+    ServiceName|endswith: $
+    Status|contains: '0x0'
+  filter:
+  - IpAddress:
+    - ::1
+    - '%domain_controllers_ip%'
+  - TargetUserName|contains: $@
+  condition: selection and not filter
+fields:
+- Hostname
+- EventID
+- IpAddress
+- ServiceName
+- Status
+- TargetUserName
+unique_fields:
+- ServiceName
+falsepositives:
+- Administrator activity, backup software
+level: medium
+x_source_repository: https://github.com/mdecrevoisier/SIGMA-detection-rules
+x_source_commit: ab15e29fcdbed297e305e2602881b8654946592c
+x_source_file: windows-active_directory/win-ad-SharpHound host enumeration over Kerberos.yaml
+x_legacy_id: winlog-9000-0030
+x_legacy_file: engine/rules/winlog/sigma_ref/9000-0030-sharphound_host_enumeration_over_kerberos.yml

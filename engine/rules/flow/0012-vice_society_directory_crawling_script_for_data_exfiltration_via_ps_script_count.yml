@@ -1,0 +1,39 @@
+title: Vice Society directory crawling script for data exfiltration (via ps_script) Count
+id: flow-0012
+status: stable
+rule_origin: public
+enable: true
+description: Detects data exfiltration performed by the Vice Society ransomware gang using a custom built PowerShell script.
+  More precisely, the script enumerates the volumes mounted on the system, then starts crawling the different directories
+  before initiating the data exfiltration over HTTP by creating multiple different jobs. As PowerShell script block logs the
+  script execution into multiple events, the detection aggregates the different log chunks using the ScriptBlockId and then
+  ensure that at least 3 of the 4 detection strings are found.
+references:
+- https://unit42.paloaltonetworks.com/vice-society-ransomware-powershell/
+- https://github.com/mdecrevoisier/SIGMA-detection-rules
+author: mdecrevoisier
+date: 2026/05/04
+modified: 2026/05/04
+tags:
+- TA0002
+- attack.t1059.001
+- attack.t1041
+- attack.execution
+- attack.exfiltration
+logsource: flow
+detection:
+  event_type: count
+  win_size: 30m
+  sorted: false
+  sigma_rules:
+  - winlog-0207
+  match_by: $s1._count > 3
+level: high
+unique_filter:
+- $s1.ScriptBlockId
+- ttl_1800
+x_source_repository: https://github.com/mdecrevoisier/SIGMA-detection-rules
+x_source_commit: ab15e29fcdbed297e305e2602881b8654946592c
+x_source_file: windows-os/win-os-exfiltration from vice society (PowerShell).yaml
+x_legacy_id: flow-9000-0010
+x_legacy_file: engine/rules/flow/sigma_ref/9000-0010-vice_society_directory_crawling_script_for_data_exfiltration_via_ps_scri_count.yml
