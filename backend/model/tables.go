@@ -34,13 +34,13 @@ func (a *User) CollectName() string {
 // 日志审计
 type AuditLog struct {
 	ID          bson.ObjectID `bson:"_id,omitempty"` // ID
-	Username    string             `bson:"username"`      //登录用户
-	ClientIp    string             `bson:"client_ip"`     //源ip
-	Event       string             `bson:"event"`         //事件
-	EventArgs   string             `bson:"event_args"`    //事件参数
-	EventResult string             `bson:"event_result"`  //事件结果 //成功 失败
-	CreateTm    time.Time          `bson:"create_tm"`     // 添加时间
-	Status      int32              `bson:"status"`        // 数据状态 1删除 0正常
+	Username    string        `bson:"username"`      //登录用户
+	ClientIp    string        `bson:"client_ip"`     //源ip
+	Event       string        `bson:"event"`         //事件
+	EventArgs   string        `bson:"event_args"`    //事件参数
+	EventResult string        `bson:"event_result"`  //事件结果 //成功 失败
+	CreateTm    time.Time     `bson:"create_tm"`     // 添加时间
+	Status      int32         `bson:"status"`        // 数据状态 1删除 0正常
 }
 
 func (a *AuditLog) CollectName() string {
@@ -63,14 +63,14 @@ type DCList struct {
 }
 
 type Domain struct {
-	ID         bson.ObjectID `bson:"_id,omitempty"` // ID
-	Name       string             `bson:"name"`          // 域名
-	DCHostName string             `bson:"dc_hostname"`   // 域控DC主机名
-	Status     string             `bson:"status"`        // run|stop|init|error
-	LdapConf   map[string]string  `bson:"ldap_conf"`     // ldap配置
-	DCList     []DCList           `bson:"dc_list"`       // DC列表
-	CreateTm   time.Time          `bson:"create_tm"`     // 添加时间
-	ErrMsg     string             `bson:"err_msg"`       // 错误信息
+	ID         bson.ObjectID     `bson:"_id,omitempty"` // ID
+	Name       string            `bson:"name"`          // 域名
+	DCHostName string            `bson:"dc_hostname"`   // 域控DC主机名
+	Status     string            `bson:"status"`        // run|stop|init|error
+	LdapConf   map[string]string `bson:"ldap_conf"`     // ldap配置
+	DCList     []DCList          `bson:"dc_list"`       // DC列表
+	CreateTm   time.Time         `bson:"create_tm"`     // 添加时间
+	ErrMsg     string            `bson:"err_msg"`       // 错误信息
 }
 
 func (a *Domain) CollectName() string {
@@ -79,19 +79,19 @@ func (a *Domain) CollectName() string {
 
 // 系统信息表
 type SystemInfo struct {
-	ID             bson.ObjectID `bson:"_id,omitempty"`   // ID
-	SystemIP       string             `bson:"system_ip"`       // 系统IP
-	SystemName     string             `bson:"system_name"`     // 系统名称
-	SystemIcon     string             `bson:"system_icon"`     // 系统Logo
-	SystemVersion  string             `bson:"system_version"`  // 系统版本
-	UpgradeSrv     string             `bson:"upgrade_srv"`     // 更新srv地址
-	UpgradeRule    bool               `bson:"upgrade_rule"`    // 是否联网更新规则
-	NtpAddress     string             `bson:"ntp_address"`     // NTP服务器地址
-	SystemLanguage string             `bson:"system_language"` // 系统语言(EN/ZH)
-	SystemProxy    map[string]string  `bson:"system_proxy"`    // 系统代理: {"http_proxy":"","https_proxy":"","upgrade_proxy":"true","nodity_proxy":"false"}
-	StatsCfg       map[string]string  `bson:"stats_cfg"`       // 系统状态监控配置
-	CreateTm       time.Time          `bson:"create_tm"`       // 系统安装时间
-	UpgradeTm      time.Time          `bson:"upgrade_tm"`      // 系统上次更新时间
+	ID             bson.ObjectID     `bson:"_id,omitempty"`   // ID
+	SystemIP       string            `bson:"system_ip"`       // 系统IP
+	SystemName     string            `bson:"system_name"`     // 系统名称
+	SystemIcon     string            `bson:"system_icon"`     // 系统Logo
+	SystemVersion  string            `bson:"system_version"`  // 系统版本
+	UpgradeSrv     string            `bson:"upgrade_srv"`     // 更新srv地址
+	UpgradeRule    bool              `bson:"upgrade_rule"`    // 是否联网更新规则
+	NtpAddress     string            `bson:"ntp_address"`     // NTP服务器地址
+	SystemLanguage string            `bson:"system_language"` // 系统语言(EN/ZH)
+	SystemProxy    map[string]string `bson:"system_proxy"`    // 系统代理: {"http_proxy":"","https_proxy":"","upgrade_proxy":"true","nodity_proxy":"false"}
+	StatsCfg       map[string]string `bson:"stats_cfg"`       // 系统状态监控配置
+	CreateTm       time.Time         `bson:"create_tm"`       // 系统安装时间
+	UpgradeTm      time.Time         `bson:"upgrade_tm"`      // 系统上次更新时间
 }
 
 func (a *SystemInfo) CollectName() string {
@@ -100,14 +100,14 @@ func (a *SystemInfo) CollectName() string {
 
 // 消息列表
 type Notify struct {
-	ID        bson.ObjectID `bson:"_id"`        // ID
-	Title     string             `bson:"title"`      // 标题
-	MsgType   string             `bson:"msg_type"`   // 消息 扫描Scanner 告警事件Alert 系统消息System
-	EventType string             `bson:"event_type"` // 事件类型
-	Desc      string             `bson:"desc"`       // 描述
-	Params    map[string]string  `bson:"params"`     // 属性
-	Status    int32              `bson:"status"`     // 状态，0为未读，1为已读
-	CreateTm  time.Time          `bson:"create_tm"`  // 事件发生时间
+	ID        bson.ObjectID     `bson:"_id"`        // ID
+	Title     string            `bson:"title"`      // 标题
+	MsgType   string            `bson:"msg_type"`   // 消息 扫描Scanner 告警事件Alert 系统消息System
+	EventType string            `bson:"event_type"` // 事件类型
+	Desc      string            `bson:"desc"`       // 描述
+	Params    map[string]string `bson:"params"`     // 属性
+	Status    int32             `bson:"status"`     // 状态，0为未读，1为已读
+	CreateTm  time.Time         `bson:"create_tm"`  // 事件发生时间
 }
 
 func (n *Notify) CollectName() string {
@@ -116,16 +116,16 @@ func (n *Notify) CollectName() string {
 
 // NotifyConf 通知模块配置
 type NotifyConf struct {
-	ID          bson.ObjectID `bson:"_id,omitempty"` // 主键ID
-	ModuleName  string             `bson:"module_name"`   // alert,baseline,leak,system
-	NotifyType  string             `bson:"notify_type"`   // syslog,webhook,email
-	Endpoint    string             `bson:"endpoint"`      // 通知目标
-	MetaData    map[string]string  `bson:"metadata"`      // 存储数据，如email配置，sender,port,sender_identity,server,alert_interval
-	Remark      string             `bson:"remark"`        // 备注说明
-	Enable      string             `bson:"enable"`        // 是否开启,默认开启 开启enable 关闭disable
-	NotifyLevel []int32            `bson:"notify_level"`  // 需要告警的严重性限制 2,3,4,5
-	NotifyRules []string           `bson:"notify_rules"`  // 需要通知的rules，对于alert为flow_id，对于baseline/leak是plugin str(_id)，对于system: cpu/mem/disk/domain/sensor
-	UpdateTm    time.Time          `bson:"update_tm"`     // 修改时间
+	ID          bson.ObjectID     `bson:"_id,omitempty"` // 主键ID
+	ModuleName  string            `bson:"module_name"`   // alert,baseline,leak,system
+	NotifyType  string            `bson:"notify_type"`   // syslog,webhook,email
+	Endpoint    string            `bson:"endpoint"`      // 通知目标
+	MetaData    map[string]string `bson:"metadata"`      // 存储数据，如email配置，sender,port,sender_identity,server,alert_interval
+	Remark      string            `bson:"remark"`        // 备注说明
+	Enable      string            `bson:"enable"`        // 是否开启,默认开启 开启enable 关闭disable
+	NotifyLevel []int32           `bson:"notify_level"`  // 需要告警的严重性限制 2,3,4,5
+	NotifyRules []string          `bson:"notify_rules"`  // 需要通知的rules，对于alert为flow_id，对于baseline/leak是plugin str(_id)，对于system: cpu/mem/disk/domain/sensor
+	UpdateTm    time.Time         `bson:"update_tm"`     // 修改时间
 }
 
 func (c *NotifyConf) CollectName() string {
@@ -213,12 +213,12 @@ func (a *ScanPlugin) CollectName() string {
 // ScanTemplate 原来的扫描模板
 type ScanTemplate struct {
 	ID       bson.ObjectID `bson:"_id,omitempty"`
-	Name     string             `bson:"name"`
-	Type     string             `bson:"type"`      // baseline|leak|weakpwd
-	Plugins  []ScanPlugin       `bson:"plugins"`   //
-	TmplType int32              `bson:"tmpl_type"` // 模板类型：1:默认, 2:自定义
-	CreateTm time.Time          `bson:"create_tm"`
-	UpdateTm time.Time          `bson:"update_tm"`
+	Name     string        `bson:"name"`
+	Type     string        `bson:"type"`      // baseline|leak|weakpwd
+	Plugins  []ScanPlugin  `bson:"plugins"`   //
+	TmplType int32         `bson:"tmpl_type"` // 模板类型：1:默认, 2:自定义
+	CreateTm time.Time     `bson:"create_tm"`
+	UpdateTm time.Time     `bson:"update_tm"`
 }
 
 func (a *ScanTemplate) CollectName() string {
@@ -228,16 +228,16 @@ func (a *ScanTemplate) CollectName() string {
 // ScanTasks 列表
 type ScanTasks struct {
 	ID            bson.ObjectID `bson:"_id,omitempty"`
-	Type          string             `bson:"type"`    // baseline|leak|weakpwd
-	Status        string             `bson:"status"`  // PENDING|RUNNING|FINISH|FAILURE
-	Trigger       string             `bson:"trigger"` // once|cycle
-	SubTasksTotal int32              `bson:"subtasks_total"`
-	SubTasksFin   int32              `bson:"subtasks_finish"`
-	Domain        string             `bson:"domain"`
-	TemplateId    string             `bson:"template_id"`
-	ErrMsg        string             `bson:"error_msg"`
-	CreateTm      time.Time          `bson:"create_tm"`
-	UpdateTm      time.Time          `bson:"update_tm"`
+	Type          string        `bson:"type"`    // baseline|leak|weakpwd
+	Status        string        `bson:"status"`  // PENDING|RUNNING|FINISH|FAILURE
+	Trigger       string        `bson:"trigger"` // once|cycle
+	SubTasksTotal int32         `bson:"subtasks_total"`
+	SubTasksFin   int32         `bson:"subtasks_finish"`
+	Domain        string        `bson:"domain"`
+	TemplateId    string        `bson:"template_id"`
+	ErrMsg        string        `bson:"error_msg"`
+	CreateTm      time.Time     `bson:"create_tm"`
+	UpdateTm      time.Time     `bson:"update_tm"`
 }
 
 func (a *ScanTasks) CollectName() string {
@@ -275,15 +275,15 @@ type SubTaskResult struct {
 
 // ScanSubTasks 列表
 type ScanSubTasks struct {
-	ID       bson.ObjectID `bson:"_id,omitempty"`
-	TaskID   string             `bson:"task_id"`
-	GroupID  string             `bson:"group_id"`
-	Status   string             `bson:"status"`
-	Result   SubTaskResult      `bson:"result"`
-	Params   map[string]any     `bson:"params"`
-	ErrMsg   string             `bson:"error_msg"`
-	CreateTm time.Time          `bson:"create_tm"`
-	UpdateTm time.Time          `bson:"update_tm"`
+	ID       bson.ObjectID  `bson:"_id,omitempty"`
+	TaskID   string         `bson:"task_id"`
+	GroupID  string         `bson:"group_id"`
+	Status   string         `bson:"status"`
+	Result   SubTaskResult  `bson:"result"`
+	Params   map[string]any `bson:"params"`
+	ErrMsg   string         `bson:"error_msg"`
+	CreateTm time.Time      `bson:"create_tm"`
+	UpdateTm time.Time      `bson:"update_tm"`
 }
 
 func (a *ScanSubTasks) CollectName() string {
@@ -292,16 +292,16 @@ func (a *ScanSubTasks) CollectName() string {
 
 // ScanConf 列表
 type ScanConf struct {
-	ID        bson.ObjectID `bson:"_id,omitempty"`
-	Name      string             `bson:"name"`
-	TaskFun   string             `bson:"task_fun"` // ScannerBaselineTask|ScannerLeakTask|ScannerWeakPwdTask
-	Type      string             `bson:"type"`     // baseline|leak|weakpwd
-	IsEnable  bool               `bson:"is_enable"`
-	CycleType int32              `bson:"cycle_type"` // 1是day，2是week，3是month
-	RunTime   string             `bson:"run_time"`
-	Plans     map[string]string  `bson:"plans"` // domain: template_id
-	CreateTm  time.Time          `bson:"create_tm"`
-	UpdateTm  time.Time          `bson:"update_tm"`
+	ID        bson.ObjectID     `bson:"_id,omitempty"`
+	Name      string            `bson:"name"`
+	TaskFun   string            `bson:"task_fun"` // ScannerBaselineTask|ScannerLeakTask|ScannerWeakPwdTask
+	Type      string            `bson:"type"`     // baseline|leak|weakpwd
+	IsEnable  bool              `bson:"is_enable"`
+	CycleType int32             `bson:"cycle_type"` // 1是day，2是week，3是month
+	RunTime   string            `bson:"run_time"`
+	Plans     map[string]string `bson:"plans"` // domain: template_id
+	CreateTm  time.Time         `bson:"create_tm"`
+	UpdateTm  time.Time         `bson:"update_tm"`
 }
 
 func (a *ScanConf) CollectName() string {
@@ -339,6 +339,7 @@ type AlertRule struct {
 	Logsource    string         `bson:"logsource" yaml:"logsource"`                   // 日志来源
 	Detection    AlertDetection `bson:"detection" yaml:"detection"`                   // 检测配置
 	Type         string         `bson:"type" yaml:"type"`                             // 规则分类
+	RuleOrigin   string         `bson:"rule_origin" yaml:"rule_origin,omitempty"`     // 规则来源: internal|public|custom
 	References   []string       `bson:"references" yaml:"references,omitempty"`       // 规则参考
 	Suggestion   string         `bson:"suggestion" yaml:"suggestion,omitempty"`       // 修复建议
 	Author       string         `bson:"author" yaml:"author,omitempty"`               // 作者
@@ -372,23 +373,24 @@ func (r *AlertRule) CollectName() string {
 type ActivityDetection map[string]any
 
 type AlertActivityRule struct {
-	ID           string            `bson:"_id,omitempty" yaml:"id"`            // 与sigma rule中的id格式一致
-	Title        string            `bson:"title" yaml:"title"`                 // 规则标题
-	Description  string            `bson:"description" yaml:"description"`     // 规则描述
-	Level        int32             `bson:"level" yaml:"level"`                 // 风险等级,5:critical, 4:high, 3:medium, 2:low, 1:info
-	Status       string            `bson:"status" yaml:"status"`               // 状态, test|experimental|stable|deprecated
-	Tags         []string          `bson:"tags" yaml:"tags"`                   // 标签(MITRE ATT&CK等)
-	Logsource    string            `bson:"logsource" yaml:"logsource"`         // 日志来源
-	References   []string          `bson:"references" yaml:"references"`       // 规则参考
-	Detection    ActivityDetection `bson:"detection" yaml:"detection"`         // 检测配置(动态结构)
-	RdxKey       string            `bson:"rdx_key" yaml:"rdx_key,omitempty"`   // 规则缓存key
-	Fields       []string          `bson:"fields" yaml:"fields"`               // 提取字段
-	UniqueFields []string          `bson:"unique_fields" yaml:"unique_fields"` // 唯一字段hash
-	Author       string            `bson:"author" yaml:"author,omitempty"`     // 作者
-	RuleDate     string            `bson:"-" yaml:"date,omitempty"`            // 规则创建日期(YAML only)
-	RuleModified string            `bson:"-" yaml:"modified,omitempty"`        // 规则修改日期(YAML only)
-	CreateTm     time.Time         `bson:"create_tm" yaml:"-"`                 // 生成时间
-	UpdateTm     time.Time         `bson:"update_tm" yaml:"-"`                 // 修改时间
+	ID           string            `bson:"_id,omitempty" yaml:"id"`                  // 与sigma rule中的id格式一致
+	Title        string            `bson:"title" yaml:"title"`                       // 规则标题
+	Description  string            `bson:"description" yaml:"description"`           // 规则描述
+	Level        int32             `bson:"level" yaml:"level"`                       // 风险等级,5:critical, 4:high, 3:medium, 2:low, 1:info
+	Status       string            `bson:"status" yaml:"status"`                     // 状态, test|experimental|stable|deprecated
+	Tags         []string          `bson:"tags" yaml:"tags"`                         // 标签(MITRE ATT&CK等)
+	Logsource    string            `bson:"logsource" yaml:"logsource"`               // 日志来源
+	RuleOrigin   string            `bson:"rule_origin" yaml:"rule_origin,omitempty"` // 规则来源: internal|public|custom
+	References   []string          `bson:"references" yaml:"references"`             // 规则参考
+	Detection    ActivityDetection `bson:"detection" yaml:"detection"`               // 检测配置(动态结构)
+	RdxKey       string            `bson:"rdx_key" yaml:"rdx_key,omitempty"`         // 规则缓存key
+	Fields       []string          `bson:"fields" yaml:"fields"`                     // 提取字段
+	UniqueFields []string          `bson:"unique_fields" yaml:"unique_fields"`       // 唯一字段hash
+	Author       string            `bson:"author" yaml:"author,omitempty"`           // 作者
+	RuleDate     string            `bson:"-" yaml:"date,omitempty"`                  // 规则创建日期(YAML only)
+	RuleModified string            `bson:"-" yaml:"modified,omitempty"`              // 规则修改日期(YAML only)
+	CreateTm     time.Time         `bson:"create_tm" yaml:"-"`                       // 生成时间
+	UpdateTm     time.Time         `bson:"update_tm" yaml:"-"`                       // 修改时间
 }
 
 func (a *AlertActivityRule) CollectName() string {
@@ -397,21 +399,21 @@ func (a *AlertActivityRule) CollectName() string {
 
 // AlertActivityESDB 告警行为表(该表必须保持和engine/core/types.go:AlertActivityESDB一致)
 type AlertActivityESDB struct {
-	ID         bson.ObjectID `bson:"_id,omitempty" json:"activity_id"` // ID (AlertActivity.ID)
-	Title      string             `bson:"title" json:"title"`               // 告警标题(规则名称,即:RuleInfo.Name)
-	Desc       string             `bson:"desc" json:"desc"`                 // 告警描述(事件详细描述,即:RuleInfo.EventTmpl格式化)
-	RuleId     string             `bson:"rule_id" json:"rule_id"`           // sigma rule_id
-	UniqueId   string             `bson:"unique_id" json:"unique_id"`       // UniqueId, 通过src_ip, username，dcHostname进行hash，通过此ID关联activity到同一事件
-	AttCkId    string             `bson:"attck_id" json:"attck_id"`         // 规则ATT&CK Id,即:RuleTags[0])
-	Level      int32              `bson:"level" json:"level"`               // 风险等级, high,medium,low,info
-	Status     string             `bson:"status" json:"status"`             // 状态,由sigma status同步过来
-	Tags       []string           `bson:"tags" json:"tags"`                 // sigma rule tags
-	DcHostname string             `bson:"dc_hostname" json:"dc_hostname"`   // DC hostname
-	RawLog     string             `bson:"raw_log" json:"raw_log"`           // 关联原始日志
-	Result     string             `bson:"result" json:"result"`             // 攻击结果
-	FieldData  map[string]string  `bson:"field_data" json:"field_data"`     // 攻击源信息
-	CreateTm   time.Time          `bson:"create_tm" json:"create_tm"`       // 生成时间
-	TimeStamp  int64              `bson:"timestamp" json:"@timestamp"`      // 文档插入时间
+	ID         bson.ObjectID     `bson:"_id,omitempty" json:"activity_id"` // ID (AlertActivity.ID)
+	Title      string            `bson:"title" json:"title"`               // 告警标题(规则名称,即:RuleInfo.Name)
+	Desc       string            `bson:"desc" json:"desc"`                 // 告警描述(事件详细描述,即:RuleInfo.EventTmpl格式化)
+	RuleId     string            `bson:"rule_id" json:"rule_id"`           // sigma rule_id
+	UniqueId   string            `bson:"unique_id" json:"unique_id"`       // UniqueId, 通过src_ip, username，dcHostname进行hash，通过此ID关联activity到同一事件
+	AttCkId    string            `bson:"attck_id" json:"attck_id"`         // 规则ATT&CK Id,即:RuleTags[0])
+	Level      int32             `bson:"level" json:"level"`               // 风险等级, high,medium,low,info
+	Status     string            `bson:"status" json:"status"`             // 状态,由sigma status同步过来
+	Tags       []string          `bson:"tags" json:"tags"`                 // sigma rule tags
+	DcHostname string            `bson:"dc_hostname" json:"dc_hostname"`   // DC hostname
+	RawLog     string            `bson:"raw_log" json:"raw_log"`           // 关联原始日志
+	Result     string            `bson:"result" json:"result"`             // 攻击结果
+	FieldData  map[string]string `bson:"field_data" json:"field_data"`     // 攻击源信息
+	CreateTm   time.Time         `bson:"create_tm" json:"create_tm"`       // 生成时间
+	TimeStamp  int64             `bson:"timestamp" json:"@timestamp"`      // 文档插入时间
 }
 
 func (a *AlertActivityESDB) CollectName() string {
@@ -420,24 +422,24 @@ func (a *AlertActivityESDB) CollectName() string {
 
 // AlertEventESDB 告警行为 索引(该表必须保持和engine/core/types.go::AlertEventESDB一致)
 type AlertEventESDB struct {
-	ID          bson.ObjectID `bson:"_id,omitempty" json:"event_id"`    // ID (AlertEvent.ID)
-	Title       string             `bson:"title" json:"title"`               // 告警标题(规则名称,即:RuleInfo.Name)
-	Desc        string             `bson:"desc" json:"desc"`                 // 告警描述(事件详细描述,即:RuleInfo.EventTmpl格式化)
-	FlowId      string             `bson:"flow_id" json:"flow_id"`           // sigma flow_id
-	UniqueId    string             `bson:"unique_id" json:"unique_id"`       // UniqueId, 通过src_ip, username，dcHostname进行hash，通过此ID关联activity到同一事件
-	AttCkId     string             `bson:"attck_id" json:"attck_id"`         // 规则ATT&CK Id,即:RuleTags[0])
-	Level       int32              `bson:"level" json:"level"`               // 风险等级, high,middle,low
-	Status      string             `bson:"status" json:"status"`             // 规则状态,由sigma status同步过来
-	EventStatus int32              `bson:"event_status" json:"event_status"` // 事件状态, 0:未处理, 1:已处理 2:已加白 3:已阻断
-	Tags        []string           `bson:"tags" json:"tags"`                 // sigma rule tags
-	DcHostname  string             `bson:"dc_hostname" json:"dc_hostname"`   // DC hostname
-	ActivityIds []string           `bson:"activity_ids" json:"activity_ids"` // 关联行为日志(多条)
-	Result      string             `bson:"result" json:"result"`             // 攻击结果
-	Remark      string             `bson:"remark" json:"remark"`             // 备注说明（portal侧更新，默认为空）
-	FieldData   map[string]string  `bson:"field_data" json:"field_data"`     // 攻击源信息
-	CreateTm    time.Time          `bson:"create_tm" json:"create_tm"`       // 生成时间
-	StartTs     int64              `bson:"start_ts" json:"start_ts"`         // 事件开始时间
-	EndTs       int64              `bson:"end_ts" json:"end_ts"`             // 事件结束时间
+	ID          bson.ObjectID     `bson:"_id,omitempty" json:"event_id"`    // ID (AlertEvent.ID)
+	Title       string            `bson:"title" json:"title"`               // 告警标题(规则名称,即:RuleInfo.Name)
+	Desc        string            `bson:"desc" json:"desc"`                 // 告警描述(事件详细描述,即:RuleInfo.EventTmpl格式化)
+	FlowId      string            `bson:"flow_id" json:"flow_id"`           // sigma flow_id
+	UniqueId    string            `bson:"unique_id" json:"unique_id"`       // UniqueId, 通过src_ip, username，dcHostname进行hash，通过此ID关联activity到同一事件
+	AttCkId     string            `bson:"attck_id" json:"attck_id"`         // 规则ATT&CK Id,即:RuleTags[0])
+	Level       int32             `bson:"level" json:"level"`               // 风险等级, high,middle,low
+	Status      string            `bson:"status" json:"status"`             // 规则状态,由sigma status同步过来
+	EventStatus int32             `bson:"event_status" json:"event_status"` // 事件状态, 0:未处理, 1:已处理 2:已加白 3:已阻断
+	Tags        []string          `bson:"tags" json:"tags"`                 // sigma rule tags
+	DcHostname  string            `bson:"dc_hostname" json:"dc_hostname"`   // DC hostname
+	ActivityIds []string          `bson:"activity_ids" json:"activity_ids"` // 关联行为日志(多条)
+	Result      string            `bson:"result" json:"result"`             // 攻击结果
+	Remark      string            `bson:"remark" json:"remark"`             // 备注说明（portal侧更新，默认为空）
+	FieldData   map[string]string `bson:"field_data" json:"field_data"`     // 攻击源信息
+	CreateTm    time.Time         `bson:"create_tm" json:"create_tm"`       // 生成时间
+	StartTs     int64             `bson:"start_ts" json:"start_ts"`         // 事件开始时间
+	EndTs       int64             `bson:"end_ts" json:"end_ts"`             // 事件结束时间
 }
 
 func (a *AlertEventESDB) CollectName() string {
@@ -446,7 +448,7 @@ func (a *AlertEventESDB) CollectName() string {
 
 // AlertWhitelist 告警规则白名单
 type AlertWhitelist struct {
-	ID       bson.ObjectID  `bson:"_id,omitempty"` // ID (AlertEvent.ID)
+	ID       bson.ObjectID       `bson:"_id,omitempty"` // ID (AlertEvent.ID)
 	RuleId   string              `bson:"rule_id"`       // 规则ID
 	RuleName string              `bson:"rule_name"`     // 规则名称
 	RuleType string              `bson:"rule_type"`     // 告警类型 tag[0]
@@ -464,7 +466,7 @@ func (a *AlertWhitelist) CollectName() string {
 
 // AlertBlock 威胁阻断表
 type AlertBlock struct {
-	ID        bson.ObjectID  `bson:"_id,omitempty"` // ID
+	ID        bson.ObjectID       `bson:"_id,omitempty"` // ID
 	Name      string              `bson:"name"`          // 阻断名称
 	Domain    string              `bson:"domain"`        // Domain
 	Origin    int32               `bson:"origin"`        // 来源，分为自动和手动，0为自动，1为手动添加
@@ -484,13 +486,13 @@ func (a *AlertBlock) CollectName() string {
 
 // SensitiveEntry 敏感user/group/computer条目
 type SensitiveEntry struct {
-	ID       bson.ObjectID `bson:"_id,omitempty"` // ID
-	Domain   string             `bson:"domain"`
-	Type     string             `bson:"type"`      // user|group|computer|honeyuser
-	Content  map[string]string  `bson:"content"`   // 条目内容，如果是敏感组则包括guid,sid,name字段
-	Origin   int32              `bson:"origin"`    // 来源，分为自动和手动，0为ldap自动同步，1为页面手动添加
-	CreateTm time.Time          `bson:"create_tm"` // 添加时间
-	UpdateTm time.Time          `bson:"update_tm"` // 修改时间
+	ID       bson.ObjectID     `bson:"_id,omitempty"` // ID
+	Domain   string            `bson:"domain"`
+	Type     string            `bson:"type"`      // user|group|computer|honeyuser
+	Content  map[string]string `bson:"content"`   // 条目内容，如果是敏感组则包括guid,sid,name字段
+	Origin   int32             `bson:"origin"`    // 来源，分为自动和手动，0为ldap自动同步，1为页面手动添加
+	CreateTm time.Time         `bson:"create_tm"` // 添加时间
+	UpdateTm time.Time         `bson:"update_tm"` // 修改时间
 }
 
 func (a *SensitiveEntry) CollectName() string {
@@ -500,21 +502,21 @@ func (a *SensitiveEntry) CollectName() string {
 // AssetUser 资产表user
 type AssetUser struct {
 	ID                 bson.ObjectID `bson:"_id,omitempty"` // ID
-	SAMAccountName     string             `bson:"sAMAccountName"`
-	IsDelete           bool               `bson:"isDelete"`
-	Dn                 string             `bson:"dn"`
-	Name               string             `bson:"name"`
-	ObjectSid          string             `bson:"objectSid"`
-	Domain             string             `bson:"domain"`
-	LastLogon          int64              `bson:"lastLogon"`
-	PwdLastSet         int64              `bson:"pwdLastSet"`
-	Email              string             `bson:"email"`
-	PrimaryGroupID     int64              `bson:"primaryGroupID"`
-	ObjectGUID         string             `bson:"objectGUID"`
-	UserAccountControl int64              `bson:"userAccountControl"`
-	WhenCreated        int64              `bson:"whenCreated"`
-	WhenChanged        int64              `bson:"whenChanged"`
-	SyncTm             int64              `bson:"syncTm"`
+	SAMAccountName     string        `bson:"sAMAccountName"`
+	IsDelete           bool          `bson:"isDelete"`
+	Dn                 string        `bson:"dn"`
+	Name               string        `bson:"name"`
+	ObjectSid          string        `bson:"objectSid"`
+	Domain             string        `bson:"domain"`
+	LastLogon          int64         `bson:"lastLogon"`
+	PwdLastSet         int64         `bson:"pwdLastSet"`
+	Email              string        `bson:"email"`
+	PrimaryGroupID     int64         `bson:"primaryGroupID"`
+	ObjectGUID         string        `bson:"objectGUID"`
+	UserAccountControl int64         `bson:"userAccountControl"`
+	WhenCreated        int64         `bson:"whenCreated"`
+	WhenChanged        int64         `bson:"whenChanged"`
+	SyncTm             int64         `bson:"syncTm"`
 }
 
 func (a *AssetUser) CollectName() string {
@@ -524,22 +526,22 @@ func (a *AssetUser) CollectName() string {
 // AssetGroup 资产表group
 type AssetGroup struct {
 	ID                   bson.ObjectID `bson:"_id,omitempty"` // ID
-	SAMAccountName       string             `bson:"sAMAccountName"`
-	IsDelete             bool               `bson:"isDelete"`
-	Dn                   string             `bson:"dn"`
-	Name                 string             `bson:"name"`
-	ObjectSid            string             `bson:"objectSid"`
-	Domain               string             `bson:"domain"`
-	AdminCount           int64              `bson:"adminCount"`
-	GroupType            int64              `bson:"groupType"`     // Raw AD groupType bitmask value
-	GroupScope           string             `bson:"groupScope"`    // Global, DomainLocal, Universal, BuiltinLocal
-	GroupCategory        string             `bson:"groupCategory"` // Security, Distribution
-	ObjectGUID           string             `bson:"objectGUID"`
-	ObjectCategory       string             `bson:"objectCategory"`
-	NTSecurityDescriptor string             `bson:"nTSecurityDescriptor"`
-	WhenCreated          int64              `bson:"whenCreated"`
-	WhenChanged          int64              `bson:"whenChanged"`
-	SyncTm               int64              `bson:"syncTm"`
+	SAMAccountName       string        `bson:"sAMAccountName"`
+	IsDelete             bool          `bson:"isDelete"`
+	Dn                   string        `bson:"dn"`
+	Name                 string        `bson:"name"`
+	ObjectSid            string        `bson:"objectSid"`
+	Domain               string        `bson:"domain"`
+	AdminCount           int64         `bson:"adminCount"`
+	GroupType            int64         `bson:"groupType"`     // Raw AD groupType bitmask value
+	GroupScope           string        `bson:"groupScope"`    // Global, DomainLocal, Universal, BuiltinLocal
+	GroupCategory        string        `bson:"groupCategory"` // Security, Distribution
+	ObjectGUID           string        `bson:"objectGUID"`
+	ObjectCategory       string        `bson:"objectCategory"`
+	NTSecurityDescriptor string        `bson:"nTSecurityDescriptor"`
+	WhenCreated          int64         `bson:"whenCreated"`
+	WhenChanged          int64         `bson:"whenChanged"`
+	SyncTm               int64         `bson:"syncTm"`
 }
 
 func (a *AssetGroup) CollectName() string {
@@ -549,25 +551,25 @@ func (a *AssetGroup) CollectName() string {
 // AssetComputer 资产表computer
 type AssetComputer struct {
 	ID                     bson.ObjectID `bson:"_id,omitempty"` // ID
-	SAMAccountName         string             `bson:"sAMAccountName"`
-	IsDelete               bool               `bson:"isDelete"`
-	Dn                     string             `bson:"dn"`
-	Name                   string             `bson:"name"`
-	ObjectSid              string             `bson:"objectSid"`
-	Domain                 string             `bson:"domain"`
-	OperatingSystem        string             `bson:"operatingSystem"`
-	OperatingSystemVersion string             `bson:"operatingSystemVersion"`
-	DnsHostName            string             `bson:"dNSHostName"`
-	ServicePrincipalName   []string           `bson:"servicePrincipalName"`
-	CountryCode            int64              `bson:"countryCode"`
-	ObjectGUID             string             `bson:"objectGUID"`
-	IsCriticalSystemObject bool               `bson:"isCriticalSystemObject"`
-	UserAccountControl     int64              `bson:"userAccountControl"`
-	WhenCreated            int64              `bson:"whenCreated"`
-	WhenChanged            int64              `bson:"whenChanged"`
-	PrimaryGroupID         int64              `bson:"primaryGroupID"`
-	LastLogonTimestamp     int64              `bson:"lastLogonTimestamp"`
-	SyncTm                 int64              `bson:"syncTm"`
+	SAMAccountName         string        `bson:"sAMAccountName"`
+	IsDelete               bool          `bson:"isDelete"`
+	Dn                     string        `bson:"dn"`
+	Name                   string        `bson:"name"`
+	ObjectSid              string        `bson:"objectSid"`
+	Domain                 string        `bson:"domain"`
+	OperatingSystem        string        `bson:"operatingSystem"`
+	OperatingSystemVersion string        `bson:"operatingSystemVersion"`
+	DnsHostName            string        `bson:"dNSHostName"`
+	ServicePrincipalName   []string      `bson:"servicePrincipalName"`
+	CountryCode            int64         `bson:"countryCode"`
+	ObjectGUID             string        `bson:"objectGUID"`
+	IsCriticalSystemObject bool          `bson:"isCriticalSystemObject"`
+	UserAccountControl     int64         `bson:"userAccountControl"`
+	WhenCreated            int64         `bson:"whenCreated"`
+	WhenChanged            int64         `bson:"whenChanged"`
+	PrimaryGroupID         int64         `bson:"primaryGroupID"`
+	LastLogonTimestamp     int64         `bson:"lastLogonTimestamp"`
+	SyncTm                 int64         `bson:"syncTm"`
 }
 
 func (a *AssetComputer) CollectName() string {
@@ -576,17 +578,17 @@ func (a *AssetComputer) CollectName() string {
 
 // ExportTask
 type ExportTask struct {
-	ID       bson.ObjectID `bson:"_id,omitempty"` // 主键ID
-	Name     string             `bson:"name"`          // 名称
-	TaskID   string             `bson:"task_id"`       // (异步)任务ID
-	Type     string             `bson:"type"`          // alert/baseline/leak/weakpwd/system/audit
-	Params   map[string]string  `bson:"params"`        // 属性:{"domain":"A,B","start_tm":xxx,"end_tm":xxx}
-	FileType string             `bson:"file_type"`     // xlsx,pdf
-	Status   string             `bson:"status"`        // padding,doing,finish,failed
-	FilePath string             `bson:"file_path"`     // 文件存储位置
-	ErrMsg   string             `bson:"err_msg"`       // 错误信息
-	CreateTm time.Time          `bson:"create_tm"`     // 创建时间
-	UpdateTm time.Time          `bson:"update_tm"`     // 每次更新状态的时间
+	ID       bson.ObjectID     `bson:"_id,omitempty"` // 主键ID
+	Name     string            `bson:"name"`          // 名称
+	TaskID   string            `bson:"task_id"`       // (异步)任务ID
+	Type     string            `bson:"type"`          // alert/baseline/leak/weakpwd/system/audit
+	Params   map[string]string `bson:"params"`        // 属性:{"domain":"A,B","start_tm":xxx,"end_tm":xxx}
+	FileType string            `bson:"file_type"`     // xlsx,pdf
+	Status   string            `bson:"status"`        // padding,doing,finish,failed
+	FilePath string            `bson:"file_path"`     // 文件存储位置
+	ErrMsg   string            `bson:"err_msg"`       // 错误信息
+	CreateTm time.Time         `bson:"create_tm"`     // 创建时间
+	UpdateTm time.Time         `bson:"update_tm"`     // 每次更新状态的时间
 }
 
 func (c *ExportTask) CollectName() string {
@@ -611,14 +613,14 @@ func (s *SystemLogs) CollectName() string {
 // AccessKey API密钥表
 type AccessKey struct {
 	ID         bson.ObjectID `bson:"_id,omitempty"` // ID
-	Username   string             `bson:"username"`      // 所属用户
-	SecretKey  string             `bson:"secret_key"`    // SecretKey(masked storage: 'sk-xx*****xxx')
-	SecretHash string             `bson:"secret_hash"`   // SecretKey Hash
-	Remark     string             `bson:"remark"`        // 备注
-	Status     string             `bson:"status"`        // 状态: active|disabled
-	ActiveTm   time.Time          `bson:"active_tm"`     // 活跃时间
-	CreateTm   time.Time          `bson:"create_tm"`     // 创建时间
-	UpdateTm   time.Time          `bson:"update_tm"`     // 更新时间
+	Username   string        `bson:"username"`      // 所属用户
+	SecretKey  string        `bson:"secret_key"`    // SecretKey(masked storage: 'sk-xx*****xxx')
+	SecretHash string        `bson:"secret_hash"`   // SecretKey Hash
+	Remark     string        `bson:"remark"`        // 备注
+	Status     string        `bson:"status"`        // 状态: active|disabled
+	ActiveTm   time.Time     `bson:"active_tm"`     // 活跃时间
+	CreateTm   time.Time     `bson:"create_tm"`     // 创建时间
+	UpdateTm   time.Time     `bson:"update_tm"`     // 更新时间
 }
 
 func (a *AccessKey) CollectName() string {

@@ -1737,6 +1737,7 @@ message AlertRuleInfo {
   repeated string uniqueFilter = 16; // 唯一性过滤器
   string createTm = 17;
   string updateTm = 18;
+  string ruleOrigin = 19; // 规则来源: internal/public/custom
 }
 
 message ListAlertRuleReply {
@@ -1769,6 +1770,7 @@ message AddAlertRuleReq {
   bool autoBlock = 14;
   AttackFlowReply attackFlow = 15;
   repeated string uniqueFilter = 16; // 唯一性过滤器
+  string ruleOrigin = 17; // 规则来源: internal/public/custom
 }
 
 message AddAlertRuleReply {
@@ -1793,6 +1795,7 @@ message UpdateAlertRuleReq {
   bool autoBlock = 14;
   AttackFlowReply attackFlow= 15;
   repeated string uniqueFilter = 16; // 唯一性过滤器
+  string ruleOrigin = 17; // 规则来源: internal/public/custom
 }
 
 message UpdateAlertRuleReply {
@@ -1880,6 +1883,7 @@ message ActivityRuleInfo {
   string author = 13; // 作者
   string createTm = 14;
   string updateTm = 15;
+  string ruleOrigin = 16; // 规则来源: internal/public/custom
 }
 
 message ListActivityRuleReply {
@@ -1907,6 +1911,7 @@ message GetActivityRuleReply {
   string author = 13;
   string createTm = 14;
   string updateTm = 15;
+  string ruleOrigin = 16; // 规则来源: internal/public/custom
 }
 
 message AddActivityRuleReq {
@@ -1923,6 +1928,7 @@ message AddActivityRuleReq {
   repeated string fields = 11;
   repeated string uniqueFields = 12;
   string author = 13;
+  string ruleOrigin = 14; // 规则来源: internal/public/custom
 }
 
 message AddActivityRuleReply {
@@ -1944,6 +1950,7 @@ message UpdateActivityRuleReq {
   repeated string fields = 11;
   repeated string uniqueFields = 12;
   string author = 13;
+  string ruleOrigin = 14; // 规则来源: internal/public/custom
 }
 
 message UpdateActivityRuleReply {
