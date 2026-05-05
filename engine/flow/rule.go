@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"regexp"
 	"slices"
 	"strconv"
 	"strings"
@@ -252,13 +253,25 @@ func extractFields(conditions []Condition, sigmaIDs []string) map[string][]strin
 			continue
 		}
 
-		if c.operation == "in" {
+		if c.fieldOneIdx < 0 || c.fieldOneIdx > int64(sigmaRuleTotal-1) {
+			logger.Warnf("fieldOneIdx(%d) out of index, sigmaID len:%d", c.fieldOneIdx, sigmaRuleTotal)
+			continue
+		}
+
+		if c.operation == "in" || c.operation == "count" {
 			// 只处理表达式前部分: $s1.LoginType in $v.slice.["ss", "sd", "sc"], 还支持`in $v.cache.key_xxxx`
 			sid := sigmaIDs[c.fieldOneIdx]
-			sigmaFields[sid] = append(sigmaFields[sid], c.fieldOneVal)
+			if c.fieldOneVal != "_count" {
+				sigmaFields[sid] = append(sigmaFields[sid], c.fieldOneVal)
+			}
 		} else {
 			// 表达式前/后两部分: $s1.LoginType == $3.UserLoginType
-			if c.fieldTwoIdx > int64(sigmaRuleTotal-1) {
+			if c.fieldTwoTyp == "const" {
+				sid1 := sigmaIDs[c.fieldOneIdx]
+				sigmaFields[sid1] = append(sigmaFields[sid1], c.fieldOneVal)
+				continue
+			}
+			if c.fieldTwoIdx < 0 || c.fieldTwoIdx > int64(sigmaRuleTotal-1) {
 				logger.Warnf("fieldTwoIdx(%d) out of index, sigmaID len:%d", c.fieldTwoIdx, sigmaRuleTotal)
 				continue
 			}
@@ -277,16 +290,27 @@ func extractFields(conditions []Condition, sigmaIDs []string) map[string][]strin
 func parseMatchByExpression(matchBy string) []Condition {
 	var conditions []Condition
 
-	// TODO: 暂时兼容_count表达式: `$s1._count == 3` 后续可继续优化
-	// 后续可支持:
-	// $s1.LoginType._count == 3 ?????
-	if strings.Contains(matchBy, "$s1._count") {
-		parts := strings.SplitN(strings.ReplaceAll(matchBy, " ", ""), "==", 2)
-		if len(parts) != 2 {
+	// count表达式: `$s1._count >= 3` 或 `$s1.TargetUserName._count >= 20`
+	if strings.Contains(matchBy, "_count") {
+		expr := strings.ReplaceAll(matchBy, " ", "")
+		re := regexp.MustCompile(`^\$s1\.(?:(?P<field>[A-Za-z0-9_.-]+)\.)?_count(?P<op>==|>=|<=|>|<)(?P<value>\d+)$`)
+		matches := re.FindStringSubmatch(expr)
+		if len(matches) == 0 {
 			logger.Warnf("0-invalid condition(%s), will ignore!", matchBy)
 			return conditions
 		}
-		conditions = append(conditions, Condition{fieldOneIdx: 0, fieldOneVal: "_count", fieldTwoIdx: 0, fieldTwoVal: "3", fieldTwoTyp: "const", operation: "=="})
+		field := matches[re.SubexpIndex("field")]
+		if field == "" {
+			field = "_count"
+		}
+		conditions = append(conditions, Condition{
+			fieldOneIdx: 0,
+			fieldOneVal: field,
+			fieldTwoIdx: -1,
+			fieldTwoVal: matches[re.SubexpIndex("value")],
+			fieldTwoTyp: "const",
+			operation:   "count",
+		})
 		return conditions
 	}
 
@@ -370,7 +394,7 @@ func parseCondition(condition string) Condition {
 	} else {
 		// 其他表达式: `$s1.SubjectUserName == $s2.SubjectUserName` 或 `$s1.SourceProcessId !=$s2.ProcessId` 或 `$s1.SubjectUserName == admin`
 		var opType string
-		operators := []string{"==", "!=", ">", "<", ">=", "<="}
+		operators := []string{">=", "<=", "==", "!=", ">", "<"}
 		for _, op := range operators {
 			if strings.Contains(expression, op) {
 				opType = op

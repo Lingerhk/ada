@@ -35,15 +35,20 @@ func (r *Ruleset) matchEventCount(ctx context.Context, fr FlowRule, flowInstance
 
 			logger.Debugf("22----handle EventTypeCount activities %#v", activities)
 
-			// match_by: "$s1._count == 3"
+			// match_by: "$s1._count >= 3" or "$s1.TargetUserName._count >= 20"
 			matchBy := fr.Detection.MatchBy
-			_, v, err := parseExpression(matchBy)
+			expr, err := parseExpression(matchBy)
 			if err != nil {
 				logger.Warnf("parse matchBy err:%v, will ignore this flow instance!", err)
 				return
 			}
 
-			if len(activities) >= v {
+			count := len(activities)
+			if expr.Field != "" {
+				count = distinctActivityFieldCount(activities, expr.Field)
+			}
+
+			if compareCount(count, expr.Operator, expr.Value) {
 				// count超过阈值，生成告警（多）事件
 				if err := r.storeEvent(insCtx, insId, fr, activities); err != nil {
 					logger.Warnf("store event(multi-count) err:%v, will ignore this flow event!", err)
@@ -211,20 +216,60 @@ func (r *Ruleset) pushNotify(ctx context.Context, fr FlowRule, params map[string
 	return r.redisCli.LPush(ctx, common.AlertNotifyQueueKey, notifyByte).Err()
 }
 
-func parseExpression(s string) (string, int, error) {
-	// "$s1._count == 3"
-	re := regexp.MustCompile(`\$(\w+\.\w+)\s*==\s*(\w+)`)
+type countExpression struct {
+	Field    string
+	Operator string
+	Value    int
+}
+
+func parseExpression(s string) (countExpression, error) {
+	// "$s1._count >= 3" or "$s1.TargetUserName._count >= 20"
+	re := regexp.MustCompile(`^\$s1\.(?:(?P<field>[A-Za-z0-9_.-]+)\.)?_count\s*(?P<op>==|>=|<=|>|<)\s*(?P<value>\d+)$`)
 	matches := re.FindStringSubmatch(s)
-	if len(matches) != 3 {
-		return "", 0, fmt.Errorf("parse err %s", s)
+	if len(matches) == 0 {
+		return countExpression{}, fmt.Errorf("parse err %s", s)
 	}
 
-	i64, err := strconv.ParseInt(matches[2], 10, 64)
+	valueIdx := re.SubexpIndex("value")
+	i64, err := strconv.ParseInt(matches[valueIdx], 10, 64)
 	if err != nil {
-		return matches[1], 0, err
+		return countExpression{}, err
 	}
 
-	return matches[1], int(i64), nil
+	return countExpression{
+		Field:    matches[re.SubexpIndex("field")],
+		Operator: matches[re.SubexpIndex("op")],
+		Value:    int(i64),
+	}, nil
+}
+
+func distinctActivityFieldCount(activities []flowActivity, field string) int {
+	values := make(map[string]struct{})
+	for _, activity := range activities {
+		val := getFieldVal(field, activity)
+		if val == "" {
+			continue
+		}
+		values[val] = struct{}{}
+	}
+	return len(values)
+}
+
+func compareCount(count int, op string, expected int) bool {
+	switch op {
+	case "==":
+		return count == expected
+	case ">":
+		return count > expected
+	case ">=":
+		return count >= expected
+	case "<":
+		return count < expected
+	case "<=":
+		return count <= expected
+	default:
+		return false
+	}
 }
 
 // whitelistCompare 白名单比较，支持: ==, !=, <, <=, >, >=, in, not_in, contain, not_contain, regex
