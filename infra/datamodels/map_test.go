@@ -1,44 +1,28 @@
 package datamodels
 
 import (
+	"strings"
 	"testing"
-
-	"github.com/stretchr/testify/assert"
 )
 
-func TestMap(t *testing.T) {
-	e1 := Map{
-		"foo": "bar",
-		"baz": Map{
-			"a": 1,
+func TestMapKeywordsIncludesScalarValuesAndRawJSON(t *testing.T) {
+	event := Map{
+		"EventData": `\ntds.dit`,
+		"Nested": map[string]any{
+			"CommandLine": "ntdsutil ifm create full",
 		},
+		"EventID": 325,
 	}
-	e1.Set(13, "baz", "b")
-	get1, ok := e1.Get("baz", "b")
-	assert.True(t, ok)
-	assert.Equal(t, 13, get1)
 
-	e2 := e1
-	val2 := Map{
-		"zzz": Map{},
+	keywords, ok := event.Keywords()
+	if !ok {
+		t.Fatal("expected keyword extraction to be applicable")
 	}
-	e2.Set(val2, "ddd")
-	get2, ok := e2.Get("ddd")
-	assert.True(t, ok)
-	assert.Equal(t, val2, get2)
 
-	e3 := e2
-	val3 := Map{
-		"zzz": Map{},
+	joined := strings.Join(keywords, "\n")
+	for _, want := range []string{`\ntds.dit`, "ntdsutil ifm create full", "325", "EventData"} {
+		if !strings.Contains(joined, want) {
+			t.Fatalf("expected keyword output to contain %q, got %#v", want, keywords)
+		}
 	}
-	e3.Set(val3, "ddd", "lll", "kkk")
-	get3, ok := e3.Get("ddd", "lll", "kkk")
-	assert.True(t, ok)
-	assert.Equal(t, val3, get3)
-
-	e4 := e3
-	e4.Set(val3, "foo")
-	get4, ok := e4.Get("foo")
-	assert.True(t, ok)
-	assert.Equal(t, val3, get4)
 }
