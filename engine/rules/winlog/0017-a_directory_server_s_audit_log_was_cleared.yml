@@ -1,0 +1,34 @@
+title: System Event Log Cleared
+id: winlog-0017
+status: test
+rule_origin: internal
+description: Detects System log clearing on a directory server (Microsoft-Windows-Eventlog event 104). Clearing operational
+  logs can remove evidence of startup, shutdown, service, or system activity.
+references:
+- https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.management/clear-eventlog
+- https://learn.microsoft.com/en-us/windows/win32/api/winbase/nf-winbase-cleareventloga
+- https://attack.mitre.org/techniques/T1070/001/
+author: ADA default rules
+date: 2017/03/09
+modified: 2026/05/05
+tags:
+- TA0005
+- attack.t1070.001
+- attack.defense_evasion
+logsource: winlog
+detection:
+  selection_source:
+    Channel: System
+    EventID: 104
+  condition: selection_source
+fields:
+- Hostname
+- AccountName
+- UserID
+- Message
+unique_fields:
+- Hostname
+- AccountName
+level: high
+x_legacy_id: winlog-0103-0011
+x_legacy_file: engine/rules/winlog/0103-0011-dc_server_auditlog_cleared.yml

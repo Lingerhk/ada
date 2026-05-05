@@ -1,0 +1,40 @@
+title: NTFS symbolic link creation
+id: winlog-0153
+status: experimental
+rule_origin: public
+description: Detects scenarios where an attacker attempts to create a symbolic link.
+references:
+- https://twitter.com/Alh4zr3d/status/1630912251560329224
+- https://github.com/mdecrevoisier/SIGMA-detection-rules
+author: mdecrevoisier
+date: 2026/05/04
+modified: 2026/05/04
+tags:
+- TA0003
+- attack.t1547.009
+- attack.persistence
+logsource:
+  product: windows
+  category: process_creation
+detection:
+  selection:
+    NewProcessName|endswith: \mklink.exe
+    CommandLine|contains:
+    - /h
+    - /d
+    - /j
+  condition: selection
+fields:
+- Hostname
+- CommandLine
+- NewProcessName
+unique_fields:
+- Hostname
+falsepositives:
+- admin activity on file server
+level: medium
+x_source_repository: https://github.com/mdecrevoisier/SIGMA-detection-rules
+x_source_commit: ab15e29fcdbed297e305e2602881b8654946592c
+x_source_file: windows-ntfs/win-os-NTFS symbolic link creation (command).yaml
+x_legacy_id: winlog-9000-0146
+x_legacy_file: engine/rules/winlog/sigma_ref/9000-0146-ntfs_symbolic_link_creation.yml

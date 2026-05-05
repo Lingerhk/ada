@@ -1,0 +1,43 @@
+title: Event log clear attempt (command)
+id: winlog-0203
+status: experimental
+rule_origin: public
+description: Detects scenarios where an attacker attempts to clear the event logs.
+references:
+- https://github.com/mdecrevoisier/EVTX-to-MITRE-Attack/tree/master/TA0005-Defense%20Evasion/T1070.001-Clear%20Windows%20event%20logs
+- https://docs.microsoft.com/en-us/windows-server/administration/windows-commands/wevtutil
+- https://www.zscaler.com/blogs/security-research/technical-analysis-crytox-ransomware
+- https://www.microsoft.com/en-us/security/blog/2022/06/13/the-many-lives-of-blackcat-ransomware/
+- https://www.elastic.co/security-labs/invisible-miners-unveiling-ghostengine
+- https://github.com/mdecrevoisier/SIGMA-detection-rules
+author: mdecrevoisier
+date: 2026/05/04
+modified: 2026/05/04
+tags:
+- TA0005
+- attack.t1070.001
+- attack.defense_evasion
+logsource:
+  product: windows
+  category: process_creation
+detection:
+  selection:
+    NewProcessName|endswith: \wevtutil.exe
+    CommandLine|contains:
+    - clear-log
+    - cl
+  condition: selection
+fields:
+- Hostname
+- CommandLine
+- NewProcessName
+unique_fields:
+- Hostname
+falsepositives:
+- None
+level: high
+x_source_repository: https://github.com/mdecrevoisier/SIGMA-detection-rules
+x_source_commit: ab15e29fcdbed297e305e2602881b8654946592c
+x_source_file: windows-os/win-os-event log clear attempt (command).yaml
+x_legacy_id: winlog-9000-0204
+x_legacy_file: engine/rules/winlog/sigma_ref/9000-0204-event_log_clear_attempt_command.yml

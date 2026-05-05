@@ -1,0 +1,58 @@
+title: Encoded PowerShell payload deployed (PowerShell)
+id: winlog-0230
+status: experimental
+rule_origin: public
+description: Detects scenarios where an attacker deployed a service pointing to a hidden and encoded PowerShell payload.
+references:
+- https://github.com/mdecrevoisier/EVTX-to-MITRE-Attack/tree/master/TA0002-Execution/T1059.001-PowerShell
+- https://www.offensive-security.com/metasploit-unleashed/psexec-pass-hash/
+- https://www.huntress.com/blog/from-powershell-to-payload-an-analysis-of-weaponized-malware
+- https://www.huntress.com/blog/malware-deep-dive-examining-a-powershell-payload
+- https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1569.002/T1569.002.md
+- https://www.f5.com/labs/articles/threat-intelligence/vulnerabilities-exploits-and-malware-driving-attack-campaigns-in-october-2019
+- https://www.crowdstrike.com/blog/getting-the-bacon-from-cobalt-strike-beacon/
+- https://unit42.paloaltonetworks.com/threat-brief-OWASSRF/
+- https://github.com/mdecrevoisier/SIGMA-detection-rules
+author: mdecrevoisier
+date: 2026/05/04
+modified: 2026/05/04
+tags:
+- TA0002
+- attack.t1059.001
+- attack.t1027
+- attack.execution
+- attack.defense_evasion
+logsource:
+  product: windows
+  category:
+  - ps_module
+  - ps_script
+detection:
+  selection_powershell_modern:
+    EventID: 4103
+    Payload|contains|all:
+    - FromBase64String
+    - IO.StreamReader
+    - IO.Compression.
+  selection_powershell_block:
+    EventID: 4104
+    ScriptBlockText|contains|all:
+    - FromBase64String
+    - IO.StreamReader
+    - IO.Compression.
+  condition: 1 of selection*
+fields:
+- Hostname
+- EventID
+- Payload
+- ScriptBlockText
+unique_fields:
+- Hostname
+falsepositives:
+- Unknown
+level: high
+x_source_repository: https://github.com/mdecrevoisier/SIGMA-detection-rules
+x_source_commit: ab15e29fcdbed297e305e2602881b8654946592c
+x_source_file: windows-os/win-os-payload encoded PowerShell deployed (PowerShell).yaml
+x_legacy_id: winlog-9000-0233
+x_legacy_file: engine/rules/winlog/sigma_ref/9000-0233-encoded_powershell_payload_deployed_powershell.yml

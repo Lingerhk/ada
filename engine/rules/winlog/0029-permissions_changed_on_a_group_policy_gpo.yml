@@ -1,0 +1,46 @@
+title: Permissions changed on a Group Policy (GPO)
+id: winlog-0029
+status: experimental
+rule_origin: public
+description: Detects scenarios where an attacker will attempt to take control over a group policy.
+references:
+- https://github.com/mdecrevoisier/EVTX-to-MITRE-Attack/tree/master/TA0005-Defense%20Evasion/T1222.001-File%20and%20Directory%20Permissions%20Modification
+- https://github.com/mdecrevoisier/SIGMA-detection-rules
+author: mdecrevoisier
+date: 2026/05/04
+modified: 2026/05/04
+tags:
+- TA0004
+- attack.t1484.001
+- attack.privilege_escalation
+logsource:
+  product: windows
+  service: security
+detection:
+  selection:
+    EventID: 5136
+    AttributeLDAPDisplayName: ntSecurityDescriptor
+    ObjectClass: groupPolicyContainer
+    OperationType: '%%14674'
+  filter:
+    SubjectUserName:
+    - SRVAGPM01$
+    - SRVAGPM02$
+  condition: selection and not filter
+fields:
+- Hostname
+- AttributeLDAPDisplayName
+- EventID
+- ObjectClass
+- OperationType
+- SubjectUserName
+unique_fields:
+- Hostname
+falsepositives:
+- Group policy administrator activity / AGPM activity
+level: medium
+x_source_repository: https://github.com/mdecrevoisier/SIGMA-detection-rules
+x_source_commit: ab15e29fcdbed297e305e2602881b8654946592c
+x_source_file: windows-active_directory/win-ad-GPO permissions changed.yaml
+x_legacy_id: winlog-9000-0005
+x_legacy_file: engine/rules/winlog/sigma_ref/9000-0005-permissions_changed_on_a_group_policy_gpo.yml

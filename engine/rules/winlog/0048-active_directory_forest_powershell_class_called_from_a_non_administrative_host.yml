@@ -1,0 +1,51 @@
+title: Active Directory Forest PowerShell class called from a non administrative host
+id: winlog-0048
+status: experimental
+rule_origin: public
+description: Detects scenarios where an attacker attempts to call the Active Directory Forest PowerShell class on a non administrative
+  host in order to enumerate trusts, forests, domains, sites and subnet information.
+references:
+- https://github.com/mdecrevoisier/EVTX-to-MITRE-Attack/tree/master/TA0007-Discovery/T1087-Account%20discovery
+- https://podalirius.net/en/articles/active-directory-sites-and-subnets-enumeration/
+- https://adsecurity.org/?p=192
+- https://github.com/PyroTek3/PowerShell-AD-Recon/blob/master/Get-PSADForestInfo
+- https://hochwald.net/powershell-retrieve-information-an-active-directory-forest/
+- https://github.com/mdecrevoisier/SIGMA-detection-rules
+author: mdecrevoisier
+date: 2026/05/04
+modified: 2026/05/04
+tags:
+- TA0007
+- attack.t1482
+- attack.discovery
+logsource:
+  product: windows
+  category:
+  - ps_module
+  - ps_script
+detection:
+  selection_powershell_modern:
+    EventID: 4103
+    Payload|contains: System.DirectoryServices.ActiveDirectory
+  selection_powershell_block:
+    EventID: 4104
+    ScriptBlockText|contains: System.DirectoryServices.ActiveDirectory
+  filter:
+  - Hostname: '%admin_workstation%'
+  - Hostname: '%domain_controllers%'
+  condition: 1 of selection* and not filter
+fields:
+- Hostname
+- EventID
+- Payload
+- ScriptBlockText
+unique_fields:
+- Hostname
+falsepositives:
+- Adminitrative host, jump host, domain controllers, Exchange servers, application interacting with Active Directory modules
+level: medium
+x_source_repository: https://github.com/mdecrevoisier/SIGMA-detection-rules
+x_source_commit: ab15e29fcdbed297e305e2602881b8654946592c
+x_source_file: windows-active_directory/win-ad-PowerShell Active Directory Forest class called from a non admin host.yaml
+x_legacy_id: winlog-9000-0024
+x_legacy_file: engine/rules/winlog/sigma_ref/9000-0024-active_directory_forest_powershell_class_called_from_a_non_administrativ.yml

@@ -1,20 +1,27 @@
-title: RDP Login Brute Force
+title: Network Logon Failure Burst
 id: flow-0001
 status: experimental
-description: flow test description
+rule_origin: internal
+enable: true
+description: Correlates three failed network logons in a 30-second window from the same grouped signal, providing a compact
+  brute-force indicator derived from Event ID 4625.
 references:
-    - https://www.test.com
-author: test
+- https://learn.microsoft.com/en-us/windows/security/threat-protection/auditing/event-4625
+- https://attack.mitre.org/techniques/T1110/
+author: ADA default rules
 date: 2021/12/12
-modified: 2023/02/14
+modified: 2026/05/05
 tags:
-    - TA0007
-    - attack.t2056.002
+- TA0006
+- attack.t1110
+- attack.credential_access
 logsource: flow
 detection:
-    event_type: count # count | multi_eve | multi_pkt | multi_eve_pkt
-    win_size: 30s # windows time size.(max:6h)
-    sigma_rules: # 关联sigma rule id
-        - "winlog-0101-0002" # event_log, this is $s1
-    match_by: "$s1._count == 3"
+  event_type: count
+  win_size: 30s
+  sigma_rules:
+  - winlog-0003
+  match_by: $s1._count == 3
 level: medium
+x_legacy_id: flow-0001
+x_legacy_file: engine/rules/flow/0001-rdp_login_brute_force.yml

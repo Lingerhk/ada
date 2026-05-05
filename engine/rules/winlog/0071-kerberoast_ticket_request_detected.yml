@@ -1,0 +1,70 @@
+title: Kerberoast ticket request detected
+id: winlog-0071
+status: experimental
+rule_origin: public
+description: Detects scenarios where an attacker requests a Kerberoast ticket with low encryption to perform offline brutforce
+  and forge a new ticket to get access to the targeted resource.
+references:
+- https://github.com/mdecrevoisier/EVTX-to-MITRE-Attack/tree/master/TA0006-Credential%20Access/T1558-Steal%20or%20Forge%20Kerberos%20Tickets
+- https://www.trustedsec.com/blog/the-art-of-bypassing-kerberoast-detections-with-orpheus/
+- https://blog.harmj0y.net/redteaming/kerberoasting-revisited/
+- https://blog.harmj0y.net/powershell/kerberoasting-without-mimikatz/
+- https://www.hackingarticles.in/as-rep-roasting/
+- https://adsecurity.org/?p=2293
+- https://adsecurity.org/?p=3458
+- https://blog.stealthbits.com/extracting-service-account-passwords-with-kerberoasting/
+- https://blogs.technet.microsoft.com/motiba/2018/02/23/detecting-kerberoasting-activity-using-azure-security-center/
+- https://github.com/nidem/kerberoast
+- https://github.com/skelsec/kerberoast
+- https://posts.specterops.io/capability-abstraction-fbeaeeb26384
+- https://www.trimarcsecurity.com/single-post/TrimarcResearch/Detecting-Kerberoasting-Activity
+- https://m365internals.com/2021/11/08/kerberoast-with-opsec/
+- https://redcanary.com/blog/marshmallows-and-kerberoasting/
+- https://www.semperis.com/blog/new-attack-paths-as-requested-sts/
+- https://www.trustedsec.com/blog/the-art-of-bypassing-kerberoast-detections-with-orpheus/
+- https://nored0x.github.io/red-teaming/Kerberos-Attacks-Kerbroasting/
+- https://github.com/mdecrevoisier/SIGMA-detection-rules
+author: mdecrevoisier
+date: 2026/05/04
+modified: 2026/05/04
+tags:
+- TA0006
+- attack.t1558.003
+- attack.credential_access
+logsource:
+  product: windows
+  service: security
+detection:
+  selection:
+    EventID: 4769
+    TicketEncryptionType: 23
+    Status|contains: '0x0'
+  filter:
+  - ServiceName|endswith: $
+  - ServiceSid: S-1-5-21-*-0
+  - ServiceSid|endswith: '-502'
+  - TargetUserName|contains: $@
+  - IpAddress:
+    - ::1
+    - 127.0.0.1
+    - '%domain_controllers_ips%'
+  condition: selection and not filter
+fields:
+- Hostname
+- EventID
+- IpAddress
+- ServiceName
+- ServiceSid
+- Status
+- TargetUserName
+- TicketEncryptionType
+unique_fields:
+- ServiceName
+falsepositives:
+- Applications using RC4 encryption (SAP, Azure AD, legacy applications...)
+level: high
+x_source_repository: https://github.com/mdecrevoisier/SIGMA-detection-rules
+x_source_commit: ab15e29fcdbed297e305e2602881b8654946592c
+x_source_file: windows-active_directory/win-ad-kerberoast ticket detected.yaml
+x_legacy_id: winlog-9000-0047
+x_legacy_file: engine/rules/winlog/sigma_ref/9000-0047-kerberoast_ticket_request_detected.yml

@@ -1,0 +1,56 @@
+title: Massive SAM users/groups enumeration (native)
+id: winlog-0052
+status: experimental
+rule_origin: public
+description: Detects scenarios where an attacker attempts to enumerate sensitive domain users/groups settings and membership.
+  Correlate TargetLogonId from ID 4624 with SubjectLogonId from ID 4661 to identify the source of the enumeration.
+references:
+- https://github.com/mdecrevoisier/EVTX-to-MITRE-Attack/tree/master/TA0007-Discovery/T1069-Permission%20Groups%20Discovery
+- https://bitvijays.github.io/LFF-IPS-P3-Exploitation.html
+- https://github.com/mdecrevoisier/SIGMA-detection-rules
+author: mdecrevoisier
+date: 2026/05/04
+modified: 2026/05/04
+tags:
+- TA0007
+- attack.t1069.002
+- attack.discovery
+logsource:
+  product: windows
+  service: security
+detection:
+  selection:
+    EventID: 4661
+    ProcessName|endswith: \lsass.exe
+    ObjectServer: Security Account Manager
+    ObjectName|startswith:
+    - S-1-5-32-
+    - S-1-5-21-
+    ObjectType:
+    - SAM_USER
+    - SAM_GROUP
+  filter:
+  - SubjectUserName|endswith: $
+  - ObjectName|endswith:
+    - '-500'
+    - '-512'
+    - '-513'
+  condition: selection and not filter
+fields:
+- Hostname
+- EventID
+- ObjectName
+- ObjectServer
+- ObjectType
+- ProcessName
+- SubjectUserName
+unique_fields:
+- Hostname
+falsepositives:
+- Administrator activity
+level: info
+x_source_repository: https://github.com/mdecrevoisier/SIGMA-detection-rules
+x_source_commit: ab15e29fcdbed297e305e2602881b8654946592c
+x_source_file: windows-active_directory/win-ad-SAM domain users & groups massive enumeration.yaml
+x_legacy_id: winlog-9000-0028
+x_legacy_file: engine/rules/winlog/sigma_ref/9000-0028-massive_sam_users_groups_enumeration_native.yml

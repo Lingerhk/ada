@@ -1,0 +1,51 @@
+title: Disabled guest or builtin account activated
+id: winlog-0167
+status: experimental
+rule_origin: public
+description: Detects scenarios where an attacker enables a disabled builtin account.
+references:
+- https://github.com/mdecrevoisier/EVTX-to-MITRE-Attack/tree/master/TA0003-Persistence/T1136-Create%20account
+- https://www.stigviewer.com/stig/windows_xp/2013-03-14/finding/V-3369
+- https://github.com/mdecrevoisier/SIGMA-detection-rules
+author: mdecrevoisier
+date: 2026/05/04
+modified: 2026/05/04
+tags:
+- TA0003
+- attack.t1098
+- attack.persistence
+logsource:
+  product: windows
+  service: security
+detection:
+  selection_event:
+    EventID: 4722
+  selection_username:
+    TargetUserName:
+    - Guest
+    - DefaultAccount
+    - support_388945a0
+    - HelpAssistant
+    - WDAGUtilityAccount
+  selection_user_sid:
+    TargetUserSid|endswith:
+    - '-501'
+    - '-503'
+    - '1001'
+  condition: selection_event and (selection_username or selection_user_sid)
+fields:
+- Hostname
+- EventID
+- TargetUserName
+- TargetUserSid
+unique_fields:
+- Hostname
+falsepositives:
+- SYSPREP deployement
+- Usage of Remote assistance
+level: medium
+x_source_repository: https://github.com/mdecrevoisier/SIGMA-detection-rules
+x_source_commit: ab15e29fcdbed297e305e2602881b8654946592c
+x_source_file: windows-os/win-os-Guest account activated.yaml
+x_legacy_id: winlog-9000-0162
+x_legacy_file: engine/rules/winlog/sigma_ref/9000-0162-disabled_guest_or_builtin_account_activated.yml

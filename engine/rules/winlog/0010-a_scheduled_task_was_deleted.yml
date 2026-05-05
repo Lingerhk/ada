@@ -1,0 +1,43 @@
+title: Scheduled Task Deleted
+id: winlog-0010
+status: test
+rule_origin: internal
+description: Detects scheduled task deletion using either Security event 4699 or Task Scheduler Operational event 141, excluding
+  known benign update tasks. Removing tasks on a domain controller or critical host may indicate cleanup or defense evasion.
+references:
+- https://learn.microsoft.com/en-us/windows/security/threat-protection/auditing/event-4699
+- https://attack.mitre.org/techniques/T1053/005/
+author: ADA default rules
+date: 2017/03/09
+modified: 2026/05/05
+tags:
+- TA0005
+- attack.t1053.005
+- attack.defense_evasion
+logsource: winlog
+detection:
+  selection_security:
+    Channel: Security
+    EventID: 4699
+  selection_taskscheduler:
+    Channel: Microsoft-Windows-TaskScheduler/Operational
+    EventID: 141
+  filter_ignore:
+    TaskName|contains:
+    - GoogleUpdater
+    - UpdateOrchestrator
+    - CreateExplorerShellUnelevatedTask
+    - Windows Defender
+  condition: (selection_security or selection_taskscheduler) and not filter_ignore
+fields:
+- Hostname
+- SubjectUserName
+- SubjectUserSid
+- TaskName
+- UserName
+unique_fields:
+- Hostname
+- SubjectUserName
+level: medium
+x_legacy_id: winlog-0103-0004
+x_legacy_file: engine/rules/winlog/0103-0004-scheduled_task_deleted.yml

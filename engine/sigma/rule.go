@@ -2,10 +2,10 @@ package sigma
 
 import (
 	"ada/engine/common"
-	"bytes"
 	"fmt"
 	"os"
 	"path/filepath"
+	"regexp"
 	"slices"
 	"strconv"
 	"strings"
@@ -91,9 +91,13 @@ func (r *Rule) margeFields(extFields map[string][]string) {
 
 func (r *Rule) convertLevel() error {
 	// levels defines in engine/common/ruletype.go
-	validLevels := []string{"info", "low", "medium", "high", "critical", "1", "2", "3", "4", "5"}
+	validLevels := []string{"informational", "info", "low", "medium", "high", "critical", "1", "2", "3", "4", "5"}
 	if !slices.Contains(validLevels, r.Level) {
 		return fmt.Errorf("invalid level: %s", r.Level)
+	}
+	if r.Level == "informational" {
+		r.Level = "info"
+		return nil
 	}
 
 	// convert level: '1' -> 'info', '2' -> 'low', etc.
@@ -181,7 +185,8 @@ func legacyKeyValuePairMap(pair any) (map[string]any, bool) {
 
 // IsMultipart checks if rule is multipart
 func IsMultipart(data []byte) bool {
-	return !bytes.HasPrefix(data, []byte("---")) && bytes.Contains(data, []byte("---"))
+	matches := regexp.MustCompile(`(?m)^---\s*$`).FindAllIndex(data, -1)
+	return len(matches) > 1 || (len(matches) == 1 && matches[0][0] != 0)
 }
 
 // NewRuleList 	reads a list of sigma rule paths and parses them to rule objects
@@ -250,8 +255,8 @@ loop:
 // It defines relevant event streams and is used for pre-filtering
 type Logsource struct {
 	Product    string `yaml:"product" json:"product"`
-	Category   string `yaml:"category" json:"category"`
-	Service    string `yaml:"service" json:"service"`
+	Category   any    `yaml:"category" json:"category"`
+	Service    any    `yaml:"service" json:"service"`
 	Definition string `yaml:"definition" json:"definition"`
 }
 

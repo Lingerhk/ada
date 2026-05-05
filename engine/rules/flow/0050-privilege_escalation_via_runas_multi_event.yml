@@ -1,0 +1,34 @@
+title: Privilege escalation via runas Multi Event
+id: flow-0050
+status: experimental
+rule_origin: public
+enable: true
+description: Correlates interactive logon, runas.exe process creation, and explicit credential use.
+references:
+- https://github.com/mdecrevoisier/SIGMA-detection-rules
+author: mdecrevoisier
+date: 2026/05/04
+modified: 2026/05/05
+tags:
+- TA0004
+- attack.t1134
+- attack.privilege_escalation
+logsource: flow
+detection:
+  event_type: multi_eve
+  win_size: 5m
+  sorted: false
+  sigma_rules:
+  - winlog-0239
+  - winlog-0334
+  - winlog-0335
+  match_by: $s1.Hostname == $s2.Hostname AND $s1.Hostname == $s3.Hostname
+level: medium
+unique_filter:
+- $s1.Hostname
+- ttl_1800
+x_source_repository: https://github.com/mdecrevoisier/SIGMA-detection-rules
+x_source_commit: ab15e29fcdbed297e305e2602881b8654946592c
+x_source_file: windows-os/win-os-privilege escalation via runas (command).yaml
+x_legacy_id: flow-9000-0050
+x_legacy_file: engine/rules/flow/sigma_ref/9000-0050-runas_privilege_escalation_multi_event.yml

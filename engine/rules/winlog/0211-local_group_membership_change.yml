@@ -1,0 +1,51 @@
+title: Local group membership change
+id: winlog-0211
+status: experimental
+rule_origin: public
+description: Detects if a member is added to a local group via PowerShell.
+references:
+- null
+- https://github.com/mdecrevoisier/SIGMA-detection-rules
+author: mdecrevoisier
+date: 2026/05/04
+modified: 2026/05/04
+tags:
+- TA0003
+- attack.t1098
+- attack.persistence
+logsource:
+  product: windows
+  category:
+  - ps_module
+  - ps_script
+detection:
+  selection2_powershell_modern:
+    EventID: 4103
+    Payload|contains|all:
+    - Add-LocalGroupMember
+    - -Group
+    - -Member
+  selection3_powershell_block:
+    EventID: 4104
+    ScriptBlockText|contains|all:
+    - Add-LocalGroupMember
+    - -Group
+    - -Member
+  condition: 1 of selection*
+fields:
+- Hostname
+- EventID
+- Payload
+- ScriptBlockText
+unique_fields:
+- Hostname
+falsepositives:
+- Pentest
+- Administrator activity
+- Splunk UF agent installation
+level: high
+x_source_repository: https://github.com/mdecrevoisier/SIGMA-detection-rules
+x_source_commit: ab15e29fcdbed297e305e2602881b8654946592c
+x_source_file: windows-os/win-os-group local membership change (PowerShell).yaml
+x_legacy_id: winlog-9000-0212
+x_legacy_file: engine/rules/winlog/sigma_ref/9000-0212-local_group_membership_change.yml

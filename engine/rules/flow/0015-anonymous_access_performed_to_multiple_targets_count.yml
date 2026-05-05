@@ -1,0 +1,36 @@
+title: Anonymous access performed to multiple targets Count
+id: flow-0015
+status: experimental
+rule_origin: public
+enable: true
+description: Detects scenarios where an attacker would attempt to enumerate hosts and collect relevant information using anonymous
+  access. Vulnerability scanners, enumeration software or tool like CrackMapexec may generate such behavior.
+references:
+- https://medium.com/@Shorty420/enumerating-ad-98e0821c4c78
+- https://book.hacktricks.xyz/pentesting/pentesting-smb
+- https://0xdf.gitlab.io/2018/12/02/pwk-notes-smb-enumeration-checklist-update1.html
+- https://github.com/mdecrevoisier/SIGMA-detection-rules
+author: mdecrevoisier
+date: 2026/05/04
+modified: 2026/05/04
+tags:
+- TA0007
+- attack.t1046
+- attack.discovery
+logsource: flow
+detection:
+  event_type: count
+  win_size: 15m
+  sorted: false
+  sigma_rules:
+  - winlog-0223
+  match_by: $s1.Hostname._count > 20
+level: high
+unique_filter:
+- $s1.IpAddress
+- ttl_1800
+x_source_repository: https://github.com/mdecrevoisier/SIGMA-detection-rules
+x_source_commit: ab15e29fcdbed297e305e2602881b8654946592c
+x_source_file: windows-os/win-os-login with anonymous access on multiple hosts.yaml
+x_legacy_id: flow-9000-0013
+x_legacy_file: engine/rules/flow/sigma_ref/9000-0013-anonymous_access_performed_to_multiple_targets_count.yml

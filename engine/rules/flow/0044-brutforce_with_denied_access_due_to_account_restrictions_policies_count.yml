@@ -1,0 +1,30 @@
+title: Brutforce with denied access due to account restrictions policies Count
+id: flow-0044
+status: experimental
+rule_origin: public
+enable: true
+description: ''
+references:
+- https://github.com/mdecrevoisier/SIGMA-detection-rules
+author: mdecrevoisier
+date: 2026/05/04
+modified: 2026/05/04
+tags:
+- TA0000
+logsource: flow
+detection:
+  event_type: count
+  win_size: 30m
+  sorted: false
+  sigma_rules:
+  - winlog-0194
+  match_by: $s1.EventRecordID._count >= 10
+level: high
+unique_filter:
+- $s1.Hostname
+- ttl_1800
+x_source_repository: https://github.com/mdecrevoisier/SIGMA-detection-rules
+x_source_commit: ab15e29fcdbed297e305e2602881b8654946592c
+x_source_file: windows-os/win-os-brutforce with denied access due to account restrictions.yaml
+x_legacy_id: flow-9000-0043
+x_legacy_file: engine/rules/flow/sigma_ref/9000-0043-brutforce_with_denied_access_due_to_account_restrictions_policies_count_value_count.yml

@@ -111,7 +111,7 @@ func TestBundledWinlogRulesetKeepsCoreRuleAvailable(t *testing.T) {
 	if err != nil {
 		t.Fatalf("ruleset failed to load: %v", err)
 	}
-	if ruleset.GetRule("winlog-0000-0001") == nil {
+	if ruleset.GetRule("winlog-0001") == nil {
 		t.Fatalf("core winlog rule is unavailable; total=%d ok=%d failed=%d unsupported=%d",
 			ruleset.Total, ruleset.Ok, ruleset.Failed, ruleset.Unsupported)
 	}

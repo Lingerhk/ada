@@ -1,0 +1,49 @@
+title: LSASS Process Object Access
+id: winlog-0012
+status: test
+rule_origin: internal
+description: Detects handle requests or object access events (4656 or 4663) for lsass.exe after filtering common trusted system
+  processes. Unexpected LSASS access can indicate credential dumping preparation or tooling.
+references:
+- https://learn.microsoft.com/en-us/windows/security/threat-protection/auditing/event-4656
+- https://learn.microsoft.com/en-us/windows/security/threat-protection/auditing/event-4663
+- https://attack.mitre.org/techniques/T1003/001/
+author: ADA default rules
+date: 2017/03/09
+modified: 2026/05/05
+tags:
+- TA0006
+- attack.t1003.001
+- attack.credential_access
+logsource: winlog
+detection:
+  selection_source:
+    Channel: Security
+    EventID:
+    - 4663
+    - 4656
+  object_process:
+    ObjectName|endswith: \lsass.exe
+  filter_ignore:
+    ProcessName|contains:
+    - WmiPrvSE.exe
+    - MsMpEng.exe
+    - vmtoolsd.exe
+    - Taskmgr.exe
+    - lsass.exe
+    - WerFault.exe
+    - svchost.exe
+    - ldapFwManager.exe
+    - rpcFwManager.exe
+  condition: selection_source and object_process and not filter_ignore
+fields:
+- Hostname
+- SubjectUserName
+- SubjectUserSid
+- ProcessName
+unique_fields:
+- Hostname
+- SubjectUserName
+level: medium
+x_legacy_id: winlog-0103-0006
+x_legacy_file: engine/rules/winlog/0103-0006-access_attempt_lsass.yml

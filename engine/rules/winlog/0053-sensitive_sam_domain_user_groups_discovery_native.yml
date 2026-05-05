@@ -1,0 +1,55 @@
+title: Sensitive SAM domain user & groups discovery (native)
+id: winlog-0053
+status: experimental
+rule_origin: public
+description: Detects scenarios where an attacker attempts to enumerate sensitive domain group settings and membership.
+references:
+- https://github.com/mdecrevoisier/EVTX-to-MITRE-Attack/tree/master/TA0007-Discovery/T1069-Permission%20Groups%20Discovery
+- https://bitvijays.github.io/LFF-IPS-P3-Exploitation.html
+- https://github.com/mdecrevoisier/SIGMA-detection-rules
+author: mdecrevoisier
+date: 2026/05/04
+modified: 2026/05/04
+tags:
+- TA0007
+- attack.t1069.002
+- attack.discovery
+logsource:
+  product: windows
+  service: security
+detection:
+  selection:
+    EventID: 4661
+    ProcessName|endswith: \lsass.exe
+    ObjectServer: Security Account Manager
+    ObjectName|startswith:
+    - S-1-5-32-
+    - S-1-5-21-
+    ObjectType:
+    - SAM_USER
+    - SAM_GROUP
+    ObjectName|endswith:
+    - '-500'
+    - '-512'
+    - '-513'
+  filter:
+    SubjectUserName|endswith: $
+  condition: selection and not filter
+fields:
+- Hostname
+- EventID
+- ObjectName
+- ObjectServer
+- ObjectType
+- ProcessName
+- SubjectUserName
+unique_fields:
+- Hostname
+falsepositives:
+- Administrator activity
+level: high
+x_source_repository: https://github.com/mdecrevoisier/SIGMA-detection-rules
+x_source_commit: ab15e29fcdbed297e305e2602881b8654946592c
+x_source_file: windows-active_directory/win-ad-SAM sensitive domain user & groups enumeration.yaml
+x_legacy_id: winlog-9000-0029
+x_legacy_file: engine/rules/winlog/sigma_ref/9000-0029-sensitive_sam_domain_user_groups_discovery_native.yml

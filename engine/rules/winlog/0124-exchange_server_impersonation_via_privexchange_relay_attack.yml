@@ -1,0 +1,52 @@
+title: Exchange server impersonation via PrivExchange relay attack
+id: winlog-0124
+status: experimental
+rule_origin: public
+description: Detects scenarios where an attacker relays Exchange server authentication to abuse Exchange servers permissions
+  and escalate privileges.
+references:
+- https://dirkjanm.io/abusing-exchange-one-api-call-away-from-domain-admin/
+- https://twitter.com/_dirkjan/status/1091632489561575424?s=20
+- https://github.com/mdecrevoisier/SIGMA-detection-rules
+author: mdecrevoisier
+date: 2026/05/04
+modified: 2026/05/04
+tags:
+- TA0006
+- attack.t1557.001
+- attack.credential_access
+logsource:
+  product: windows
+  service: security
+detection:
+  selection:
+    EventID: 4624
+    AuthenticationPackageName: NTLM
+    LogonProcessName: NtLmSsp
+    LogonType: 3
+    Hostname: '%domain_controllers%'
+    TargetUserName:
+    - SRVEXCH01$
+    - SRVEXCH02$
+    - SRVEXCH03$
+  filter:
+    IpAddress: '%exchange_server_ips%'
+  condition: selection and not filter
+fields:
+- Hostname
+- AuthenticationPackageName
+- EventID
+- IpAddress
+- LogonProcessName
+- LogonType
+- TargetUserName
+unique_fields:
+- Hostname
+falsepositives:
+- None
+level: high
+x_source_repository: https://github.com/mdecrevoisier/SIGMA-detection-rules
+x_source_commit: ab15e29fcdbed297e305e2602881b8654946592c
+x_source_file: windows-exchange/win-exchange-PrivExchange impersonation detected.yaml
+x_legacy_id: winlog-9000-0109
+x_legacy_file: engine/rules/winlog/sigma_ref/9000-0109-exchange_server_impersonation_via_privexchange_relay_attack.yml

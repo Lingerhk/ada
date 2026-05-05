@@ -1,0 +1,56 @@
+title: Encoded PowerShell payload deployed via service
+id: winlog-0232
+status: experimental
+rule_origin: public
+description: Detects scenarios where an attacker deployed a service pointing to a hidden and encoded PowerShell payload. Some
+  parameters are commented in case you would like to reduce false positives or make the rule more precise.
+references:
+- https://github.com/mdecrevoisier/EVTX-to-MITRE-Attack/tree/master/TA0003-Persistence/T1543.003-Create%20or%20Modify%20System%20Process-Windows%20Service
+- https://www.offensive-security.com/metasploit-unleashed/psexec-pass-hash/
+- https://www.fortinet.com/blog/threat-research/newly-discovered-function-in-darkside-ransomware-variant-targets-disk-partitions
+- https://www.huntress.com/blog/from-powershell-to-payload-an-analysis-of-weaponized-malware
+- https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1569.002/T1569.002.md
+- https://www.f5.com/labs/articles/threat-intelligence/vulnerabilities-exploits-and-malware-driving-attack-campaigns-in-october-2019
+- https://www.crowdstrike.com/blog/getting-the-bacon-from-cobalt-strike-beacon/
+- https://github.com/mdecrevoisier/SIGMA-detection-rules
+author: mdecrevoisier
+date: 2026/05/04
+modified: 2026/05/04
+tags:
+- TA0004
+- attack.t1543.003
+- attack.t1027
+- attack.privilege_execution
+- attack.defense_evasion
+logsource:
+  product: windows
+  service:
+  - system
+  - security
+detection:
+  selection1:
+    EventID: 4697
+    ServiceFileName|contains:
+    - FromBase64String
+    - gnirtS46esaBmorF
+  selection2:
+    EventID: 7045
+    ImagePath|contains:
+    - FromBase64String
+    - gnirtS46esaBmorF
+  condition: selection1 or selection2
+fields:
+- Hostname
+- EventID
+- ImagePath
+- ServiceFileName
+unique_fields:
+- Hostname
+falsepositives:
+- None
+level: high
+x_source_repository: https://github.com/mdecrevoisier/SIGMA-detection-rules
+x_source_commit: ab15e29fcdbed297e305e2602881b8654946592c
+x_source_file: windows-os/win-os-payload encoded PowerShell deployed via service.yaml
+x_legacy_id: winlog-9000-0235
+x_legacy_file: engine/rules/winlog/sigma_ref/9000-0235-encoded_powershell_payload_deployed_via_service.yml

@@ -1,0 +1,45 @@
+title: Brutforce on Windows OpenSSH server with valid users
+id: winlog-0192
+status: experimental
+rule_origin: public
+description: Detects scenarios where an attacker attempts to SSH brutforce a Windows OpenSSH server with a valid user.
+references:
+- https://github.com/mdecrevoisier/EVTX-to-MITRE-Attack/tree/master/TA0006-Credential%20Access/T1110.xxx-Brut%20force
+- https://winaero.com/enable-openssh-server-windows-10/
+- https://docs.microsoft.com/en-us/windows-server/administration/openssh/openssh_install_firstuse
+- https://virtualizationreview.com/articles/2020/05/21/ssh-server-on-windows-10.aspx
+- https://github.com/mdecrevoisier/SIGMA-detection-rules
+author: mdecrevoisier
+date: 2026/05/04
+modified: 2026/05/04
+tags:
+- TA0006
+- attack.t1110
+- attack.credential_access
+logsource:
+  product: windows
+  service: security
+detection:
+  selection:
+    EventID: 4625
+    SubStatus: '0xc000006A'
+    ProcessName|endswith:
+    - \sshd.exe
+    - \ssh.exe
+  condition: selection
+fields:
+- Hostname
+- EventID
+- ProcessName
+- SubStatus
+- EventRecordID
+unique_fields:
+- Hostname
+falsepositives:
+- None
+level: high
+x_source_repository: https://github.com/mdecrevoisier/SIGMA-detection-rules
+x_source_commit: ab15e29fcdbed297e305e2602881b8654946592c
+x_source_file: windows-os/win-os-brutforce attempt with valid user (OpenSSH).yaml
+x_legacy_id: winlog-9000-0192
+x_legacy_file: engine/rules/winlog/sigma_ref/9000-0192-brutforce_on_windows_openssh_server_with_valid_users.yml

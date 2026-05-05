@@ -1,0 +1,31 @@
+title: Directory Server Event Log Service Stopped
+id: winlog-0016
+status: test
+rule_origin: internal
+description: Detects EventLog service stop on a directory server (System event 6006). This usually occurs during clean shutdown
+  or restart and helps identify power-off or reboot activity on critical domain infrastructure.
+references:
+- https://learn.microsoft.com/en-us/troubleshoot/windows-server/installing-updates-features-roles/troubleshoot-error-shutdown-in-process
+- https://attack.mitre.org/techniques/T1529/
+author: ADA default rules
+date: 2017/03/09
+modified: 2026/05/05
+tags:
+- TA0040
+- attack.t1529
+- attack.impact
+logsource: winlog
+detection:
+  selection_source:
+    Channel: System
+    EventID: 6006
+  condition: selection_source
+fields:
+- Hostname
+- SourceName
+unique_fields:
+- Hostname
+- EventID
+level: high
+x_legacy_id: winlog-0103-0010
+x_legacy_file: engine/rules/winlog/0103-0010-dc_server_power_off.yml

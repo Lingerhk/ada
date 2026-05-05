@@ -1,0 +1,40 @@
+title: Account marked as sensitive and cannot be delegated had its protection removed (weakness introduction)
+id: winlog-0098
+status: experimental
+rule_origin: public
+description: Detects scenarios where an attacker removes security protection from a sensitive account to escalate privileges
+references:
+- https://github.com/mdecrevoisier/EVTX-to-MITRE-Attack/tree/master/TA0003-Persistence/T1098.xxx-Account%20manipulation
+- https://www.sans.org/blog/protecting-privileged-domain-accounts-safeguarding-access-tokens/
+- https://www.cyberark.com/resources/threat-research-blog/weakness-within-kerberos-delegation
+- https://book.hacktricks.xyz/windows/stealing-credentials/credentials-protections#protected-users
+- https://github.com/mdecrevoisier/SIGMA-detection-rules
+author: mdecrevoisier
+date: 2026/05/04
+modified: 2026/05/04
+tags:
+- TA0003
+- attack.t1098
+- attack.persistence
+logsource:
+  product: windows
+  service: security
+detection:
+  selection:
+    EventID: 4738
+    UserAccountControl|contains: '%%2062'
+  condition: selection
+fields:
+- Hostname
+- EventID
+- UserAccountControl
+unique_fields:
+- Hostname
+falsepositives:
+- none
+level: high
+x_source_repository: https://github.com/mdecrevoisier/SIGMA-detection-rules
+x_source_commit: ab15e29fcdbed297e305e2602881b8654946592c
+x_source_file: windows-active_directory/win-ad-user set as sensitive had protection removed.yaml
+x_legacy_id: winlog-9000-0074
+x_legacy_file: engine/rules/winlog/sigma_ref/9000-0074-account_marked_as_sensitive_and_cannot_be_delegated_had_its_protection_r.yml

@@ -1,0 +1,35 @@
+title: Massive remote service creation via named pipes (TChopper, CME) Count
+id: flow-0028
+status: experimental
+rule_origin: public
+enable: true
+description: Detects scenarios where an attacker remotely creates a service over named pipes. Tools like Tchopper or CrackMapExec
+  can trigger this rule.
+references:
+- https://github.com/mdecrevoisier/EVTX-to-MITRE-Attack/tree/master/TA0002-Execution/T1569.002-Service%20execution
+- https://github.com/lawrenceamer/TChopper
+- https://github.com/mdecrevoisier/SIGMA-detection-rules
+author: mdecrevoisier
+date: 2026/05/04
+modified: 2026/05/04
+tags:
+- TA0002
+- attack.t1569
+- attack.execution
+logsource: flow
+detection:
+  event_type: count
+  win_size: 30m
+  sorted: false
+  sigma_rules:
+  - winlog-0305
+  match_by: $s1.Hostname._count > 20
+level: high
+unique_filter:
+- $s1.IpAddress
+- ttl_1800
+x_source_repository: https://github.com/mdecrevoisier/SIGMA-detection-rules
+x_source_commit: ab15e29fcdbed297e305e2602881b8654946592c
+x_source_file: windows-services/win-os-service remote creation via named pipes (CME, Tchopper).yaml
+x_legacy_id: flow-9000-0026
+x_legacy_file: engine/rules/flow/sigma_ref/9000-0026-massive_remote_service_creation_via_named_pipes_tchopper_cme_count.yml

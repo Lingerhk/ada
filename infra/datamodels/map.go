@@ -1,6 +1,8 @@
 package datamodels
 
 import (
+	"encoding/json"
+	"fmt"
 	"strings"
 	"time"
 )
@@ -15,9 +17,52 @@ func (d Map) Select(key string) (any, bool) {
 	return d.Get(strings.Split(key, ".")...)
 }
 
-// Keywords implements keyword interface for sigma rule engine. For now it's a stub.
+// Keywords implements keyword interface for sigma rule engine.
 func (d Map) Keywords() ([]string, bool) {
-	return nil, false
+	keywords := make([]string, 0)
+	collectKeywords(d, &keywords)
+	if len(keywords) == 0 {
+		return nil, false
+	}
+	if raw, err := json.Marshal(d); err == nil {
+		keywords = append(keywords, string(raw))
+	}
+	return keywords, true
+}
+
+func collectKeywords(value any, out *[]string) {
+	switch v := value.(type) {
+	case Map:
+		for _, child := range v {
+			collectKeywords(child, out)
+		}
+	case map[string]any:
+		for _, child := range v {
+			collectKeywords(child, out)
+		}
+	case []any:
+		for _, child := range v {
+			collectKeywords(child, out)
+		}
+	case []string:
+		for _, child := range v {
+			if child != "" {
+				*out = append(*out, child)
+			}
+		}
+	case string:
+		if v != "" {
+			*out = append(*out, v)
+		}
+	case fmt.Stringer:
+		if s := v.String(); s != "" {
+			*out = append(*out, s)
+		}
+	case nil:
+		return
+	default:
+		*out = append(*out, fmt.Sprint(v))
+	}
 }
 
 func (d Map) Set(value any, key ...string) error {

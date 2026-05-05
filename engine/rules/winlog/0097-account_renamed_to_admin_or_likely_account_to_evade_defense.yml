@@ -1,0 +1,57 @@
+title: Account renamed to admin (or likely) account to evade defense
+id: winlog-0097
+status: experimental
+rule_origin: public
+description: Detects scenarios where an attacker rename a non admin account in order to evade SOC & operations vigilance
+references:
+- https://github.com/mdecrevoisier/EVTX-to-MITRE-Attack/tree/master/TA0003-Persistence/T1098.xxx-Account%20manipulation
+- https://github.com/mdecrevoisier/SIGMA-detection-rules
+author: mdecrevoisier
+date: 2026/05/04
+modified: 2026/05/04
+tags:
+- TA0003
+- attack.t1078.002
+- attack.persistence
+logsource:
+  product: windows
+  service: security
+detection:
+  selection_event:
+    EventID: 4781
+  selection_pattern:
+  - NewTargetUserName|startswith:
+    - admin-
+    - adm-
+    - <customer pattern>
+  - NewTargetUserName|endswith:
+    - -admin
+    - -adm
+    - <customer pattern>
+  filter:
+  - OldTargetUserName|startswith:
+    - admin-
+    - adm-
+    - <customer pattern>
+  - OldTargetUserName|endswith:
+    - -admin
+    - -adm
+    - <customer pattern>
+  - TargetSid|endswith: '-500'
+  condition: selection_event and selection_pattern and not filter
+fields:
+- Hostname
+- EventID
+- NewTargetUserName
+- OldTargetUserName
+- TargetSid
+unique_fields:
+- Hostname
+falsepositives:
+- builtin admin account renamed for obfuscation
+level: high
+x_source_repository: https://github.com/mdecrevoisier/SIGMA-detection-rules
+x_source_commit: ab15e29fcdbed297e305e2602881b8654946592c
+x_source_file: windows-active_directory/win-ad-user renamed to admin to bypass vigilance.yaml
+x_legacy_id: winlog-9000-0073
+x_legacy_file: engine/rules/winlog/sigma_ref/9000-0073-account_renamed_to_admin_or_likely_account_to_evade_defense.yml

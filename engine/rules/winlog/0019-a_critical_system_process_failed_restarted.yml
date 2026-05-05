@@ -1,0 +1,32 @@
+title: Critical System Process Failure
+id: winlog-0019
+status: test
+rule_origin: internal
+description: Detects Microsoft-Windows-Wininit event 1015 for a critical system process failure that forces the machine to
+  restart. On a domain controller, LSASS or other critical process failure can indicate instability, tampering, or impact
+  activity.
+references:
+- https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0xef--critical-process-died
+- https://attack.mitre.org/techniques/T1499/
+author: ADA default rules
+date: 2017/03/09
+modified: 2026/05/05
+tags:
+- TA0040
+- attack.t1499
+- attack.impact
+logsource: winlog
+detection:
+  selection_source:
+    Channel: Application
+    EventID: 1015
+  condition: selection_source
+fields:
+- Hostname
+- Message
+- SourceName
+unique_fields:
+- Hostname
+level: high
+x_legacy_id: winlog-0103-0013
+x_legacy_file: engine/rules/winlog/0103-0013-systemt_process_winini_failed.yml

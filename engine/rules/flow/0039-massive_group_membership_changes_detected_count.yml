@@ -1,0 +1,30 @@
+title: Massive group membership changes detected Count
+id: flow-0039
+status: experimental
+rule_origin: public
+enable: true
+description: ''
+references:
+- https://github.com/mdecrevoisier/SIGMA-detection-rules
+author: mdecrevoisier
+date: 2026/05/04
+modified: 2026/05/04
+tags:
+- TA0000
+logsource: flow
+detection:
+  event_type: count
+  win_size: 15m
+  sorted: false
+  sigma_rules:
+  - winlog-0068
+  match_by: $s1.TargetSid._count >= 20
+level: high
+unique_filter:
+- $s1.SubjectUserSid
+- ttl_1800
+x_source_repository: https://github.com/mdecrevoisier/SIGMA-detection-rules
+x_source_commit: ab15e29fcdbed297e305e2602881b8654946592c
+x_source_file: windows-active_directory/win-ad-group massive membership changes.yaml
+x_legacy_id: flow-9000-0038
+x_legacy_file: engine/rules/flow/sigma_ref/9000-0038-massive_group_membership_changes_detected_count_value_count.yml

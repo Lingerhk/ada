@@ -1,0 +1,34 @@
+title: PowerShell Command In Script Block
+id: winlog-0021
+status: test
+rule_origin: internal
+description: Detects PowerShell script block logging events (4104) where the captured script block contains the powershell
+  token. This provides a broad signal for PowerShell command execution and can feed higher-confidence correlations.
+references:
+- https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_logging
+- https://attack.mitre.org/techniques/T1059/001/
+author: ADA default rules
+date: 2017/03/09
+modified: 2026/05/05
+tags:
+- TA0002
+- attack.t1059.001
+- attack.execution
+logsource: winlog
+detection:
+  selection_source:
+    Channel: Microsoft-Windows-PowerShell/Operational
+    EventID: 4104
+    ScriptBlockText|contains: powershell
+  condition: selection_source
+fields:
+- Hostname
+- AccountName
+- ScriptBlockText
+- SourceName
+unique_fields:
+- Hostname
+- AccountName
+level: info
+x_legacy_id: winlog-0103-0015
+x_legacy_file: engine/rules/winlog/0103-0015-powershell_commad_execution.yml

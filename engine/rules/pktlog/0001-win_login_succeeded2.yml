@@ -1,0 +1,47 @@
+title: Kerberos Network Logon Succeeded (Packet Log)
+id: pktlog-0001
+status: experimental
+rule_origin: internal
+description: Detects successful Kerberos network logons represented in packet-derived log data, using the same 4624 LogonType
+  3 semantics as the matching winlog rule and excluding machine or system accounts.
+references:
+- https://learn.microsoft.com/en-us/windows/security/threat-protection/auditing/event-4624
+- https://attack.mitre.org/techniques/T1078/
+author: ADA default rules
+date: 2021/12/12
+modified: 2026/05/05
+tags:
+- TA0001
+- attack.t1078
+- attack.initial_access
+logsource: pktlog
+detection:
+  selection1:
+    EventID: 4624
+    LogonType: 3
+    LogonProcessName: Kerberos
+  filter1:
+    IpAddress:
+    - ::1
+    - fe80
+    - 127.0.0.1
+  filter2:
+    TargetUserSid|contains:
+    - S-1-5-18
+    - S-1-5-90-0-
+  filter3:
+    TargetUserName|endswith: $
+  condition: selection1 and not filter1 and not filter2 and not filter3
+rdx_key: rule_cache:aduser_info
+fields:
+- Hostname
+- TargetDomainName
+- TargetUserName
+- TargetUserSid
+- IpAddress
+unique_fields:
+- Hostname
+- TargetUserName
+level: info
+x_legacy_id: pktlog-0000-0001
+x_legacy_file: engine/rules/pktlog/0000-0001-win_login_succ.yml

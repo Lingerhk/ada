@@ -1,0 +1,45 @@
+title: Command Shell Spawned Common Administrative Tool
+id: winlog-0020
+status: test
+rule_origin: internal
+description: Detects process creation events (4688) where cmd.exe or powershell.exe launches common administrative or scripting
+  tools such as net, whoami, or powershell. This can capture interactive command execution and early reconnaissance from a
+  terminal.
+references:
+- https://learn.microsoft.com/en-us/windows/security/threat-protection/auditing/event-4688
+- https://attack.mitre.org/techniques/T1059/
+author: ADA default rules
+date: 2017/03/09
+modified: 2026/05/05
+tags:
+- TA0002
+- attack.t1059
+- attack.execution
+logsource: winlog
+detection:
+  selection_source:
+    Channel: Security
+    EventID: 4688
+    ParentProcessName|endswith:
+    - cmd.exe
+    - net.exe
+    - powershell.exe
+  filter_ignore:
+    CommandLine|contains:
+    - '0xffffffff'
+    - npcap
+    - netsh.exe
+  condition: selection_source and not filter_ignore
+fields:
+- Hostname
+- CommandLine
+- NewProcessName
+- ParentProcessName
+- SubjectUserName
+- SubjectUserSid
+unique_fields:
+- Hostname
+- SubjectUserName
+level: high
+x_legacy_id: winlog-0103-0014
+x_legacy_file: engine/rules/winlog/0103-0014-commad_execution_via_cmd.yml

@@ -1,0 +1,38 @@
+title: Winlogon process contact to C2 - Blacklotus (Sysmon)
+id: winlog-0268
+status: experimental
+rule_origin: public
+description: Detects Blacklotus HTTP downloader injection into winlogon.exe process.
+references:
+- https://www.microsoft.com/en-us/security/blog/2023/04/11/guidance-for-investigating-attacks-using-cve-2022-21894-the-blacklotus-campaign/
+- https://github.com/mdecrevoisier/SIGMA-detection-rules
+author: mdecrevoisier
+date: 2026/05/04
+modified: 2026/05/04
+tags:
+- TA0011
+- attack.t1016
+- attack.command_and_control
+- attack.discovery
+logsource:
+  product: windows
+  category: process_creation
+detection:
+  selection:
+    Image|endswith: \winlogon.exe
+    DestinationPort: 80
+  condition: selection
+fields:
+- Hostname
+- DestinationPort
+- Image
+unique_fields:
+- Hostname
+falsepositives:
+- None
+level: high
+x_source_repository: https://github.com/mdecrevoisier/SIGMA-detection-rules
+x_source_commit: ab15e29fcdbed297e305e2602881b8654946592c
+x_source_file: windows-os/win-os-winlogon process contact to C2 (network).yaml
+x_legacy_id: winlog-9000-0275
+x_legacy_file: engine/rules/winlog/sigma_ref/9000-0275-winlogon_process_contact_to_c2_blacklotus_sysmon.yml

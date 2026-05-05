@@ -1,0 +1,59 @@
+title: Kerberos ticket without a trailing $ (CVE-2021-42278/42287)
+id: winlog-0045
+status: experimental
+rule_origin: public
+description: Detects scenarios where an attacker attempts to spoof the SAM account name of a a domain controller in order
+  to impersonate it. Vulnerability comes from that computer accounts should have a trailing $ in their name (i.e. sAMAccountName
+  attribute) but no validation process existed until the patch was released. During the offensive phase, attacker will create
+  and rename the sAMAccountName of a computer account to look like the one of a domain controller.
+references:
+- https://github.com/mdecrevoisier/EVTX-to-MITRE-Attack/tree/master/TA0006-Credential%20Access/T1558-Steal%20or%20Forge%20Kerberos%20Tickets
+- https://exploit.ph/cve-2021-42287-cve-2021-42278-weaponisation.html
+- https://www.thehacker.recipes/ad/movement/kerberos/samaccountname-spoofing
+- https://support.microsoft.com/en-us/topic/kb5008380-authentication-updates-cve-2021-42287-9dafac11-e0d0-4cb8-959a-143bd0201041
+- https://github.com/WazeHell/sam-the-admin
+- https://github.com/cube0x0/noPac
+- https://github.com/ly4k/Pachine
+- https://cloudbrothers.info/en/exploit-kerberos-samaccountname-spoofing/
+- https://github.com/mdecrevoisier/SIGMA-detection-rules
+author: mdecrevoisier
+date: 2026/05/04
+modified: 2026/05/04
+tags:
+- TA0006
+- attack.t1558
+- attack.t1068
+- attack.credential_access
+- attack.privilege_escalation
+logsource:
+  product: windows
+  service: security
+detection:
+  selection_tgt:
+    EventID: 4768
+    Status|contains: '0x0'
+    ServiceSid|endswith: '-502'
+  selection_tgs:
+    EventID: 4769
+    Status|contains: '0x0'
+    ServiceName|endswith: $
+  selection_host:
+    TargetUserName|contains: $
+  condition: (selection_tgt or selection_tgs) and not selection_host
+fields:
+- Hostname
+- EventID
+- ServiceName
+- ServiceSid
+- Status
+- TargetUserName
+unique_fields:
+- Hostname
+falsepositives:
+- None
+level: high
+x_source_repository: https://github.com/mdecrevoisier/SIGMA-detection-rules
+x_source_commit: ab15e29fcdbed297e305e2602881b8654946592c
+x_source_file: windows-active_directory/win-ad-Kerberos ticket without a trailing $ (CVE-2021-42278).yaml
+x_legacy_id: winlog-9000-0021
+x_legacy_file: engine/rules/winlog/sigma_ref/9000-0021-kerberos_ticket_without_a_trailing_cve_2021_42278_42287.yml

@@ -1,0 +1,55 @@
+title: Suspicious SPN enumeration previous to Kerberoasting attack (PowerShell)
+id: winlog-0086
+status: experimental
+rule_origin: public
+description: Detects scenarios where an attacker attempts to retrieve SPN using PowerShell and native tools.
+references:
+- https://github.com/mdecrevoisier/EVTX-to-MITRE-Attack/tree/master/TA0007-Discovery/T1087-Account%20discovery
+- https://github.com/nidem/kerberoast
+- https://github.com/cyberark/RiskySPN
+- https://pentestlab.blog/2018/06/04/spn-discovery/
+- https://adsecurity.org/?p=3458
+- https://redcanary.com/blog/marshmallows-and-kerberoasting/
+- https://www.security.com/threat-intelligence/us-china-espionage
+- https://github.com/mdecrevoisier/SIGMA-detection-rules
+author: mdecrevoisier
+date: 2026/05/04
+modified: 2026/05/04
+tags:
+- TA0006
+- attack.t1087.002
+- attack.t1558.003
+- attack.account_discovery
+- attack.credential_access
+logsource:
+  product: windows
+  category:
+  - ps_module
+  - ps_script
+detection:
+  selection2_powershell_modern:
+    EventID: 4103
+    Payload|contains:
+    - System.IdentityModel.Tokens.KerberosRequestorSecurityToken
+    - Add-Type -AssemblyName System.IdentityModel
+  selection3_powershell_block:
+    EventID: 4104
+    ScriptBlockText|contains:
+    - System.IdentityModel.Tokens.KerberosRequestorSecurityToken
+    - Add-Type -AssemblyName System.IdentityModel
+  condition: 1 of selection*
+fields:
+- Hostname
+- EventID
+- Payload
+- ScriptBlockText
+unique_fields:
+- Hostname
+falsepositives:
+- Administrators
+level: high
+x_source_repository: https://github.com/mdecrevoisier/SIGMA-detection-rules
+x_source_commit: ab15e29fcdbed297e305e2602881b8654946592c
+x_source_file: windows-active_directory/win-ad-spn enumeration (PowerShell).yaml
+x_legacy_id: winlog-9000-0062
+x_legacy_file: engine/rules/winlog/sigma_ref/9000-0062-suspicious_spn_enumeration_previous_to_kerberoasting_attack_powershell.yml

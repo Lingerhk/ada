@@ -1,0 +1,40 @@
+title: DNS hosts file modified
+id: winlog-0216
+status: experimental
+rule_origin: public
+description: Detects scenarios where an attacker attempts to modify the Hosts file to perform DNS interception and/or redirect
+  network traffic.
+references:
+- https://github.com/mdecrevoisier/EVTX-to-MITRE-Attack/tree/master/TA0040-Impact/T1565-Data%20manipulation
+- https://www.elastic.co/guide/en/security/current/hosts-file-modified.html
+- https://www.crowdstrike.com/blog/anatomy-of-alpha-spider-ransomware/
+- https://github.com/mdecrevoisier/SIGMA-detection-rules
+author: mdecrevoisier
+date: 2026/05/04
+modified: 2026/05/04
+tags:
+- TA0040
+- attack.t1565
+- attack.impact
+logsource:
+  product: windows
+  service: security
+detection:
+  selection:
+    EventID: 11
+    TargetFilename|endswith: \System32\drivers\etc\hosts
+  condition: selection
+fields:
+- Hostname
+- EventID
+- TargetFilename
+unique_fields:
+- Hostname
+falsepositives:
+- Administrator activity, web servers configuration, malware blocking attempt during incident response
+level: high
+x_source_repository: https://github.com/mdecrevoisier/SIGMA-detection-rules
+x_source_commit: ab15e29fcdbed297e305e2602881b8654946592c
+x_source_file: windows-os/win-os-hosts file modified.yaml
+x_legacy_id: winlog-9000-0217
+x_legacy_file: engine/rules/winlog/sigma_ref/9000-0217-dns_hosts_file_modified.yml

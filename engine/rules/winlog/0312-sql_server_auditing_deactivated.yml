@@ -1,0 +1,57 @@
+title: SQL Server auditing deactivated
+id: winlog-0312
+status: experimental
+rule_origin: public
+description: Detects scenarios where an attacker deactivates SQL Server auditing capacities. SQL auditing requires previous
+  configuration on each SQL instance.
+references:
+- https://github.com/mdecrevoisier/EVTX-to-MITRE-Attack/tree/master/TA0005-Defense%20Evasion/T1562.002-Disable%20Windows%20Event%20Logging
+- https://www.ultimatewindowssecurity.com/sqlserver/auditlog/sampleevent.aspx
+- https://docs.microsoft.com/en-us/sql/relational-databases/security/auditing/sql-server-audit-action_id-groups-and-action_ids?view=sql-server-2017
+- https://www.sqlshack.com/various-techniques-to-audit-sql-server-databases/
+- https://sqlquantumleap.com/reference/server-audit-filter-values-for-action_id_id/
+- https://github.com/mdecrevoisier/SIGMA-detection-rules
+author: mdecrevoisier
+date: 2026/05/04
+modified: 2026/05/04
+tags:
+- TA0005
+- attack.t1562.002
+- attack.defense_evasion
+logsource:
+  product: mssql
+  category: application
+detection:
+  sql_server_event:
+    EventID: 33205
+  server_audit_spec_disabled:
+    action_id: AL
+    class_type: SA
+    statement|contains: STATE = OFF
+  server_audit_spec_deleted:
+    action_id: DR
+    class_type: SA
+  server_audit_obj_disabled:
+    action_id: AL
+    class_type: A
+    statement|contains: STATE = OFF
+  server_audit_obj_deleted:
+    action_id: DR
+    class_type: A
+  condition: sql_server_event and (1 of server_audit_*)
+fields:
+- Hostname
+- EventID
+- action_id
+- class_type
+- statement
+unique_fields:
+- Hostname
+falsepositives:
+- DBA policy change
+level: high
+x_source_repository: https://github.com/mdecrevoisier/SIGMA-detection-rules
+x_source_commit: ab15e29fcdbed297e305e2602881b8654946592c
+x_source_file: windows-sql_server/sql_server-auditing capacities deactivated.yaml
+x_legacy_id: winlog-9000-0326
+x_legacy_file: engine/rules/winlog/sigma_ref/9000-0326-sql_server_auditing_deactivated.yml

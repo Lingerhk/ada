@@ -1,0 +1,45 @@
+title: RDP shadow session started (command)
+id: winlog-0275
+status: experimental
+rule_origin: public
+description: Detects scenarios where an attacker would attempt to shadow a RDP session.
+references:
+- http://woshub.com/rds-shadow-how-to-connect-to-a-user-session-in-windows-server-2012-r2/
+- https://www.elastic.co/guide/en/security/current/potential-remote-desktop-shadowing-activity.html
+- https://bitsadm.in/blog/spying-on-users-using-rdp-shadowing
+- https://swarm.ptsecurity.com/remote-desktop-services-shadowing/
+- https://github.com/mdecrevoisier/SIGMA-detection-rules
+author: mdecrevoisier
+date: 2026/05/04
+modified: 2026/05/04
+tags:
+- TA0008
+- attack.t1021.001
+- attack.t1113
+- attack.t1125
+- attack.lateral_movement
+- attack.collection
+logsource:
+  product: windows
+  category: process_creation
+detection:
+  selection:
+    NewProcessName|endswith: \mstsc.exe
+    CommandLine|contains|all:
+    - mstsc
+    - /shadow
+  condition: selection
+fields:
+- Hostname
+- CommandLine
+- NewProcessName
+unique_fields:
+- Hostname
+falsepositives:
+- administrative source host used for shadowing
+level: high
+x_source_repository: https://github.com/mdecrevoisier/SIGMA-detection-rules
+x_source_commit: ab15e29fcdbed297e305e2602881b8654946592c
+x_source_file: windows-rdp/win-rdp-shadow session started (command).yaml
+x_legacy_id: winlog-9000-0285
+x_legacy_file: engine/rules/winlog/sigma_ref/9000-0285-rdp_shadow_session_started_command.yml

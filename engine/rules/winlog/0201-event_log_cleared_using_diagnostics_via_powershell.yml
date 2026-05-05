@@ -1,0 +1,48 @@
+title: Event log cleared using Diagnostics (via PowerShell)
+id: winlog-0201
+status: stable
+rule_origin: public
+description: Detects scenarios where an attacker attempts to clear the event logs.
+references:
+- hhttps://www.linkedin.com/feed/update/urn:li:activity:7143833994139283456/
+- https://dscottraynsford.wordpress.com/2015/04/09/clear-all-windows-event-logs/
+- https://github.com/mdecrevoisier/SIGMA-detection-rules
+author: mdecrevoisier
+date: 2026/05/04
+modified: 2026/05/04
+tags:
+- TA0005
+- attack.t1070.001
+- attack.defense_evasion
+logsource:
+  product: windows
+  category:
+  - ps_module
+  - ps_script
+detection:
+  selection_powershell_modern:
+    EventID: 4103
+    Payload|contains|all:
+    - System.Diagnostics.Eventing.Reader.EventLogSession
+    - ClearLog
+  selection_powershell_block:
+    EventID: 4104
+    ScriptBlockText|contains|all:
+    - System.Diagnostics.Eventing.Reader.EventLogSession
+    - ClearLog
+  condition: selection_powershell_modern or selection_powershell_block
+fields:
+- Hostname
+- EventID
+- Payload
+- ScriptBlockText
+unique_fields:
+- Hostname
+falsepositives:
+- None
+level: high
+x_source_repository: https://github.com/mdecrevoisier/SIGMA-detection-rules
+x_source_commit: ab15e29fcdbed297e305e2602881b8654946592c
+x_source_file: windows-os/win-os-event log clear attemp using diagnostic (PowerShell).yaml
+x_legacy_id: winlog-9000-0202
+x_legacy_file: engine/rules/winlog/sigma_ref/9000-0202-event_log_cleared_using_diagnostics_via_powershell.yml

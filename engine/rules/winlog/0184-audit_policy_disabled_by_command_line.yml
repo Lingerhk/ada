@@ -1,0 +1,43 @@
+title: Audit policy disabled by command line
+id: winlog-0184
+status: experimental
+rule_origin: public
+description: Detects scenarios where an attacker attempts disbaled the audit policy for defense evasion purposes.
+references:
+- https://github.com/mdecrevoisier/EVTX-to-MITRE-Attack/tree/master/TA0005-Defense%20Evasion/T1562.002-Disable%20Windows%20Event%20Logging
+- https://searchitchannel.techtarget.com/feature/Using-AuditPol-to-audit-Windows-users-and-set-policies
+- https://github.com/mdecrevoisier/SIGMA-detection-rules
+author: mdecrevoisier
+date: 2026/05/04
+modified: 2026/05/04
+tags:
+- TA0005
+- attack.t1562.002
+- attack.defense_evasion
+logsource:
+  product: windows
+  service: security
+detection:
+  selection:
+    EventID: 4719
+    AuditPolicyChanges|contains:
+    - '%%8448'
+    - '%%8450'
+  filter:
+    SubjectUserName|endswith: $
+  condition: selection and not filter
+fields:
+- Hostname
+- AuditPolicyChanges
+- EventID
+- SubjectUserName
+unique_fields:
+- Hostname
+falsepositives:
+- Administrator debugging audit policy
+level: high
+x_source_repository: https://github.com/mdecrevoisier/SIGMA-detection-rules
+x_source_commit: ab15e29fcdbed297e305e2602881b8654946592c
+x_source_file: windows-os/win-os-audit policy disabled (native).yaml
+x_legacy_id: winlog-9000-0184
+x_legacy_file: engine/rules/winlog/sigma_ref/9000-0184-audit_policy_disabled_by_command_line.yml

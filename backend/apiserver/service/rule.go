@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"fmt"
+	"strings"
 
 	v2 "ada/backend/apiserver/api/v2"
 	"ada/backend/apiserver/server"
@@ -40,6 +41,18 @@ func detectionToYAML(detection any) (string, error) {
 	}
 
 	return buf.String(), nil
+}
+
+func normalizeRuleOrigin(origin, fallback string) string {
+	origin = strings.ToLower(strings.TrimSpace(origin))
+	switch origin {
+	case "internal", "public", "custom":
+		return origin
+	}
+	if fallback != "" {
+		return fallback
+	}
+	return "custom"
 }
 
 // Alert Rule methods
@@ -131,6 +144,7 @@ func (s *ADAServiceV2) ListAlertRule(ctx context.Context, in *v2.ListAlertRuleRe
 			Logsource:    rule.Logsource,
 			Detection:    detectionStr,
 			Type:         rule.Type,
+			RuleOrigin:   normalizeRuleOrigin(rule.RuleOrigin, "internal"),
 			Author:       rule.Author,
 			References:   rule.References,
 			Suggestion:   rule.Suggestion,
@@ -199,6 +213,7 @@ func (s *ADAServiceV2) AddAlertRule(ctx context.Context, in *v2.AddAlertRuleReq)
 		Logsource:    in.Logsource,
 		Detection:    detection,
 		Type:         in.Type,
+		RuleOrigin:   normalizeRuleOrigin(in.RuleOrigin, "custom"),
 		References:   in.References,
 		Suggestion:   in.Suggestion,
 		Author:       in.Author,
@@ -273,6 +288,9 @@ func (s *ADAServiceV2) UpdateAlertRule(ctx context.Context, in *v2.UpdateAlertRu
 	}
 	if in.Type != "" {
 		updates["type"] = in.Type
+	}
+	if in.RuleOrigin != "" {
+		updates["rule_origin"] = normalizeRuleOrigin(in.RuleOrigin, "custom")
 	}
 	if len(in.References) > 0 {
 		updates["references"] = in.References
@@ -517,6 +535,7 @@ func (s *ADAServiceV2) ListActivityRule(ctx context.Context, in *v2.ListActivity
 			Status:       rule.Status,
 			Tags:         tags,
 			Logsource:    rule.Logsource,
+			RuleOrigin:   normalizeRuleOrigin(rule.RuleOrigin, "internal"),
 			References:   rule.References,
 			Detection:    detectionStr,
 			RdxKey:       rule.RdxKey,
@@ -561,6 +580,7 @@ func (s *ADAServiceV2) GetActivityRule(ctx context.Context, in *v2.GetActivityRu
 		Status:       rule.Status,
 		Tags:         rule.Tags,
 		Logsource:    rule.Logsource,
+		RuleOrigin:   normalizeRuleOrigin(rule.RuleOrigin, "internal"),
 		References:   rule.References,
 		Detection:    detectionStr,
 		RdxKey:       rule.RdxKey,
@@ -588,6 +608,7 @@ func (s *ADAServiceV2) AddActivityRule(ctx context.Context, in *v2.AddActivityRu
 		Status:       in.Status,
 		Tags:         in.Tags,
 		Logsource:    in.Logsource,
+		RuleOrigin:   normalizeRuleOrigin(in.RuleOrigin, "custom"),
 		References:   in.References,
 		Detection:    detection,
 		RdxKey:       in.RdxKey,
@@ -644,6 +665,9 @@ func (s *ADAServiceV2) UpdateActivityRule(ctx context.Context, in *v2.UpdateActi
 	}
 	if in.Logsource != "" {
 		updates["logsource"] = in.Logsource
+	}
+	if in.RuleOrigin != "" {
+		updates["rule_origin"] = normalizeRuleOrigin(in.RuleOrigin, "custom")
 	}
 	if len(in.References) > 0 {
 		updates["references"] = in.References

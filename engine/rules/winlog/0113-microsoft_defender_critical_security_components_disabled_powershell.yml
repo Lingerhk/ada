@@ -1,0 +1,62 @@
+title: Microsoft Defender critical security components disabled (PowerShell)
+id: winlog-0113
+status: experimental
+rule_origin: public
+description: Detects scenarios where an attacker attempts to disable Defender security features in PowerShell
+references:
+- https://github.com/mdecrevoisier/EVTX-to-MITRE-Attack/tree/master/TA0005-Defense%20Evasion/T1562.001-Impair%20Defenses-Disable%20or%20Modify%20tool
+- https://github.com/swagkarna/Defeat-Defender-V1.2
+- https://docs.microsoft.com/en-us/powershell/module/defender/set-mppreference?view=windowsserver2019-ps
+- https://docs.microsoft.com/en-us/windows/client-management/mdm/defender-csp
+- https://powershell.one/wmi/root/microsoft/windows/defender/msft_mppreference
+- https://gist.github.com/pe3zx/7c5e0080c3b0869ccba1f1dc2ea0c5e0
+- https://cloudbrothers.info/en/current-limits-defender-av-tamper-protection/
+- https://github.com/mdecrevoisier/SIGMA-detection-rules
+author: mdecrevoisier
+date: 2026/05/04
+modified: 2026/05/04
+tags:
+- TA0005
+- attack.t1562.001
+- attack.defense_evasion
+logsource:
+  product: windows
+  category:
+  - ps_module
+  - ps_script
+detection:
+  selection2_powershell_modern:
+    EventID: 4103
+    EventData|contains: Set-MpPreference
+    Payload|contains:
+    - DisableRealtimeMonitoring
+    - DisableBehaviorMonitoring
+    - DisableIOAVProtection
+    - DisableIntrusionPreventionSystem
+    - DisableInboundConnectionFiltering
+  selection3_powershell_block:
+    EventID: 4104
+    EventData|contains: Set-MpPreference
+    ScriptBlockText|contains:
+    - DisableRealtimeMonitoring
+    - DisableBehaviorMonitoring
+    - DisableIOAVProtection
+    - DisableIntrusionPreventionSystem
+    - DisableInboundConnectionFiltering
+  condition: 1 of selection*
+fields:
+- Hostname
+- EventData
+- EventID
+- Payload
+- ScriptBlockText
+unique_fields:
+- Hostname
+falsepositives:
+- None
+level: high
+x_source_repository: https://github.com/mdecrevoisier/SIGMA-detection-rules
+x_source_commit: ab15e29fcdbed297e305e2602881b8654946592c
+x_source_file: windows-defender/defender-critical security components disabled (PowerShell).yaml
+x_legacy_id: winlog-9000-0091
+x_legacy_file: engine/rules/winlog/sigma_ref/9000-0091-microsoft_defender_critical_security_components_disabled_powershell.yml

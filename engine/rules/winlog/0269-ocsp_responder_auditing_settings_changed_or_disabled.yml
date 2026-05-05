@@ -1,0 +1,42 @@
+title: OCSP responder auditing settings changed or disabled
+id: winlog-0269
+status: experimental
+rule_origin: public
+description: Detects scenarios where an attacker would attempt to alter or disable OCSP responder auditing settings to evade
+  detection and perform further escalation via ADCS vulnerabilities.
+references:
+- https://github.com/mdecrevoisier/EVTX-to-MITRE-Attack/tree/master/TA0005-Defense%20Evasion/T1222.001-File%20and%20Directory%20Permissions%20Modification
+- https://www.gradenegger.eu/en/overview-of-the-audit-events-generated-by-the-online-responder-ocsp/
+- https://services.google.com/fh/files/misc/active-directory-certificate-services-hardening-wp-en.pdf
+- https://speakerdeck.com/heirhabarov/hunting-for-active-directory-certificate-services-abuse
+- https://www.crowdstrike.com/wp-content/uploads/2023/12/investigating-active-directory-certificate-abuse.pdf
+- https://github.com/mdecrevoisier/SIGMA-detection-rules
+author: mdecrevoisier
+date: 2026/05/04
+modified: 2026/05/04
+tags:
+- TA0005
+- attack.t1562.002
+- attack.defense_evasion
+logsource:
+  product: windows
+  service: security
+detection:
+  selection:
+    EventID: 5123
+    PropertyName: AuditFilter
+  condition: selection
+fields:
+- Hostname
+- EventID
+- PropertyName
+unique_fields:
+- Hostname
+falsepositives:
+- Rare PKI/ADCS/OSCP admin changes
+level: high
+x_source_repository: https://github.com/mdecrevoisier/SIGMA-detection-rules
+x_source_commit: ab15e29fcdbed297e305e2602881b8654946592c
+x_source_file: windows-pki-ocsp/win-ocsp-auditing changed.yaml
+x_legacy_id: winlog-9000-0276
+x_legacy_file: engine/rules/winlog/sigma_ref/9000-0276-ocsp_responder_auditing_settings_changed_or_disabled.yml

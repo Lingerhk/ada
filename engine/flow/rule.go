@@ -290,11 +290,13 @@ func extractFields(conditions []Condition, sigmaIDs []string) map[string][]strin
 			continue
 		}
 
-		if c.operation == "in" {
+		if c.operation == "in" || c.operation == "count" {
 			// 只处理表达式前部分: $s1.LoginType in $v.slice.["ss", "sd", "sc"], 还支持`in $v.cache.key_xxxx`
 			sid := sigmaIDs[c.fieldOneIdx]
-			sigmaFields[sid] = append(sigmaFields[sid], c.fieldOneVal)
-			if c.fieldTwoTyp == "cache" || c.fieldTwoTyp == "ldap" {
+			if c.fieldOneVal != "_count" {
+				sigmaFields[sid] = append(sigmaFields[sid], c.fieldOneVal)
+			}
+			if c.operation == "in" && (c.fieldTwoTyp == "cache" || c.fieldTwoTyp == "ldap") {
 				for _, ref := range extractCacheFieldRefs(c.fieldTwoVal) {
 					if ref.idx < 0 || ref.idx > int64(sigmaRuleTotal-1) {
 						logger.Warnf("%s field idx(%d) out of index, sigmaID len:%d", c.fieldTwoTyp, ref.idx, sigmaRuleTotal)

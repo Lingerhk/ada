@@ -1,0 +1,53 @@
+title: OpenSSH native server feature installation
+id: winlog-0155
+status: experimental
+rule_origin: public
+description: Detects scenarios where an attacker enables the native OpenSSH server feature on Windows to perform stealthy
+  lateral movement.
+references:
+- https://github.com/mdecrevoisier/EVTX-to-MITRE-Attack/tree/master/TA0008-Lateral%20Movement/T1021.004-Remote%20Service%20SSH
+- https://winaero.com/enable-openssh-server-windows-10/
+- https://docs.microsoft.com/en-us/windows-server/administration/openssh/openssh_install_firstuse
+- https://virtualizationreview.com/articles/2020/05/21/ssh-server-on-windows-10.aspx
+- https://www.microsoft.com/en-us/security/blog/2022/10/18/defenders-beware-a-case-for-post-ransomware-investigations/
+- https://github.com/mdecrevoisier/SIGMA-detection-rules
+author: mdecrevoisier
+date: 2026/05/04
+modified: 2026/05/04
+tags:
+- TA0008
+- attack.t1021.004
+- attack.lateral_movement
+logsource:
+  product: windows
+  category:
+  - ps_module
+  - ps_script
+detection:
+  selection_powershell_modern:
+    EventID: 4103
+    Payload|contains|all:
+    - Add-WindowsCapability
+    - OpenSSH.Server
+  selection_powershell_block:
+    EventID: 4104
+    ScriptBlockText|contains|all:
+    - Add-WindowsCapability
+    - OpenSSH.Server
+  condition: 1 of selection*
+fields:
+- Hostname
+- EventID
+- Payload
+- ScriptBlockText
+unique_fields:
+- Hostname
+falsepositives:
+- legitimate administrator installation
+- developer computer
+level: medium
+x_source_repository: https://github.com/mdecrevoisier/SIGMA-detection-rules
+x_source_commit: ab15e29fcdbed297e305e2602881b8654946592c
+x_source_file: windows-openssh/win-os-OpenSSH feature installation (PowerShell).yaml
+x_legacy_id: winlog-9000-0148
+x_legacy_file: engine/rules/winlog/sigma_ref/9000-0148-openssh_native_server_feature_installation.yml

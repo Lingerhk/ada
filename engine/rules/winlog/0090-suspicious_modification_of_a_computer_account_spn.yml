@@ -1,0 +1,43 @@
+title: Suspicious modification of a computer account SPN
+id: winlog-0090
+status: experimental
+rule_origin: public
+description: Detects scenarios where an attacker update the Service Principal Name (SPN) of a computer account in order to
+  perform "Kerberos redirection" and escalate privileges.
+references:
+- https://dirkjanm.io/krbrelayx-unconstrained-delegation-abuse-toolkit/
+- https://github.com/mdecrevoisier/EVTX-to-MITRE-Attack/tree/master/TA0003-Persistence/T1098.xxx-Account%20manipulation
+- https://github.com/mdecrevoisier/SIGMA-detection-rules
+author: mdecrevoisier
+date: 2026/05/04
+modified: 2026/05/04
+tags:
+- TA0003
+- attack.t1098
+- attack.persistence
+logsource:
+  product: windows
+  service: security
+detection:
+  selection:
+    EventID: 4742
+  filter:
+    SubjectUserName|endswith: $
+    ServicePrincipalNames: '-'
+    ServicePrincipalNames|contains: GC/
+  condition: selection and not filter
+fields:
+- Hostname
+- EventID
+- ServicePrincipalNames
+- SubjectUserName
+unique_fields:
+- Hostname
+falsepositives:
+- Rare administrator modifications on computer objects
+level: high
+x_source_repository: https://github.com/mdecrevoisier/SIGMA-detection-rules
+x_source_commit: ab15e29fcdbed297e305e2602881b8654946592c
+x_source_file: windows-active_directory/win-ad-spn modification of a computer account.yaml
+x_legacy_id: winlog-9000-0066
+x_legacy_file: engine/rules/winlog/sigma_ref/9000-0066-suspicious_modification_of_a_computer_account_spn.yml

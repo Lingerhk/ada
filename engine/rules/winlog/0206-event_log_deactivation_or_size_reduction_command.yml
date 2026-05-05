@@ -1,0 +1,41 @@
+title: Event log deactivation or size reduction (command)
+id: winlog-0206
+status: experimental
+rule_origin: public
+description: Detects scenarios where an attacker disable or reduce the size of an event log.
+references:
+- https://www.recordedfuture.com/five-common-ransomware-techniques
+- https://www.cybereason.com/blog/research/cybereason-vs.-ransomexx-ransomware
+- https://research.splunk.com/endpoint/236e7c8e-c9d9-11eb-a824-acde48001122/
+- https://github.com/mdecrevoisier/SIGMA-detection-rules
+author: mdecrevoisier
+date: 2026/05/04
+modified: 2026/05/04
+tags:
+- TA0005
+- attack.t1562.002
+- attack.defense_evasion
+logsource:
+  product: windows
+  category: process_creation
+detection:
+  selection:
+    NewProcessName|endswith: \wevtutil.exe
+    CommandLine|contains:
+    - /e:false
+    - '/ms:'
+  condition: selection
+fields:
+- Hostname
+- CommandLine
+- NewProcessName
+unique_fields:
+- Hostname
+falsepositives:
+- None
+level: high
+x_source_repository: https://github.com/mdecrevoisier/SIGMA-detection-rules
+x_source_commit: ab15e29fcdbed297e305e2602881b8654946592c
+x_source_file: windows-os/win-os-event log disabled or size reduced (command).yaml
+x_legacy_id: winlog-9000-0207
+x_legacy_file: engine/rules/winlog/sigma_ref/9000-0207-event_log_deactivation_or_size_reduction_command.yml

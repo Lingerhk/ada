@@ -1,0 +1,30 @@
+title: SharpHound host enumeration over Kerberos Count
+id: flow-0037
+status: experimental
+rule_origin: public
+enable: true
+description: ''
+references:
+- https://github.com/mdecrevoisier/SIGMA-detection-rules
+author: mdecrevoisier
+date: 2026/05/04
+modified: 2026/05/04
+tags:
+- TA0000
+logsource: flow
+detection:
+  event_type: count
+  win_size: 5m
+  sorted: false
+  sigma_rules:
+  - winlog-0054
+  match_by: $s1.IpAddress._count >= 20
+level: high
+unique_filter:
+- $s1.ServiceName
+- ttl_1800
+x_source_repository: https://github.com/mdecrevoisier/SIGMA-detection-rules
+x_source_commit: ab15e29fcdbed297e305e2602881b8654946592c
+x_source_file: windows-active_directory/win-ad-SharpHound host enumeration over Kerberos.yaml
+x_legacy_id: flow-9000-0036
+x_legacy_file: engine/rules/flow/sigma_ref/9000-0036-sharphound_host_enumeration_over_kerberos_count_value_count.yml

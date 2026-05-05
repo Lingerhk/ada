@@ -1,0 +1,41 @@
+title: Suspicious permissions modification on a network share
+id: winlog-0251
+status: experimental
+rule_origin: public
+description: Detects scenarios where an attacker modifies network share permissions in order to facilitate lateral movement
+  and avoid detection by creating new network shares
+references:
+- https://github.com/mdecrevoisier/EVTX-to-MITRE-Attack/tree/master/TA0005-Defense%20Evasion/T1222.001-File%20and%20Directory%20Permissions%20Modification
+- https://medium.com/falconforce/falconfriday-monitoring-for-public-shares-0xff1a-ece14fe137e1
+- https://github.com/mdecrevoisier/SIGMA-detection-rules
+author: mdecrevoisier
+date: 2026/05/04
+modified: 2026/05/04
+tags:
+- TA0005
+- attack.t1222.001
+- attack.t1021.002
+- attack.defense_evasion
+- attack.lateral_movement
+logsource:
+  product: windows
+  service: security
+detection:
+  selection:
+    EventID: 5143
+  filter:
+    Hostname: '%domain_controllers%'
+  condition: selection and not filter
+fields:
+- Hostname
+- EventID
+unique_fields:
+- Hostname
+falsepositives:
+- Administrator modification on network shares, SCCM servers, DFS shares, printer servers
+level: medium
+x_source_repository: https://github.com/mdecrevoisier/SIGMA-detection-rules
+x_source_commit: ab15e29fcdbed297e305e2602881b8654946592c
+x_source_file: windows-os/win-os-share permission changed (limited).yaml
+x_legacy_id: winlog-9000-0256
+x_legacy_file: engine/rules/winlog/sigma_ref/9000-0256-suspicious_permissions_modification_on_a_network_share.yml

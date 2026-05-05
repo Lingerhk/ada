@@ -1,0 +1,44 @@
+title: Renamed Procdump tool used for dumping LSASS process
+id: winlog-0240
+status: experimental
+rule_origin: public
+description: Detects scenarios where an attacker attempts to dump the LSASS process content using a renamed version of the
+  Procdump tool.
+references:
+- https://www.intrinsec.com/apt27-analysis/
+- https://learn.microsoft.com/en-us/sysinternals/downloads/procdump
+- https://github.com/mdecrevoisier/SIGMA-detection-rules
+author: mdecrevoisier
+date: 2026/05/04
+modified: 2026/05/04
+tags:
+- TA0002
+- attack.t1569.002
+- attack.execution
+logsource:
+  product: windows
+  category: process_creation
+detection:
+  selection_name:
+  - Image|endswith: \procdump.exe
+  - OriginalFilename: procdump.exe
+  selection_paramters:
+    CommandLine|contains|all:
+    - accepteula
+    - -ma
+  condition: selection_name or selection_paramters
+fields:
+- Hostname
+- CommandLine
+- Image
+- OriginalFilename
+unique_fields:
+- Hostname
+falsepositives:
+- None
+level: high
+x_source_repository: https://github.com/mdecrevoisier/SIGMA-detection-rules
+x_source_commit: ab15e29fcdbed297e305e2602881b8654946592c
+x_source_file: windows-os/win-os-procdump tool renamed and used for dumping LSASS process.yaml
+x_legacy_id: winlog-9000-0244
+x_legacy_file: engine/rules/winlog/sigma_ref/9000-0244-renamed_procdump_tool_used_for_dumping_lsass_process.yml

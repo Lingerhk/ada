@@ -1,0 +1,49 @@
+title: Sensitive User NTLM Network Logon Succeeded
+id: winlog-0024
+status: experimental
+rule_origin: internal
+description: Detects successful NTLM network logons (4624, LogonType 3) after filtering machine and system accounts. This
+  event is intended to feed sensitive-user correlation and alerting.
+references:
+- https://learn.microsoft.com/en-us/windows/security/threat-protection/auditing/event-4624
+- https://attack.mitre.org/techniques/T1078/
+author: ADA default rules
+date: 2021/12/12
+modified: 2026/05/05
+tags:
+- TA0001
+- attack.t1078
+- attack.initial_access
+logsource: winlog
+detection:
+  selection1:
+    EventID: 4624
+    LogonType: 3
+    AuthenticationPackageName: NTLM
+  filter1:
+    IpAddress:
+    - ::1
+    - fe80
+    - 127.0.0.1
+  filter2:
+    TargetUserSid|contains:
+    - S-1-5-18
+    - S-1-5-90-0-
+  filter3:
+    TargetUserName|endswith: $
+  condition: selection1 and not filter1 and not filter2 and not filter3
+fields:
+- Hostname
+- SubjectDomainName
+- SubjectUserName
+- TargetDomainName
+- TargetUserName
+- TargetUserSid
+- IpAddress
+unique_fields:
+- Hostname
+- TargetUserName
+- IpAddress
+level: low
+x_legacy_id: winlog-0104-0001
+x_legacy_file: engine/rules/winlog/0104-0001-senstive_login_succ.yml

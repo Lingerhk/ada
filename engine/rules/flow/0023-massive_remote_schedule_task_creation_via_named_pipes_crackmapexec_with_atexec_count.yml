@@ -1,0 +1,37 @@
+title: Massive remote schedule task creation via named pipes (CrackMapExec with ATexec) Count
+id: flow-0023
+status: experimental
+rule_origin: public
+enable: true
+description: Detects scenarios where an attacker remotely creates a scheduled task on multiple hosts over named pipes to execute
+  commands or elevate privileges.
+references:
+- https://github.com/mdecrevoisier/EVTX-to-MITRE-Attack/tree/master/TA0002-Execution/T1053.005-Scheduled%20Task
+- https://github.com/SecureAuthCorp/impacket/blob/master/examples/atexec.py
+- https://u0041.co/blog/post/1
+- https://blog.menasec.net/2019/03/threat-hunting-25-scheduled-tasks-for.html
+- https://github.com/mdecrevoisier/SIGMA-detection-rules
+author: mdecrevoisier
+date: 2026/05/04
+modified: 2026/05/04
+tags:
+- TA0002
+- attack.t1053.005
+- attack.execution
+logsource: flow
+detection:
+  event_type: count
+  win_size: 30m
+  sorted: false
+  sigma_rules:
+  - winlog-0282
+  match_by: $s1.Hostname._count > 20
+level: medium
+unique_filter:
+- $s1.IpAddress
+- ttl_1800
+x_source_repository: https://github.com/mdecrevoisier/SIGMA-detection-rules
+x_source_commit: ab15e29fcdbed297e305e2602881b8654946592c
+x_source_file: windows-scheduled_task/win-os-scheduled task remote creation via named pipes (CME-ATexec).yaml
+x_legacy_id: flow-9000-0021
+x_legacy_file: engine/rules/flow/sigma_ref/9000-0021-massive_remote_schedule_task_creation_via_named_pipes_crackmapexec_with_count.yml

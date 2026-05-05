@@ -1,0 +1,31 @@
+title: Directory Server Event Log Service Started
+id: winlog-0015
+status: test
+rule_origin: internal
+description: Detects EventLog service start on a directory server (System event 6005). This is commonly seen during system
+  startup and can be used to correlate reboot windows on critical domain infrastructure.
+references:
+- https://learn.microsoft.com/en-us/troubleshoot/windows-server/performance/troubleshoot-unexpected-reboots-system-event-logs
+- https://attack.mitre.org/techniques/T1529/
+author: ADA default rules
+date: 2017/03/09
+modified: 2026/05/05
+tags:
+- TA0040
+- attack.t1529
+- attack.impact
+logsource: winlog
+detection:
+  selection_source:
+    Channel: System
+    EventID: 6005
+  condition: selection_source
+fields:
+- Hostname
+- SourceName
+unique_fields:
+- Hostname
+- EventID
+level: medium
+x_legacy_id: winlog-0103-0009
+x_legacy_file: engine/rules/winlog/0103-0009-dc_server_power_on.yml
