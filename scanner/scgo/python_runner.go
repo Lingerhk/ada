@@ -5,7 +5,10 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
+	"os"
 	"os/exec"
+	"path/filepath"
+	"sort"
 	"strings"
 	"time"
 
@@ -124,7 +127,7 @@ func RunPluginVerify(pythonBin, scRoot, module string, kwargs map[string]any) (m
 
 	cmd := exec.Command(pythonBin, "-c", pyRunner)
 	cmd.Dir = scRoot
-	cmd.Env = append(cmd.Environ(),
+	cmd.Env = pluginPythonEnv(cmd.Environ(), scRoot,
 		"SC_ROOT="+scRoot,
 		"PLUGIN_MODULE="+module,
 		"PLUGIN_ACTION=verify",
@@ -171,4 +174,36 @@ func RunPluginVerify(pythonBin, scRoot, module string, kwargs map[string]any) (m
 		err = ErrPluginResultNotFound
 	}
 	return nil, outStr, errStr, err
+}
+
+func pluginPythonEnv(base []string, scRoot string, extra ...string) []string {
+	return append(setEnv(base, "PYTHONPATH", pluginPythonPath(scRoot)), extra...)
+}
+
+func pluginPythonPath(scRoot string) string {
+	paths := []string{scRoot}
+	venvRoot := filepath.Join(filepath.Dir(scRoot), ".venv", "lib")
+	matches, _ := filepath.Glob(filepath.Join(venvRoot, "python*", "site-packages"))
+	sort.Strings(matches)
+	for _, p := range matches {
+		if st, err := os.Stat(p); err == nil && st.IsDir() {
+			paths = append(paths, p)
+		}
+	}
+	if existing := os.Getenv("PYTHONPATH"); existing != "" {
+		paths = append(paths, existing)
+	}
+	return strings.Join(paths, string(os.PathListSeparator))
+}
+
+func setEnv(base []string, key, value string) []string {
+	prefix := key + "="
+	out := make([]string, 0, len(base)+1)
+	for _, item := range base {
+		if strings.HasPrefix(item, prefix) {
+			continue
+		}
+		out = append(out, item)
+	}
+	return append(out, prefix+value)
 }

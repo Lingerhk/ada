@@ -1,7 +1,6 @@
 package main
 
 import (
-	"ada/infra/license"
 	_ "ada/infra/version"
 	"ada/scanner/common"
 	"ada/scanner/config"
@@ -26,8 +25,6 @@ func main() {
 		os.Exit(1)
 	}
 
-	logger.Debugf("trait: %s", license.GetTrait())
-
 	w, err := worker.New(env)
 	if err != nil {
 		logger.Errorf("init scanner worker failed: %v", err)
@@ -41,8 +38,6 @@ func main() {
 
 	// signal handler: exit
 	go signalHandler(w)
-
-	go w.RuntimeCheck()
 
 	w.Worker()
 }

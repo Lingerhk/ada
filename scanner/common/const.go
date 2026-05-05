@@ -26,6 +26,3 @@ const ScannerEnvMongoDBURI = "MONGODB_URI"
 
 // ScannerConcurrencyEnv controls scgo worker concurrency.
 const ScannerConcurrencyEnv = "SCANNER_CONCURRENCY"
-
-// ScannerRedisRandKey is used for runtime verification in Redis.
-const ScannerRedisRandKey = "ada:rand_key"

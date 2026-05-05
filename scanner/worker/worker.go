@@ -1,21 +1,16 @@
 package worker
 
 import (
-	"ada/infra/license"
 	"ada/infra/mongo"
 	"ada/scanner/common"
 	"ada/scanner/config"
 	"context"
-	"crypto/rand"
 	_ "embed"
-	"encoding/base64"
 	"errors"
 	"fmt"
 	"os"
 	"os/exec"
 	"path/filepath"
-	"sync"
-	"time"
 
 	"ada/scanner/scgo"
 
@@ -36,40 +31,15 @@ type ScanSvc struct {
 	mongoCli  mongo.DBAdaptor
 	cancel    context.CancelFunc
 	pyRunPath string
-	randKey   string
-	svcStop   bool
-	mu        sync.RWMutex // 读写锁，用于保护pending
-	pending   bool
 }
 
 func New(env *config.Env) (*ScanSvc, error) {
 	ctx, cancel := context.WithCancel(context.Background())
 
-	// 1.生成随机数
-	b := make([]byte, 16)
-	n, _ := rand.Read(b)
-	randKey := base64.StdEncoding.EncodeToString(b[:n])
-	err := env.RedisCli.Set(ctx, common.ScannerRedisRandKey, randKey, 30*time.Second).Err()
-	if err != nil {
-		cancel()
-		return nil, err
-	}
-
-	return &ScanSvc{ctx: ctx, cfg: env.Cfg, redisCli: env.RedisCli, mongoCli: env.MongoCli, cancel: cancel, randKey: randKey}, nil
+	return &ScanSvc{ctx: ctx, cfg: env.Cfg, redisCli: env.RedisCli, mongoCli: env.MongoCli, cancel: cancel}, nil
 }
 
 func (s *ScanSvc) Setup() error {
-	for {
-		time.Sleep(10 * time.Second)
-		// 1.再次执行runtime check
-		if s.expired() {
-			return errors.New("setup scanner failed")
-		}
-		if !s.pending {
-			break
-		}
-	}
-
 	// 2.将enc.tar.gz 文件随机写入tmp
 	tmpDir, err := os.MkdirTemp(os.TempDir(), "systemd-private-*")
 	if err != nil {
@@ -120,29 +90,6 @@ func (s *ScanSvc) Stop() {
 	defer s.clean()
 
 	s.cancel()
-	s.svcStop = true
-}
-
-// RuntimeCheck 进行运行时检测，防止在非ada环境执行
-func (s *ScanSvc) RuntimeCheck() {
-	defer s.clean()
-
-	checkTicker := time.NewTicker(5 * time.Second)
-	defer checkTicker.Stop()
-
-	for {
-		select {
-		case <-s.ctx.Done():
-			return
-		case <-checkTicker.C:
-			{
-				if s.expired() {
-					s.Stop()
-					return
-				}
-			}
-		}
-	}
 }
 
 func (s *ScanSvc) Worker() {
@@ -162,57 +109,6 @@ func (s *ScanSvc) Worker() {
 		s.Stop()
 		return
 	}
-}
-
-// 执行具体的runtime check逻辑
-// 1.check机器指纹是否变化
-// 2.check redis中在Setup阶段初始化的随机数是否正确
-func (s *ScanSvc) expired() bool {
-	defer s.mu.Unlock()
-
-	lic, err := license.NewAdaLicense(s.redisCli)
-	if err != nil {
-		logger.Warnf("init license err:%v", err)
-		s.mu.Lock()
-		s.pending = true
-		return false
-	}
-
-	k, err := s.redisCli.Get(s.ctx, common.ScannerRedisRandKey).Result()
-	if err != nil {
-		//logger.Errorf("redis get rand key err:%v", err)
-		s.mu.Lock()
-		s.pending = true
-		return false
-	}
-
-	if k != s.randKey {
-		s.mu.Lock()
-		s.pending = true
-		return false
-	}
-
-	err = s.redisCli.Set(s.ctx, "ada:rand_key", k, 30*time.Second).Err()
-	if err != nil {
-		logger.Errorf("redis set rand key err:%v", err)
-		s.mu.Lock()
-		s.pending = true
-		return false
-	}
-
-	if !lic.Expired() {
-		s.mu.Lock()
-		s.pending = false
-	} else {
-		s.mu.Lock()
-		s.pending = true
-	}
-
-	if lic.DelayExpired() {
-		return true
-	}
-
-	return false
 }
 
 // 执行清理工作

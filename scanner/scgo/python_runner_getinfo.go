@@ -13,7 +13,7 @@ import (
 func RunPluginGetInfo(pythonBin, scRoot, module, pkgPath string) (map[string]any, string, string, error) {
 	cmd := exec.Command(pythonBin, "-c", pyRunner)
 	cmd.Dir = scRoot
-	cmd.Env = append(cmd.Environ(),
+	cmd.Env = pluginPythonEnv(cmd.Environ(), scRoot,
 		"SC_ROOT="+scRoot,
 		"PLUGIN_MODULE="+module,
 		"PLUGIN_ACTION=get_info",
