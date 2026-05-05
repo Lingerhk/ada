@@ -24,6 +24,7 @@ type Plugin struct {
 	adaHost            string
 	pktPluginSwitch    bool
 	logPluginSwitch    bool
+	tsharkPluginSwitch bool
 	rpcFwPluginSwitch  bool
 	ldapFwPluginSwitch bool
 	cpuMaxLimit        float64
@@ -31,10 +32,11 @@ type Plugin struct {
 
 	plugEvtThread         *evtPlugin
 	plugPktThread         *pktPlugin
-	mu                    sync.RWMutex           // Protects all maps below
-	PlugProcessMap        map[string]uint32      // Process ID map
-	PlugConfigChangedMap  map[string]bool        // 记录插件配置是否发生变化
-	plugProcessAutoResMap map[string]bool        // Track plugins stopped by AutoResLimit
+	plugTsharkThread      *tsharkPlugin
+	mu                    sync.RWMutex      // Protects all maps below
+	PlugProcessMap        map[string]uint32 // Process ID map
+	PlugConfigChangedMap  map[string]bool   // 记录插件配置是否发生变化
+	plugProcessAutoResMap map[string]bool   // Track plugins stopped by AutoResLimit
 }
 
 func New(ctx context.Context, rdxCli *redis.Client, sensorId string, sensorCfg config.SensorCfg) (*Plugin, error) {
@@ -48,6 +50,7 @@ func New(ctx context.Context, rdxCli *redis.Client, sensorId string, sensorCfg c
 	plugProcessMap[common.SensorSvcName] = 0
 	plugProcessMap[common.PlugPktName] = 0
 	plugProcessMap[common.PlugEvtName] = 0
+	plugProcessMap[common.PlugTsharkName] = 0
 	plugProcessMap[common.PlugRpcFwName] = 0
 	plugProcessMap[common.PlugLdapFwName] = 0
 	plug.PlugProcessMap = plugProcessMap
@@ -55,6 +58,7 @@ func New(ctx context.Context, rdxCli *redis.Client, sensorId string, sensorCfg c
 	plugConfigChangedMap := make(map[string]bool)
 	plugConfigChangedMap[common.PlugEvtName] = false
 	plugConfigChangedMap[common.PlugPktName] = false
+	plugConfigChangedMap[common.PlugTsharkName] = false
 	plugConfigChangedMap[common.PlugRpcFwName] = false
 	plugConfigChangedMap[common.PlugLdapFwName] = false
 	plug.PlugConfigChangedMap = plugConfigChangedMap
@@ -62,6 +66,7 @@ func New(ctx context.Context, rdxCli *redis.Client, sensorId string, sensorCfg c
 	plugProcessAutoResMap := make(map[string]bool)
 	plugProcessAutoResMap[common.PlugPktName] = false
 	plugProcessAutoResMap[common.PlugEvtName] = false
+	plugProcessAutoResMap[common.PlugTsharkName] = false
 	plugProcessAutoResMap[common.PlugRpcFwName] = false
 	plugProcessAutoResMap[common.PlugLdapFwName] = false
 	plug.plugProcessAutoResMap = plugProcessAutoResMap
@@ -74,6 +79,11 @@ func New(ctx context.Context, rdxCli *redis.Client, sensorId string, sensorCfg c
 	plug.plugPktThread, err = NewPktPlugin(ctx, sensorCfg.RegHost, sensorCfg.PktSrvPort)
 	if err != nil {
 		logger.Errorf("new pkt plugin err:%v", err)
+		return nil, err
+	}
+	plug.plugTsharkThread, err = NewTsharkPlugin(ctx, sensorCfg.RegHost, sensorCfg.EvtSrvPort)
+	if err != nil {
+		logger.Errorf("new tshark plugin err:%v", err)
 		return nil, err
 	}
 
@@ -197,6 +207,7 @@ func (p *Plugin) loadConfigure() {
 	p.mu.RLock()
 	pktAutoRes := p.plugProcessAutoResMap[common.PlugPktName]
 	evtAutoRes := p.plugProcessAutoResMap[common.PlugEvtName]
+	tsharkAutoRes := p.plugProcessAutoResMap[common.PlugTsharkName]
 	rpcFwAutoRes := p.plugProcessAutoResMap[common.PlugRpcFwName]
 	ldapFwAutoRes := p.plugProcessAutoResMap[common.PlugLdapFwName]
 	p.mu.RUnlock()
@@ -211,6 +222,12 @@ func (p *Plugin) loadConfigure() {
 		logger.Infof("evt plugin auto res limit flag is true, ignore load configure")
 	} else {
 		p.loadConfigureEvtPlugin(sensorIDKey)
+	}
+
+	if tsharkAutoRes {
+		logger.Infof("tshark plugin auto res limit flag is true, ignore load configure")
+	} else {
+		p.loadConfigureTsharkPlugin(sensorIDKey)
 	}
 
 	if rpcFwAutoRes {
@@ -342,6 +359,75 @@ func (p *Plugin) loadConfigureEvtPlugin(sensorIDKey string) {
 	}
 }
 
+func (p *Plugin) loadConfigureTsharkPlugin(sensorIDKey string) {
+	v, err := p.rdxCli.HGet(p.ctx, sensorIDKey, "tshark_plugin_switch").Result()
+	if err != nil && err != redis.Nil {
+		logger.Errorf("get tshark switch err:%v", err)
+	} else if v != "" {
+		tsharkPluginSwitch, err := strconv.ParseBool(v)
+		if err == nil {
+			if v != strconv.FormatBool(p.tsharkPluginSwitch) {
+				logger.Infof("tshark plugin switch changed to %s", v)
+				p.mu.Lock()
+				p.PlugConfigChangedMap[common.PlugTsharkName] = true
+				p.mu.Unlock()
+			}
+			p.tsharkPluginSwitch = tsharkPluginSwitch
+		}
+	}
+
+	var ifaceNames []string
+	v, err = p.rdxCli.HGet(p.ctx, sensorIDKey, "tshark_bind_net_iface").Result()
+	if err != nil && err != redis.Nil {
+		logger.Errorf("get tshark bind iface err:%v", err)
+	}
+	if v == "" {
+		v, err = p.rdxCli.HGet(p.ctx, sensorIDKey, "bind_net_iface").Result()
+		if err != nil && err != redis.Nil {
+			logger.Errorf("get bind iface for tshark err:%v", err)
+		}
+	}
+	if v != "" {
+		ifaceNames = strings.Split(v, ",")
+		currentIfaceNames := p.plugTsharkThread.GetIfaceNames()
+		if !reflect.DeepEqual(currentIfaceNames, ifaceNames) {
+			logger.Infof("tshark bind iface names changed to %v", ifaceNames)
+			p.mu.Lock()
+			p.PlugConfigChangedMap[common.PlugTsharkName] = true
+			p.mu.Unlock()
+			p.plugTsharkThread.SetIfaceNames(ifaceNames)
+		}
+	}
+
+	var tsharkPath, captureFilter, displayFilter, fields string
+	if v, err = p.rdxCli.HGet(p.ctx, sensorIDKey, "tshark_path").Result(); err == nil {
+		tsharkPath = v
+	} else if err != redis.Nil {
+		logger.Errorf("get tshark path err:%v", err)
+	}
+	if v, err = p.rdxCli.HGet(p.ctx, sensorIDKey, "tshark_capture_filter").Result(); err == nil {
+		captureFilter = v
+	} else if err != redis.Nil {
+		logger.Errorf("get tshark capture filter err:%v", err)
+	}
+	if v, err = p.rdxCli.HGet(p.ctx, sensorIDKey, "tshark_display_filter").Result(); err == nil {
+		displayFilter = v
+	} else if err != redis.Nil {
+		logger.Errorf("get tshark display filter err:%v", err)
+	}
+	if v, err = p.rdxCli.HGet(p.ctx, sensorIDKey, "tshark_fields").Result(); err == nil {
+		fields = v
+	} else if err != redis.Nil {
+		logger.Errorf("get tshark fields err:%v", err)
+	}
+
+	if p.plugTsharkThread.SetConfig(tsharkPath, captureFilter, displayFilter, fields) {
+		p.mu.Lock()
+		p.PlugConfigChangedMap[common.PlugTsharkName] = true
+		p.mu.Unlock()
+	}
+}
+
 func (p *Plugin) loadConfigureRpcFwPlugin(sensorIDKey string) {
 	v, err := p.rdxCli.HGet(p.ctx, sensorIDKey, "rpcfw_plugin_switch").Result()
 	if err != nil {
@@ -386,10 +472,12 @@ func (p *Plugin) runPlugin() {
 	p.mu.RLock()
 	evtAutoRes := p.plugProcessAutoResMap[common.PlugEvtName]
 	pktAutoRes := p.plugProcessAutoResMap[common.PlugPktName]
+	tsharkAutoRes := p.plugProcessAutoResMap[common.PlugTsharkName]
 	rpcFwAutoRes := p.plugProcessAutoResMap[common.PlugRpcFwName]
 	ldapFwAutoRes := p.plugProcessAutoResMap[common.PlugLdapFwName]
 	evtConfigChanged := p.PlugConfigChangedMap[common.PlugEvtName]
 	pktConfigChanged := p.PlugConfigChangedMap[common.PlugPktName]
+	tsharkConfigChanged := p.PlugConfigChangedMap[common.PlugTsharkName]
 	rpcFwConfigChanged := p.PlugConfigChangedMap[common.PlugRpcFwName]
 	ldapFwConfigChanged := p.PlugConfigChangedMap[common.PlugLdapFwName]
 	p.mu.RUnlock()
@@ -416,7 +504,7 @@ func (p *Plugin) runPlugin() {
 					// Don't reset flag on failure - will retry next cycle
 				} else {
 					p.mu.Lock()
-					p.PlugProcessMap[common.PlugEvtName] = 1 // Mark as running (in-process)
+					p.PlugProcessMap[common.PlugEvtName] = 1           // Mark as running (in-process)
 					p.PlugConfigChangedMap[common.PlugEvtName] = false // Reset flag ONLY on success
 					p.mu.Unlock()
 				}
@@ -457,7 +545,7 @@ func (p *Plugin) runPlugin() {
 					// Don't reset flag on failure - will retry next cycle
 				} else {
 					p.mu.Lock()
-					p.PlugProcessMap[common.PlugPktName] = 1 // Mark as running (in-process)
+					p.PlugProcessMap[common.PlugPktName] = 1           // Mark as running (in-process)
 					p.PlugConfigChangedMap[common.PlugPktName] = false // Reset flag ONLY on success
 					p.mu.Unlock()
 				}
@@ -472,6 +560,51 @@ func (p *Plugin) runPlugin() {
 			p.mu.Lock()
 			p.PlugProcessMap[common.PlugPktName] = 0
 			p.PlugConfigChangedMap[common.PlugPktName] = false // Reset flag when stopped
+			p.mu.Unlock()
+		}
+	}
+
+	// check tshark plugin process
+	if p.tsharkPluginSwitch {
+		if tsharkAutoRes {
+			logger.Warnf("Plugin %s start skipped due to AutoResLimit", common.PlugTsharkName)
+		} else if !p.plugTsharkThread.IsRunning() {
+			logger.Infof("try start tshark plugin")
+			if err := p.plugTsharkThread.Start(); err != nil {
+				logger.Errorf("start tshark plugin err:%v", err)
+				p.mu.Lock()
+				p.PlugProcessMap[common.PlugTsharkName] = 0
+				p.mu.Unlock()
+			} else {
+				p.mu.Lock()
+				p.PlugProcessMap[common.PlugTsharkName] = p.plugTsharkThread.PrimaryPID()
+				p.PlugConfigChangedMap[common.PlugTsharkName] = false
+				p.mu.Unlock()
+			}
+		} else if tsharkConfigChanged {
+			logger.Infof("tshark plugin config changed, reload tshark plugin")
+			if err := p.plugTsharkThread.Reload(); err != nil {
+				logger.Errorf("reload tshark plugin err:%v", err)
+			} else {
+				p.mu.Lock()
+				p.PlugProcessMap[common.PlugTsharkName] = p.plugTsharkThread.PrimaryPID()
+				p.PlugConfigChangedMap[common.PlugTsharkName] = false
+				p.mu.Unlock()
+			}
+		} else {
+			p.mu.Lock()
+			p.PlugProcessMap[common.PlugTsharkName] = p.plugTsharkThread.PrimaryPID()
+			p.mu.Unlock()
+		}
+	} else {
+		if p.plugTsharkThread.IsRunning() {
+			logger.Infof("try stop tshark plugin")
+			if err := p.plugTsharkThread.Stop(); err != nil {
+				logger.Errorf("stop tshark plugin err:%v", err)
+			}
+			p.mu.Lock()
+			p.PlugProcessMap[common.PlugTsharkName] = 0
+			p.PlugConfigChangedMap[common.PlugTsharkName] = false
 			p.mu.Unlock()
 		}
 	}
@@ -579,6 +712,10 @@ func (p *Plugin) stopPlugin(pluginName string) error {
 		if p.plugEvtThread.IsRunning() {
 			err = p.plugEvtThread.Stop()
 		}
+	case common.PlugTsharkName:
+		if p.plugTsharkThread.IsRunning() {
+			err = p.plugTsharkThread.Stop()
+		}
 	case common.PlugRpcFwName:
 		if isRpcFwInstalled() {
 			// Check status before stopping (optional, but good practice)
@@ -622,6 +759,7 @@ func (p *Plugin) AutoResLimit(wg *sync.WaitGroup) {
 	// Priority order for stopping plugins
 	pluginStopPriority := []string{
 		common.PlugPktName,
+		common.PlugTsharkName,
 		common.PlugLdapFwName,
 		common.PlugRpcFwName,
 		common.PlugEvtName,

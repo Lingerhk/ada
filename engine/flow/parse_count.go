@@ -15,6 +15,65 @@ import (
 	"time"
 )
 
+type countExpression struct {
+	sigmaIdx  int64
+	field     string
+	distinct  bool
+	operation string
+	threshold int
+}
+
+func (e countExpression) toCondition() Condition {
+	field := "_count"
+	if e.field != "" {
+		field = e.field
+	}
+	return Condition{
+		fieldOneIdx: e.sigmaIdx,
+		fieldOneVal: field,
+		fieldTwoIdx: -1,
+		fieldTwoVal: strconv.Itoa(e.threshold),
+		fieldTwoTyp: "const",
+		operation:   e.operation,
+		valid:       e.sigmaIdx >= 0 && e.operation != "" && e.threshold >= 0,
+	}
+}
+
+func (e countExpression) count(activities []flowActivity, sigmaIDs []string) int {
+	targetSID := ""
+	if e.sigmaIdx >= 0 && int(e.sigmaIdx) < len(sigmaIDs) {
+		targetSID = sigmaIDs[e.sigmaIdx]
+	}
+
+	total := 0
+	distinctVals := make(map[string]struct{})
+	for _, activity := range activities {
+		if targetSID != "" && activity.activityCache["sid"] != targetSID {
+			continue
+		}
+
+		if e.field == "" {
+			total++
+			continue
+		}
+
+		fieldVal := strings.TrimSpace(getFieldVal(e.field, activity))
+		if fieldVal == "" {
+			continue
+		}
+		if e.distinct {
+			distinctVals[strings.ToLower(fieldVal)] = struct{}{}
+			continue
+		}
+		total++
+	}
+
+	if e.distinct {
+		return len(distinctVals)
+	}
+	return total
+}
+
 // 匹配器: count类型
 func (r *Ruleset) matchEventCount(ctx context.Context, fr FlowRule, flowInstances []string) {
 	for _, insId := range flowInstances {
@@ -35,27 +94,20 @@ func (r *Ruleset) matchEventCount(ctx context.Context, fr FlowRule, flowInstance
 
 			logger.Debugf("22----handle EventTypeCount activities %#v", activities)
 
-			// match_by: "$s1._count >= 3" or "$s1.TargetUserName._count >= 20"
-			matchBy := fr.Detection.MatchBy
-			expr, err := parseExpression(matchBy)
+			countExpr, err := parseCountExpression(fr.Detection.MatchBy)
 			if err != nil {
 				logger.Warnf("parse matchBy err:%v, will ignore this flow instance!", err)
 				return
 			}
 
-			count := len(activities)
-			if expr.Field != "" {
-				count = distinctActivityFieldCount(activities, expr.Field)
-			}
-
-			if compareCount(count, expr.Operator, expr.Value) {
+			if compareInt(countExpr.operation, countExpr.count(activities, fr.Detection.SigmaRules), countExpr.threshold) {
 				// count超过阈值，生成告警（多）事件
 				if err := r.storeEvent(insCtx, insId, fr, activities); err != nil {
 					logger.Warnf("store event(multi-count) err:%v, will ignore this flow event!", err)
 				}
 
 				// 将该flow instance中的activity从redis(zset)删除，start从new开始算(ts<now的删除)
-				err := r.redisCli.ZRemRangeByScore(insCtx, insId, strconv.FormatInt(stop-common.MaxFlowWinSize, 10), strconv.FormatInt(stop, 10)).Err()
+				err := r.redisCli.ZRemRangeByScore(insCtx, insId, strconv.FormatInt(stop-common.MaxFlowWinSize*1000, 10), strconv.FormatInt(stop, 10)).Err()
 				if err != nil {
 					logger.Warnf("delete alerted event from zset err:%v", err)
 				}
@@ -216,57 +268,81 @@ func (r *Ruleset) pushNotify(ctx context.Context, fr FlowRule, params map[string
 	return r.redisCli.LPush(ctx, common.AlertNotifyQueueKey, notifyByte).Err()
 }
 
-type countExpression struct {
-	Field    string
-	Operator string
-	Value    int
-}
-
-func parseExpression(s string) (countExpression, error) {
-	// "$s1._count >= 3" or "$s1.TargetUserName._count >= 20"
-	re := regexp.MustCompile(`^\$s1\.(?:(?P<field>[A-Za-z0-9_.-]+)\.)?_count\s*(?P<op>==|>=|<=|>|<)\s*(?P<value>\d+)$`)
-	matches := re.FindStringSubmatch(s)
-	if len(matches) == 0 {
-		return countExpression{}, fmt.Errorf("parse err %s", s)
+func parseCountExpression(s string) (countExpression, error) {
+	expression := strings.TrimSpace(s)
+	opPattern := `(==|!=|>=|<=|>|<)`
+	specs := []struct {
+		re       *regexp.Regexp
+		fieldIdx int
+		opIdx    int
+		numIdx   int
+		distinct bool
+	}{
+		{regexp.MustCompile(`^\$s([1-9]\d*)\._count\s*` + opPattern + `\s*(\d+)$`), -1, 2, 3, false},
+		{regexp.MustCompile(`^len\(\s*\$s([1-9]\d*)\s*\)\s*` + opPattern + `\s*(\d+)$`), -1, 2, 3, false},
+		{regexp.MustCompile(`^len\(\s*distinct\(\s*\$s([1-9]\d*)\.([A-Za-z0-9_@.-]+)\s*\)\s*\)\s*` + opPattern + `\s*(\d+)$`), 2, 3, 4, true},
+		{regexp.MustCompile(`^len\(\s*\$s([1-9]\d*)\.([A-Za-z0-9_@.-]+)\s*\)\s*` + opPattern + `\s*(\d+)$`), 2, 3, 4, false},
+		{regexp.MustCompile(`^\$s([1-9]\d*)\.([A-Za-z0-9_@.-]+)\._count\s*` + opPattern + `\s*(\d+)$`), 2, 3, 4, true},
 	}
 
-	valueIdx := re.SubexpIndex("value")
-	i64, err := strconv.ParseInt(matches[valueIdx], 10, 64)
-	if err != nil {
-		return countExpression{}, err
-	}
-
-	return countExpression{
-		Field:    matches[re.SubexpIndex("field")],
-		Operator: matches[re.SubexpIndex("op")],
-		Value:    int(i64),
-	}, nil
-}
-
-func distinctActivityFieldCount(activities []flowActivity, field string) int {
-	values := make(map[string]struct{})
-	for _, activity := range activities {
-		val := getFieldVal(field, activity)
-		if val == "" {
+	for _, spec := range specs {
+		matches := spec.re.FindStringSubmatch(expression)
+		if len(matches) == 0 {
 			continue
 		}
-		values[val] = struct{}{}
+
+		idx, err := strconv.ParseInt(matches[1], 10, 64)
+		if err != nil || idx < 1 || idx > common.MaxFlowSelections {
+			return countExpression{}, fmt.Errorf("invalid count selector in %s", s)
+		}
+		threshold, err := strconv.Atoi(matches[spec.numIdx])
+		if err != nil {
+			return countExpression{}, err
+		}
+
+		field := ""
+		if spec.fieldIdx >= 0 {
+			field = matches[spec.fieldIdx]
+		}
+		return countExpression{
+			sigmaIdx:  idx - 1,
+			field:     field,
+			distinct:  spec.distinct,
+			operation: matches[spec.opIdx],
+			threshold: threshold,
+		}, nil
 	}
-	return len(values)
+
+	return countExpression{}, fmt.Errorf("parse err %s", s)
 }
 
-func compareCount(count int, op string, expected int) bool {
+func parseExpression(s string) (string, int, error) {
+	countExpr, err := parseCountExpression(s)
+	if err != nil {
+		return "", 0, err
+	}
+
+	ref := fmt.Sprintf("s%d._count", countExpr.sigmaIdx+1)
+	if countExpr.field != "" {
+		ref = fmt.Sprintf("s%d.%s._count", countExpr.sigmaIdx+1, countExpr.field)
+	}
+	return ref, countExpr.threshold, nil
+}
+
+func compareInt(op string, value1, value2 int) bool {
 	switch op {
 	case "==":
-		return count == expected
-	case ">":
-		return count > expected
-	case ">=":
-		return count >= expected
+		return value1 == value2
+	case "!=":
+		return value1 != value2
 	case "<":
-		return count < expected
+		return value1 < value2
 	case "<=":
-		return count <= expected
+		return value1 <= value2
+	case ">":
+		return value1 > value2
+	case ">=":
+		return value1 >= value2
 	default:
 		return false
 	}

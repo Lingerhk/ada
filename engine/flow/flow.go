@@ -24,6 +24,7 @@ type Ruleset struct {
 	redisCli      *redis.Client
 	mongoCli      mongo.DBAdaptor
 	FlowRules     []FlowRule
+	FlowRuleByID  map[string]*FlowRule
 	sigmaRuleTTLs map[string]int64 // sigma_id -> (max)ttl, 在FlowCleaner中按max ttl进行activity清理
 }
 
@@ -41,6 +42,7 @@ func NewRuleset(redisCli *redis.Client, mongoCli mongo.DBAdaptor, flowRuleDir st
 	}
 
 	var sigmaRuleTTLs = make(map[string]int64) // sigma_id -> (max)ttl 在FlowCleaner中按max ttl进行activity清理
+	flowRuleByID := make(map[string]*FlowRule)
 	for _, f := range flowRules {
 		for sid, _ := range f.ExtFields {
 			winSize, _ := utime.ConvertStrTime(f.Detection.WinSize)
@@ -51,8 +53,11 @@ func NewRuleset(redisCli *redis.Client, mongoCli mongo.DBAdaptor, flowRuleDir st
 			}
 		}
 	}
+	for i := range flowRules {
+		flowRuleByID[flowRules[i].ID] = &flowRules[i]
+	}
 
-	return &Ruleset{redisCli: redisCli, mongoCli: mongoCli, FlowRules: flowRules, sigmaRuleTTLs: sigmaRuleTTLs}, nil
+	return &Ruleset{redisCli: redisCli, mongoCli: mongoCli, FlowRules: flowRules, FlowRuleByID: flowRuleByID, sigmaRuleTTLs: sigmaRuleTTLs}, nil
 }
 
 // FlowCleaner 执行flow event, 产生多事件关联告警

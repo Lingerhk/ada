@@ -44,6 +44,127 @@ func TestTreeParse(t *testing.T) {
 	}
 }
 
+func TestLogsourceUnmarshalSupportsScalarAndMapping(t *testing.T) {
+	var scalar Rule
+	if err := yaml.Unmarshal([]byte(`logsource: winlog`), &scalar); err != nil {
+		t.Fatalf("scalar logsource failed to unmarshal: %v", err)
+	}
+	if scalar.Logsource.Product != "winlog" {
+		t.Fatalf("scalar logsource product = %q, want winlog", scalar.Logsource.Product)
+	}
+
+	var mapping Rule
+	if err := yaml.Unmarshal([]byte(`logsource:
+  product: windows
+  category: process_creation
+  service: security
+  definition: test
+`), &mapping); err != nil {
+		t.Fatalf("mapping logsource failed to unmarshal: %v", err)
+	}
+	if mapping.Logsource.Product != "windows" || mapping.Logsource.Category != "process_creation" ||
+		mapping.Logsource.Service != "security" || mapping.Logsource.Definition != "test" {
+		t.Fatalf("mapping logsource decoded incorrectly: %#v", mapping.Logsource)
+	}
+}
+
+func TestBundledScalarLogsourceRuleParses(t *testing.T) {
+	var rule Rule
+	raw := `title: Win Login Succeeded
+id: winlog-0000-0001
+tags:
+  - TA0007
+logsource: winlog
+detection:
+  selection1:
+    EventID: 4624
+    LogonType: 3
+    LogonProcessName: "Kerberos"
+  filter1:
+    IpAddress:
+      - "::1"
+      - "fe80"
+      - "127.0.0.1"
+  filter2:
+    TargetUserSid|contains:
+      - "S-1-5-18"
+      - "S-1-5-90-0-"
+  filter3:
+    TargetUserName|endswith: "$"
+  condition: selection1 and not filter1 and not filter2 and not filter3
+fields:
+  - "Hostname"
+unique_fields:
+  - "Hostname"
+level: info
+`
+	if err := yaml.Unmarshal([]byte(raw), &rule); err != nil {
+		t.Fatalf("rule failed to unmarshal: %v", err)
+	}
+	if _, err := NewTree(RuleHandle{Rule: rule}); err != nil {
+		t.Fatalf("rule failed to parse tree: %v", err)
+	}
+}
+
+func TestBundledWinlogRulesetKeepsCoreRuleAvailable(t *testing.T) {
+	ruleset, err := NewRuleset(Config{Directory: []string{"../rules/winlog"}}, nil)
+	if err != nil {
+		t.Fatalf("ruleset failed to load: %v", err)
+	}
+	if ruleset.GetRule("winlog-0001") == nil {
+		t.Fatalf("core winlog rule is unavailable; total=%d ok=%d failed=%d unsupported=%d",
+			ruleset.Total, ruleset.Ok, ruleset.Failed, ruleset.Unsupported)
+	}
+}
+
+func TestLegacyKeyValueDetectionParses(t *testing.T) {
+	raw := `id: winlog-legacy-kv
+title: Legacy key value rule
+tags:
+  - TA0007
+logsource: winlog
+detection:
+  condition: selection1 and not filter1
+  selection1:
+    - - key: key
+        value: EventID
+      - key: value
+        value: 4624
+    - - key: key
+        value: LogonProcessName
+      - key: value
+        value: Kerberos
+  filter1:
+    - - key: value
+        value:
+          - "::1"
+          - "127.0.0.1"
+      - key: key
+        value: IpAddress
+fields:
+  - Hostname
+unique_fields:
+  - Hostname
+level: info
+`
+	rule, err := RuleFromYAML([]byte(raw))
+	if err != nil {
+		t.Fatalf("legacy key/value rule failed to unmarshal: %v", err)
+	}
+	tree, err := NewTree(RuleHandle{Rule: rule})
+	if err != nil {
+		t.Fatalf("legacy key/value rule failed to parse tree: %v", err)
+	}
+	matched, applicable := tree.Match(datamodels.Map{
+		"EventID":          4624,
+		"LogonProcessName": "Kerberos",
+		"IpAddress":        "10.0.0.8",
+	})
+	if !matched || !applicable {
+		t.Fatalf("legacy key/value rule did not match")
+	}
+}
+
 // we should probably add an alternative to this benchmark to include noCollapseWS on or off (we collapse by default now)
 func benchmarkCase(b *testing.B, rawRule, rawEvent string) {
 	var rule Rule

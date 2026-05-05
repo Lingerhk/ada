@@ -1,6 +1,7 @@
 .DS_Store
 .vscode/
 build/
+dist/
 vendor/
 bin/
 script/docker/*.tar

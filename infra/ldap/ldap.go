@@ -137,30 +137,3 @@ func Search(conn *ldap3.Conn, dn, filter string, attributes []string) (*ldap3.Se
 
 	return res, nil
 }
-
-func SearchWithPage(DialURL, dns, dn, user, password, filter string, attributes []string, pageSize uint32) (*ldap3.SearchResult, error) {
-	c, err := GetConn(DialURL, user, password, dns)
-	if err != nil {
-		return nil, err
-	}
-	defer c.Close()
-
-	sr := ldap3.NewSearchRequest(
-		dn,
-		ldap3.ScopeSingleLevel, // ScopeWholeSubtree|ScopeSingleLevel|xx
-		ldap3.NeverDerefAliases,
-		0,
-		0,
-		false,
-		filter,
-		attributes,
-		nil,
-	)
-
-	res, err := c.SearchWithPaging(sr, pageSize)
-	if err != nil {
-		return nil, err
-	}
-
-	return res, nil
-}

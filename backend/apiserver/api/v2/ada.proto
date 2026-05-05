@@ -1670,11 +1670,33 @@ message DashboardStatsReply{
 }
 
 message DashboardTrendsReq{
-
+  string domain = 1; // 必选，all|domainX
+  int32 year = 2; // 可选，默认当前年份
 }
 
 message DashboardTrendsReply{
-
+  repeated string labels = 1; // 月份标签，如 2026-01
+  repeated int32 total = 2; // 告警事件总数
+  repeated int32 high = 3; // 高危/严重告警事件数
+  repeated int32 medium = 4; // 中危告警事件数
+  repeated int32 low = 5; // 低危告警事件数
+  repeated int32 alert_pending = 6; // 未处理告警事件数
+  repeated int32 alert_handled = 7; // 已处理告警事件数
+  repeated int32 alert_whitelisted = 8; // 已加白告警事件数
+  repeated int32 alert_blocked = 9; // 已阻断告警事件数
+  repeated string domain_risk_domains = 10; // 域风险排行域名
+  repeated int32 domain_risk_high_alerts = 11; // 各域高危/严重告警事件数
+  repeated int32 domain_risk_high_leaks = 12; // 各域高危/严重漏洞命中数
+  repeated int32 domain_risk_high_baselines = 13; // 各域高危/严重基线命中数
+  repeated int32 scan_leak_finished = 14; // 漏洞扫描完成任务数
+  repeated int32 scan_leak_failed = 15; // 漏洞扫描失败任务数
+  repeated int32 scan_leak_hits = 16; // 漏洞扫描命中数
+  repeated int32 scan_baseline_finished = 17; // 基线扫描完成任务数
+  repeated int32 scan_baseline_failed = 18; // 基线扫描失败任务数
+  repeated int32 scan_baseline_hits = 19; // 基线扫描命中数
+  repeated int32 scan_weakpwd_finished = 20; // 弱口令扫描完成任务数
+  repeated int32 scan_weakpwd_failed = 21; // 弱口令扫描失败任务数
+  repeated int32 scan_weakpwd_hits = 22; // 弱口令扫描命中数
 }
 
 message DashboardLogStatsReq {

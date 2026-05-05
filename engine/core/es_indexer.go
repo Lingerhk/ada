@@ -14,18 +14,31 @@ import (
 )
 
 // ESIndexer batches documents and writes them via Bulk API.
-// It is best-effort: on failures it logs and drops items (can be extended to retry/persist).
+// It keeps bounded in-memory retry behavior; failed batches are dropped after retry budget is exhausted.
 type ESIndexer struct {
 	ctx context.Context
 	es  *elasticsearch.Client
 
-	index         string
-	flushMaxItems int
-	flushInterval time.Duration
+	index          string
+	flushMaxItems  int
+	flushInterval  time.Duration
+	maxRetries     int
+	retryBaseDelay time.Duration
 
 	mu     sync.Mutex
 	buf    []bulkItem
 	wakeCh chan struct{}
+	stats  ESIndexerStats
+}
+
+type ESIndexerStats struct {
+	EnqueuedItems uint64
+	FlushBatches  uint64
+	IndexedItems  uint64
+	RetryAttempts uint64
+	FailedBatches uint64
+	DroppedItems  uint64
+	LastError     string
 }
 
 type bulkItem struct {
@@ -35,12 +48,14 @@ type bulkItem struct {
 
 func NewESIndexer(ctx context.Context, es *elasticsearch.Client, index string, flushMaxItems int, flushInterval time.Duration) *ESIndexer {
 	i := &ESIndexer{
-		ctx:           ctx,
-		es:            es,
-		index:         index,
-		flushMaxItems: flushMaxItems,
-		flushInterval: flushInterval,
-		wakeCh:        make(chan struct{}, 1),
+		ctx:            ctx,
+		es:             es,
+		index:          index,
+		flushMaxItems:  flushMaxItems,
+		flushInterval:  flushInterval,
+		maxRetries:     3,
+		retryBaseDelay: 200 * time.Millisecond,
+		wakeCh:         make(chan struct{}, 1),
 	}
 
 	go i.loop()
@@ -66,6 +81,7 @@ func (i *ESIndexer) EnqueueBytes(id string, body []byte) {
 
 	i.mu.Lock()
 	i.buf = append(i.buf, bulkItem{id: id, body: body})
+	i.stats.EnqueuedItems++
 	n := len(i.buf)
 	i.mu.Unlock()
 
@@ -106,6 +122,7 @@ func (i *ESIndexer) Flush() error {
 	}
 	items := i.buf
 	i.buf = nil
+	i.stats.FlushBatches++
 	i.mu.Unlock()
 
 	// Build NDJSON payload.
@@ -117,18 +134,97 @@ func (i *ESIndexer) Flush() error {
 		b.WriteByte('\n')
 	}
 
-	req := esapi.BulkRequest{Body: bytes.NewReader(b.Bytes())}
-	res, err := req.Do(i.ctx, i.es)
-	if err != nil {
-		logger.Errorf("es bulk request err: %v (items=%d)", err, len(items))
-		return err
-	}
-	defer res.Body.Close()
+	return i.flushPayloadWithRetry(b.Bytes(), len(items))
+}
 
-	if res.IsError() {
-		logger.Errorf("es bulk response err: %s (items=%d)", res.Status(), len(items))
-		return fmt.Errorf("bulk status: %s", res.Status())
+func (i *ESIndexer) Stats() ESIndexerStats {
+	if i == nil {
+		return ESIndexerStats{}
+	}
+	i.mu.Lock()
+	defer i.mu.Unlock()
+	return i.stats
+}
+
+func (i *ESIndexer) flushPayloadWithRetry(payload []byte, itemCount int) error {
+	var lastErr error
+	attempts := i.maxRetries + 1
+	if attempts < 1 {
+		attempts = 1
 	}
 
-	return nil
+	for attempt := 0; attempt < attempts; attempt++ {
+		if attempt > 0 {
+			i.recordRetry()
+			if !i.waitRetryDelay(attempt) {
+				return i.dropFailedBatch(itemCount, i.ctx.Err())
+			}
+		}
+
+		req := esapi.BulkRequest{Body: bytes.NewReader(payload)}
+		res, err := req.Do(i.ctx, i.es)
+		if err != nil {
+			lastErr = err
+			logger.Warnf("es bulk request err: %v (items=%d attempt=%d/%d)", err, itemCount, attempt+1, attempts)
+			continue
+		}
+
+		if res.IsError() {
+			lastErr = fmt.Errorf("bulk status: %s", res.Status())
+			logger.Warnf("es bulk response err: %s (items=%d attempt=%d/%d)", res.Status(), itemCount, attempt+1, attempts)
+			_ = res.Body.Close()
+			continue
+		}
+		_ = res.Body.Close()
+
+		i.mu.Lock()
+		i.stats.IndexedItems += uint64(itemCount)
+		i.stats.LastError = ""
+		i.mu.Unlock()
+		return nil
+	}
+
+	return i.dropFailedBatch(itemCount, lastErr)
+}
+
+func (i *ESIndexer) recordRetry() {
+	i.mu.Lock()
+	i.stats.RetryAttempts++
+	i.mu.Unlock()
+}
+
+func (i *ESIndexer) waitRetryDelay(attempt int) bool {
+	delay := i.retryBaseDelay
+	if delay <= 0 {
+		return true
+	}
+	for j := 1; j < attempt; j++ {
+		delay *= 2
+		if delay > 2*time.Second {
+			delay = 2 * time.Second
+			break
+		}
+	}
+
+	timer := time.NewTimer(delay)
+	defer timer.Stop()
+	select {
+	case <-i.ctx.Done():
+		return false
+	case <-timer.C:
+		return true
+	}
+}
+
+func (i *ESIndexer) dropFailedBatch(itemCount int, err error) error {
+	if err == nil {
+		err = fmt.Errorf("bulk request failed")
+	}
+	logger.Errorf("es bulk dropped batch after retries: %v (items=%d)", err, itemCount)
+	i.mu.Lock()
+	i.stats.FailedBatches++
+	i.stats.DroppedItems += uint64(itemCount)
+	i.stats.LastError = err.Error()
+	i.mu.Unlock()
+	return err
 }

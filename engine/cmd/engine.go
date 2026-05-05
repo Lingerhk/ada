@@ -36,8 +36,6 @@ func main() {
 		os.Exit(1)
 	}
 
-	go e.RuntimeCheck() // license check
-
 	// signal handler: exit and reload
 	go signalHandler(e)
 

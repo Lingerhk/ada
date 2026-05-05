@@ -400,7 +400,7 @@ func (s *ADAServiceV2) GetAlertRuleNames(ctx context.Context, in *v2.GetAlertRul
 	}
 
 	// Get all alert rules
-	rules, _, err := server.ListAlertRule(s.env, []int32{}, []string{}, nil, "", []string{}, -1, -1, -1)
+	rules, _, err := server.ListAlertRule(s.env, []int32{}, []string{}, nil, "", []string{}, -1, 0, 0)
 	if err != nil {
 		logger.Errorf("list all alert rules err:%v", err)
 		return nil, status.Error(codes.Internal, s.I18n("QueryFailed"))
