@@ -6,7 +6,13 @@ ADAegis is an open security platform focused on Active Directory and enterprise 
 
 ADAegis is built for teams that need practical visibility into domain controllers, user activity, authentication behavior, network protocol traces, weak passwords, risky configurations, and identity-driven attack paths.
 
-> Introduction video: Coming soon. Replace this line with the video link.
+<div align="center">
+  <a href="https://youtu.be/AMeVAIE1blk">
+    <img src="https://img.youtube.com/vi/AMeVAIE1blk/maxresdefault.jpg" alt="ADAegis introduction video" width="720" />
+  </a>
+  <br />
+  <a href="https://youtu.be/AMeVAIE1blk"><strong>Watch the ADAegis introduction video on YouTube</strong></a>
+</div>
 
 ## What Problems ADAegis Solves
 
