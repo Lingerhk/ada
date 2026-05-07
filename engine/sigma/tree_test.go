@@ -165,6 +165,43 @@ level: info
 	}
 }
 
+func TestTreeEvalFormatsNumericFieldsCompactly(t *testing.T) {
+	raw := `id: winlog-numeric-format
+title: Numeric format rule
+tags:
+  - TA0007
+logsource: winlog
+detection:
+  selection1:
+    EventID: 4662
+  condition: selection1
+fields:
+  - EventID
+unique_fields:
+  - EventID
+level: info
+`
+	rule, err := RuleFromYAML([]byte(raw))
+	if err != nil {
+		t.Fatalf("numeric format rule failed to unmarshal: %v", err)
+	}
+	tree, err := NewTree(RuleHandle{Rule: rule})
+	if err != nil {
+		t.Fatalf("numeric format rule failed to parse tree: %v", err)
+	}
+
+	result, ok := tree.Eval(datamodels.Map{"EventID": 4662.0})
+	if !ok {
+		t.Fatalf("numeric format rule did not match")
+	}
+	if got := result.Fields["EventID"]; got != "4662" {
+		t.Fatalf("EventID field = %q, want 4662", got)
+	}
+	if result.UniqueId == "" {
+		t.Fatalf("unique id should be calculated from compact numeric field")
+	}
+}
+
 // we should probably add an alternative to this benchmark to include noCollapseWS on or off (we collapse by default now)
 func benchmarkCase(b *testing.B, rawRule, rawEvent string) {
 	var rule Rule

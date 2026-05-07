@@ -4,7 +4,9 @@ import (
 	"crypto/md5"
 	"encoding/hex"
 	"fmt"
+
 	"github.com/gobwas/glob"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -35,9 +37,9 @@ func (t Tree) Eval(e Event) (*Result, bool) {
 			if val, ok := e.Select(field); ok {
 				switch v := val.(type) {
 				case int:
-					fieldMap[field] = fmt.Sprintf("%d", v)
+					fieldMap[field] = strconv.Itoa(v)
 				case float64:
-					fieldMap[field] = fmt.Sprintf("%f", v)
+					fieldMap[field] = formatNumber(v)
 				case string:
 					fieldMap[field] = v
 				case []any:
@@ -62,9 +64,9 @@ func (t Tree) Eval(e Event) (*Result, bool) {
 			if val, ok := e.Select(field); ok {
 				switch v := val.(type) {
 				case int:
-					uniqueFieldStr += fmt.Sprintf("%d", v)
+					uniqueFieldStr += strconv.Itoa(v)
 				case float64:
-					uniqueFieldStr += fmt.Sprintf("%f", v)
+					uniqueFieldStr += formatNumber(v)
 				case string:
 					uniqueFieldStr += v
 				default:
@@ -92,6 +94,10 @@ func (t Tree) Eval(e Event) (*Result, bool) {
 		}, true
 	}
 	return nil, false
+}
+
+func formatNumber(v float64) string {
+	return strconv.FormatFloat(v, 'f', -1, 64)
 }
 
 // NewTree parses rule handle into an abstract syntax tree
