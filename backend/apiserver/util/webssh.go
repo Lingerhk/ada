@@ -86,12 +86,15 @@ func (wss *WebSshStreamer) LoginOk() {
 	_ = wss.redisCli.Del(context.Background(), websshLockKey).Err()
 }
 
+func (wss *WebSshStreamer) tokenRevoked(claim *UserClaim) bool {
+	val, err := wss.redisCli.Get(context.Background(), "ada:server:user_login:expire:"+claim.User).Int64()
+	return err == nil && val > claim.Expired
+}
+
 // WebSshStream websocket接口
 func (wss *WebSshStreamer) Stream(c *gin.Context) {
 	wsKey := c.GetHeader("Sec-WebSocket-Key")
-	conn, err := (&websocket.Upgrader{CheckOrigin: func(r *http.Request) bool {
-		return true
-	}, Subprotocols: []string{wsKey}}).Upgrade(c.Writer, c.Request, nil)
+	conn, err := (&websocket.Upgrader{Subprotocols: []string{wsKey}}).Upgrade(c.Writer, c.Request, nil)
 	if err != nil {
 		logger.Errorf("websocket upgrader err: %v", err)
 		c.JSON(http.StatusOK, gin.H{"err": "websocket init err"})
@@ -121,7 +124,7 @@ func (wss *WebSshStreamer) Stream(c *gin.Context) {
 			conn.Close()
 			return
 		}
-		if claim.Role != "1" && claim.Expired < time.Now().Unix() {
+		if claim.Priv != common.PrivSuper || wss.tokenRevoked(claim) {
 			wss.LoginFailed()
 			_ = conn.WriteJSON("请使用管理员账户")
 			conn.Close()

@@ -254,6 +254,12 @@ func (s *ADAServiceV2) AddUser(ctx context.Context, in *v2.AddUserReq) (*v2.AddU
 
 func (s *ADAServiceV2) UpdateUser(ctx context.Context, in *v2.UpdateUserReq) (*v2.UpdateUserReply, error) {
 	s = s.withContext(ctx)
+	currentUser := s.GetUser(ctx)
+	isSuper := s.IsSuper(ctx)
+	if !isSuper && in.Username != currentUser {
+		return nil, status.Error(codes.PermissionDenied, s.I18n("NoPermission"))
+	}
+
 	_, err := server.GetUser(s.env, in.Username)
 	if err != nil {
 		return nil, status.Error(codes.Unauthenticated, s.I18n("User.InvalidUsernameOrPassword"))
@@ -264,7 +270,16 @@ func (s *ADAServiceV2) UpdateUser(ctx context.Context, in *v2.UpdateUserReq) (*v
 		logger.Errorf("find user by name err:%v", err)
 		return nil, status.Error(codes.Unauthenticated, s.I18n("User.UpdateUser.GetUserInfoFailed"))
 	}
-	user.Role = in.Role
+	if isSuper && in.Role != "" {
+		user.Role = in.Role
+		if in.Role == common.RoleMgr {
+			user.Priv = common.PrivSuper
+		} else {
+			user.Priv = common.PrivUser
+		}
+	} else if !isSuper && in.Role != "" && in.Role != user.Role {
+		return nil, status.Error(codes.PermissionDenied, s.I18n("NoPermission"))
+	}
 	user.Mobile = in.Mobile
 	user.Email = in.Email
 	user.Remark = in.Remark
@@ -280,12 +295,13 @@ func (s *ADAServiceV2) UpdateUser(ctx context.Context, in *v2.UpdateUserReq) (*v
 
 func (s *ADAServiceV2) UpdateUserPassword(ctx context.Context, in *v2.UpdateUserPasswordReq) (*v2.UpdateUserPasswordReply, error) {
 	s = s.withContext(ctx)
-	//is super
-	var userName string
-	if !s.IsSuper(ctx) {
-		userName = s.GetUser(ctx)
-	} else {
-		userName = in.Username
+	currentUser := s.GetUser(ctx)
+	userName := in.Username
+	if userName == "" {
+		userName = currentUser
+	}
+	if !s.IsSuper(ctx) && userName != currentUser {
+		return nil, status.Error(codes.PermissionDenied, s.I18n("NoPermission"))
 	}
 	//get user info and checkout old password
 	user, err := server.GetUser(s.env, userName)
@@ -305,7 +321,7 @@ func (s *ADAServiceV2) UpdateUserPassword(ctx context.Context, in *v2.UpdateUser
 		return nil, status.Error(codes.Internal, s.I18n("User.UpdateUserPassword.EncryptPasswordError"))
 	}
 	passStrength := util.CheckPassStrength(in.NewPassword)
-	err = server.UpdateUserPassword(s.env, in.Username, string(passwordHash), passStrength)
+	err = server.UpdateUserPassword(s.env, userName, string(passwordHash), passStrength)
 	if err != nil {
 		logger.Errorf("update password err:%v", err)
 		return nil, status.Error(codes.Internal, s.I18n("User.UpdateUserPassword.UpdatePasswordFailed"))
@@ -366,6 +382,12 @@ func (s *ADAServiceV2) EnableMfa(ctx context.Context, in *v2.EnableMfaReq) (*v2.
 	secret := in.Secret
 	code := in.MfaCode
 	passWord := in.Password
+	if userName == "" {
+		userName = s.GetUser(ctx)
+	}
+	if !s.IsSuper(ctx) && userName != s.GetUser(ctx) {
+		return nil, status.Error(codes.PermissionDenied, s.I18n("NoPermission"))
+	}
 
 	if len(code) < 6 {
 		return nil, status.Error(codes.InvalidArgument, s.I18n("InvalidArgument"))
@@ -438,6 +460,15 @@ func (s *ADAServiceV2) UpdateAvatar(ctx context.Context, in *v2.UpdateAvatarReq)
 	file := in.File
 	ret := &v2.UpdateAvatarReply{
 		Result: common.RESP_FAILED,
+	}
+	if !s.IsSuper(ctx) {
+		currentUser, err := server.GetUser(s.env, s.GetUser(ctx))
+		if err != nil {
+			return ret, status.Error(codes.Internal, s.I18n("InternalError"))
+		}
+		if currentUser.ID != in.UserId {
+			return ret, status.Error(codes.PermissionDenied, s.I18n("NoPermission"))
+		}
 	}
 
 	bytes, err := base64.StdEncoding.DecodeString(file)

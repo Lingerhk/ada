@@ -5,7 +5,9 @@ import (
 	"ada/backend/model"
 	utime "ada/infra/time"
 	"fmt"
+	"regexp"
 	"strconv"
+	"strings"
 	"time"
 
 	logger "github.com/sirupsen/logrus"
@@ -18,6 +20,45 @@ type AdvancedSearchReq struct {
 	Name  string
 	Type  string
 	Value []string
+}
+
+type threatAdvancedFieldKind int
+
+const (
+	threatAdvancedString threatAdvancedFieldKind = iota
+	threatAdvancedInt
+	threatAdvancedTimeMillis
+	threatAdvancedDomain
+	threatAdvancedFlowActor
+)
+
+type threatAdvancedField struct {
+	dbName string
+	kind   threatAdvancedFieldKind
+}
+
+func normalizeThreatAdvancedField(name string) (threatAdvancedField, bool) {
+	switch strings.TrimSpace(name) {
+	case "title", "threatID", "threatId", "flowId", "flowID", "flow_id", "ruleId", "ruleID", "rule_id":
+		// Current UI labels this as "Threat Name", but the selected value is flow_id.
+		return threatAdvancedField{dbName: "flow_id", kind: threatAdvancedString}, true
+	case "titleText", "threatTitle":
+		return threatAdvancedField{dbName: "title", kind: threatAdvancedString}, true
+	case "level", "threatLevel", "riskLevel", "risk_level":
+		return threatAdvancedField{dbName: "level", kind: threatAdvancedInt}, true
+	case "eventStatus", "event_status":
+		return threatAdvancedField{dbName: "event_status", kind: threatAdvancedInt}, true
+	case "status":
+		return threatAdvancedField{dbName: "status", kind: threatAdvancedString}, true
+	case "time", "endTm", "endTM", "end_tm", "endTs", "endTS", "end_ts":
+		return threatAdvancedField{dbName: "end_ts", kind: threatAdvancedTimeMillis}, true
+	case "domain":
+		return threatAdvancedField{dbName: "dc_hostname", kind: threatAdvancedDomain}, true
+	case "source", "target":
+		return threatAdvancedField{dbName: strings.TrimSpace(name), kind: threatAdvancedFlowActor}, true
+	default:
+		return threatAdvancedField{}, false
+	}
 }
 
 // fixme 需要优化该处，修改为通用方法
@@ -87,111 +128,247 @@ func ThreatEventFilter(threatIDList []string, levels []int32, eventStatus int32,
 }
 
 // 等于 eq，不等于ne 之前lt，之后gt 两者之间bt，包含contain 不包含 not_contain
-// todo 优化生成query的逻辑
 func AdvancedSearch(request []AdvancedSearchReq) (bson.D, error) {
-	query := bson.D{}
+	var conditions []bson.D
 	for _, v := range request {
-		if v.Name == "source" || v.Name == "target" {
-			//var value string
-			// 不包含
-			if v.Type == "not_contain" {
-				if v.Value[0] == "" {
-					continue
-				}
-				//value = fmt.Sprintf("^((?!%s).)*$", v.Value[0])
-				source := bson.E{Key: "$and", Value: bson.A{
-					bson.D{{Key: fmt.Sprintf("field_data.%s_username", v.Name), Value: bson.M{"$ne": v.Value[0]}}},
-					bson.D{{Key: fmt.Sprintf("field_data.%s_ip", v.Name), Value: bson.M{"$ne": v.Value[0]}}},
-					bson.D{{Key: fmt.Sprintf("field_data.%s_machine_username", v.Name), Value: bson.M{"$ne": v.Value[0]}}},
-					bson.D{{Key: fmt.Sprintf("field_data.%s_machine_hostname", v.Name), Value: bson.M{"$ne": v.Value[0]}}},
-					//bson.D{{fmt.Sprintf("field_data.%s_computer", v.Name), bson.Regex{Pattern: value, Options: "i"}}},
-					//bson.D{{fmt.Sprintf("field_data.%s_username", v.Name), bson.Regex{Pattern: value, Options: "i"}}},
-					//bson.D{{fmt.Sprintf("field_data.%s_ip", v.Name), bson.Regex{Pattern: value, Options: "i"}}},
-				}}
-				query = append(query, source)
-			} else {
-				//value = v.Value[0]
-				source := bson.E{Key: "$or", Value: bson.A{
-					bson.D{{Key: fmt.Sprintf("field_data.%s_username", v.Name), Value: v.Value[0]}},
-					bson.D{{Key: fmt.Sprintf("field_data.%s_ip", v.Name), Value: v.Value[0]}},
-					bson.D{{Key: fmt.Sprintf("field_data.%s_machine_username", v.Name), Value: v.Value[0]}},
-					bson.D{{Key: fmt.Sprintf("field_data.%s_machine_hostname", v.Name), Value: v.Value[0]}},
-				}}
-				query = append(query, source)
-			}
-
+		field, ok := normalizeThreatAdvancedField(v.Name)
+		if !ok {
+			return nil, fmt.Errorf("unsupported advanced search field: %s", v.Name)
+		}
+		values := compactAdvancedValues(v.Value)
+		if len(values) == 0 {
 			continue
 		}
 
-		switch v.Type {
-		case "eq":
-			var valueList []int
-			if v.Name == "risk_level" {
-				for _, v := range v.Value {
-					atoi, err := strconv.Atoi(v)
-					if err != nil {
-						continue
-					}
-					valueList = append(valueList, atoi)
-				}
-				query = append(query, bson.E{Key: v.Name, Value: bson.D{{Key: "$in", Value: valueList}}})
-			} else {
-				query = append(query, bson.E{Key: v.Name, Value: bson.D{{Key: "$in", Value: v.Value}}})
-			}
-		case "ne":
-			var valueList []int
-			if v.Name == "risk_level" {
-				for _, v := range v.Value {
-					atoi, err := strconv.Atoi(v)
-					if err != nil {
-						continue
-					}
-					valueList = append(valueList, atoi)
-				}
-				query = append(query, bson.E{Key: v.Name, Value: bson.D{{Key: "$nin", Value: valueList}}})
-			} else {
-				query = append(query, bson.E{Key: v.Name, Value: bson.D{{Key: "$nin", Value: v.Value}}})
-			}
-		case "lt":
-			if v.Name == "end_tm" {
-				tm, err := time.Parse("2006-01-02 15:04:05", v.Value[0])
-				if err != nil {
-					logger.Errorf("parse time err:%v", err)
-					return nil, err
-				}
-				query = append(query, bson.E{Key: v.Name, Value: bson.D{{Key: "$lte", Value: tm.Add(-time.Hour * 8)}}})
-			} else {
-				query = append(query, bson.E{Key: v.Name, Value: bson.D{{Key: "$lte", Value: v.Value[0]}}})
-			}
-		case "gt":
-			if v.Name == "end_tm" {
-				tm, err := time.Parse("2006-01-02 15:04:05", v.Value[0])
-				if err != nil {
-					logger.Errorf("parse time err:%v", err)
-					return nil, err
-				}
-				query = append(query, bson.E{Key: v.Name, Value: bson.D{{Key: "$gte", Value: tm.Add(-time.Hour * 8)}}})
-			} else {
-				query = append(query, bson.E{Key: v.Name, Value: bson.D{{Key: "$gte", Value: v.Value[0]}}})
-			}
-
-		case "bt":
-			startTime, err := time.Parse("2006-01-02 15:04:05", v.Value[0])
-			if err != nil {
-				logger.Errorf("parse time err:%v", err)
-				return nil, err
-			}
-			endTime, err := time.Parse("2006-01-02 15:04:05", v.Value[1])
-			if err != nil {
-				logger.Errorf("parse time err:%v", err)
-				return nil, err
-			}
-
-			query = append(query, bson.E{Key: v.Name, Value: bson.D{{Key: "$gte", Value: startTime.Add(-time.Hour * 8)}}})
-			query = append(query, bson.E{Key: v.Name, Value: bson.D{{Key: "$lte", Value: endTime.Add(-time.Hour * 8)}}})
+		condition, err := buildThreatAdvancedCondition(field, v.Type, values)
+		if err != nil {
+			return nil, err
+		}
+		if len(condition) > 0 {
+			conditions = append(conditions, condition)
 		}
 	}
-	return query, nil
+
+	if len(conditions) == 0 {
+		return bson.D{}, nil
+	}
+	if len(conditions) == 1 {
+		return conditions[0], nil
+	}
+
+	andConditions := make(bson.A, 0, len(conditions))
+	for _, condition := range conditions {
+		andConditions = append(andConditions, condition)
+	}
+	return bson.D{{Key: "$and", Value: andConditions}}, nil
+}
+
+func compactAdvancedValues(values []string) []string {
+	ret := make([]string, 0, len(values))
+	for _, value := range values {
+		value = strings.TrimSpace(value)
+		if value != "" {
+			ret = append(ret, value)
+		}
+	}
+	return ret
+}
+
+func buildThreatAdvancedCondition(field threatAdvancedField, operator string, values []string) (bson.D, error) {
+	switch field.kind {
+	case threatAdvancedString:
+		return buildStringAdvancedCondition(field.dbName, operator, values)
+	case threatAdvancedInt:
+		return buildIntAdvancedCondition(field.dbName, operator, values)
+	case threatAdvancedTimeMillis:
+		return buildTimeMillisAdvancedCondition(field.dbName, operator, values)
+	case threatAdvancedDomain:
+		return buildDomainAdvancedCondition(field.dbName, operator, values)
+	case threatAdvancedFlowActor:
+		return buildFlowActorAdvancedCondition(field.dbName, operator, values)
+	default:
+		return nil, fmt.Errorf("unsupported advanced search field type")
+	}
+}
+
+func buildStringAdvancedCondition(field, operator string, values []string) (bson.D, error) {
+	switch operator {
+	case "eq":
+		return bson.D{{Key: field, Value: bson.D{{Key: "$in", Value: values}}}}, nil
+	case "ne":
+		return bson.D{{Key: field, Value: bson.D{{Key: "$nin", Value: values}}}}, nil
+	case "contain":
+		return buildRegexAnyCondition(field, values, false), nil
+	case "not_contain":
+		return buildRegexAllCondition(field, values, false), nil
+	default:
+		return nil, fmt.Errorf("unsupported advanced search operator %q for field %q", operator, field)
+	}
+}
+
+func buildIntAdvancedCondition(field, operator string, values []string) (bson.D, error) {
+	intValues, err := parseInt32AdvancedValues(values)
+	if err != nil {
+		return nil, err
+	}
+
+	switch operator {
+	case "eq":
+		return bson.D{{Key: field, Value: bson.D{{Key: "$in", Value: intValues}}}}, nil
+	case "ne":
+		return bson.D{{Key: field, Value: bson.D{{Key: "$nin", Value: intValues}}}}, nil
+	default:
+		return nil, fmt.Errorf("unsupported advanced search operator %q for numeric field %q", operator, field)
+	}
+}
+
+func parseInt32AdvancedValues(values []string) ([]int32, error) {
+	ret := make([]int32, 0, len(values))
+	for _, value := range values {
+		parsed, err := strconv.ParseInt(value, 10, 32)
+		if err != nil {
+			return nil, fmt.Errorf("invalid numeric advanced search value %q: %w", value, err)
+		}
+		ret = append(ret, int32(parsed))
+	}
+	return ret, nil
+}
+
+func buildTimeMillisAdvancedCondition(field, operator string, values []string) (bson.D, error) {
+	switch operator {
+	case "lt":
+		millis, err := parseAdvancedLocalTimeMillis(values[0])
+		if err != nil {
+			return nil, err
+		}
+		return bson.D{{Key: field, Value: bson.D{{Key: "$lte", Value: millis}}}}, nil
+	case "gt":
+		millis, err := parseAdvancedLocalTimeMillis(values[0])
+		if err != nil {
+			return nil, err
+		}
+		return bson.D{{Key: field, Value: bson.D{{Key: "$gte", Value: millis}}}}, nil
+	case "bt":
+		if len(values) < 2 {
+			return nil, fmt.Errorf("advanced search operator bt requires two time values")
+		}
+		startTime, endTime, err := initTimeInterval(values[0], values[1])
+		if err != nil {
+			return nil, err
+		}
+		return bson.D{{Key: field, Value: bson.D{
+			{Key: "$gte", Value: startTime.Add(-time.Hour * 8).UnixMilli()},
+			{Key: "$lte", Value: endTime.Add(-time.Hour * 8).UnixMilli()},
+		}}}, nil
+	default:
+		return nil, fmt.Errorf("unsupported advanced search operator %q for time field %q", operator, field)
+	}
+}
+
+func parseAdvancedLocalTimeMillis(value string) (int64, error) {
+	tm, err := time.Parse("2006-01-02 15:04:05", value)
+	if err != nil {
+		logger.Errorf("parse time err:%v", err)
+		return 0, err
+	}
+	return tm.Add(-time.Hour * 8).UnixMilli(), nil
+}
+
+func buildDomainAdvancedCondition(field, operator string, values []string) (bson.D, error) {
+	switch operator {
+	case "eq", "contain":
+		return buildDomainAnyCondition(field, values), nil
+	case "ne", "not_contain":
+		return buildDomainAllCondition(field, values), nil
+	default:
+		return nil, fmt.Errorf("unsupported advanced search operator %q for domain field", operator)
+	}
+}
+
+func buildDomainAnyCondition(field string, values []string) bson.D {
+	orValues := make(bson.A, 0, len(values))
+	for _, value := range values {
+		orValues = append(orValues, bson.D{{Key: field, Value: bson.Regex{Pattern: domainSuffixPattern(value), Options: "i"}}})
+	}
+	return bson.D{{Key: "$or", Value: orValues}}
+}
+
+func buildDomainAllCondition(field string, values []string) bson.D {
+	andValues := make(bson.A, 0, len(values))
+	for _, value := range values {
+		andValues = append(andValues, bson.D{{Key: field, Value: bson.M{"$not": bson.Regex{Pattern: domainSuffixPattern(value), Options: "i"}}}})
+	}
+	return bson.D{{Key: "$and", Value: andValues}}
+}
+
+func domainSuffixPattern(value string) string {
+	return fmt.Sprintf("(^|\\.)%s$", regexp.QuoteMeta(value))
+}
+
+func buildRegexAnyCondition(field string, values []string, exact bool) bson.D {
+	orValues := make(bson.A, 0, len(values))
+	for _, value := range values {
+		orValues = append(orValues, bson.D{{Key: field, Value: bson.Regex{Pattern: regexPattern(value, exact), Options: "i"}}})
+	}
+	return bson.D{{Key: "$or", Value: orValues}}
+}
+
+func buildRegexAllCondition(field string, values []string, exact bool) bson.D {
+	andValues := make(bson.A, 0, len(values))
+	for _, value := range values {
+		andValues = append(andValues, bson.D{{Key: field, Value: bson.M{"$not": bson.Regex{Pattern: regexPattern(value, exact), Options: "i"}}}})
+	}
+	return bson.D{{Key: "$and", Value: andValues}}
+}
+
+func regexPattern(value string, exact bool) string {
+	pattern := regexp.QuoteMeta(value)
+	if exact {
+		return fmt.Sprintf("^%s$", pattern)
+	}
+	return pattern
+}
+
+func buildFlowActorAdvancedCondition(actor, operator string, values []string) (bson.D, error) {
+	fields := []string{
+		fmt.Sprintf("field_data.%s_username", actor),
+		fmt.Sprintf("field_data.%s_ip", actor),
+		fmt.Sprintf("field_data.%s_machine_username", actor),
+		fmt.Sprintf("field_data.%s_machine_hostname", actor),
+	}
+
+	switch operator {
+	case "eq":
+		return buildActorAnyCondition(fields, values, true), nil
+	case "contain":
+		return buildActorAnyCondition(fields, values, false), nil
+	case "ne":
+		return buildActorAllCondition(fields, values, true), nil
+	case "not_contain":
+		return buildActorAllCondition(fields, values, false), nil
+	default:
+		return nil, fmt.Errorf("unsupported advanced search operator %q for %s field", operator, actor)
+	}
+}
+
+func buildActorAnyCondition(fields []string, values []string, exact bool) bson.D {
+	orValues := make(bson.A, 0, len(fields)*len(values))
+	for _, field := range fields {
+		for _, value := range values {
+			orValues = append(orValues, bson.D{{Key: field, Value: bson.Regex{Pattern: regexPattern(value, exact), Options: "i"}}})
+		}
+	}
+	return bson.D{{Key: "$or", Value: orValues}}
+}
+
+func buildActorAllCondition(fields []string, values []string, exact bool) bson.D {
+	andValues := make(bson.A, 0, len(fields)*len(values))
+	for _, field := range fields {
+		for _, value := range values {
+			andValues = append(andValues, bson.D{{Key: field, Value: bson.M{"$not": bson.Regex{Pattern: regexPattern(value, exact), Options: "i"}}}})
+		}
+	}
+	return bson.D{{Key: "$and", Value: andValues}}
 }
 
 func GetThreatEventByID(e *config.Env, id string) (*model.AlertEventESDB, error) {

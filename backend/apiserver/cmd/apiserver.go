@@ -13,10 +13,12 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"net"
 	"net/http"
 	"net/http/httputil"
 	"net/url"
 	"os"
+	"strings"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -247,6 +249,11 @@ func (h *httpHandle) kibanaProxyHandler(c *gin.Context) {
 }
 
 func (h *httpHandle) licenseHandler(c *gin.Context) {
+	if !isLoopbackRequest(c.Request) {
+		c.JSON(http.StatusForbidden, gin.H{"err": "license endpoint is local only"})
+		return
+	}
+
 	switch c.Request.RequestURI {
 	case "/lic/trait":
 		trait := license.GetTrait()
@@ -288,4 +295,36 @@ func (h *httpHandle) licenseHandler(c *gin.Context) {
 		}
 		c.JSON(http.StatusOK, gin.H{"msg": "ok"})
 	}
+}
+
+func isLoopbackRequest(r *http.Request) bool {
+	if r == nil || !isLoopbackRemote(r.RemoteAddr) {
+		return false
+	}
+
+	for _, headerName := range []string{"X-Real-IP", "X-Forwarded-For"} {
+		for _, headerValue := range r.Header.Values(headerName) {
+			for _, peer := range strings.Split(headerValue, ",") {
+				peer = strings.TrimSpace(peer)
+				if peer == "" {
+					continue
+				}
+				if !isLoopbackRemote(peer) {
+					return false
+				}
+			}
+		}
+	}
+	return true
+}
+
+func isLoopbackRemote(remoteAddr string) bool {
+	remoteAddr = strings.TrimSpace(remoteAddr)
+	host, _, err := net.SplitHostPort(remoteAddr)
+	if err != nil {
+		host = remoteAddr
+	}
+	host = strings.Trim(host, "[]")
+	ip := net.ParseIP(host)
+	return ip != nil && ip.IsLoopback()
 }

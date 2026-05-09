@@ -102,11 +102,20 @@ func (s *GrpcService) updateUserActiveTm(username string) error {
 	}
 
 	if shouldUpdate {
-		// Update the ActiveTm field in database
+		user, err := server.GetUser(s.env, username)
+		if err != nil {
+			logger.Errorf("Failed to find user before updating active_tm for %s: %v", username, err)
+			return err
+		}
+		if user == nil {
+			err := fmt.Errorf("user %s not found", username)
+			logger.Warnf("Skip active_tm update for unknown user %s", username)
+			return err
+		}
+
 		now := time.Now()
-		var u model.User
-		update := bson.M{"$set": bson.M{"active_tm": now}}
-		err := s.env.MongoCli.UpdateRaw(s.env.MongoContext(), u.CollectName(), bson.M{"username": username}, &update, false)
+		update := bson.M{"active_tm": now}
+		err = s.env.MongoCli.UpdateById(s.env.MongoContext(), user.CollectName(), user.ID, &update)
 		if err != nil {
 			logger.Errorf("Failed to update user active_tm for %s: %v", username, err)
 			return err
@@ -493,8 +502,18 @@ func eventMasking(fullMethod string, data string) string {
 	for url, mkList := range v2.URLEventMaskingMap {
 		if url == fullMethod {
 			for _, m := range mkList {
-				reg := regexp.MustCompile(m + ":(.*)\"")
-				data = reg.ReplaceAllString(data, "\""+m+"\""+`:"*""`)
+				field := regexp.QuoteMeta(m)
+				patterns := []*regexp.Regexp{
+					regexp.MustCompile(`(` + field + `:")([^"]*)(")`),
+					regexp.MustCompile(`("` + field + `"\s*:\s*")([^"]*)(")`),
+				}
+				for _, reg := range patterns {
+					data = reg.ReplaceAllString(data, `${1}***${3}`)
+				}
+				if m == "metadata" {
+					reg := regexp.MustCompile(`metadata:\{key:"[^"]*" value:"[^"]*"\}`)
+					data = reg.ReplaceAllString(data, `metadata:{key:"***" value:"***"}`)
+				}
 			}
 		}
 	}

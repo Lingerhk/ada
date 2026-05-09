@@ -7,6 +7,7 @@ import (
 	"ada/backend/tasker/tasks"
 	"ada/backend/tasker/worker"
 	"context"
+	"errors"
 	"fmt"
 	"math"
 	"net"
@@ -23,7 +24,7 @@ import (
 	redisbroker "github.com/RichardKnop/machinery/v2/brokers/redis"
 	mconfig "github.com/RichardKnop/machinery/v2/config"
 	eagerlock "github.com/RichardKnop/machinery/v2/locks/eager"
-	"github.com/golang-jwt/jwt"
+	"github.com/golang-jwt/jwt/v5"
 	logger "github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
@@ -33,9 +34,10 @@ import (
 )
 
 const (
-	_abortIndex int8 = math.MaxInt8 / 2
-	_headerAuth      = "authorization"
-	_bearer          = "Bearer"
+	_abortIndex    int8 = math.MaxInt8 / 2
+	_headerAuth         = "authorization"
+	_bearer             = "Bearer"
+	maxJWTTokenLen      = 4096
 )
 
 var rpcHandlers []grpc.UnaryServerInterceptor
@@ -296,50 +298,79 @@ type UserClaim struct {
 	Expired int64  `json:"exp"`
 }
 
-func (c UserClaim) Valid() error {
-	vErr := new(jwt.ValidationError)
+func (c UserClaim) GetExpirationTime() (*jwt.NumericDate, error) {
+	if c.Expired == 0 {
+		return nil, nil
+	}
+	return jwt.NewNumericDate(time.Unix(c.Expired, 0)), nil
+}
+
+func (c UserClaim) GetIssuedAt() (*jwt.NumericDate, error) {
+	return nil, nil
+}
+
+func (c UserClaim) GetNotBefore() (*jwt.NumericDate, error) {
+	return nil, nil
+}
+
+func (c UserClaim) GetIssuer() (string, error) {
+	return "", nil
+}
+
+func (c UserClaim) GetSubject() (string, error) {
+	return "", nil
+}
+
+func (c UserClaim) GetAudience() (jwt.ClaimStrings, error) {
+	return nil, nil
+}
+
+func (c UserClaim) Validate() error {
+	var errs []error
 	now := time.Now().Unix()
 	if c.Expired == 0 {
-		vErr.Inner = fmt.Errorf("exp is required")
-		vErr.Errors |= jwt.ValidationErrorClaimsInvalid
+		errs = append(errs, fmt.Errorf("exp is required"))
 	}
 	if c.Expired < now {
 		delta := time.Unix(now, 0).Sub(time.Unix(c.Expired, 0))
-		vErr.Inner = fmt.Errorf("token is expired by %v", delta)
-		vErr.Errors |= jwt.ValidationErrorExpired
+		errs = append(errs, fmt.Errorf("token is expired by %v", delta))
 	}
 
 	if c.User == "" {
-		vErr.Inner = fmt.Errorf("user is required")
-		vErr.Errors |= jwt.ValidationErrorClaimsInvalid
+		errs = append(errs, fmt.Errorf("user is required"))
 	}
 
 	if c.Role == "" {
-		vErr.Inner = fmt.Errorf("role is required")
-		vErr.Errors |= jwt.ValidationErrorClaimsInvalid
+		errs = append(errs, fmt.Errorf("role is required"))
 	}
 
 	if c.Priv == 0 {
-		vErr.Inner = fmt.Errorf("priv is required")
-		vErr.Errors |= jwt.ValidationErrorClaimsInvalid
+		errs = append(errs, fmt.Errorf("priv is required"))
 	}
 
-	if vErr.Errors == 0 {
-		return nil
-	}
-
-	return vErr
+	return errors.Join(errs...)
 }
 
 // 解析token获取user消息
 func parseToken(tokenStr, authSecret string) (*UserClaim, error) {
+	if len(tokenStr) > maxJWTTokenLen {
+		return nil, fmt.Errorf("jwt token is too large")
+	}
+
 	fn := func(token *jwt.Token) (any, error) {
 		return []byte(authSecret), nil
 	}
 
-	token, err := jwt.ParseWithClaims(tokenStr, &UserClaim{}, fn)
+	parser := jwt.NewParser(
+		jwt.WithValidMethods([]string{jwt.SigningMethodHS256.Alg()}),
+		jwt.WithExpirationRequired(),
+	)
+	token, err := parser.ParseWithClaims(tokenStr, &UserClaim{}, fn)
 	if err != nil {
 		return nil, err
+	}
+	if !token.Valid {
+		return nil, fmt.Errorf("invalid jwt token")
 	}
 
 	claim, ok := token.Claims.(*UserClaim)

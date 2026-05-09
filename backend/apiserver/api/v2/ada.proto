@@ -968,7 +968,7 @@ message ListThreatReq{
   string endTm = 7;  // 结束时间
   int32 searchType = 8;// 检索类型,0为普通检索，1为高级检索
   message Details {
-    string name = 1; // 检索字段
+    string name = 1; // 检索字段: title(flow_id)|level|eventStatus|time; 兼容 threatID|threatLevel|endTm 等旧字段
     string type = 2; // 等于 eq，不等于ne 之前lt，之后gt 两者之间bt，包含contain 不包含 not_contain
     repeated string value = 3;
   }

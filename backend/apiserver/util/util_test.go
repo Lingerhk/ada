@@ -1,7 +1,11 @@
 package util
 
 import (
+	"ada/backend/apiserver/common"
 	"testing"
+	"time"
+
+	"github.com/golang-jwt/jwt/v5"
 )
 
 func TestPasswordEncryptDecrypt(t *testing.T) {
@@ -90,7 +94,7 @@ func TestPasswordDecode_InvalidInput(t *testing.T) {
 	}{
 		{"empty string", ""},
 		{"invalid base64", "not-valid-base64!!!"},
-		{"short ciphertext", "YWJj"}, // "abc" in base64
+		{"short ciphertext", "YWJj"},                 // "abc" in base64
 		{"corrupted ciphertext", "SGVsbG8gV29ybGQh"}, // Valid base64 but invalid ciphertext
 	}
 
@@ -132,8 +136,8 @@ func TestPasswordEncrypt_SecurityImprovement(t *testing.T) {
 
 	// All three encrypted values should be different (due to random nonce in GCM)
 	if encryptedPasswords[0] == encryptedPasswords[1] ||
-	   encryptedPasswords[1] == encryptedPasswords[2] ||
-	   encryptedPasswords[0] == encryptedPasswords[2] {
+		encryptedPasswords[1] == encryptedPasswords[2] ||
+		encryptedPasswords[0] == encryptedPasswords[2] {
 		t.Error("GCM mode should produce different ciphertexts for identical plaintexts")
 	}
 
@@ -146,5 +150,34 @@ func TestPasswordEncrypt_SecurityImprovement(t *testing.T) {
 		if decrypted != "DomainAdmin123" {
 			t.Errorf("Password %d decrypted incorrectly: got %s", i, decrypted)
 		}
+	}
+}
+
+func TestParseTokenRequiresHS256(t *testing.T) {
+	claim := UserClaim{
+		User:    "admin",
+		Role:    common.RoleMgr,
+		Priv:    common.PrivSuper,
+		Expired: time.Now().Add(time.Hour).Unix(),
+	}
+	token := jwt.NewWithClaims(jwt.SigningMethodHS384, claim)
+	tokenStr, err := token.SignedString([]byte(common.JWT_SECRET))
+	if err != nil {
+		t.Fatalf("sign HS384 token: %v", err)
+	}
+
+	if _, err := ParseToken(tokenStr, common.JWT_SECRET); err == nil {
+		t.Fatal("expected ParseToken to reject non-HS256 token")
+	}
+}
+
+func TestParseTokenRejectsOversizedToken(t *testing.T) {
+	tokenStr := make([]byte, maxJWTTokenLen+1)
+	for i := range tokenStr {
+		tokenStr[i] = 'a'
+	}
+
+	if _, err := ParseToken(string(tokenStr), common.JWT_SECRET); err == nil {
+		t.Fatal("expected ParseToken to reject oversized token")
 	}
 }

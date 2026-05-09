@@ -26,19 +26,6 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-func snakeString(s string) string {
-	m := map[string]string{
-		"domain":      "domain",
-		"threatID":    "rule_id",
-		"threatLevel": "risk_level",
-		"status":      "status",
-		"time":        "end_tm",
-		"source":      "source",
-		"target":      "target",
-	}
-	return m[s]
-}
-
 func getAttackFlow(env *config.Env, flowId string, fieldData map[string]string) *v2.AttackFlowReply {
 	attackFlow, err := server.GetThreatAttackFlowByID(env, flowId, fieldData)
 	if err != nil {
@@ -78,12 +65,11 @@ func (s *ADAServiceV2) ListThreat(ctx context.Context, in *v2.ListThreatReq) (*v
 	} else {
 		var req []server.AdvancedSearchReq
 		for _, search := range in.AdvancedSearch {
-			name := snakeString(search.Name)
 			if len(search.Value) == 0 {
 				continue
 			}
 			req = append(req, server.AdvancedSearchReq{
-				Name:  name,
+				Name:  search.Name,
 				Type:  search.Type,
 				Value: search.Value,
 			})
