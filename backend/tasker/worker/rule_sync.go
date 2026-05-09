@@ -135,6 +135,11 @@ func (w *Worker) RuleSyncTask(ctx context.Context) error {
 	}
 
 	// Step 4: Rule upload - upload local-only or updated rules (after sync completed)
+	if !rulePeerUploadEnabled() {
+		logger.Info("Rule peer upload is disabled, skipping local rule upload")
+		return nil
+	}
+
 	logger.Info("Step 4: Checking for local-only or updated rules to upload")
 
 	// Get proxy settings for upload
@@ -151,6 +156,18 @@ func (w *Worker) RuleSyncTask(ctx context.Context) error {
 	}
 
 	return nil
+}
+
+func rulePeerUploadEnabled() bool {
+	switch strings.ToLower(strings.TrimSpace(os.Getenv("ADA_RULE_PEER_UPLOAD"))) {
+	case "", "1", "true", "yes", "on":
+		return true
+	case "0", "false", "no", "off", "disable", "disabled":
+		return false
+	default:
+		logger.Warn("Invalid ADA_RULE_PEER_UPLOAD value, defaulting to enabled")
+		return true
+	}
 }
 
 // checkLatestVersion downloads the latest.json from remote server and check if need update
@@ -491,8 +508,8 @@ func (w *Worker) collectFlowRulesToUpload(ctx context.Context, remoteRules map[s
 			// Rule only exists locally - new rule
 			action = "new"
 			logger.Infof("Flow rule %s exists only locally (new)", rule.ID)
-		} else if remoteMeta.DetectionMD5 != localDetectionMD5 {
-			// Rule exists but detection differs - updated rule
+		} else if shouldUploadRuleUpdate(rule.ID, rule.UpdateTm, remoteMeta, localDetectionMD5) {
+			// Rule exists and is newer than the remote baseline with detection changes.
 			action = "update"
 			logger.Infof("Flow rule %s has been updated locally", rule.ID)
 		}
@@ -547,8 +564,8 @@ func (w *Worker) collectActivityRulesToUpload(ctx context.Context, remoteRules m
 			// Rule only exists locally - new rule
 			action = "new"
 			logger.Infof("Activity rule %s exists only locally (new)", rule.ID)
-		} else if remoteMeta.DetectionMD5 != localDetectionMD5 {
-			// Rule exists but detection differs - updated rule
+		} else if shouldUploadRuleUpdate(rule.ID, rule.UpdateTm, remoteMeta, localDetectionMD5) {
+			// Rule exists and is newer than the remote baseline with detection changes.
 			action = "update"
 			logger.Infof("Activity rule %s has been updated locally", rule.ID)
 		}
@@ -595,6 +612,24 @@ func calculateStringMD5(s string) string {
 	hash := md5.New()
 	hash.Write([]byte(s))
 	return hex.EncodeToString(hash.Sum(nil))
+}
+
+func shouldUploadRuleUpdate(ruleID string, localUpdateTm time.Time, remoteMeta RuleMetadata, localDetectionMD5 string) bool {
+	if remoteMeta.UpdateTm > 0 {
+		if localUpdateTm.IsZero() || localUpdateTm.Unix() <= remoteMeta.UpdateTm {
+			return false
+		}
+	}
+
+	if remoteMeta.DetectionMD5 == localDetectionMD5 {
+		return false
+	}
+
+	if remoteMeta.DetectionMD5 == "" {
+		logger.Infof("Rule %s has newer local update_tm and remote detection checksum is empty", ruleID)
+	}
+
+	return true
 }
 
 // extractAndValidateZIP extracts the ZIP file and validates structure
@@ -736,7 +771,7 @@ func (w *Worker) updateActivityRule(ctx context.Context, meta RuleMetadata, rule
 
 	// Parse date/modified fields from YAML
 	createTm := parseRuleDate(rule.RuleDate)
-	updateTm := parseRuleDate(rule.RuleModified)
+	updateTm := remoteRuleUpdateTime(meta, parseRuleDate(rule.RuleModified))
 
 	// Check if rule exists
 	var existingRule model.AlertActivityRule
@@ -801,7 +836,7 @@ func (w *Worker) updateFlowRule(ctx context.Context, meta RuleMetadata, rulesDir
 
 	// Parse date/modified fields from YAML
 	createTm := parseRuleDate(rule.RuleDate)
-	updateTm := parseRuleDate(rule.RuleModified)
+	updateTm := remoteRuleUpdateTime(meta, parseRuleDate(rule.RuleModified))
 
 	// Check if rule exists
 	var existingRule model.AlertRule
@@ -897,6 +932,13 @@ func parseRuleDate(dateStr string) time.Time {
 	// If parsing fails, log warning and return current time
 	logger.Warnf("Failed to parse rule date '%s', using current time", dateStr)
 	return time.Now()
+}
+
+func remoteRuleUpdateTime(meta RuleMetadata, fallback time.Time) time.Time {
+	if meta.UpdateTm > 0 {
+		return time.Unix(meta.UpdateTm, 0)
+	}
+	return fallback
 }
 
 // createUploadPackage creates a ZIP package with rules and desc.json

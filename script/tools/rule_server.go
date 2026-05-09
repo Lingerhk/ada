@@ -79,6 +79,30 @@ type UploadDescriptor struct {
 	ClientTrait   string `json:"client_trait,omitempty"`
 }
 
+// UploadedFileInfo records useful details for manual upload review.
+type UploadedFileInfo struct {
+	Path string `json:"path"`
+	Size int64  `json:"size"`
+}
+
+// UploadArchiveRecord is written next to each uploaded package and to uploads.log.
+type UploadArchiveRecord struct {
+	Timestamp     string             `json:"timestamp"`
+	RemoteIP      string             `json:"remote_ip"`
+	ClientVersion string             `json:"client_version,omitempty"`
+	ClientTrait   string             `json:"client_trait,omitempty"`
+	UploadVersion string             `json:"upload_version,omitempty"`
+	PackageFile   string             `json:"package_file"`
+	PackagePath   string             `json:"package_path"`
+	PackageSize   int64              `json:"package_size"`
+	PackageMD5    string             `json:"package_md5"`
+	RecordFile    string             `json:"record_file"`
+	ReviewStatus  string             `json:"review_status"`
+	PublishAction string             `json:"publish_action"`
+	RulesCount    map[string]int     `json:"rules_count"`
+	LargestFiles  []UploadedFileInfo `json:"largest_files,omitempty"`
+}
+
 // DownloadLog represents a download record
 type DownloadLog struct {
 	Timestamp     time.Time `json:"timestamp"`
@@ -445,15 +469,15 @@ func (s *Server) handleUpload(w http.ResponseWriter, r *http.Request) {
 
 		logger.Infof("Uploaded package saved to: %s (size: %d bytes)", uploadPath, len(body))
 
-		// Process the uploaded package
-		if err := s.processUploadedPackage(uploadPath, r.RemoteAddr); err != nil {
-			logger.Errorf("Failed to process uploaded package: %v", err)
+		record, err := s.archiveUploadedPackage(uploadPath, r.RemoteAddr)
+		if err != nil {
+			logger.Errorf("Failed to archive uploaded package: %v", err)
 			http.Error(w, fmt.Sprintf("Failed to process upload: %v", err), http.StatusBadRequest)
 			return
 		}
 
 		w.WriteHeader(http.StatusCreated)
-		fmt.Fprintf(w, "Upload successful: %s\n", filepath.Base(uploadPath))
+		fmt.Fprintf(w, "Upload archived for manual review: %s\nRecord: %s\n", record.PackageFile, record.RecordFile)
 		return
 	}
 
@@ -484,48 +508,58 @@ func (s *Server) handleUpload(w http.ResponseWriter, r *http.Request) {
 
 	logger.Infof("Uploaded package saved to: %s (size: %d bytes)", uploadPath, size)
 
-	// Process the uploaded package
-	if err := s.processUploadedPackage(uploadPath, r.RemoteAddr); err != nil {
-		logger.Errorf("Failed to process uploaded package: %v", err)
+	record, err := s.archiveUploadedPackage(uploadPath, r.RemoteAddr)
+	if err != nil {
+		logger.Errorf("Failed to archive uploaded package: %v", err)
 		http.Error(w, fmt.Sprintf("Failed to process upload: %v", err), http.StatusBadRequest)
 		return
 	}
 
 	w.WriteHeader(http.StatusCreated)
-	fmt.Fprintf(w, "Upload successful: %s\n", filepath.Base(uploadPath))
+	fmt.Fprintf(w, "Upload archived for manual review: %s\nRecord: %s\n", record.PackageFile, record.RecordFile)
 }
 
-// processUploadedPackage validates an uploaded rule package, merges it into the
-// current latest package, and publishes a new latest.json/latest.zip pair.
-func (s *Server) processUploadedPackage(zipPath, remoteAddr string) error {
+// archiveUploadedPackage validates an uploaded rule package and records it for
+// manual review. It must not update latest.json/latest.zip.
+func (s *Server) archiveUploadedPackage(zipPath, remoteAddr string) (*UploadArchiveRecord, error) {
+	info, err := os.Stat(zipPath)
+	if err != nil {
+		return nil, fmt.Errorf("failed to stat upload: %w", err)
+	}
+
+	packageMD5, err := calculateFileMD5(zipPath)
+	if err != nil {
+		return nil, fmt.Errorf("failed to calculate upload md5: %w", err)
+	}
+
 	tmpDir, err := os.MkdirTemp(s.uploadDir, "process_*")
 	if err != nil {
-		return fmt.Errorf("failed to create temp dir: %w", err)
+		return nil, fmt.Errorf("failed to create temp dir: %w", err)
 	}
 	defer os.RemoveAll(tmpDir)
 
 	if err := extractZipSecure(zipPath, tmpDir); err != nil {
-		return err
+		return nil, err
 	}
 
 	descPath, packageRoot, err := findPackageDescriptor(tmpDir)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	data, err := os.ReadFile(descPath)
 	if err != nil {
-		return fmt.Errorf("failed to read desc.json: %w", err)
+		return nil, fmt.Errorf("failed to read desc.json: %w", err)
 	}
 
 	var uploadDesc UploadDescriptor
 	if err := json.Unmarshal(data, &uploadDesc); err != nil {
-		return fmt.Errorf("failed to parse desc.json: %w", err)
+		return nil, fmt.Errorf("failed to parse desc.json: %w", err)
 	}
 
 	totalRules := len(uploadDesc.Flow) + len(uploadDesc.WinLog) + len(uploadDesc.PktLog)
 	if totalRules == 0 {
-		return errors.New("uploaded package has no rules in desc.json")
+		return nil, errors.New("uploaded package has no rules in desc.json")
 	}
 
 	logger.Infof("Upload metadata: version=%s, client_version=%s, client_trait=%s, flow=%d, winlog=%d, pktlog=%d",
@@ -536,24 +570,131 @@ func (s *Server) processUploadedPackage(zipPath, remoteAddr string) error {
 		len(uploadDesc.WinLog),
 		len(uploadDesc.PktLog))
 
-	publishedVersion, err := s.mergeUploadedPackage(packageRoot, &uploadDesc.RuleDescriptor)
-	if err != nil {
-		return err
+	if err := validateUploadDescriptorFiles(packageRoot, &uploadDesc.RuleDescriptor); err != nil {
+		return nil, err
 	}
 
-	logEntry := map[string]any{
-		"_log_type":         "upload",
-		"timestamp":         time.Now().Format(time.RFC3339),
-		"remote_ip":         remoteAddr,
-		"client_version":    uploadDesc.ClientVersion,
-		"client_trait":      uploadDesc.ClientTrait,
-		"package_file":      filepath.Base(zipPath),
-		"published_version": publishedVersion,
-		"rules_count": map[string]int{
+	largestFiles, err := largestUploadedFiles(packageRoot, 10)
+	if err != nil {
+		return nil, err
+	}
+
+	recordPath := strings.TrimSuffix(zipPath, filepath.Ext(zipPath)) + ".json"
+	record := &UploadArchiveRecord{
+		Timestamp:     time.Now().Format(time.RFC3339),
+		RemoteIP:      remoteAddr,
+		ClientVersion: uploadDesc.ClientVersion,
+		ClientTrait:   uploadDesc.ClientTrait,
+		UploadVersion: uploadDesc.Version,
+		PackageFile:   filepath.Base(zipPath),
+		PackagePath:   zipPath,
+		PackageSize:   info.Size(),
+		PackageMD5:    packageMD5,
+		RecordFile:    filepath.Base(recordPath),
+		ReviewStatus:  "pending_review",
+		PublishAction: "manual_required",
+		RulesCount: map[string]int{
 			"flow":   len(uploadDesc.Flow),
 			"winlog": len(uploadDesc.WinLog),
 			"pktlog": len(uploadDesc.PktLog),
 		},
+		LargestFiles: largestFiles,
+	}
+
+	recordData, err := json.MarshalIndent(record, "", "  ")
+	if err != nil {
+		return nil, fmt.Errorf("failed to marshal upload record: %w", err)
+	}
+	recordData = append(recordData, '\n')
+	if err := os.WriteFile(recordPath, recordData, 0644); err != nil {
+		return nil, fmt.Errorf("failed to write upload record: %w", err)
+	}
+
+	s.queueUploadLog(record)
+	logger.Infof("Archived upload %s for manual review; latest package was not changed", record.PackageFile)
+
+	return record, nil
+}
+
+func validateUploadDescriptorFiles(packageRoot string, desc *RuleDescriptor) error {
+	ruleTypes := []struct {
+		name  string
+		metas []RuleMetadata
+	}{
+		{name: "flow", metas: desc.Flow},
+		{name: "pktlog", metas: desc.PktLog},
+		{name: "winlog", metas: desc.WinLog},
+	}
+
+	for _, ruleType := range ruleTypes {
+		for _, meta := range ruleType.metas {
+			if meta.ID == "" {
+				return fmt.Errorf("empty rule id in %s descriptor", ruleType.name)
+			}
+			if _, _, err := findRuleFileForMeta(packageRoot, ruleType.name, meta); err != nil {
+				return err
+			}
+		}
+	}
+	return nil
+}
+
+func largestUploadedFiles(root string, limit int) ([]UploadedFileInfo, error) {
+	files := make([]UploadedFileInfo, 0)
+	err := filepath.WalkDir(root, func(path string, entry os.DirEntry, walkErr error) error {
+		if walkErr != nil {
+			return walkErr
+		}
+		if entry.IsDir() {
+			return nil
+		}
+		info, err := entry.Info()
+		if err != nil {
+			return err
+		}
+		relPath, err := filepath.Rel(root, path)
+		if err != nil {
+			return err
+		}
+		files = append(files, UploadedFileInfo{
+			Path: filepath.ToSlash(relPath),
+			Size: info.Size(),
+		})
+		return nil
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	sort.Slice(files, func(i, j int) bool {
+		if files[i].Size == files[j].Size {
+			return files[i].Path < files[j].Path
+		}
+		return files[i].Size > files[j].Size
+	})
+	if len(files) > limit {
+		files = files[:limit]
+	}
+	return files, nil
+}
+
+func (s *Server) queueUploadLog(record *UploadArchiveRecord) {
+	logEntry := map[string]any{
+		"_log_type":      "upload",
+		"timestamp":      record.Timestamp,
+		"remote_ip":      record.RemoteIP,
+		"client_version": record.ClientVersion,
+		"client_trait":   record.ClientTrait,
+		"upload_version": record.UploadVersion,
+		"package_file":   record.PackageFile,
+		"package_path":   record.PackagePath,
+		"package_size":   record.PackageSize,
+		"package_md5":    record.PackageMD5,
+		"record_file":    record.RecordFile,
+		"review_status":  record.ReviewStatus,
+		"publish_action": record.PublishAction,
+		"rules_count":    record.RulesCount,
+		"largest_files":  record.LargestFiles,
 	}
 
 	select {
@@ -561,8 +702,6 @@ func (s *Server) processUploadedPackage(zipPath, remoteAddr string) error {
 	default:
 		logger.Warnf("Log queue full, dropping upload log entry")
 	}
-
-	return nil
 }
 
 func extractZipSecure(zipPath, destDir string) error {
@@ -649,53 +788,6 @@ func findPackageDescriptor(root string) (descPath, packageRoot string, err error
 	return descPath, packageRoot, nil
 }
 
-func descriptorMaps(desc RuleDescriptor) (map[string]RuleMetadata, map[string]RuleMetadata, map[string]RuleMetadata) {
-	flow := make(map[string]RuleMetadata, len(desc.Flow))
-	pktlog := make(map[string]RuleMetadata, len(desc.PktLog))
-	winlog := make(map[string]RuleMetadata, len(desc.WinLog))
-	for _, meta := range desc.Flow {
-		flow[meta.ID] = meta
-	}
-	for _, meta := range desc.PktLog {
-		pktlog[meta.ID] = meta
-	}
-	for _, meta := range desc.WinLog {
-		winlog[meta.ID] = meta
-	}
-	return flow, pktlog, winlog
-}
-
-func sortedMetadata(m map[string]RuleMetadata) []RuleMetadata {
-	out := make([]RuleMetadata, 0, len(m))
-	for _, meta := range m {
-		out = append(out, meta)
-	}
-	sort.Slice(out, func(i, j int) bool {
-		return out[i].ID < out[j].ID
-	})
-	return out
-}
-
-func copyDirContents(srcDir, dstDir string) error {
-	if _, err := os.Stat(srcDir); os.IsNotExist(err) {
-		return nil
-	}
-	return filepath.Walk(srcDir, func(path string, info os.FileInfo, err error) error {
-		if err != nil {
-			return err
-		}
-		relPath, err := filepath.Rel(srcDir, path)
-		if err != nil {
-			return err
-		}
-		dstPath := filepath.Join(dstDir, relPath)
-		if info.IsDir() {
-			return os.MkdirAll(dstPath, 0755)
-		}
-		return copyFile(path, dstPath)
-	})
-}
-
 func findRuleFileForMeta(packageRoot, ruleType string, meta RuleMetadata) (string, string, error) {
 	candidates := make([]string, 0, 4)
 	if meta.Filename != "" {
@@ -726,149 +818,6 @@ func findRuleFileForMeta(packageRoot, ruleType string, meta RuleMetadata) (strin
 	}
 	sort.Strings(matches)
 	return matches[0], filepath.Base(matches[0]), nil
-}
-
-func normalizeRuleMetadata(packageRoot, ruleType string, meta RuleMetadata) (RuleMetadata, string, error) {
-	srcPath, filename, err := findRuleFileForMeta(packageRoot, ruleType, meta)
-	if err != nil {
-		return RuleMetadata{}, "", err
-	}
-
-	data, err := os.ReadFile(srcPath)
-	if err != nil {
-		return RuleMetadata{}, "", err
-	}
-
-	meta.Filename = filename
-	meta.MD5 = calculateStringMD5(string(data))
-	if meta.UpdateTm == 0 {
-		meta.UpdateTm = time.Now().Unix()
-	}
-
-	if meta.DetectionMD5 == "" {
-		var rule map[string]any
-		if err := yaml.Unmarshal(data, &rule); err == nil {
-			if detection, ok := rule["detection"]; ok {
-				if detectionData, err := json.Marshal(detection); err == nil {
-					meta.DetectionMD5 = calculateStringMD5(string(detectionData))
-				}
-			}
-		}
-	}
-
-	return meta, srcPath, nil
-}
-
-func mergeRuleType(packageRoot, dstRoot, ruleType string, metas []RuleMetadata, dst map[string]RuleMetadata) error {
-	dstDir := filepath.Join(dstRoot, ruleType)
-	if err := os.MkdirAll(dstDir, 0755); err != nil {
-		return err
-	}
-
-	for _, meta := range metas {
-		if meta.ID == "" {
-			return fmt.Errorf("empty rule id in %s descriptor", ruleType)
-		}
-		normalized, srcPath, err := normalizeRuleMetadata(packageRoot, ruleType, meta)
-		if err != nil {
-			return err
-		}
-		dstPath := filepath.Join(dstDir, normalized.Filename)
-		if err := copyFile(srcPath, dstPath); err != nil {
-			return err
-		}
-		dst[normalized.ID] = normalized
-	}
-
-	return nil
-}
-
-func (s *Server) mergeUploadedPackage(uploadRoot string, uploadDesc *RuleDescriptor) (string, error) {
-	version := fmt.Sprintf("%d", time.Now().Unix())
-	packageName := fmt.Sprintf("ada_rule_%s", version)
-
-	workDir, err := os.MkdirTemp(s.packageDir, "merge_*")
-	if err != nil {
-		return "", fmt.Errorf("failed to create merge temp dir: %w", err)
-	}
-	defer os.RemoveAll(workDir)
-
-	mergeRoot := filepath.Join(workDir, packageName)
-	for _, dir := range []string{"flow", "pktlog", "winlog"} {
-		if err := os.MkdirAll(filepath.Join(mergeRoot, dir), 0755); err != nil {
-			return "", err
-		}
-	}
-
-	var currentDesc RuleDescriptor
-	latestZipPath := filepath.Join(s.packageDir, "latest.zip")
-	if _, err := os.Stat(latestZipPath); err == nil {
-		currentExtractDir := filepath.Join(workDir, "current")
-		if err := os.MkdirAll(currentExtractDir, 0755); err != nil {
-			return "", err
-		}
-		if err := extractZipSecure(latestZipPath, currentExtractDir); err != nil {
-			return "", fmt.Errorf("failed to extract current latest.zip: %w", err)
-		}
-		currentDescPath, currentRoot, err := findPackageDescriptor(currentExtractDir)
-		if err != nil {
-			return "", fmt.Errorf("failed to read current package descriptor: %w", err)
-		}
-		data, err := os.ReadFile(currentDescPath)
-		if err != nil {
-			return "", err
-		}
-		if err := json.Unmarshal(data, &currentDesc); err != nil {
-			return "", fmt.Errorf("failed to parse current desc.json: %w", err)
-		}
-		for _, dir := range []string{"flow", "pktlog", "winlog"} {
-			if err := copyDirContents(filepath.Join(currentRoot, dir), filepath.Join(mergeRoot, dir)); err != nil {
-				return "", err
-			}
-		}
-	} else if !os.IsNotExist(err) {
-		return "", err
-	}
-
-	flowMap, pktlogMap, winlogMap := descriptorMaps(currentDesc)
-	if err := mergeRuleType(uploadRoot, mergeRoot, "flow", uploadDesc.Flow, flowMap); err != nil {
-		return "", err
-	}
-	if err := mergeRuleType(uploadRoot, mergeRoot, "pktlog", uploadDesc.PktLog, pktlogMap); err != nil {
-		return "", err
-	}
-	if err := mergeRuleType(uploadRoot, mergeRoot, "winlog", uploadDesc.WinLog, winlogMap); err != nil {
-		return "", err
-	}
-
-	mergedDesc := RuleDescriptor{
-		Version: version,
-		Flow:    sortedMetadata(flowMap),
-		PktLog:  sortedMetadata(pktlogMap),
-		WinLog:  sortedMetadata(winlogMap),
-	}
-
-	descData, err := json.MarshalIndent(mergedDesc, "", "  ")
-	if err != nil {
-		return "", err
-	}
-	if err := os.WriteFile(filepath.Join(mergeRoot, "desc.json"), descData, 0644); err != nil {
-		return "", err
-	}
-
-	zipPath := filepath.Join(s.packageDir, packageName+".zip")
-	if err := s.createZipArchive(mergeRoot, zipPath, packageName); err != nil {
-		return "", err
-	}
-
-	if err := s.publishLatest(zipPath, version); err != nil {
-		return "", err
-	}
-
-	logger.Infof("Published merged rule package version=%s flow=%d winlog=%d pktlog=%d",
-		version, len(mergedDesc.Flow), len(mergedDesc.WinLog), len(mergedDesc.PktLog))
-
-	return version, nil
 }
 
 func (s *Server) publishLatest(zipPath, version string) error {
