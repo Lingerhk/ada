@@ -376,7 +376,7 @@ func upsertAlertRule(ctx context.Context, cli mongo.DBAdaptor, rule *model.Alert
 	return cli.UpdateRaw(ctx, rule.CollectName(), bson.M{"_id": rule.ID}, bson.M{
 		"$set":         update,
 		"$setOnInsert": bson.M{"_id": rule.ID},
-	}, false)
+	}, false, true)
 }
 
 func upsertActivityRule(ctx context.Context, cli mongo.DBAdaptor, rule *model.AlertActivityRule) error {
@@ -400,7 +400,7 @@ func upsertActivityRule(ctx context.Context, cli mongo.DBAdaptor, rule *model.Al
 	return cli.UpdateRaw(ctx, rule.CollectName(), bson.M{"_id": rule.ID}, bson.M{
 		"$set":         update,
 		"$setOnInsert": bson.M{"_id": rule.ID},
-	}, false)
+	}, false, true)
 }
 
 func deleteMissingAlertRules(ctx context.Context, cli mongo.DBAdaptor, keep map[string]bool) (int, error) {

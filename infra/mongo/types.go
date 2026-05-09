@@ -44,7 +44,7 @@ type DBAdaptor interface {
 
 	Update(ctx context.Context, name string, query, update any, multi bool) error
 	UpdateById(ctx context.Context, name string, id, update any) error // id is the original type of _id, eg: ObjectID, int
-	UpdateRaw(ctx context.Context, name string, query, update any, multi bool) error
+	UpdateRaw(ctx context.Context, name string, query, update any, multi bool, upsert ...bool) error
 
 	GetNextSequence(ctx context.Context, name string) (int32, error)
 

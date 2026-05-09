@@ -80,7 +80,7 @@ func (s *stubMongoAdaptor) UpdateById(ctx context.Context, name string, id, upda
 	return nil
 }
 
-func (s *stubMongoAdaptor) UpdateRaw(ctx context.Context, name string, query, update any, multi bool) error {
+func (s *stubMongoAdaptor) UpdateRaw(ctx context.Context, name string, query, update any, multi bool, upsert ...bool) error {
 	return nil
 }
 
