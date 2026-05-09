@@ -46,7 +46,7 @@ func (e *EngineWorker) sigmaRuleMatcher(ctx context.Context, channel, payload st
 	}
 
 	// 进行heartbeat心跳记录
-	go e.heartbeat(ctx, ruleType, dcHostname)
+	e.recordHeartbeat(ruleType, dcHostname)
 
 	if e.preFilter(ctx, ruleType, obj) {
 		logger.Debugf("pre-filter passed, will ignore this rawlog!!!")
@@ -69,15 +69,31 @@ func (e *EngineWorker) sigmaRuleMatcher(ctx context.Context, channel, payload st
 	}
 }
 
-func (e *EngineWorker) heartbeat(ctx context.Context, ruleType, dcHostname string) {
-	// 记录心跳信息
+func (e *EngineWorker) recordHeartbeat(ruleType, dcHostname string) {
 	ts := time.Now().Unix()
-	if ts%10 == 0 {
-		heartbeatKey := fmt.Sprintf("%s_%s", ruleType, dcHostname)
-		err := e.redisCli.HSet(ctx, common.SensorCollectStatusKey, heartbeatKey, ts).Err()
-		if err != nil {
-			logger.Errorf("set heartbeat(dcHostname:%s, type:%s) err:%v", dcHostname, ruleType, err)
+	if ts%10 != 0 {
+		return
+	}
+
+	go e.heartbeat(ruleType, dcHostname, ts)
+}
+
+func (e *EngineWorker) heartbeat(ruleType, dcHostname string, ts int64) {
+	baseCtx := e.ctx
+	if baseCtx == nil {
+		baseCtx = context.Background()
+	}
+
+	ctx, cancel := context.WithTimeout(baseCtx, 2*time.Second)
+	defer cancel()
+
+	heartbeatKey := fmt.Sprintf("%s_%s", ruleType, dcHostname)
+	err := e.redisCli.HSet(ctx, common.SensorCollectStatusKey, heartbeatKey, ts).Err()
+	if err != nil {
+		if ctx.Err() == context.Canceled {
+			return
 		}
+		logger.Errorf("set heartbeat(dcHostname:%s, type:%s) err:%v", dcHostname, ruleType, err)
 	}
 }
 

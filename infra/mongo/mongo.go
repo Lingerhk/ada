@@ -153,11 +153,11 @@ func (ms *MongoSession) UpdateById(ctx context.Context, name string, id any, upd
 // UpdateRaw supports MongoDB native update operations, $set, $inc ...
 func (ms *MongoSession) UpdateRaw(ctx context.Context, name string, query any, update any, multi bool) error {
 	if multi {
-		_, err := ms.session.DB(ms.dbName).C(name).WithContext(normalizeContext(ctx)).UpdateAll(query, update, true)
+		_, err := ms.session.DB(ms.dbName).C(name).WithContext(normalizeContext(ctx)).UpdateAll(query, update)
 		return err
 	}
 
-	return ms.session.DB(ms.dbName).C(name).WithContext(normalizeContext(ctx)).Update(query, update, true)
+	return ms.session.DB(ms.dbName).C(name).WithContext(normalizeContext(ctx)).Update(query, update)
 }
 
 // GetNextSequence generates Int32 type auto-increment ID

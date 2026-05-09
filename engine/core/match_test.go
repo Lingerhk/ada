@@ -81,3 +81,26 @@ func TestSyncFlowEngineUsesFlowCacheKey(t *testing.T) {
 		t.Fatalf("expected activity cache sid %s, got %s", result.ID, sid)
 	}
 }
+
+func TestHeartbeatWritesWithWorkerContext(t *testing.T) {
+	s := miniredis.RunT(t)
+	rdb := redis.NewClient(&redis.Options{Addr: s.Addr()})
+	t.Cleanup(func() { _ = rdb.Close() })
+
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	worker := &EngineWorker{
+		ctx:      ctx,
+		redisCli: rdb,
+	}
+
+	const ts int64 = 1700000000
+	worker.heartbeat(common.RulePktLog, "dc01.example.com", ts)
+
+	heartbeatKey := fmt.Sprintf("%s_%s", common.RulePktLog, "dc01.example.com")
+	got := rdb.HGet(context.Background(), common.SensorCollectStatusKey, heartbeatKey).Val()
+	if got != fmt.Sprint(ts) {
+		t.Fatalf("expected heartbeat timestamp %d, got %q", ts, got)
+	}
+}

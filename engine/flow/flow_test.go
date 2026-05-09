@@ -91,7 +91,7 @@ func (f *fakeMongoAdaptor) Update(ctx context.Context, name string, query, updat
 func (f *fakeMongoAdaptor) UpdateById(ctx context.Context, name string, id, update any) error {
 	return errUnsupportedMongo
 }
-func (f *fakeMongoAdaptor) UpdateRaw(ctx context.Context, name string, query, update any, multi bool) error {
+func (f *fakeMongoAdaptor) UpdateRaw(ctx context.Context, name string, query, update any, multi bool, upsert ...bool) error {
 	return errUnsupportedMongo
 }
 func (f *fakeMongoAdaptor) GetNextSequence(ctx context.Context, name string) (int32, error) {
