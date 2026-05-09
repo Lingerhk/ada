@@ -29,10 +29,10 @@ var URLEventMap = map[string]string{
 	"/" + serviceName + "/" + "DeleteThreatBlock":     "删除威胁阻断",
 
 	// 规则管理
-	"/" + serviceName + "/" + "AddAlertRule":      "添加告警规则",
-	"/" + serviceName + "/" + "UpdateAlertRule":   "更新告警规则",
-	"/" + serviceName + "/" + "DeleteAlertRule":   "删除告警规则",
-	"/" + serviceName + "/" + "AddActivityRule":   "添加活动规则",
+	"/" + serviceName + "/" + "AddAlertRule":       "添加告警规则",
+	"/" + serviceName + "/" + "UpdateAlertRule":    "更新告警规则",
+	"/" + serviceName + "/" + "DeleteAlertRule":    "删除告警规则",
+	"/" + serviceName + "/" + "AddActivityRule":    "添加活动规则",
 	"/" + serviceName + "/" + "UpdateActivityRule": "更新活动规则",
 	"/" + serviceName + "/" + "DeleteActivityRule": "删除活动规则",
 
@@ -103,10 +103,16 @@ var URLEventMaskingMap = map[string][]string{
 	"/" + serviceName + "/" + "AddUser":            {"password"},
 	"/" + serviceName + "/" + "UpdateUser":         {"password"},
 	"/" + serviceName + "/" + "UpdateUserPassword": {"oldPassword", "newPassword"},
+	"/" + serviceName + "/" + "CheckMfa":           {"password"},
+	"/" + serviceName + "/" + "EnableMfa":          {"password", "secret", "mfaCode"},
+	"/" + serviceName + "/" + "UpdateAvatar":       {"file"},
+	"/" + serviceName + "/" + "ResetPassword":      {"newPassword"},
 	"/" + serviceName + "/" + "AddDomain":          {"password"},
 	"/" + serviceName + "/" + "UpdateDomain":       {"password"},
 	"/" + serviceName + "/" + "TestDomain":         {"password"},
-	"/" + serviceName + "/" + "ResetPassword":      {"newPassword"},
+	"/" + serviceName + "/" + "UpdateSystemCfg":    {"file"},
+	"/" + serviceName + "/" + "UpdateSystemProxy":  {"httpProxy", "httpsProxy"},
+	"/" + serviceName + "/" + "UpdateLicense":      {"licenseKey"},
 	"/" + serviceName + "/" + "AddNotifyConf":      {"metadata"},
 	"/" + serviceName + "/" + "UpdateNotifyConf":   {"metadata"},
 }
