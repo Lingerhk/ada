@@ -7,10 +7,10 @@ ADAegis 是一个面向 Active Directory 与企业身份环境的安全平台。
 ADAegis 适用于需要持续观察域控、用户活动、认证行为、网络协议痕迹、弱口令、风险配置和身份攻击路径的团队。
 
 <p>
-  <big>
-    <a href="https://youtu.be/Oexs-58C-Fg" style="text-decoration: none;"><strong>Adaegis Introduction:</strong> https://youtu.be/Oexs-58C-Fg</a><br />
-    <a href="https://demo.adaegis.net/" style="text-decoration: none;"><strong>Adaegis Demo:</strong> https://demo.adaegis.net/</a>
-  </big>
+  <big><strong>Introduction Video:</strong> <a href="https://youtu.be/Oexs-58C-Fg" style="text-decoration: none;">https://youtu.be/Oexs-58C-Fg</a></big>
+</p>
+<p>
+  <big><strong>Demo Portal:</strong> <a href="https://demo.adaegis.net/" style="text-decoration: none;">https://demo.adaegis.net/</a></big>
 </p>
 
 ## ADAegis 解决什么问题
