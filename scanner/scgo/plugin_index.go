@@ -79,17 +79,14 @@ func BuildPluginIndex(scRoot string) (*PluginIndex, error) {
 	return idx, nil
 }
 
-// RegisterPluginsAndTemplates refreshes scanner plugin metadata.
+// RegisterPluginsAndTemplates refreshes scanner plugin metadata without
+// resetting operator-controlled plugin config such as enable and meta_data.
 // It populates:
 // - tb_scan_plugin
 // - plugin lists on builtin templates seeded by MongoDB init
 // - backfills missing builtin plugins into other templates (enable=0)
 func RegisterPluginsAndTemplates(ctx context.Context, mgo mongo.DBAdaptor, idx *PluginIndex) error {
 	// step 1 register plugins
-	if err := mgo.Remove(ctx, "tb_scan_plugin", bson.M{}, true); err != nil {
-		return err
-	}
-
 	builtin := map[string][]map[string]any{
 		"baseline": {},
 		"leak":     {},
@@ -101,11 +98,13 @@ func RegisterPluginsAndTemplates(ctx context.Context, mgo mongo.DBAdaptor, idx *
 		if ent == nil {
 			continue
 		}
-		if err := mgo.Insert(ctx, "tb_scan_plugin", ent.PackageDoc); err != nil {
-			return fmt.Errorf("insert plugin %d: %w", id, err)
+
+		registeredDoc, err := registerPluginDoc(ctx, mgo, ent)
+		if err != nil {
+			return err
 		}
 		if _, ok := builtin[ent.Category]; ok {
-			builtin[ent.Category] = append(builtin[ent.Category], ent.PackageDoc)
+			builtin[ent.Category] = append(builtin[ent.Category], registeredDoc)
 		}
 	}
 
@@ -140,19 +139,19 @@ func RegisterPluginsAndTemplates(ctx context.Context, mgo mongo.DBAdaptor, idx *
 			"create_tm": now,
 			"update_tm": now,
 		}
-		update := bson.M{
-			"name":      t.Name,
-			"type":      t.Type,
-			"plugins":   t.Plugs,
-			"tmpl_type": int32(1),
-			"update_tm": now,
-		}
 		var existing bson.M
 		err, exist := mgo.FindOne(ctx, "tb_scan_template", bson.M{"_id": id}, &existing)
 		if err != nil && err != mongo.ErrNotFound {
 			return fmt.Errorf("find builtin template %s: %w", t.Name, err)
 		}
 		if exist {
+			update := bson.M{
+				"name":      t.Name,
+				"type":      t.Type,
+				"plugins":   mergePluginList(t.Plugs, existing["plugins"], true),
+				"tmpl_type": int32(1),
+				"update_tm": now,
+			}
 			if err := mgo.UpdateById(ctx, "tb_scan_template", id, update); err != nil {
 				return fmt.Errorf("update builtin template %s: %w", t.Name, err)
 			}
@@ -261,4 +260,84 @@ func RegisterPluginsAndTemplates(ctx context.Context, mgo mongo.DBAdaptor, idx *
 
 	logger.Infof("registered plugins=%d; templates refreshed", len(idx.AllIDs))
 	return nil
+}
+
+func registerPluginDoc(ctx context.Context, mgo mongo.DBAdaptor, ent *PluginEntry) (map[string]any, error) {
+	var existing bson.M
+	err, exist := mgo.FindOne(ctx, "tb_scan_plugin", bson.M{"_id": ent.ID}, &existing)
+	if err != nil && err != mongo.ErrNotFound {
+		return nil, fmt.Errorf("find plugin %d: %w", ent.ID, err)
+	}
+	if !exist {
+		doc := clonePluginDoc(ent.PackageDoc)
+		if err := mgo.Insert(ctx, "tb_scan_plugin", doc); err != nil {
+			return nil, fmt.Errorf("insert plugin %d: %w", ent.ID, err)
+		}
+		return doc, nil
+	}
+
+	doc := mergePluginDoc(ent.PackageDoc, existing, true)
+	updateDoc := clonePluginDoc(doc)
+	delete(updateDoc, "_id")
+	if err := mgo.UpdateById(ctx, "tb_scan_plugin", ent.ID, updateDoc); err != nil {
+		return nil, fmt.Errorf("update plugin %d: %w", ent.ID, err)
+	}
+	return doc, nil
+}
+
+func clonePluginDoc(src map[string]any) map[string]any {
+	dst := make(map[string]any, len(src))
+	for k, v := range src {
+		dst[k] = v
+	}
+	return dst
+}
+
+func mergePluginDoc(defaultDoc map[string]any, existing map[string]any, preserveConfig bool) map[string]any {
+	doc := clonePluginDoc(defaultDoc)
+	if !preserveConfig {
+		return doc
+	}
+	if v, ok := existing["enable"]; ok {
+		doc["enable"] = v
+	}
+	if v, ok := existing["meta_data"]; ok {
+		doc["meta_data"] = v
+	}
+	return doc
+}
+
+func pluginMapByID(pluginsAny any) map[int32]map[string]any {
+	out := map[int32]map[string]any{}
+	if arr, ok := asSliceAny(pluginsAny); ok {
+		for _, it := range arr {
+			p, ok := mapFromAny(it)
+			if !ok {
+				continue
+			}
+			pid, ok := asInt32(p["_id"])
+			if ok {
+				out[pid] = p
+			}
+		}
+	}
+	return out
+}
+
+func mergePluginList(defaultPlugins []map[string]any, existingPlugins any, preserveConfig bool) []map[string]any {
+	existingByID := pluginMapByID(existingPlugins)
+	merged := make([]map[string]any, 0, len(defaultPlugins))
+	for _, p := range defaultPlugins {
+		pid, ok := asInt32(p["_id"])
+		if !ok {
+			merged = append(merged, clonePluginDoc(p))
+			continue
+		}
+		if existing, ok := existingByID[pid]; ok {
+			merged = append(merged, mergePluginDoc(p, existing, preserveConfig))
+			continue
+		}
+		merged = append(merged, clonePluginDoc(p))
+	}
+	return merged
 }
