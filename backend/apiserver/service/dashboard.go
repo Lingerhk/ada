@@ -48,7 +48,11 @@ func (s *ADAServiceV2) DashboardStats(ctx context.Context, in *v2.DashboardStats
 	}
 
 	// Get alert counts by level (from AlertEventESDB collection)
-	alertCounts, err := server.GetAlertCountsByLevel(s.env, domains)
+	alertDomains := domains
+	if in.Domain == "all" {
+		alertDomains = nil
+	}
+	alertCounts, err := server.GetAlertCountsByLevel(s.env, alertDomains)
 	if err != nil {
 		logger.Errorf("get alert counts err:%v", err)
 	} else {
@@ -136,7 +140,13 @@ func (s *ADAServiceV2) DashboardTrends(ctx context.Context, in *v2.DashboardTren
 		domains = []string{in.Domain}
 	}
 
-	trend, err := server.GetAlertTrendByMonth(s.env, domains, int(in.Year))
+	var trend *server.DashboardTrend
+	var err error
+	if in.DurationDays > 0 {
+		trend, err = server.GetDashboardTrendByDuration(s.env, domains, int(in.DurationDays))
+	} else {
+		trend, err = server.GetDashboardTrendByYear(s.env, domains, int(in.Year))
+	}
 	if err != nil {
 		logger.Errorf("get alert trend err:%v", err)
 		return nil, status.Error(codes.Internal, s.I18n("InternalError"))

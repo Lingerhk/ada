@@ -662,17 +662,26 @@ func DeleteSensitiveEntry(e *config.Env, Id string) error {
 	return e.MongoCli.RemoveById(e.MongoContext(), se.CollectName(), objId)
 }
 
-func ThreatTops(e *config.Env, domain, typ string, duration int32) ([]bson.M, error) {
+func normalizeThreatDuration(duration int32) int32 {
 	if duration == 0 {
-		duration = 7
+		return 7
 	}
+	return duration
+}
+
+func threatDurationStartTimestamp(duration int32) int64 {
+	return time.Now().UnixMilli() - int64(duration)*24*3600*1000
+}
+
+func ThreatTops(e *config.Env, domain, typ string, duration int32) ([]bson.M, error) {
+	duration = normalizeThreatDuration(duration)
 
 	var matchStage bson.D
 	if domain != "all" {
 		matchStage = append(matchStage, bson.E{Key: "dc_hostname", Value: bson.M{"$regex": bson.Regex{Pattern: ".*" + domain + "$", Options: "i"}}})
 	}
 
-	startTimestamp := time.Now().UnixNano()/int64(time.Millisecond) - int64(duration)*24*3600*1000
+	startTimestamp := threatDurationStartTimestamp(duration)
 
 	var tb string
 	var pipeline mongo.Pipeline
@@ -717,10 +726,8 @@ func ThreatTops(e *config.Env, domain, typ string, duration int32) ([]bson.M, er
 }
 
 func ThreatTrends(e *config.Env, domain string, levels []int32, duration int32) ([]bson.M, error) {
-	if duration == 0 {
-		duration = 7
-	}
-	startTimestamp := time.Now().UnixNano()/int64(time.Millisecond) - int64(duration)*24*3600*1000
+	duration = normalizeThreatDuration(duration)
+	startTimestamp := threatDurationStartTimestamp(duration)
 
 	matchStage := bson.D{
 		{Key: "timestamp", Value: bson.M{"$gte": startTimestamp}},

@@ -1598,6 +1598,18 @@ message pluginInfo {
   string type  = 4; // 按不同类型:
   int32 level  = 5; //  1:低危 2:中危 3:高危
   map<string, string> metaData = 6;
+  string display = 7;
+  string version = 8;
+  double points = 9;
+  string category = 10;
+  string sub_type = 11;
+  string desc = 12;
+  string verify_desc = 13;
+  string suggestion = 14;
+  string reference = 15;
+  reserved 16;
+  int64 update_tm = 17;
+  map<string, string> metaDataDesc = 18;
 }
 
 message GetScanTmplReply{
@@ -1672,10 +1684,11 @@ message DashboardStatsReply{
 message DashboardTrendsReq{
   string domain = 1; // 必选，all|domainX
   int32 year = 2; // 可选，默认当前年份
+  int32 duration_days = 3; // 可选，最近N天；传入时优先于year，支持30/60/90/120
 }
 
 message DashboardTrendsReply{
-  repeated string labels = 1; // 月份标签，如 2026-01
+  repeated string labels = 1; // 时间标签，如 2026-01 或 2026-05-10
   repeated int32 total = 2; // 告警事件总数
   repeated int32 high = 3; // 高危/严重告警事件数
   repeated int32 medium = 4; // 中危告警事件数

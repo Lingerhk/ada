@@ -11,14 +11,46 @@ import (
 	logger "github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/v2/bson"
 	"slices"
+	"strings"
 )
+
+const (
+	scanTriggerOnce  = "once"
+	scanTriggerCycle = "cycle"
+)
+
+type scannerTaskPayload struct {
+	Plans   map[string]string `json:"plans"`
+	Trigger string            `json:"trigger"`
+}
+
+func parseScannerTaskPayload(raw string) (map[string]string, string) {
+	var legacyPlans map[string]string
+	if err := json.Unmarshal([]byte(raw), &legacyPlans); err == nil && legacyPlans != nil {
+		return legacyPlans, scanTriggerOnce
+	}
+
+	var payload scannerTaskPayload
+	if err := json.Unmarshal([]byte(raw), &payload); err != nil {
+		logger.Errorf("parse scanner task payload error: %v", err)
+		return map[string]string{}, scanTriggerOnce
+	}
+
+	trigger := strings.ToLower(strings.TrimSpace(payload.Trigger))
+	if trigger != scanTriggerCycle {
+		trigger = scanTriggerOnce
+	}
+	if payload.Plans == nil {
+		payload.Plans = map[string]string{}
+	}
+	return payload.Plans, trigger
+}
 
 func (w *Worker) ScannerBaselineTask(ctx context.Context, domainTmplMap string) error {
 	w = w.withContext(ctx)
-	var dtm map[string]string
-	_ = json.Unmarshal([]byte(domainTmplMap), &dtm)
+	dtm, trigger := parseScannerTaskPayload(domainTmplMap)
 
-	logger.Debugf("start ScannerBaselineTask, plans:%#v", dtm)
+	logger.Debugf("start ScannerBaselineTask, trigger:%s, plans:%#v", trigger, dtm)
 
 	for domainName, templateId := range dtm {
 		dm, err := w.getDomainByName(domainName)
@@ -38,7 +70,7 @@ func (w *Worker) ScannerBaselineTask(ctx context.Context, domainTmplMap string) 
 		var st model.ScanTasks
 		st.ID = bson.NewObjectID()
 		st.Type = "baseline"
-		st.Trigger = "once"
+		st.Trigger = trigger
 		st.Status = common.ScanTaskStatusRun
 		st.Domain = dm.Name
 		st.TemplateId = sTmpl.ID.Hex()
@@ -83,10 +115,9 @@ func (w *Worker) ScannerBaselineTask(ctx context.Context, domainTmplMap string) 
 
 func (w *Worker) ScannerLeakTask(ctx context.Context, domainTmplMap string) error {
 	w = w.withContext(ctx)
-	var dtm map[string]string
-	_ = json.Unmarshal([]byte(domainTmplMap), &dtm)
+	dtm, trigger := parseScannerTaskPayload(domainTmplMap)
 
-	logger.Debugf("start ScannerLeakTask, plans:%#v", dtm)
+	logger.Debugf("start ScannerLeakTask, trigger:%s, plans:%#v", trigger, dtm)
 
 	for domainName, templateId := range dtm {
 		dm, err := w.getDomainByName(domainName)
@@ -106,7 +137,7 @@ func (w *Worker) ScannerLeakTask(ctx context.Context, domainTmplMap string) erro
 		var st model.ScanTasks
 		st.ID = bson.NewObjectID()
 		st.Type = "leak"
-		st.Trigger = "once"
+		st.Trigger = trigger
 		st.Status = common.ScanTaskStatusRun
 		st.Domain = dm.Name
 		st.TemplateId = sTmpl.ID.Hex()
@@ -154,10 +185,9 @@ func (w *Worker) ScannerLeakTask(ctx context.Context, domainTmplMap string) erro
 
 func (w *Worker) ScannerWeakPwdTask(ctx context.Context, domainTmplMap string) error {
 	w = w.withContext(ctx)
-	var dtm map[string]string
-	_ = json.Unmarshal([]byte(domainTmplMap), &dtm)
+	dtm, trigger := parseScannerTaskPayload(domainTmplMap)
 
-	logger.Debugf("start ScannerWeakPwdTask, plans:%#v", dtm)
+	logger.Debugf("start ScannerWeakPwdTask, trigger:%s, plans:%#v", trigger, dtm)
 
 	for domainName, templateId := range dtm {
 		dm, err := w.getDomainByName(domainName)
@@ -195,7 +225,7 @@ func (w *Worker) ScannerWeakPwdTask(ctx context.Context, domainTmplMap string) e
 		var st model.ScanTasks
 		st.ID = bson.NewObjectID()
 		st.Type = "weakpwd"
-		st.Trigger = "once"
+		st.Trigger = trigger
 		st.Status = common.ScanTaskStatusRun
 		st.Domain = dm.Name
 		st.TemplateId = sTmpl.ID.Hex()

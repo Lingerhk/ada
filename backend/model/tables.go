@@ -202,7 +202,6 @@ type ScanPlugin struct {
 	VerifyDesc   string            `bson:"verify_desc"`
 	Suggestion   string            `bson:"suggestion"`
 	Reference    string            `bson:"reference"`
-	Remark       string            `bson:"remark"`
 	UpdateTm     int               `bson:"update_tm"`
 }
 
@@ -258,7 +257,6 @@ type PluginInfo struct {
 	VerifyDesc   string            `bson:"verify_desc"`
 	Suggestion   string            `bson:"suggestion"`
 	Reference    string            `bson:"reference"`
-	Remark       string            `bson:"remark"`
 	UpdateTm     int64             `bson:"update_tm"`
 	RiskLevel    int32             `bson:"risk_level"`
 	MetaData     map[string]any    `bson:"meta_data"`

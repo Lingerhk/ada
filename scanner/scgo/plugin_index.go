@@ -73,10 +73,10 @@ func BuildPluginIndex(scRoot string) (*PluginIndex, error) {
 	return idx, nil
 }
 
-// RegisterPluginsAndTemplates mirrors sc/plugins/main.py:register_scanner_plugin_template().
+// RegisterPluginsAndTemplates refreshes scanner plugin metadata.
 // It populates:
 // - tb_scan_plugin
-// - default templates in tb_scan_template
+// - plugin lists on builtin templates seeded by MongoDB init
 // - backfills missing builtin plugins into other templates (enable=0)
 func RegisterPluginsAndTemplates(ctx context.Context, mgo mongo.DBAdaptor, idx *PluginIndex) error {
 	// step 1 register plugins
@@ -103,15 +103,10 @@ func RegisterPluginsAndTemplates(ctx context.Context, mgo mongo.DBAdaptor, idx *
 		}
 	}
 
-	// step 2 register default templates
-	baselineName := "内置基线检测模板"
-	leakName := "内置漏洞检测模板"
-	weakpwdName := "内置弱口令检测模板"
-
-	// delete templates with these names
-	if err := mgo.Remove(ctx, "tb_scan_template", bson.M{"name": bson.M{"$in": []string{baselineName, leakName, weakpwdName}}}, true); err != nil {
-		return err
-	}
+	// step 2 refresh builtin templates seeded by MongoDB init
+	baselineName := "Built-in Baseline Detection Template"
+	leakName := "Built-in Vulnerability Detection Template"
+	weakpwdName := "Built-in Weak Password Detection Template"
 
 	now := time.Now().UTC()
 	defTemplates := []struct {
@@ -139,8 +134,26 @@ func RegisterPluginsAndTemplates(ctx context.Context, mgo mongo.DBAdaptor, idx *
 			"create_tm": now,
 			"update_tm": now,
 		}
+		update := bson.M{
+			"name":      t.Name,
+			"type":      t.Type,
+			"plugins":   t.Plugs,
+			"tmpl_type": int32(1),
+			"update_tm": now,
+		}
+		var existing bson.M
+		err, exist := mgo.FindOne(ctx, "tb_scan_template", bson.M{"_id": id}, &existing)
+		if err != nil && err != mongo.ErrNotFound {
+			return fmt.Errorf("find builtin template %s: %w", t.Name, err)
+		}
+		if exist {
+			if err := mgo.UpdateById(ctx, "tb_scan_template", id, update); err != nil {
+				return fmt.Errorf("update builtin template %s: %w", t.Name, err)
+			}
+			continue
+		}
 		if err := mgo.Insert(ctx, "tb_scan_template", doc); err != nil {
-			return fmt.Errorf("insert default template %s: %w", t.Name, err)
+			return fmt.Errorf("insert builtin template %s: %w", t.Name, err)
 		}
 	}
 

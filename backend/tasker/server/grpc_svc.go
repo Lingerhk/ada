@@ -10,6 +10,25 @@ import (
 	"google.golang.org/grpc/status"
 )
 
+const (
+	scanTriggerOnce  = "once"
+	scanTriggerCycle = "cycle"
+)
+
+type scannerTaskPayload struct {
+	Plans   map[string]string `json:"plans"`
+	Trigger string            `json:"trigger"`
+}
+
+func marshalScannerTaskPayload(plans map[string]string, trigger string) string {
+	payload, err := json.Marshal(scannerTaskPayload{Plans: plans, Trigger: trigger})
+	if err != nil {
+		logger.Errorf("marshal scanner task payload error: %v", err)
+		return "{}"
+	}
+	return string(payload)
+}
+
 func (ts *TaskServer) GetTaskState(ctx context.Context, in *api.GetTaskStateReq) (*api.GetTaskStateReply, error) {
 	logger.Infof("get task state task of %+v", in)
 	//get backend
@@ -107,8 +126,8 @@ func (ts *TaskServer) ExportReportTask(ctx context.Context, in *api.ExportReport
 // Cron wrapper methods (no gRPC context required)
 
 func (ts *TaskServer) CronScannerBaselineTask(plans map[string]string) error {
-	dtm, _ := json.Marshal(plans)
-	_, err := ts.taskSrv.SendTask(tasks.TaskScannerBaseline(string(dtm)))
+	payload := marshalScannerTaskPayload(plans, scanTriggerCycle)
+	_, err := ts.taskSrv.SendTask(tasks.TaskScannerBaseline(payload))
 	if err != nil {
 		logger.Errorf("CronScannerBaselineTask error: %v", err)
 		return err
@@ -117,8 +136,8 @@ func (ts *TaskServer) CronScannerBaselineTask(plans map[string]string) error {
 }
 
 func (ts *TaskServer) CronScannerLeakTask(plans map[string]string) error {
-	dtm, _ := json.Marshal(plans)
-	_, err := ts.taskSrv.SendTask(tasks.TaskScannerLeak(string(dtm)))
+	payload := marshalScannerTaskPayload(plans, scanTriggerCycle)
+	_, err := ts.taskSrv.SendTask(tasks.TaskScannerLeak(payload))
 	if err != nil {
 		logger.Errorf("CronScannerLeakTask error: %v", err)
 		return err
@@ -127,8 +146,8 @@ func (ts *TaskServer) CronScannerLeakTask(plans map[string]string) error {
 }
 
 func (ts *TaskServer) CronScannerWeakPwdTask(plans map[string]string) error {
-	dtm, _ := json.Marshal(plans)
-	_, err := ts.taskSrv.SendTask(tasks.TaskScannerWeakPwd(string(dtm)))
+	payload := marshalScannerTaskPayload(plans, scanTriggerCycle)
+	_, err := ts.taskSrv.SendTask(tasks.TaskScannerWeakPwd(payload))
 	if err != nil {
 		logger.Errorf("CronScannerWeakPwdTask error: %v", err)
 		return err

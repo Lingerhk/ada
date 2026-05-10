@@ -217,7 +217,61 @@ func (cs *CronScheduler) loadJobConfigsFromDB() ([]*model.ScanConf, error) {
 		return nil, fmt.Errorf("failed to query scan configs: %w", err)
 	}
 
+	defaultTemplates, err := cs.loadDefaultTemplateIDs()
+	if err != nil {
+		return nil, err
+	}
+	for _, job := range jobList {
+		if cs.repairEmptyPlanTemplates(job, defaultTemplates) {
+			update := bson.M{
+				"plans":     job.Plans,
+				"update_tm": time.Now(),
+			}
+			if err := cs.Tasker.env.MongoCli.UpdateById(cs.Tasker.env.MongoContext(), job.CollectName(), job.ID, &update); err != nil {
+				logger.Errorf("CronJobUpdate: failed to repair scan config %s plans: %v", job.ID.Hex(), err)
+				continue
+			}
+			job.UpdateTm = update["update_tm"].(time.Time)
+		}
+	}
+
 	return jobList, nil
+}
+
+func (cs *CronScheduler) loadDefaultTemplateIDs() (map[string]string, error) {
+	var templates []model.ScanTemplate
+	if err := cs.Tasker.env.MongoCli.FindAll(cs.Tasker.env.MongoContext(), (&model.ScanTemplate{}).CollectName(), bson.M{"tmpl_type": 1}, &templates); err != nil {
+		return nil, fmt.Errorf("failed to query default scan templates: %w", err)
+	}
+
+	defaultTemplates := make(map[string]string, len(templates))
+	for _, tmpl := range templates {
+		defaultTemplates[tmpl.Type] = tmpl.ID.Hex()
+	}
+	return defaultTemplates, nil
+}
+
+func (cs *CronScheduler) repairEmptyPlanTemplates(job *model.ScanConf, defaultTemplates map[string]string) bool {
+	defaultTemplateID := strings.TrimSpace(defaultTemplates[job.Type])
+	if defaultTemplateID == "" {
+		return false
+	}
+
+	changed := false
+	if job.Plans == nil {
+		job.Plans = make(map[string]string)
+		changed = true
+	}
+	for domain, templateID := range job.Plans {
+		if strings.TrimSpace(templateID) != "" {
+			continue
+		}
+		job.Plans[domain] = defaultTemplateID
+		changed = true
+		logger.Warnf("CronJobUpdate: repaired empty template in scan config %s (%s) for domain %s with default template %s",
+			job.ID.Hex(), job.Type, domain, defaultTemplateID)
+	}
+	return changed
 }
 
 // removeJobByID removes a job from scheduler and internal maps

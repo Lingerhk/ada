@@ -4,6 +4,7 @@ import (
 	"ada/backend/apiserver/config"
 	"ada/backend/model"
 	utime "ada/infra/time"
+	"strings"
 	"time"
 
 	logger "github.com/sirupsen/logrus"
@@ -152,7 +153,7 @@ func FindScanTasksSelect(e *config.Env, typ, status, cycle, startTm, endTm strin
 		query = append(query, bson.E{Key: "status", Value: status})
 	}
 	if cycle != "all" {
-		query = append(query, bson.E{Key: "cycle", Value: cycle})
+		query = append(query, bson.E{Key: "trigger", Value: cycle})
 	}
 	if startTm != "" && endTm != "" {
 		startTime, endTime, err := initTimeInterval(startTm, endTm)
@@ -397,6 +398,11 @@ func GetDefaultScanTmplMap(e *config.Env) (map[string]string, error) {
 	return tmplIdMap, nil
 }
 
+func defaultScanTmplID(tmplIdMap map[string]string, scanType string) (string, bool) {
+	tmplID := strings.TrimSpace(tmplIdMap[scanType])
+	return tmplID, tmplID != ""
+}
+
 // UpdateScanConfByDomain 当添加域/删除域的时候，更新tb_scan_conf.plans
 func UpdateScanConfByDomain(e *config.Env, domain string, isDelete bool) error {
 	// 对于delete操作, 遍历扫描配置(baseline/leak/weakpwd)，从plans中移除该domain
@@ -414,6 +420,9 @@ func UpdateScanConfByDomain(e *config.Env, domain string, isDelete bool) error {
 	}
 
 	for _, sc := range scList {
+		if sc.Plans == nil {
+			sc.Plans = make(map[string]string)
+		}
 		exist := false
 		for dm, tmplId := range sc.Plans {
 			if isDelete && domain == dm {
@@ -426,7 +435,11 @@ func UpdateScanConfByDomain(e *config.Env, domain string, isDelete bool) error {
 			}
 		}
 		if !exist {
-			sc.Plans[domain] = tmplIdMap[sc.Type]
+			if tmplID, ok := defaultScanTmplID(tmplIdMap, sc.Type); ok {
+				sc.Plans[domain] = tmplID
+			} else {
+				logger.Warnf("skip adding scan conf plan for domain %s: default template not found for type %s", domain, sc.Type)
+			}
 		}
 		update := bson.M{
 			"plans":     sc.Plans,
@@ -458,6 +471,9 @@ func UpdateScanConfByDomainV2(e *config.Env, oldDomain, domain string) error {
 	}
 
 	for _, sc := range scList {
+		if sc.Plans == nil {
+			sc.Plans = make(map[string]string)
+		}
 		for dm := range sc.Plans {
 			// remove old domain
 			if dm == oldDomain {
@@ -465,7 +481,11 @@ func UpdateScanConfByDomainV2(e *config.Env, oldDomain, domain string) error {
 			}
 		}
 		// add new domain
-		sc.Plans[domain] = tmplIdMap[sc.Type]
+		if tmplID, ok := defaultScanTmplID(tmplIdMap, sc.Type); ok {
+			sc.Plans[domain] = tmplID
+		} else {
+			logger.Warnf("skip adding scan conf plan for domain %s: default template not found for type %s", domain, sc.Type)
+		}
 		update := bson.M{
 			"plans":     sc.Plans,
 			"update_tm": utime.CurTime(),

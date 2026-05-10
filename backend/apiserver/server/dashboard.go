@@ -12,7 +12,7 @@ import (
 	"go.mongodb.org/mongo-driver/v2/bson"
 )
 
-type AlertTrendByMonth struct {
+type DashboardTrend struct {
 	Labels                  []string
 	Total                   []int32
 	High                    []int32
@@ -37,23 +37,20 @@ type AlertTrendByMonth struct {
 	ScanWeakpwdHits         []int32
 }
 
-// GetAlertCountsByLevel returns alert counts grouped by level
+type trendBucket struct {
+	Label string
+	Start time.Time
+	End   time.Time
+}
+
+// GetAlertCountsByLevel uses the same rolling one-day event window as ThreatTops.
 func GetAlertCountsByLevel(e *config.Env, domains []string) (map[string]int32, error) {
 	result := make(map[string]int32)
 	tb := (&model.AlertEventESDB{}).CollectName()
 
-	now := time.Now()
-	start := time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, now.Location())
-	end := start.AddDate(0, 0, 1)
-	startMs := start.UnixMilli()
-	endMs := end.UnixMilli()
-
+	startTimestamp := threatDurationStartTimestamp(1)
 	queryParts := bson.A{
-		bson.M{"event_status": 0},
-		bson.M{"$or": bson.A{
-			bson.M{"start_ts": bson.M{"$gte": startMs, "$lt": endMs}},
-			bson.M{"create_tm": bson.M{"$gte": start, "$lt": end}},
-		}},
+		bson.M{"start_ts": bson.M{"$gte": startTimestamp}},
 	}
 
 	if domainFilter, ok := domainHostnameFilter(domains); ok {
@@ -84,21 +81,66 @@ func GetAlertCountsByLevel(e *config.Env, domains []string) (map[string]int32, e
 	return result, nil
 }
 
-// GetAlertTrendByMonth returns monthly alert event counts for the selected year.
-func GetAlertTrendByMonth(e *config.Env, domains []string, year int) (*AlertTrendByMonth, error) {
-	tb := (&model.AlertEventESDB{}).CollectName()
+// GetDashboardTrendByYear returns monthly dashboard trend counts for the selected year.
+func GetDashboardTrendByYear(e *config.Env, domains []string, year int) (*DashboardTrend, error) {
 	if year <= 0 {
 		year = time.Now().Year()
 	}
 
 	start := time.Date(year, time.January, 1, 0, 0, 0, 0, time.Local)
 	end := start.AddDate(1, 0, 0)
+	buckets := make([]trendBucket, 0, 12)
+	for month := 1; month <= 12; month++ {
+		bucketStart := time.Date(year, time.Month(month), 1, 0, 0, 0, 0, time.Local)
+		buckets = append(buckets, trendBucket{
+			Label: bucketStart.Format("2006-01"),
+			Start: bucketStart,
+			End:   bucketStart.AddDate(0, 1, 0),
+		})
+	}
+
+	return getDashboardTrend(e, domains, start, end, buckets)
+}
+
+// GetDashboardTrendByDuration returns daily dashboard trend counts for the latest N days.
+func GetDashboardTrendByDuration(e *config.Env, domains []string, durationDays int) (*DashboardTrend, error) {
+	durationDays = normalizeDashboardTrendDurationDays(durationDays)
+	now := time.Now()
+	today := time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, now.Location())
+	start := today.AddDate(0, 0, -durationDays+1)
+	end := today.AddDate(0, 0, 1)
+
+	buckets := make([]trendBucket, 0, durationDays)
+	for offset := 0; offset < durationDays; offset++ {
+		bucketStart := start.AddDate(0, 0, offset)
+		buckets = append(buckets, trendBucket{
+			Label: bucketStart.Format("2006-01-02"),
+			Start: bucketStart,
+			End:   bucketStart.AddDate(0, 0, 1),
+		})
+	}
+
+	return getDashboardTrend(e, domains, start, end, buckets)
+}
+
+func normalizeDashboardTrendDurationDays(durationDays int) int {
+	switch durationDays {
+	case 30, 60, 90, 120:
+		return durationDays
+	default:
+		return 30
+	}
+}
+
+func getDashboardTrend(e *config.Env, domains []string, start, end time.Time, buckets []trendBucket) (*DashboardTrend, error) {
+	tb := (&model.AlertEventESDB{}).CollectName()
 	startMs := start.UnixMilli()
 	endMs := end.UnixMilli()
 
 	queryParts := bson.A{
 		bson.M{"$or": bson.A{
 			bson.M{"end_ts": bson.M{"$gte": startMs, "$lt": endMs}},
+			bson.M{"start_ts": bson.M{"$gte": startMs, "$lt": endMs}},
 			bson.M{"create_tm": bson.M{"$gte": start, "$lt": end}},
 		}},
 	}
@@ -119,29 +161,7 @@ func GetAlertTrendByMonth(e *config.Env, domains []string, year int) (*AlertTren
 		return nil, err
 	}
 
-	trend := &AlertTrendByMonth{
-		Labels:               make([]string, 12),
-		Total:                make([]int32, 12),
-		High:                 make([]int32, 12),
-		Medium:               make([]int32, 12),
-		Low:                  make([]int32, 12),
-		AlertPending:         make([]int32, 12),
-		AlertHandled:         make([]int32, 12),
-		AlertWhitelisted:     make([]int32, 12),
-		AlertBlocked:         make([]int32, 12),
-		ScanLeakFinished:     make([]int32, 12),
-		ScanLeakFailed:       make([]int32, 12),
-		ScanLeakHits:         make([]int32, 12),
-		ScanBaselineFinished: make([]int32, 12),
-		ScanBaselineFailed:   make([]int32, 12),
-		ScanBaselineHits:     make([]int32, 12),
-		ScanWeakpwdFinished:  make([]int32, 12),
-		ScanWeakpwdFailed:    make([]int32, 12),
-		ScanWeakpwdHits:      make([]int32, 12),
-	}
-	for month := 1; month <= 12; month++ {
-		trend.Labels[month-1] = time.Date(year, time.Month(month), 1, 0, 0, 0, 0, time.Local).Format("2006-01")
-	}
+	trend := newDashboardTrend(buckets)
 
 	riskByDomain := make(map[string]*domainRisk)
 	for _, domain := range domains {
@@ -151,56 +171,98 @@ func GetAlertTrendByMonth(e *config.Env, domains []string, year int) (*AlertTren
 	}
 
 	for _, alert := range alerts {
-		alertTime := alert.CreateTm
-		switch {
-		case alert.EndTs > 0:
-			alertTime = time.UnixMilli(alert.EndTs)
-		case alert.StartTs > 0:
-			alertTime = time.UnixMilli(alert.StartTs)
-		}
-		if alertTime.Before(start) || !alertTime.Before(end) {
+		alertTime := alertTrendTime(alert)
+		bucketIdx := trendBucketIndex(alertTime, buckets)
+		if bucketIdx < 0 {
 			continue
 		}
 
-		monthIdx := int(alertTime.Month()) - 1
-		trend.Total[monthIdx]++
+		trend.Total[bucketIdx]++
 		switch alert.Level {
 		case 5, 4:
-			trend.High[monthIdx]++
+			trend.High[bucketIdx]++
 			if domain := matchDomain(alert.DcHostname, domains); domain != "" {
 				risk := ensureDomainRisk(riskByDomain, domain)
 				risk.HighAlerts++
 			}
 		case 3:
-			trend.Medium[monthIdx]++
+			trend.Medium[bucketIdx]++
 		case 2:
-			trend.Low[monthIdx]++
+			trend.Low[bucketIdx]++
 		}
 
 		switch alert.EventStatus {
 		case 0:
-			trend.AlertPending[monthIdx]++
+			trend.AlertPending[bucketIdx]++
 		case 1:
-			trend.AlertHandled[monthIdx]++
+			trend.AlertHandled[bucketIdx]++
 		case 2:
-			trend.AlertWhitelisted[monthIdx]++
+			trend.AlertWhitelisted[bucketIdx]++
 		case 3:
-			trend.AlertBlocked[monthIdx]++
+			trend.AlertBlocked[bucketIdx]++
 		}
 	}
 
-	if err := fillDomainRiskScanCounts(e, domains, riskByDomain); err != nil {
+	if err := fillDomainRiskScanCounts(e, domains, riskByDomain, start, end); err != nil {
 		logger.Errorf("fill domain risk scan counts err:%v", err)
 		return nil, err
 	}
 	fillDomainRiskSeries(trend, riskByDomain)
 
-	if err := fillScanTaskTrend(e, domains, start, end, trend); err != nil {
+	if err := fillScanTaskTrend(e, domains, start, end, buckets, trend); err != nil {
 		logger.Errorf("fill scan task trend err:%v", err)
 		return nil, err
 	}
 
 	return trend, nil
+}
+
+func newDashboardTrend(buckets []trendBucket) *DashboardTrend {
+	length := len(buckets)
+	trend := &DashboardTrend{
+		Labels:               make([]string, length),
+		Total:                make([]int32, length),
+		High:                 make([]int32, length),
+		Medium:               make([]int32, length),
+		Low:                  make([]int32, length),
+		AlertPending:         make([]int32, length),
+		AlertHandled:         make([]int32, length),
+		AlertWhitelisted:     make([]int32, length),
+		AlertBlocked:         make([]int32, length),
+		ScanLeakFinished:     make([]int32, length),
+		ScanLeakFailed:       make([]int32, length),
+		ScanLeakHits:         make([]int32, length),
+		ScanBaselineFinished: make([]int32, length),
+		ScanBaselineFailed:   make([]int32, length),
+		ScanBaselineHits:     make([]int32, length),
+		ScanWeakpwdFinished:  make([]int32, length),
+		ScanWeakpwdFailed:    make([]int32, length),
+		ScanWeakpwdHits:      make([]int32, length),
+	}
+	for index, bucket := range buckets {
+		trend.Labels[index] = bucket.Label
+	}
+	return trend
+}
+
+func alertTrendTime(alert model.AlertEventESDB) time.Time {
+	switch {
+	case alert.EndTs > 0:
+		return time.UnixMilli(alert.EndTs)
+	case alert.StartTs > 0:
+		return time.UnixMilli(alert.StartTs)
+	default:
+		return alert.CreateTm
+	}
+}
+
+func trendBucketIndex(value time.Time, buckets []trendBucket) int {
+	for index, bucket := range buckets {
+		if !value.Before(bucket.Start) && value.Before(bucket.End) {
+			return index
+		}
+	}
+	return -1
 }
 
 type domainRisk struct {
@@ -268,7 +330,7 @@ func alertLevelKey(level int32) (string, bool) {
 	}
 }
 
-func fillDomainRiskSeries(trend *AlertTrendByMonth, riskByDomain map[string]*domainRisk) {
+func fillDomainRiskSeries(trend *DashboardTrend, riskByDomain map[string]*domainRisk) {
 	risks := make([]*domainRisk, 0, len(riskByDomain))
 	for _, risk := range riskByDomain {
 		risks = append(risks, risk)
@@ -293,17 +355,17 @@ func fillDomainRiskSeries(trend *AlertTrendByMonth, riskByDomain map[string]*dom
 	}
 }
 
-func fillDomainRiskScanCounts(e *config.Env, domains []string, riskByDomain map[string]*domainRisk) error {
+func fillDomainRiskScanCounts(e *config.Env, domains []string, riskByDomain map[string]*domainRisk, start, end time.Time) error {
 	for _, domain := range domains {
 		if domain == "" {
 			continue
 		}
 		risk := ensureDomainRisk(riskByDomain, domain)
-		leaks, err := countLatestHighRiskScanHits(e, domain, "leak")
+		leaks, err := countHighRiskScanHitsInPeriod(e, domain, "leak", start, end)
 		if err != nil {
 			return err
 		}
-		baselines, err := countLatestHighRiskScanHits(e, domain, "baseline")
+		baselines, err := countHighRiskScanHitsInPeriod(e, domain, "baseline", start, end)
 		if err != nil {
 			return err
 		}
@@ -313,25 +375,36 @@ func fillDomainRiskScanCounts(e *config.Env, domains []string, riskByDomain map[
 	return nil
 }
 
-func countLatestHighRiskScanHits(e *config.Env, domain, scanType string) (int32, error) {
+func countHighRiskScanHitsInPeriod(e *config.Env, domain, scanType string, start, end time.Time) (int32, error) {
 	taskQuery := bson.D{
 		{Key: "domain", Value: domain},
 		{Key: "type", Value: scanType},
 		{Key: "status", Value: "FINISH"},
+		{Key: "create_tm", Value: bson.M{"$gte": start, "$lt": end}},
 	}
 
 	var tasks []model.ScanTasks
-	sortBy := bson.M{"create_tm": -1}
-	if err := e.MongoCli.FindSortByLimitAndSkip(e.MongoContext(), (&model.ScanTasks{}).CollectName(), taskQuery, sortBy, &tasks, 1, 0); err != nil {
+	if err := e.MongoCli.FindAll(e.MongoContext(), (&model.ScanTasks{}).CollectName(), taskQuery, &tasks); err != nil {
 		return 0, err
 	}
 	if len(tasks) == 0 {
 		return 0, nil
 	}
 
+	taskIDs := make([]string, 0, len(tasks))
+	for _, task := range tasks {
+		taskIDs = append(taskIDs, task.ID.Hex())
+	}
+	return countHighRiskScanHitsForTasks(e, domain, taskIDs)
+}
+
+func countHighRiskScanHitsForTasks(e *config.Env, domain string, taskIDs []string) (int32, error) {
+	if len(taskIDs) == 0 {
+		return 0, nil
+	}
 	subtaskQuery := bson.D{
 		{Key: "status", Value: "FINISH"},
-		{Key: "group_id", Value: tasks[0].ID.Hex()},
+		{Key: "group_id", Value: bson.D{{Key: "$in", Value: taskIDs}}},
 		{Key: "params.domain", Value: domain},
 		{Key: "result.status", Value: bson.D{{Key: "$gt", Value: 0}}},
 		{Key: "result.plugin.risk_level", Value: bson.D{{Key: "$in", Value: []int32{4, 5}}}},
@@ -343,7 +416,7 @@ func countLatestHighRiskScanHits(e *config.Env, domain, scanType string) (int32,
 	return int32(count), nil
 }
 
-func fillScanTaskTrend(e *config.Env, domains []string, start, end time.Time, trend *AlertTrendByMonth) error {
+func fillScanTaskTrend(e *config.Env, domains []string, start, end time.Time, buckets []trendBucket, trend *DashboardTrend) error {
 	query := bson.D{
 		{Key: "type", Value: bson.D{{Key: "$in", Value: []string{"leak", "baseline", "weakpwd"}}}},
 		{Key: "create_tm", Value: bson.M{"$gte": start, "$lt": end}},
@@ -357,42 +430,42 @@ func fillScanTaskTrend(e *config.Env, domains []string, start, end time.Time, tr
 		return err
 	}
 
-	taskIDsByTypeMonth := map[string]map[int][]string{
+	taskIDsByTypeBucket := map[string]map[int][]string{
 		"leak":     make(map[int][]string),
 		"baseline": make(map[int][]string),
 		"weakpwd":  make(map[int][]string),
 	}
 	for _, task := range tasks {
-		if task.CreateTm.Before(start) || !task.CreateTm.Before(end) {
+		bucketIdx := trendBucketIndex(task.CreateTm, buckets)
+		if bucketIdx < 0 {
 			continue
 		}
-		monthIdx := int(task.CreateTm.Month()) - 1
 		switch task.Type {
 		case "leak":
-			fillScanTaskStatus(task.Status, monthIdx, trend.ScanLeakFinished, trend.ScanLeakFailed)
-			taskIDsByTypeMonth["leak"][monthIdx] = append(taskIDsByTypeMonth["leak"][monthIdx], task.ID.Hex())
+			fillScanTaskStatus(task.Status, bucketIdx, trend.ScanLeakFinished, trend.ScanLeakFailed)
+			taskIDsByTypeBucket["leak"][bucketIdx] = append(taskIDsByTypeBucket["leak"][bucketIdx], task.ID.Hex())
 		case "baseline":
-			fillScanTaskStatus(task.Status, monthIdx, trend.ScanBaselineFinished, trend.ScanBaselineFailed)
-			taskIDsByTypeMonth["baseline"][monthIdx] = append(taskIDsByTypeMonth["baseline"][monthIdx], task.ID.Hex())
+			fillScanTaskStatus(task.Status, bucketIdx, trend.ScanBaselineFinished, trend.ScanBaselineFailed)
+			taskIDsByTypeBucket["baseline"][bucketIdx] = append(taskIDsByTypeBucket["baseline"][bucketIdx], task.ID.Hex())
 		case "weakpwd":
-			fillScanTaskStatus(task.Status, monthIdx, trend.ScanWeakpwdFinished, trend.ScanWeakpwdFailed)
-			taskIDsByTypeMonth["weakpwd"][monthIdx] = append(taskIDsByTypeMonth["weakpwd"][monthIdx], task.ID.Hex())
+			fillScanTaskStatus(task.Status, bucketIdx, trend.ScanWeakpwdFinished, trend.ScanWeakpwdFailed)
+			taskIDsByTypeBucket["weakpwd"][bucketIdx] = append(taskIDsByTypeBucket["weakpwd"][bucketIdx], task.ID.Hex())
 		}
 	}
 
-	for scanType, taskIDsByMonth := range taskIDsByTypeMonth {
-		for monthIdx, taskIDs := range taskIDsByMonth {
+	for scanType, taskIDsByBucket := range taskIDsByTypeBucket {
+		for bucketIdx, taskIDs := range taskIDsByBucket {
 			hits, err := countScanHitsForTasks(e, taskIDs, scanType)
 			if err != nil {
 				return err
 			}
 			switch scanType {
 			case "leak":
-				trend.ScanLeakHits[monthIdx] += hits
+				trend.ScanLeakHits[bucketIdx] += hits
 			case "baseline":
-				trend.ScanBaselineHits[monthIdx] += hits
+				trend.ScanBaselineHits[bucketIdx] += hits
 			case "weakpwd":
-				trend.ScanWeakpwdHits[monthIdx] += hits
+				trend.ScanWeakpwdHits[bucketIdx] += hits
 			}
 		}
 	}

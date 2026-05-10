@@ -678,10 +678,16 @@ func (s *ADAServiceV2) UpdateScanConf(ctx context.Context, in *v2.UpdateScanConf
 
 	ret := v2.UpdateScanConfReply{Result: RESP_FAILED}
 
-	_, err := server.GetScanConfById(s.env, in.ID)
+	cnf, err := server.GetScanConfById(s.env, in.ID)
 	if err != nil {
 		logger.Errorf("get scan conf(id:%s) err:%v", in.ID, err)
 		return &ret, status.Error(codes.Internal, s.I18n("ScanRisk.ScanConf.GetScanConfFailed"))
+	}
+
+	defaultTemplates, err := server.GetDefaultScanTmplMap(s.env)
+	if err != nil {
+		logger.Errorf("get default scan template map err:%v", err)
+		return &ret, status.Error(codes.Internal, s.I18n("ScanRisk.ScanConf.UpdateFailed"))
 	}
 
 	var plans = make(map[string]string)
@@ -692,10 +698,18 @@ func (s *ADAServiceV2) UpdateScanConf(ctx context.Context, in *v2.UpdateScanConf
 			continue
 		}
 
+		if strings.TrimSpace(tmplId) == "" {
+			tmplId = defaultTemplates[cnf.Type]
+		}
+
 		// check scan tmpl exist by id
 		tmplIns, _ := server.GetScanTmplById(s.env, tmplId)
 		if tmplIns == nil {
 			logger.Warnf("get scan tmpl(id:%s) by id faild, will ignore!", tmplId)
+			continue
+		}
+		if tmplIns.Type != cnf.Type {
+			logger.Warnf("get scan tmpl(id:%s) faild, it's type is:%s", tmplId, tmplIns.Type)
 			continue
 		}
 		plans[domain] = tmplId
@@ -773,12 +787,23 @@ func (s *ADAServiceV2) GetScanTmpl(ctx context.Context, in *v2.GetScanTmplReq) (
 	var plugins []*v2.PluginInfo
 	for _, p := range tmpl.Plugins {
 		plugins = append(plugins, &v2.PluginInfo{
-			ID:       p.ID,
-			Name:     p.Name,
-			Type:     p.Type,
-			Level:    p.Level,
-			Enable:   p.Enable,
-			MetaData: getPluginMetadata(p.MetaData),
+			ID:           p.ID,
+			Name:         p.Name,
+			Type:         p.Type,
+			Level:        p.Level,
+			Enable:       p.Enable,
+			MetaData:     getPluginMetadata(p.MetaData),
+			Display:      p.Display,
+			Version:      p.Version,
+			Points:       p.Points,
+			Category:     p.Category,
+			SubType:      p.SubType,
+			Desc:         p.Desc,
+			VerifyDesc:   p.VerifyDesc,
+			Suggestion:   p.Suggestion,
+			Reference:    p.Reference,
+			UpdateTm:     int64(p.UpdateTm),
+			MetaDataDesc: p.MetaDataDesc,
 		})
 	}
 
