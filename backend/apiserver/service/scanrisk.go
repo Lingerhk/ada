@@ -577,11 +577,10 @@ func (s *ADAServiceV2) DeleteScanTask(ctx context.Context, in *v2.DeleteScanTask
 		return &ret, status.Error(codes.Internal, s.I18n("ScanRisk.GetScanTaskFailed"))
 	}
 
-	// 如果是weakpwd类型的，需要删除tb_domain_xxx_hash表
+	// 如果是weakpwd类型的，需要删除当前域在 tb_domain_user_hash 中的 hash 缓存
 	if task.Type == "weakpwd" {
-		tb := fmt.Sprintf("tb_domain_%s_hash", task.Domain)
-		if err := server.DropDomainUserHash(s.env, tb); err != nil {
-			logger.Warnf("drop domain user hash table err:%v", err)
+		if err := server.DeleteDomainUserHash(s.env, task.Domain); err != nil {
+			logger.Warnf("delete domain user hash cache err:%v", err)
 		}
 	}
 

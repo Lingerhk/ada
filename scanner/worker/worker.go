@@ -18,8 +18,8 @@ import (
 	logger "github.com/sirupsen/logrus"
 )
 
-//go:embed sc_enc.tar.gz
-var scCnt []byte
+//go:embed plugin_enc.tar.gz
+var pluginCnt []byte
 
 //go:embed venv_enc.tar.gz
 var venvCnt []byte
@@ -48,17 +48,15 @@ func (s *ScanSvc) Setup() error {
 	}
 	defer os.RemoveAll(tmpDir)
 
-	scFile := filepath.Join(tmpDir, "sc_enc.tar.gz")
+	pluginFile := filepath.Join(tmpDir, "plugin_enc.tar.gz")
 	venvFile := filepath.Join(tmpDir, "venv_enc.tar.gz")
-	if len(scCnt) < 1024 {
-		return errors.New("embedded scanner package sc_enc.tar.gz is not bundled")
+	if len(pluginCnt) < 1024 {
+		return errors.New("embedded scanner package plugin_enc.tar.gz is not bundled")
 	}
-	if err := os.WriteFile(scFile, scCnt, 0644); err != nil {
+	if err := os.WriteFile(pluginFile, pluginCnt, 0644); err != nil {
 		logger.Errorf("write enc file err:%v", err)
 		return err
 	}
-
-	// TODO: 随机生成多个目录，并检测是否被读/打开
 
 	// 2.执行解压(解压密钥由不同环境存在差异,在部署的时候生成key)
 	if len(venvCnt) > 1024 {
@@ -67,17 +65,25 @@ func (s *ScanSvc) Setup() error {
 			return err
 		}
 
-		if err := s.tar(venvFile); err != nil {
+		if err := s.decryptTar(venvFile, common.ScannerRunPath); err != nil {
 			logger.Errorf("tar enc file err:%v", err)
 			return err
 		}
 	}
-	if err := s.tar(scFile); err != nil {
+
+	scRoot := filepath.Join(common.ScannerRunPath, ".sc")
+	if err := os.MkdirAll(scRoot, 0755); err != nil {
+		logger.Errorf("create scanner root err:%v", err)
+		return err
+	}
+	if err := os.RemoveAll(filepath.Join(scRoot, "plugins")); err != nil {
+		logger.Errorf("clean old scanner plugins err:%v", err)
+		return err
+	}
+	if err := s.decryptTar(pluginFile, scRoot); err != nil {
 		logger.Errorf("tar enc file err:%v", err)
 		return err
 	}
-
-	// 3.部署.so文件到指定位置
 
 	// 4.更新 s.pyRunPath
 	//s.pyRunPath = filepath.Join(common.GetCurrentPath(), "sc")
@@ -116,13 +122,12 @@ func (s *ScanSvc) clean() {
 	logger.Debug("start clean()...")
 	os.RemoveAll(filepath.Join(s.pyRunPath, ".sc"))
 	os.RemoveAll(filepath.Join(s.pyRunPath, ".venv"))
-	//os.RemoveAll("/var/log/scada/sc.log")
 	//os.RemoveAll("/var/log/scada/plugin.log")
 }
 
-func (s *ScanSvc) tar(pkgFile string) error {
+func (s *ScanSvc) decryptTar(pkgFile, targetDir string) error {
 	cmdStr := fmt.Sprintf("/usr/bin/openssl des3 -d -k %s -salt -in %s | tar -C %s -xzf -",
-		common.ScannerPkgDecryptKey, pkgFile, common.ScannerRunPath)
+		common.ScannerPkgDecryptKey, pkgFile, targetDir)
 	c := exec.Command("/bin/bash", "-c", cmdStr)
 	_, err := c.CombinedOutput()
 	if err != nil {

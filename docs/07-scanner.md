@@ -79,7 +79,7 @@ leak:
 weakpwd:
 
 - Read domain users from `tb_asset_user`, excluding `Guest`, `DefaultAccount`, and `krbtgt`.
-- If `tb_domain_<domain>_hash` exists, use incremental scan logic; otherwise run a full scan.
+- If `tb_domain_user_hash` contains cached hash records for the current domain, use incremental scan logic; otherwise run a full scan.
 - Split users into groups of 300.
 - Subtask kwargs include `user_list` and `scan_type`.
 
@@ -92,7 +92,7 @@ weakpwd:
 | `tb_scan_conf` | Periodic scan configuration |
 | `tb_scan_tasks` | Scan parent task table |
 | `tb_scan_subtasks` | Scan subtasks and plugin results |
-| `tb_domain_<domain>_hash` | Domain user hash cache for weak-password scans |
+| `tb_domain_user_hash` | Domain user hash cache for weak-password scans, separated by the `domain` field |
 
 ## State Transitions
 

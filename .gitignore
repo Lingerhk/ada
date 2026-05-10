@@ -30,14 +30,13 @@ agent/sensor/tools/packet_forward.go
 agent/sensor/tools/crypt_cfg.go
 agent/sensor/tools/pkg_sensor.go
 
-engine/rules/flow/TODO.txt
-
-scanner/scan_bussis.md
-scanner/worker/sc_enc.tar.gz
+scanner/worker/plugin_enc.tar.gz
 scanner/worker/venv_enc.tar.gz
 scanner/worker/.sc
-scanner/sc
 scanner/worker/.venv
+scanner/plugins
+scanner/pylibs
+scanner/.build
 
 script/docker-poc/ada-service/adaegis.zip
 script/docker-poc/ada-service/install-adaegis.ps1

@@ -79,7 +79,7 @@ leak：
 weakpwd：
 
 - 先从 `tb_asset_user` 读取域用户列表，忽略 `Guest`、`DefaultAccount`、`krbtgt`。
-- 如果存在 `tb_domain_<domain>_hash`，按增量扫描处理，否则全量扫描。
+- 如果 `tb_domain_user_hash` 中存在当前域的 hash 缓存记录，按增量扫描处理，否则全量扫描。
 - 用户按每组 300 个拆分。
 - 子任务 kwargs 包含 `user_list` 和 `scan_type`。
 
@@ -92,7 +92,7 @@ weakpwd：
 | `tb_scan_conf` | 周期扫描配置 |
 | `tb_scan_tasks` | 扫描任务主表 |
 | `tb_scan_subtasks` | 扫描子任务和插件结果 |
-| `tb_domain_<domain>_hash` | 弱口令扫描的域用户 hash 缓存 |
+| `tb_domain_user_hash` | 弱口令扫描的域用户 hash 缓存，通过 `domain` 字段区分域 |
 
 ## 状态流转
 

@@ -38,6 +38,12 @@ func BuildPluginIndex(scRoot string) (*PluginIndex, error) {
 	idx := &PluginIndex{ByID: map[int32]*PluginEntry{}}
 
 	for _, pkgPath := range matches {
+		mainSoPath := filepath.Join(filepath.Dir(pkgPath), "main.so")
+		if st, err := os.Stat(mainSoPath); err != nil || st.IsDir() {
+			logger.Debugf("skip uncompiled plugin package=%s missing main.so", pkgPath)
+			continue
+		}
+
 		b, err := os.ReadFile(pkgPath)
 		if err != nil {
 			return nil, err

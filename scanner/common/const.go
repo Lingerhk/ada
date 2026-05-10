@@ -6,7 +6,7 @@ const DomainPwdKeyGCM = "3a43d7a31b3ca37d9f2e8b5c1a6d4e7f"
 // ScannerRunPath is the default runtime directory for scanner artifacts.
 const ScannerRunPath = "/var/lib/scada"
 
-// ScannerPkgDecryptKey must match the packaging key used to encrypt sc_enc.tar.gz/venv_enc.tar.gz.
+// ScannerPkgDecryptKey must match the packaging key used to encrypt plugin_enc.tar.gz/venv_enc.tar.gz.
 const ScannerPkgDecryptKey = "G0pRA3dhZcdQDF1S"
 
 // ScannerConfPathEnv is the env var that overrides scanner config path.

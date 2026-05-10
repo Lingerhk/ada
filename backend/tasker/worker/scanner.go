@@ -17,6 +17,8 @@ import (
 const (
 	scanTriggerOnce  = "once"
 	scanTriggerCycle = "cycle"
+
+	domainUserHashCollection = "tb_domain_user_hash"
 )
 
 type scannerTaskPayload struct {
@@ -208,9 +210,8 @@ func (w *Worker) ScannerWeakPwdTask(ctx context.Context, domainTmplMap string) e
 			continue
 		}
 
-		// 判断扫描类型: 当存在tb_domain_xxx_hash表时，表明该域user hash已经缓存在本地，可执行增量扫描，否则全量扫描
-		tb := fmt.Sprintf("tb_domain_%s_hash", domainName)
-		total, err := w.env.MongoCli.FindCount(w.env.MongoContext(), tb, bson.M{})
+		// 判断扫描类型: 当 tb_domain_user_hash 存在当前域记录时，表明该域 user hash 已缓存，可执行增量扫描，否则全量扫描
+		total, err := w.env.MongoCli.FindCount(w.env.MongoContext(), domainUserHashCollection, bson.M{"domain": dm.Name})
 		if err != nil {
 			logger.Errorf("count ad user hash table err:%v", err)
 			continue

@@ -11,6 +11,8 @@ import (
 	"go.mongodb.org/mongo-driver/v2/bson"
 )
 
+const domainUserHashCollection = "tb_domain_user_hash"
+
 func GetLatestTaskByType(e *config.Env, typ string) (*model.ScanTasks, error) {
 	var st []model.ScanTasks
 	tb := (&model.ScanTasks{}).CollectName()
@@ -237,8 +239,8 @@ func FindSubScanTasks(e *config.Env, groupId string, limit, offset int32) ([]mod
 	return sst, total, nil
 }
 
-func DropDomainUserHash(e *config.Env, tbName string) error {
-	return e.MongoCli.Drop(e.MongoContext(), tbName)
+func DeleteDomainUserHash(e *config.Env, domain string) error {
+	return e.MongoCli.Remove(e.MongoContext(), domainUserHashCollection, bson.M{"domain": domain}, true)
 }
 
 func GetLatestSubTaskByDomain(e *config.Env, domain, typ string) ([]model.ScanSubTasks, error) {
