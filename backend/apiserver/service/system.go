@@ -2,6 +2,7 @@ package service
 
 import (
 	v2 "ada/backend/apiserver/api/v2"
+	apiCommon "ada/backend/apiserver/common"
 	"ada/backend/apiserver/server"
 	"ada/backend/apiserver/util"
 	"ada/backend/cache"
@@ -31,7 +32,13 @@ import (
 	logger "github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/v2/bson"
 	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/status"
+)
+
+const (
+	networkDebugTimeout = 60 * time.Second
+	ntpUpdateTimeout    = 15 * time.Second
 )
 
 // readCurrentRuleVersion reads the current rule version from current_version.txt
@@ -111,6 +118,76 @@ func fetchCloudRuleVersion(upgradeSrv string, upgradeProxy bool, httpProxy strin
 	}
 
 	return versionInfo.Version
+}
+
+func normalizeNTPAddress(addr string) string {
+	return strings.TrimSuffix(strings.ToLower(strings.TrimSpace(addr)), ".")
+}
+
+func validNTPAddress(addr string) bool {
+	addr = normalizeNTPAddress(addr)
+	if addr == "" {
+		return false
+	}
+	domainReg := `^(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z]{2,}$`
+	domainRegex := regexp.MustCompile(domainReg)
+	return net.ParseIP(addr) != nil || domainRegex.MatchString(addr)
+}
+
+func resolveExecutable(name string, candidates ...string) (string, error) {
+	for _, candidate := range candidates {
+		info, err := os.Stat(candidate)
+		if err == nil && !info.IsDir() && info.Mode()&0111 != 0 {
+			return candidate, nil
+		}
+	}
+	resolved, err := exec.LookPath(name)
+	if err != nil {
+		return "", err
+	}
+	if !filepath.IsAbs(resolved) {
+		return "", fmt.Errorf("%s resolved to non-absolute path %q", name, resolved)
+	}
+	return resolved, nil
+}
+
+func runNTPUpdate(ctx context.Context, server string) ([]byte, error) {
+	ntpdatePath, err := resolveExecutable("ntpdate", "/usr/sbin/ntpdate", "/usr/bin/ntpdate", "/sbin/ntpdate", "/bin/ntpdate")
+	if err != nil {
+		return nil, fmt.Errorf("resolve ntpdate: %w", err)
+	}
+
+	commandPath := ntpdatePath
+	args := []string{server}
+	if os.Geteuid() != 0 {
+		sudoPath, err := resolveExecutable("sudo", "/usr/bin/sudo", "/bin/sudo")
+		if err != nil {
+			return nil, fmt.Errorf("resolve sudo: %w", err)
+		}
+		commandPath = sudoPath
+		args = []string{"-n", ntpdatePath, server}
+	}
+
+	cmdCtx, cancel := context.WithTimeout(ctx, ntpUpdateTimeout)
+	defer cancel()
+	out, err := exec.CommandContext(cmdCtx, commandPath, args...).CombinedOutput()
+	if cmdCtx.Err() != nil {
+		return out, cmdCtx.Err()
+	}
+	return out, err
+}
+
+func isSuperUserContext(ctx context.Context) bool {
+	md, ok := metadata.FromIncomingContext(ctx)
+	if !ok {
+		return false
+	}
+	for _, priv := range md.Get("priv") {
+		if priv == strconv.Itoa(apiCommon.PrivSuper) {
+			return true
+		}
+	}
+	return false
 }
 
 func (s *ADAServiceV2) GetSystemInfo(ctx context.Context, in *v2.GetSystemInfoReq) (*v2.GetSystemInfoReply, error) {
@@ -250,15 +327,13 @@ func (s *ADAServiceV2) UpdateSystemCfg(ctx context.Context, in *v2.UpdateSystemC
 
 	// Validate and process NTP if provided
 	if in.Ntp != "" {
-		domainReg := `^(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z]{2,}$`
-		domainRegex := regexp.MustCompile(domainReg)
-		if net.ParseIP(in.Ntp) == nil && !domainRegex.MatchString(in.Ntp) {
+		if !validNTPAddress(in.Ntp) {
 			logger.Infof("invalid ntp address %s", in.Ntp)
 			return ret, status.Error(codes.InvalidArgument, s.I18n("System.UpdateNtpAddressFailed"))
 		}
 
 		// call system command to update ntp address
-		out, err := exec.Command("sudo", "ntpdate", in.Ntp).Output()
+		out, err := runNTPUpdate(ctx, normalizeNTPAddress(in.Ntp))
 		if err != nil {
 			logger.Warnf("update ntp(%s) err:%v, stdout:%s", in.Ntp, err, out)
 			return ret, status.Error(codes.Internal, s.I18n("System.UpdateNtpAddressFailed"))
@@ -422,6 +497,9 @@ func (s *ADAServiceV2) ListAuditLog(ctx context.Context, in *v2.ListAuditLogReq)
 }
 
 func (s *ADAServiceV2) NetworkDebug(ctx context.Context, in *v2.NetworkDebugReq) (*v2.NetworkDebugReply, error) {
+	if !isSuperUserContext(ctx) {
+		return nil, status.Error(codes.PermissionDenied, "No permission")
+	}
 	s = s.withContext(ctx)
 	// Validate target using allowlist approach (only allow valid hostnames, IPs, or IP:port)
 	// This is more secure than blocklist approach
@@ -488,29 +566,19 @@ func (s *ADAServiceV2) NetworkDebug(ctx context.Context, in *v2.NetworkDebugReq)
 	}
 
 	statusChan := diagCmd.Start()
-	timeoutCh := make(chan string)
-	// Stop command after 120 second
-	go func() {
-		<-time.After(time.Second * 60)
-		diagCmd.Stop()
-		timeoutCh <- "timout"
-	}()
+	timer := time.NewTimer(networkDebugTimeout)
+	defer timer.Stop()
 
-	// Check if command is done
 	select {
-	case <-timeoutCh:
-		//timeout
+	case <-timer.C:
+		_ = diagCmd.Stop()
 		return nil, status.Error(codes.DeadlineExceeded, s.I18n("System.NetworkDebug.Timeout"))
-	case <-statusChan:
-		// done
-	default:
-		// no, still running
+	case final := <-statusChan:
+		result := ""
+		result += strings.Join(final.Stdout, "\n")
+		result += strings.Join(final.Stderr, "\n")
+		return &v2.NetworkDebugReply{Result: result}, nil
 	}
-	final := <-statusChan
-	result := ""
-	result += strings.Join(final.Stdout, "\n")
-	result += strings.Join(final.Stderr, "\n")
-	return &v2.NetworkDebugReply{Result: result}, nil
 }
 
 func (s *ADAServiceV2) GetLicense(ctx context.Context, in *v2.GetLicenseReq) (*v2.GetLicenseReply, error) {

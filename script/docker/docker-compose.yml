@@ -172,6 +172,30 @@ services:
       timeout: 5s
       retries: 30
 
+  ada_easytier:
+    container_name: "ada_easytier"
+    image: ada_easytier:2.9.1
+    restart: unless-stopped
+    network_mode: host
+    cap_add:
+      - NET_ADMIN
+    devices:
+      - /dev/net/tun:/dev/net/tun
+    environment:
+      - ET_INSTANCE_NAME=${EASYTIER_INSTANCE_NAME:-adaegis-test-portal}
+      - ET_HOSTNAME=${EASYTIER_HOSTNAME:-adaegis-test-portal}
+      - ET_NETWORK_NAME=${EASYTIER_NETWORK_NAME:-adaegis-demo}
+      - ET_NETWORK_SECRET=${EASYTIER_NETWORK_SECRET:-change-this-secret}
+      - ET_IPV4=${EASYTIER_IPV4:-192.168.10.2/24}
+      - ET_PEERS=${EASYTIER_PEERS:-tcp://47.237.97.83:8090}
+      - ET_NO_LISTENER=${EASYTIER_NO_LISTENER:-true}
+      - ET_DISABLE_UDP_HOLE_PUNCHING=true
+      - ET_DISABLE_IPV6=true
+      - ET_PRIVATE_MODE=true
+      - ET_CONSOLE_LOG_LEVEL=${EASYTIER_LOG_LEVEL:-warn}
+    depends_on:
+      - ada_backend
+
   ada_engine:
     container_name: "ada_engine"
     image: ada_engine:2.9.1

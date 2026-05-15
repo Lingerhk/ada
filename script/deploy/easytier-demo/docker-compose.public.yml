@@ -1,0 +1,21 @@
+name: "adaegis-demo-tunnel"
+
+services:
+  ada_easytier_public:
+    container_name: "ada_easytier_public"
+    image: ada_easytier:2.9.1
+    restart: unless-stopped
+    network_mode: host
+    environment:
+      - ET_INSTANCE_NAME=${EASYTIER_INSTANCE_NAME:-adaegis-public-demo}
+      - ET_HOSTNAME=${EASYTIER_HOSTNAME:-adaegis-public-demo}
+      - ET_NETWORK_NAME=${EASYTIER_NETWORK_NAME:-adaegis-demo}
+      - ET_NETWORK_SECRET=${EASYTIER_NETWORK_SECRET:-change-this-secret}
+      - ET_IPV4=${EASYTIER_PUBLIC_IPV4:-192.168.10.1/24}
+      - ET_LISTENERS=${EASYTIER_LISTENERS:-tcp://0.0.0.0:8090}
+      - ET_NO_TUN=true
+      - ET_PORT_FORWARD=${EASYTIER_PORT_FORWARD:-tcp://127.0.0.1:18080/192.168.10.2:80}
+      - ET_DISABLE_UDP_HOLE_PUNCHING=true
+      - ET_DISABLE_IPV6=true
+      - ET_PRIVATE_MODE=true
+      - ET_CONSOLE_LOG_LEVEL=${EASYTIER_LOG_LEVEL:-warn}

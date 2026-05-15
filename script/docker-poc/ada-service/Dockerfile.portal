@@ -22,6 +22,8 @@ RUN set -x \
         libnginx-mod-stream \
         supervisor \
         ca-certificates \
+        sudo \
+        ntpsec-ntpdate \
     && rm -rf /var/lib/apt/lists/*
 
 # Update CA certificates
@@ -29,6 +31,8 @@ RUN update-ca-certificates
 
 # Create user
 RUN useradd -rm -d /home/adadmin -s /bin/bash -g root -G sudo -u 1001 adadmin
+RUN echo 'adadmin ALL=(root) NOPASSWD: /usr/sbin/ntpdate, /usr/bin/ntpdate' > /etc/sudoers.d/adaegis-ntpdate \
+    && chmod 0440 /etc/sudoers.d/adaegis-ntpdate
 
 # Create directories
 RUN set -x \

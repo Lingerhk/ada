@@ -1,12 +1,12 @@
 
 set -euo pipefail
 
-version=2.9.1
-root_path="/home/adadmin/adaegis"
+version=${ADA_IMAGE_VERSION:-2.9.1}
+root_path="${ADA_ROOT_PATH:-/home/adadmin/adaegis}"
 ada_path="${root_path}/ada"
 web_path="${root_path}/ada-web"
 
-remote_server="adadmin@192.168.7.2"
+remote_server="${ADA_REMOTE_SERVER:-adadmin@192.168.7.2}"
 
 # build path
 # 统一规范： 该脚本在当前目录下执行，不可以在每个docker 子目录下运行
@@ -58,6 +58,7 @@ build_backend() {
 # build scanner
 build_scanner() {
     cd ${ada_path} || exit;
+    make -C scanner package-runtime
     make scanner
     cd - || exit;
     cd scanner || exit;
@@ -112,6 +113,12 @@ build_elasticsearch_setup() {
     cd - || exit
 }
 
+build_easytier() {
+    cd ${ada_path} || exit
+    docker build --network=host -f script/docker/easytier/Dockerfile -t ada_easytier:${version} .
+    cd - || exit
+}
+
 build_images() {
     case $1 in
     engine)
@@ -144,6 +151,9 @@ build_images() {
     elasticsearch-setup)
         build_elasticsearch_setup
         ;;
+    easytier)
+        build_easytier
+        ;;
     all)
         build_engine
         build_backend
@@ -154,9 +164,10 @@ build_images() {
         build_kibana
         build_elasticsearch
         build_elasticsearch_setup
+        build_easytier
         ;;
     *)
-        echo "Usage: $0 {engine|backend|scanner|zeek|redis|mongodb|kibana|elasticsearch|elasticsearch-setup|all}"
+        echo "Usage: $0 {engine|backend|scanner|zeek|redis|mongodb|kibana|elasticsearch|elasticsearch-setup|easytier|all}"
         exit 1
         ;;
     esac
@@ -202,6 +213,10 @@ package_images() {
             docker save -o ada_elasticsearch_setup_${version}.tar ada_elasticsearch_setup:${version}
             ls -l ada_elasticsearch_setup_${version}.tar
             ;;
+        easytier)
+            docker save -o ada_easytier_${version}.tar ada_easytier:${version}
+            ls -l ada_easytier_${version}.tar
+            ;;
         all)
             docker save -o ada_engine_${version}.tar ada_engine:${version}
             docker save -o ada_backend_${version}.tar ada_backend:${version}
@@ -212,6 +227,7 @@ package_images() {
             docker save -o ada_kibana_${version}.tar ada_kibana:${version}
             docker save -o ada_elasticsearch_${version}.tar ada_elasticsearch:${version}
             docker save -o ada_elasticsearch_setup_${version}.tar ada_elasticsearch_setup:${version}
+            docker save -o ada_easytier_${version}.tar ada_easytier:${version}
             ls -l ada_elasticsearch_${version}.tar
             ls -l ada_elasticsearch_setup_${version}.tar
             ls -l ada_engine_${version}.tar
@@ -221,6 +237,7 @@ package_images() {
             ls -l ada_redis_${version}.tar
             ls -l ada_mongodb_${version}.tar
             ls -l ada_kibana_${version}.tar
+            ls -l ada_easytier_${version}.tar
             ;;
     esac
 }
@@ -269,8 +286,17 @@ deploy_service() {
             ssh ${remote_server} "rm -f /tmp/ada_zeek_${version}.tar"
             echo "Deployment completed."
             ;;
+        easytier)
+            echo "Deploying ada_easytier:${version}..."
+            scp ada_easytier_${version}.tar ${remote_server}:/tmp/
+            ssh ${remote_server} "docker load -i /tmp/ada_easytier_${version}.tar"
+            ssh ${remote_server} "cd /home/adadmin/ && docker compose up -d ada_easytier"
+            ssh ${remote_server} "cd /home/adadmin/ && docker compose ps ada_easytier"
+            ssh ${remote_server} "rm -f /tmp/ada_easytier_${version}.tar"
+            echo "Deployment completed."
+            ;;
         *)
-            echo "Usage: $0 deploy {backend|engine|scanner|zeek}"
+            echo "Usage: $0 deploy {backend|engine|scanner|zeek|easytier}"
             exit 1
             ;;
     esac

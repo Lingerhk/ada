@@ -10,10 +10,12 @@ LABEL description="Docker image for ada system backend service"
 
 RUN set -x \
     && apt-get update \
-    && apt-get install -y iputils-ping dnsutils traceroute netcat-openbsd curl nginx supervisor \
+    && apt-get install -y iputils-ping dnsutils traceroute netcat-openbsd curl nginx supervisor sudo ntpsec-ntpdate \
 	&& rm -rf /var/lib/apt/lists/*
 
 RUN useradd -rm -d /home/adadmin -s /bin/bash -g root -G sudo -u 1001 adadmin
+RUN echo 'adadmin ALL=(root) NOPASSWD: /usr/sbin/ntpdate, /usr/bin/ntpdate' > /etc/sudoers.d/adaegis-ntpdate \
+    && chmod 0440 /etc/sudoers.d/adaegis-ntpdate
 
 RUN set -x \
     && mkdir -p /home/adadmin/logs \
