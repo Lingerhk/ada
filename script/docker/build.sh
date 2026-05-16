@@ -86,10 +86,12 @@ build_redis() {
 
 # build mongodb
 build_mongodb() {
-    cd mongodb || exit;
-    sed -i "s/ADA_SERVER_VERSION/${version}/g" 02-init_db.js
-    docker build --network=host -f Dockerfile -t ada_mongodb:${version} .
-    cd - || exit
+    local build_ctx
+    build_ctx=$(mktemp -d)
+    cp -a mongodb/. "${build_ctx}/"
+    sed -i "s/ADA_SERVER_VERSION/${version}/g" "${build_ctx}/02-init_db.js"
+    docker build --network=host -f "${build_ctx}/Dockerfile" -t ada_mongodb:${version} "${build_ctx}"
+    rm -rf "${build_ctx}"
 }
 
 #build kibana

@@ -17,6 +17,7 @@ Numbered documents are available in both English and Chinese. English documents 
 7. Active scanner: [EN](./07-scanner.md) / [CN](./07-scanner_CN.md): understand how baseline, leak, and weak-password scan tasks are created, distributed, and executed.
 8. Data model and storage conventions: [EN](./08-data-model-storage.md) / [CN](./08-data-model-storage_CN.md): quickly locate Redis keys, MongoDB collections, and Elasticsearch index responsibilities.
 9. Development, testing, and troubleshooting: [EN](./09-development-testing.md) / [CN](./09-development-testing_CN.md): daily build commands, focused tests, logs, troubleshooting, and change notes.
+10. GOAD integration and validation: [EN](./10-goad-integration.md) / [CN](./10-goad-integration_CN.md): deploy GOAD on Proxmox, prepare DC audit policy, install sensors, and validate alerts.
 
 ## Main Repository Entrypoints
 

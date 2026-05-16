@@ -17,6 +17,7 @@
 7. 主动扫描系统：[EN](./07-scanner.md) / [CN](./07-scanner_CN.md)：理解 baseline、leak、weakpwd 扫描任务如何被创建、分发和执行。
 8. 数据模型与存储约定：[EN](./08-data-model-storage.md) / [CN](./08-data-model-storage_CN.md)：快速查 Redis key、MongoDB collection、ES index 的职责。
 9. 开发、测试与排障入口：[EN](./09-development-testing.md) / [CN](./09-development-testing_CN.md)：日常构建、自测、日志、排障和变更注意事项。
+10. GOAD 集成与验证：[EN](./10-goad-integration.md) / [CN](./10-goad-integration_CN.md)：在 Proxmox 部署 GOAD、准备 DC 审计策略、安装 sensor 并验证告警。
 
 ## 仓库主入口
 
