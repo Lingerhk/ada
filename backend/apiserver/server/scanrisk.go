@@ -57,15 +57,20 @@ func FindBaselineListSelect(e *config.Env, groupId string, domains, subTypes []s
 		sort = bson.M{"update_tm": orderUpdateTm}
 	}
 
-	err := e.MongoCli.FindSortByLimitAndSkip(e.MongoContext(), tb, query, sort, &sst, int64(limit), int64(offset))
+	total, err := e.MongoCli.FindCount(e.MongoContext(), tb, query)
+	if err != nil {
+		return nil, 0, err
+	}
+
+	err = e.MongoCli.FindSortByLimitAndSkip(e.MongoContext(), tb, query, sort, &sst, int64(limit), int64(offset))
 	if err != nil {
 		return sst, 0, err
 	}
 
-	return sst, 0, nil
+	return sst, total, nil
 }
 
-func FindWeakPwdListSelect(e *config.Env, groupId string, domains []string, limit, offset int32) ([]model.ScanSubTasks, int64, error) {
+func FindWeakPwdListSelect(e *config.Env, groupId string, domains []string) ([]model.ScanSubTasks, error) {
 	var sst []model.ScanSubTasks
 	tb := (&model.ScanSubTasks{}).CollectName()
 
@@ -76,12 +81,12 @@ func FindWeakPwdListSelect(e *config.Env, groupId string, domains []string, limi
 	}
 
 	sort := bson.M{"update_tm": -1}
-	err := e.MongoCli.FindSortByLimitAndSkip(e.MongoContext(), tb, query, sort, &sst, int64(limit), int64(offset))
+	err := e.MongoCli.FindSortByLimitAndSkip(e.MongoContext(), tb, query, sort, &sst, 0, 0)
 	if err != nil {
-		return sst, 0, err
+		return sst, err
 	}
 
-	return sst, 0, nil
+	return sst, nil
 }
 
 func FindLeakListSelect(e *config.Env, groupId string, domains, subTypes []string, levels, results []int32, search, startTm, endTm string, orderUpdateTm, limit, offset int32) ([]model.ScanSubTasks, int64, error) {
@@ -118,12 +123,17 @@ func FindLeakListSelect(e *config.Env, groupId string, domains, subTypes []strin
 		sort = bson.M{"update_tm": orderUpdateTm}
 	}
 
-	err := e.MongoCli.FindSortByLimitAndSkip(e.MongoContext(), tb, query, sort, &sst, int64(limit), int64(offset))
+	total, err := e.MongoCli.FindCount(e.MongoContext(), tb, query)
+	if err != nil {
+		return nil, 0, err
+	}
+
+	err = e.MongoCli.FindSortByLimitAndSkip(e.MongoContext(), tb, query, sort, &sst, int64(limit), int64(offset))
 	if err != nil {
 		return sst, 0, err
 	}
 
-	return sst, 0, nil
+	return sst, total, nil
 }
 
 func GetScanSubTaskById(e *config.Env, id string) (*model.ScanSubTasks, error) {
@@ -287,7 +297,7 @@ func FindAllScanConf(e *config.Env) ([]model.ScanConf, error) {
 	return sc, err
 }
 
-func FindScanTmplSelect(e *config.Env, typ string, limit, offset int64) ([]model.ScanTemplate, error) {
+func FindScanTmplSelect(e *config.Env, typ string, limit, offset int64) ([]model.ScanTemplate, int64, error) {
 	var st []model.ScanTemplate
 	tb := (&model.ScanTemplate{}).CollectName()
 
@@ -296,11 +306,17 @@ func FindScanTmplSelect(e *config.Env, typ string, limit, offset int64) ([]model
 		query["type"] = typ
 	}
 
-	if err := e.MongoCli.FindByLimitAndSkip(e.MongoContext(), tb, query, &st, limit, offset); err != nil {
-		return nil, err
+	total, err := e.MongoCli.FindCount(e.MongoContext(), tb, query)
+	if err != nil {
+		return nil, 0, err
 	}
 
-	return st, nil
+	sort := bson.M{"update_tm": -1}
+	if err := e.MongoCli.FindSortByLimitAndSkip(e.MongoContext(), tb, query, sort, &st, limit, offset); err != nil {
+		return nil, 0, err
+	}
+
+	return st, total, nil
 }
 
 func GetScanTmplById(e *config.Env, id string) (*model.ScanTemplate, error) {

@@ -262,9 +262,10 @@ func (s *ADAServiceV2) ListWeakPwd(ctx context.Context, in *v2.ListWeakPwdReq) (
 		return ret, nil
 	}
 
-	// 再从tb_scan_subtasks表按group_id过滤结果
+	// Weak password subtasks contain multiple users, so pagination has to be
+	// applied after expanding and filtering users instead of on subtasks.
 	var limit, offset = in.PageSize, in.PageSize * (in.PageIdx - 1)
-	subTasks, total, err := server.FindWeakPwdListSelect(s.env, weakPwd.ID.Hex(), in.Domain, limit, offset)
+	subTasks, err := server.FindWeakPwdListSelect(s.env, weakPwd.ID.Hex(), in.Domain)
 	if err != nil {
 		logger.Errorf("find weakpwd list err:%v", err)
 		return ret, status.Error(codes.Internal, s.I18n("ScanRisk.ListWeakPwd.GetWeakPwdListFailed"))
@@ -273,7 +274,7 @@ func (s *ADAServiceV2) ListWeakPwd(ctx context.Context, in *v2.ListWeakPwdReq) (
 	// debug
 	logger.Infof("weakPwd:%s, subTasks len:%d", weakPwd.ID.Hex(), len(subTasks))
 
-	var idx int32
+	var total int32
 	var userList weakPwdUserList
 	for _, taskCnt := range subTasks {
 		domain := taskCnt.Result.Data["domain"].(string)
@@ -306,14 +307,18 @@ func (s *ADAServiceV2) ListWeakPwd(ctx context.Context, in *v2.ListWeakPwdReq) (
 				}
 			}
 
+			total += 1
+			if total <= offset || int32(len(ret.List)) >= limit {
+				continue
+			}
+
 			password := "****"
 			if in.IsPlain {
 				password = user.Password
 			}
 
-			idx += 1
 			ret.List = append(ret.List, &v2.ListWeakPwdReply_Details{
-				ID:           idx,
+				ID:           total,
 				Username:     user.Name,
 				SamName:      user.SamName,
 				Password:     password,
@@ -328,7 +333,7 @@ func (s *ADAServiceV2) ListWeakPwd(ctx context.Context, in *v2.ListWeakPwdReq) (
 		}
 	}
 
-	ret.Page.Total = int32(total)
+	ret.Page.Total = total
 	if (limit + offset) < int32(total) {
 		ret.Exhausted = false
 	}
@@ -397,10 +402,18 @@ func (s *ADAServiceV2) GetScanTask(ctx context.Context, in *v2.GetScanTaskReq) (
 
 	// 再从tb_scan_subtasks表按group_id过滤结果
 	var limit, offset = in.PageSize, in.PageSize * (in.PageIdx - 1)
-	subTasks, total, err := server.FindSubScanTasks(s.env, task.ID.Hex(), limit, offset)
+	subTaskLimit, subTaskOffset := limit, offset
+	if task.Type == "weakpwd" {
+		subTaskLimit = 0
+		subTaskOffset = 0
+	}
+	subTasks, total, err := server.FindSubScanTasks(s.env, task.ID.Hex(), subTaskLimit, subTaskOffset)
 	if err != nil {
 		logger.Errorf("find sub tasks list err:%v", err)
 		return nil, status.Error(codes.Internal, s.I18n("ScanRisk.GetScanTaskListFailed"))
+	}
+	if task.Type == "weakpwd" {
+		total = 0
 	}
 
 	for _, t := range subTasks {
@@ -460,12 +473,17 @@ func (s *ADAServiceV2) GetScanTask(ctx context.Context, in *v2.GetScanTaskReq) (
 
 			for _, user := range userList {
 				total += 1
-				params["username"] = user.Name
-				params["sam_name"] = user.SamName
-				params["password"] = "****"
-				params["expiration_tm"] = user.ExpirationTm
-				params["last_update_tm"] = user.LastUpdateTm
-				params["locked"] = fmt.Sprintf("%d", user.Locked)
+				if total <= int64(offset) || int32(len(ret.List)) >= limit {
+					continue
+				}
+				userParams := map[string]string{
+					"username":       user.Name,
+					"sam_name":       user.SamName,
+					"password":       "****",
+					"expiration_tm":  user.ExpirationTm,
+					"last_update_tm": user.LastUpdateTm,
+					"locked":         fmt.Sprintf("%d", user.Locked),
+				}
 
 				ret.List = append(ret.List, &v2.GetScanTaskReply_Details{
 					ID:       t.ID.Hex(),
@@ -475,7 +493,7 @@ func (s *ADAServiceV2) GetScanTask(ctx context.Context, in *v2.GetScanTaskReq) (
 					SubType:  t.Result.Plugin.Type,
 					Level:    t.Result.Plugin.RiskLevel,
 					Result:   t.Result.Status,
-					Params:   params,
+					Params:   userParams,
 					UpdateTm: t.UpdateTm.String(),
 				})
 			}
@@ -731,7 +749,7 @@ func (s *ADAServiceV2) UpdateScanConf(ctx context.Context, in *v2.UpdateScanConf
 
 func (s *ADAServiceV2) GetScanTmplNames(ctx context.Context, in *v2.GetScanTmplNamesReq) (*v2.GetScanTmplNamesReply, error) {
 	s = s.withContext(ctx)
-	tmplList, err := server.FindScanTmplSelect(s.env, in.Type, 100, 0)
+	tmplList, _, err := server.FindScanTmplSelect(s.env, in.Type, 0, 0)
 	if err != nil {
 		logger.Errorf("list scan tmpl err:%v", err)
 		return nil, status.Error(codes.Internal, s.I18n("ScanRisk.ScanTmpl.GetScanTmplNamesFailed"))
@@ -748,7 +766,7 @@ func (s *ADAServiceV2) GetScanTmplNames(ctx context.Context, in *v2.GetScanTmplN
 func (s *ADAServiceV2) ListScanTmpl(ctx context.Context, in *v2.ListScanTmplReq) (*v2.ListScanTmplReply, error) {
 	s = s.withContext(ctx)
 	limit, offset := in.PageSize, (in.PageIdx-1)*in.PageSize
-	tmplList, err := server.FindScanTmplSelect(s.env, in.Type, int64(limit), int64(offset))
+	tmplList, total, err := server.FindScanTmplSelect(s.env, in.Type, int64(limit), int64(offset))
 	if err != nil {
 		logger.Errorf("list scan tmpl err:%v", err)
 		return nil, status.Error(codes.Internal, s.I18n("ScanRisk.ScanTmpl.GetScanTmplFailed"))
@@ -769,7 +787,10 @@ func (s *ADAServiceV2) ListScanTmpl(ctx context.Context, in *v2.ListScanTmplReq)
 	ret.Page = &v2.ModelPage{
 		PageIdx:  in.PageIdx,
 		PageSize: in.PageSize,
-		Total:    int32(len(tmplList)),
+		Total:    int32(total),
+	}
+	if (limit + offset) < int32(total) {
+		ret.Exhausted = false
 	}
 
 	return &ret, nil

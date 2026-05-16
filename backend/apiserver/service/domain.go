@@ -35,7 +35,13 @@ func (s *ADAServiceV2) ListDomain(ctx context.Context, in *v2.ListDomainReq) (*v
 	// 2、结果返回(带域账户信息)
 	ret := v2.ListDomainReply{}
 	for _, r := range res {
-		r.LdapConf["password"] = "*******"
+		ldapConf := make(map[string]string, len(r.LdapConf))
+		for key, value := range r.LdapConf {
+			ldapConf[key] = value
+		}
+		if _, ok := ldapConf["password"]; ok {
+			ldapConf["password"] = "*******"
+		}
 
 		// Create domain details
 		domainDetails := &v2.ListDomainReply_Details{
@@ -43,7 +49,7 @@ func (s *ADAServiceV2) ListDomain(ctx context.Context, in *v2.ListDomainReq) (*v
 			Name:       r.Name,
 			DcHostname: r.DCHostName,
 			Status:     r.Status,
-			DomainInfo: r.LdapConf,
+			DomainInfo: ldapConf,
 			CreateTm:   r.CreateTm.String(),
 			ErrMsg:     r.ErrMsg,
 		}
