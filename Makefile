@@ -13,7 +13,8 @@ BUILD_PATH_SCANNER=./scanner/cmd
 BUILD_PATH_INFRA=ada/infra
 BUILD_API_PROTO_PATH=${BUILD_BASE_PATH}/backend/apiserver/api/v2
 BUILD_RPC_PROTO_PATH=${BUILD_BASE_PATH}/backend/tasker/api
-PROTOC ?= ${HOME}/go/bin/protoc
+GOPATH ?= $(shell /usr/local/go/bin/go env GOPATH)
+PROTOC ?= ${GOPATH}/bin/protoc
 
 
 .PHONY: all gen_proto apiserver task_worker task_server engine scanner clean
