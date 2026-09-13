@@ -21,7 +21,7 @@ type Session struct {
 	maxPoolSize uint64
 	db          string
 	uri         string
-	m           sync.RWMutex
+	m           *sync.RWMutex
 	filter      any
 	limit       *int64
 	project     any
@@ -36,6 +36,7 @@ type Session struct {
 func New(uri string) *Session {
 	session := &Session{
 		uri: uri,
+		m:   &sync.RWMutex{},
 	}
 	return session
 }

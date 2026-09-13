@@ -2,6 +2,8 @@ package mongo
 
 import (
 	"context"
+	"sync"
+
 	"go.mongodb.org/mongo-driver/v2/bson"
 	"go.mongodb.org/mongo-driver/v2/mongo"
 	"go.mongodb.org/mongo-driver/v2/mongo/options"
@@ -14,12 +16,12 @@ type Collection struct {
 
 // Find
 func (c *Collection) Find(filter any) *Session {
-	return &Session{ctx: c.ctx, filter: filter, collection: c.collection}
+	return &Session{ctx: c.ctx, filter: filter, collection: c.collection, m: &sync.RWMutex{}}
 }
 
 // Select
 func (c *Collection) Select(projection any) *Session {
-	return &Session{ctx: c.ctx, project: projection, collection: c.collection}
+	return &Session{ctx: c.ctx, project: projection, collection: c.collection, m: &sync.RWMutex{}}
 }
 
 // WithContext clones the collection handle with an operation context.
