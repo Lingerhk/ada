@@ -1,0 +1,21 @@
+{
+    "rules": [
+        {
+            "operations": ["search"],
+            "ips": ["*"],
+            "users": ["*"],
+            "attributes": ["ms-Mcs-AdmPwd"],
+            "action": "block"
+        },
+	    {
+            "operations": ["search"],
+			"audit": "off"
+        },
+        {
+            "operations": ["*"],
+            "ips": ["*"],
+            "users": ["*"],
+            "action": "allow"
+        }
+    ]
+}

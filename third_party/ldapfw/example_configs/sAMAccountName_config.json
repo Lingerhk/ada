@@ -1,0 +1,20 @@
+{
+    "rules": [
+        {
+            "operations": ["add"],
+            "ips": ["*"],
+            "users": ["*"],
+            "action": "block"
+        },
+	    {
+            "operations": ["search"],
+			"audit": "off"
+        },
+        {
+            "operations": ["*"],
+            "ips": ["*"],
+            "users": ["*"],
+            "action": "allow"
+        }
+    ]
+}

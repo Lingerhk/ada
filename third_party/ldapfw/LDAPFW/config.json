@@ -1,0 +1,18 @@
+{
+    "rules": [
+	    {
+            "operations": ["search"],
+			"attributes": ["admincount", "userpassword", "msds-allowedToDelegateTo", "ms-Mcs-AdmPwd"],
+			"audit": "on"
+        },
+	    {
+            "operations": ["search"],
+			"audit": "off"
+        },
+		{
+			"operations": ["*"],
+			"action":  "allow",
+			"audit": "on",
+		}
+    ]
+}
