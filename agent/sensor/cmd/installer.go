@@ -1,6 +1,10 @@
-//go:build windows
+//go:build windows && sensor_installer
 
 package main
+// Build with the file named explicitly (constraints are then ignored):
+//   go build -o installer.exe installer.go
+// The sensor_installer tag keeps `go build ./...` from seeing two main
+// functions in this directory.
 
 import (
 	"ada/agent/sensor/installer"
