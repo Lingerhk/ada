@@ -432,23 +432,10 @@ func (s *ADAServiceV2) pushCmdSensor(ctx context.Context, cmdMsg sCommon.AdaMess
 	}
 
 	// 同步等待 下发结果
-	taskSucc := false
 	taskKey := fmt.Sprintf("%s_%s", sCommon.SensorCmdRespKey, cmdMsg.TaskID)
-	for range 40 {
-		time.Sleep(1 * time.Second)
-		succ := s.env.RedisCli.HGet(ctx, taskKey, "succeed").Val()
-		if succ == "" {
-			continue
-		}
-		if succ == "1" {
-			// task succeed
-			taskSucc = true
-			break
-		}
-	}
+	taskSucc, errMsg := waitSensorCmdResult(ctx, s.env.RedisCli, taskKey, 40*time.Second)
 	if !taskSucc {
-		logger.Errorf("sync task result fialed or timeout, task_id:%s, sensor_id:%s", cmdMsg.TaskID, cmdMsg.AgentID)
-		errMsg := s.env.RedisCli.HGet(ctx, taskKey, "msg").Val()
+		logger.Errorf("sync task result failed or timeout, task_id:%s, sensor_id:%s", cmdMsg.TaskID, cmdMsg.AgentID)
 		return fmt.Errorf("sync task err_msg:%s", errMsg)
 	}
 

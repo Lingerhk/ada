@@ -243,9 +243,9 @@ func (s *GrpcService) Start(address string) error {
 	return s.server.Serve(listener)
 }
 
-// Stop stops the grpc server.
+// Stop stops the grpc server, letting in-flight RPCs finish first.
 func (s *GrpcService) Stop() {
-	s.server.Stop()
+	s.server.GracefulStop()
 }
 
 // Execution is done in left-to-right order, including passing of context.
@@ -465,7 +465,6 @@ func (s *GrpcService) SignalHandler() {
 	case syscall.SIGQUIT, syscall.SIGTERM, syscall.SIGINT:
 		logger.Info("apiserver exit")
 		s.Stop()
-		time.Sleep(time.Second)
 		return
 	case syscall.SIGHUP:
 		// TODO reload

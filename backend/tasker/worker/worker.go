@@ -8,7 +8,6 @@ import (
 	"os"
 	"os/signal"
 	"syscall"
-	"time"
 
 	"github.com/RichardKnop/machinery/v2"
 	logger "github.com/sirupsen/logrus"
@@ -81,7 +80,6 @@ func (tw *TaskWorker) SignalHandler() {
 	case syscall.SIGQUIT, syscall.SIGTERM, syscall.SIGINT:
 		logger.Info("tasker(worker) exit")
 		tw.Stop()
-		time.Sleep(time.Second)
 		return
 	case syscall.SIGHUP:
 		// TODO reload

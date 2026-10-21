@@ -30,6 +30,7 @@ type CronScheduler struct {
 	Tasker       *TaskServer
 	CjIdMap      map[string]gocron.Job
 	CjVersionMap map[string]time.Time
+	ctx          context.Context
 	cancel       context.CancelFunc
 }
 
@@ -48,6 +49,7 @@ func NewCronScheduler(ts *TaskServer) (*CronScheduler, error) {
 		Tasker:       ts.withContext(ctx),
 		CjIdMap:      make(map[string]gocron.Job),
 		CjVersionMap: make(map[string]time.Time),
+		ctx:          ctx,
 		cancel:       cancel,
 	}, nil
 }
@@ -296,8 +298,15 @@ func (cs *CronScheduler) CronJobUpdate() {
 		}
 	}()
 
+	ticker := time.NewTicker(1 * time.Minute)
+	defer ticker.Stop()
+
 	for {
-		time.Sleep(1 * time.Minute)
+		select {
+		case <-cs.ctx.Done():
+			return
+		case <-ticker.C:
+		}
 		logger.Debug("CronJobUpdate running...")
 
 		// Load job configurations from database

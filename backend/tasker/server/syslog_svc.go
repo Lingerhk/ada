@@ -338,20 +338,20 @@ func (s *SyslogServer) startSyslogWorkers() {
 	}
 }
 
+// monitor reports ingestion statistics every five minutes until the server
+// stops.
 func (s *SyslogServer) monitor() {
-	var last int64
+	const statsInterval = 5 * time.Minute
+
+	ticker := time.NewTicker(statsInterval)
+	defer ticker.Stop()
 
 	for {
 		select {
 		case <-s.ctx.Done():
 			return
-		default:
-			time.Sleep(1 * time.Second)
-			now := time.Now().Unix()
-			if now-last > 300 {
-				s.stats()
-				last = now
-			}
+		case <-ticker.C:
+			s.stats()
 		}
 	}
 }
@@ -536,7 +536,12 @@ func (s *SyslogServer) PktlogServe() {
 				if err := pubsub.Ping(s.ctx); err != nil {
 					logger.Errorf("PubSub failure:%s", err.Error())
 				}
-				time.Sleep(2 * time.Second)
+				// back off before the next receive, but stay responsive to shutdown
+				select {
+				case <-s.ctx.Done():
+					return
+				case <-time.After(2 * time.Second):
+				}
 				continue
 			}
 			switch msg := msg.(type) {

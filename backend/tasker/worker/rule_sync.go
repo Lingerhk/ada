@@ -49,20 +49,52 @@ type RuleDescriptor struct {
 	WinLog  []RuleMetadata `json:"winlog"`
 }
 
+// ruleSyncReadyTimeout bounds how long RuleSyncTask waits for MongoDB to
+// answer when the task fires right after process start.
+const ruleSyncReadyTimeout = 30 * time.Second
+
+// loadSystemInfoWithRetry reads tb_system_info, retrying with backoff while
+// MongoDB is still coming up (the task is scheduled at process start).
+func (w *Worker) loadSystemInfoWithRetry(ctx context.Context) (*model.SystemInfo, bool, error) {
+	ctx, cancel := context.WithTimeout(ctx, ruleSyncReadyTimeout)
+	defer cancel()
+
+	var sysInfo model.SystemInfo
+	backoff := 500 * time.Millisecond
+	for {
+		err, exist := w.env.MongoCli.FindOne(ctx, sysInfo.CollectName(), bson.M{}, &sysInfo)
+		if err == nil {
+			return &sysInfo, exist, nil
+		}
+		logger.Warnf("rule sync: system info not readable yet (%v), retrying in %s", err, backoff)
+		select {
+		case <-ctx.Done():
+			return nil, false, fmt.Errorf("waiting for system info: %w", err)
+		case <-time.After(backoff):
+		}
+		if backoff < 5*time.Second {
+			backoff *= 2
+		}
+	}
+}
+
 // RuleSyncTask executes rule synchronization from remote server
 func (w *Worker) RuleSyncTask(ctx context.Context) error {
 	w = w.withContext(ctx)
-	time.Sleep(10 * time.Second) // wait 10s for case: first run at the process started(wait for other service ready)
 
 	rulesPath := filepath.Join(common.ROOT_PATH, "download", "rules")
 
 	// Get system info to check UpgradeRule setting
-	var sysInfo model.SystemInfo
-	_, exist := w.env.MongoCli.FindOne(w.env.MongoContext(), sysInfo.CollectName(), bson.M{}, &sysInfo)
+	sysInfoPtr, exist, err := w.loadSystemInfoWithRetry(ctx)
+	if err != nil {
+		logger.Errorf("rule sync: %v", err)
+		return err
+	}
 	if !exist {
 		logger.Warn("System info not found, skipping rule sync")
 		return nil
 	}
+	sysInfo := *sysInfoPtr
 
 	if sysInfo.UpgradeSrv == "" {
 		logger.Warn("UpgradeSrv not configured, skipping rule sync")

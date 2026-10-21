@@ -60,30 +60,33 @@ func (p *PubsubServer) PubsubSensorEvent(wg *sync.WaitGroup) {
 	se := event.NewSensorEvent(p.env.RedisCli, p.env.MongoCli)
 
 	for {
-		select {
-		case <-p.ctx.Done():
+		if p.ctx.Err() != nil {
 			return
-		default:
-			time.Sleep(1 * time.Second)
-			queueLen, err := p.env.RedisCli.LLen(p.ctx, sCommon.SensorStateQueue).Result()
-			if err != nil {
-				logger.Errorf("redis llen %s err:%v", sCommon.SensorStateQueue, err)
-				continue
-			}
-			if queueLen == 0 {
-				continue
-			}
-
-			msg, err := p.env.RedisCli.RPop(p.ctx, sCommon.SensorStateQueue).Result()
-			if err != nil {
-				logger.Errorf("redis rpop err:%v", err)
-				continue
-			}
-
-			logger.Debugf("received sensor event:%v", msg)
-
-			go se.Process(msg) // 确保不会卡住队列
 		}
+
+		// Blocking pop: wakes up as soon as a sensor event is queued, and
+		// returns redis.Nil once per second when the queue stays empty.
+		vals, err := p.env.RedisCli.BRPop(p.ctx, 1*time.Second, sCommon.SensorStateQueue).Result()
+		if err != nil {
+			if err == redis.Nil || p.ctx.Err() != nil {
+				continue
+			}
+			logger.Errorf("redis brpop %s err:%v", sCommon.SensorStateQueue, err)
+			select {
+			case <-p.ctx.Done():
+				return
+			case <-time.After(time.Second):
+			}
+			continue
+		}
+		if len(vals) != 2 {
+			continue
+		}
+		msg := vals[1]
+
+		logger.Debugf("received sensor event:%v", msg)
+
+		go se.Process(msg) // 确保不会卡住队列
 	}
 }
 

@@ -1277,23 +1277,10 @@ func pushThreatPolicy(ctx context.Context, rdxCli *redis.Client, cmdMsg sCommon.
 	}
 
 	// 同步等待 下发结果
-	taskSucc := false
 	taskKey := fmt.Sprintf("%s_%s", sCommon.SensorCmdRespKey, cmdMsg.TaskID)
-	for i := 0; i < 10; i++ {
-		time.Sleep(1 * time.Second)
-		succ := rdxCli.HGet(ctx, taskKey, "succeed").Val()
-		if succ == "" {
-			continue
-		}
-		if succ == "1" {
-			// task succeed
-			taskSucc = true
-			break
-		}
-	}
+	taskSucc, errMsg := waitSensorCmdResult(ctx, rdxCli, taskKey, 10*time.Second)
 	if !taskSucc {
-		logger.Errorf("sync task result fialed or timeout, task_id:%s, sensor_id:%s", cmdMsg.TaskID, cmdMsg.AgentID)
-		errMsg := rdxCli.HGet(ctx, taskKey, "msg").Val()
+		logger.Errorf("sync task result failed or timeout, task_id:%s, sensor_id:%s", cmdMsg.TaskID, cmdMsg.AgentID)
 		return fmt.Errorf("sync task err_msg:%s", errMsg)
 	}
 

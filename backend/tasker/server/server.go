@@ -162,11 +162,17 @@ func (s *TaskService) Start() error {
 	return nil
 }
 
+// Stop shuts every sub-service down and waits for in-flight requests.
 func (s *TaskService) Stop() {
 	s.syslogServer.Stop()
 	s.pubsubServer.Stop()
-	s.grpcServer.Stop()
-	s.httpServer.Shutdown(nil)
+	s.grpcServer.GracefulStop()
+
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+	if err := s.httpServer.Shutdown(ctx); err != nil {
+		logger.Warnf("http server shutdown: %v", err)
+	}
 	s.cronServer.Stop()
 }
 
@@ -181,7 +187,6 @@ func (s *TaskService) SignalHandler() {
 	case syscall.SIGQUIT, syscall.SIGTERM, syscall.SIGINT:
 		logger.Info("tasker(server) exit")
 		s.Stop()
-		time.Sleep(time.Second)
 		return
 	case syscall.SIGHUP:
 		// TODO reload

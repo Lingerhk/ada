@@ -63,23 +63,11 @@ func New(env *config.Env) (*EngineWorker, error) {
 	pktLogRulePath := filepath.Join(common.RuleDir, common.RulePktLog)
 
 	// init sigma flow ruleset（必须在sigma rule初始化执行）
-	var err error
-	var flowset *flow.Ruleset
-	for {
-		time.Sleep(3 * time.Second)
-		flowset, err = flow.NewRuleset(env.RedisCli, env.MongoCli, flowRulePath)
-		if err == flow.ErrMissingRuleList {
-			logger.Warnf("empty rules %v, wait 20s...", err)
-			time.Sleep(20 * time.Second)
-			continue
-		}
-
-		if err != nil {
-			logger.Errorf("init flow ruleset err %v", err)
-			cancel()
-			return nil, err
-		}
-		break
+	flowset, err := loadFlowRuleset(ctx, env, flowRulePath)
+	if err != nil {
+		logger.Errorf("init flow ruleset err %v", err)
+		cancel()
+		return nil, err
 	}
 
 	logger.Infof("loaded flow ruleset form %s", flowRulePath)
@@ -364,10 +352,48 @@ func (e *EngineWorker) Reload() error {
 	return nil
 }
 
+// loadFlowRuleset loads the flow rules, waiting (with backoff, up to
+// flowRulesetRetryMax between attempts) while the rule list has not been
+// published yet by the tasker.
+func loadFlowRuleset(ctx context.Context, env *config.Env, flowRulePath string) (*flow.Ruleset, error) {
+	const (
+		retryInitial = 3 * time.Second
+		retryMax     = 20 * time.Second
+	)
+
+	wait := retryInitial
+	for {
+		flowset, err := flow.NewRuleset(env.RedisCli, env.MongoCli, flowRulePath)
+		if err == nil {
+			return flowset, nil
+		}
+		if err != flow.ErrMissingRuleList {
+			return nil, err
+		}
+
+		logger.Warnf("empty rules %v, retry in %s...", err, wait)
+		select {
+		case <-ctx.Done():
+			return nil, ctx.Err()
+		case <-time.After(wait):
+		}
+		if wait < retryMax {
+			wait = min(wait*2, retryMax)
+		}
+	}
+}
+
 func (e *EngineWorker) FlowMatcher() {
 	// run as goroutine to match flow event
+	ticker := time.NewTicker(1 * time.Second)
+	defer ticker.Stop()
+
 	for {
-		time.Sleep(1 * time.Second)
+		select {
+		case <-e.ctx.Done():
+			return
+		case <-ticker.C:
+		}
 
 		e.mu.RLock()
 		stopped := e.stopped
