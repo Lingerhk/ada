@@ -137,10 +137,13 @@ func (h *httpHandle) genSession(c *gin.Context) {
 	}
 
 	req.Header.Set("Content-Type", "application/json")
-	req.Header.Set("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36")
 	req.Header.Set("Origin", h.env.Cfg.Kibana.Address)
 	req.Header.Set("Referer", h.env.Cfg.Kibana.Address)
-	req.Header.Set("kbn-version", "8.18.8")
+	// Kibana accepts either an exact "kbn-version" or any "kbn-xsrf" value as
+	// XSRF protection; kbn-xsrf keeps this independent of the Kibana release.
+	// x-elastic-internal-origin is required by Kibana 9 for internal APIs.
+	req.Header.Set("kbn-xsrf", "adaegis")
+	req.Header.Set("x-elastic-internal-origin", "Kibana")
 
 	res, err := client.Do(req)
 	if err != nil || (res != nil && res.StatusCode != 200 && res.StatusCode != 204) {
