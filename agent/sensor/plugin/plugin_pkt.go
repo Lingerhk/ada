@@ -50,7 +50,7 @@ func (p *pktPlugin) createConn() error {
 	var err error
 	udpAddr, err := net.ResolveUDPAddr("udp", p.remoteAddr)
 	if err != nil {
-			logger.Errorf("failed to resolve remote UDP address '%s': %v", p.remoteAddr, err)
+		logger.Errorf("failed to resolve remote UDP address '%s': %v", p.remoteAddr, err)
 		return err
 	}
 
