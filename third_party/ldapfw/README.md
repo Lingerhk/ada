@@ -176,6 +176,3 @@ Yes! Don't be shy to do a pull request.
 # We would love to hear from you!
 For any questions, issues, or simply to shout out, join our [-273°C Slack channel](https://join.slack.com/t/minus273celsius/shared_invite/zt-1ulg46s8x-N0P9sEzmv3SbYTlDXVSf2g) where the community shares best practices and helps build better defenses using open-source tools.<br> 
 We are also available at [support@zeronetworks.com](mailto:support@zeronetworks.com).
-
-# License information
-For more details, see [LICENSE](LICENSE).
