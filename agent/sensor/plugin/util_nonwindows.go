@@ -40,19 +40,11 @@ func stopRpcFwPlugin() error {
 	return fmt.Errorf("rpc firewall plugin is only supported on windows")
 }
 
-func reloadRpcFwPlugin() error {
-	return fmt.Errorf("rpc firewall plugin is only supported on windows")
-}
-
 func startLdapFwPlugin(restart bool) error {
 	return fmt.Errorf("ldap firewall plugin is only supported on windows")
 }
 
 func stopLdapFwPlugin() error {
-	return fmt.Errorf("ldap firewall plugin is only supported on windows")
-}
-
-func reloadLdapFwPlugin() error {
 	return fmt.Errorf("ldap firewall plugin is only supported on windows")
 }
 
