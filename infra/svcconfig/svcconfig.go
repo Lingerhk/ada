@@ -55,6 +55,10 @@ const (
 	redisDialTimeout = 15 * time.Second
 	redisIOTimeout   = 10 * time.Second
 	redisPoolSize    = 100
+	// redisConnectTimeout bounds the startup PING: go-redis retries dials
+	// internally, so without a deadline an unreachable server can stall
+	// start-up for minutes.
+	redisConnectTimeout = redisDialTimeout + redisIOTimeout
 
 	logMaxSizeMB  = 30
 	logMaxBackups = 2
@@ -122,7 +126,9 @@ func NewRedisClient(ctx context.Context, cfg RedisCfg) (*redis.Client, error) {
 	opt.PoolSize = redisPoolSize
 
 	rdb := redis.NewClient(opt)
-	if err := rdb.Ping(ctx).Err(); err != nil {
+	pingCtx, cancel := context.WithTimeout(ctx, redisConnectTimeout)
+	defer cancel()
+	if err := rdb.Ping(pingCtx).Err(); err != nil {
 		_ = rdb.Close()
 		return nil, fmt.Errorf("ping redis: %w", err)
 	}

@@ -54,7 +54,7 @@ For a standard Docker-based deployment, use the compose assets under `script/doc
 
 ### Start With Existing Images
 
-If the required images are already available on the host:
+If the required images are already available on the host (the image tag is `ADA_VERSION` in `script/docker/.env`, generated from the root `VERSION` file by `build.sh`):
 
 ```bash
 cd script/docker
@@ -88,6 +88,8 @@ If your checkout path is different from the build script's default workspace lay
 ## Local Development
 
 ### Backend
+
+Go 1.26 or newer is required (see the `go` directive in `go.mod`).
 
 ```bash
 cd ada

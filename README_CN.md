@@ -54,6 +54,8 @@ ADAegis 将采集、检测、风险评估、告警处置和运维流程整合到
 
 ### 使用已有镜像启动
 
+镜像 tag 由 `script/docker/.env` 中的 `ADA_VERSION` 决定，该值由 `build.sh` 从仓库根目录的 `VERSION` 文件生成。
+
 如果目标主机已经具备所需镜像：
 
 ```bash
@@ -88,6 +90,8 @@ docker compose ps
 ## 本地开发
 
 ### 后端
+
+需要 Go 1.26 及以上版本（见 `go.mod` 中的 `go` 指令）。
 
 ```bash
 cd ada
