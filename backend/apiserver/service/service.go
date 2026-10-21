@@ -15,7 +15,6 @@ import (
 	"slices"
 	"strconv"
 	"strings"
-	"sync"
 	"syscall"
 	"time"
 
@@ -58,18 +57,6 @@ var (
 		"/ada.ADA/GetLicence",
 		"/ada.ADA/UpdateLicence",
 	}
-
-	// accessKeyActiveTmCache tracks the last time ActiveTm was updated for each AccessKey ID
-	// to avoid updating the database on every request (throttled to 5 minutes)
-	accessKeyActiveTmCache    = make(map[string]time.Time)
-	accessKeyActiveTmMutex    sync.RWMutex
-	accessKeyActiveTmThrottle = 5 * time.Minute
-
-	// userActiveTmCache tracks the last time ActiveTm was updated for each User
-	// to avoid updating the database on every request (throttled to 5 minutes)
-	userActiveTmCache    = make(map[string]time.Time)
-	userActiveTmMutex    sync.RWMutex
-	userActiveTmThrottle = 5 * time.Minute
 )
 
 // ADA grpc service struct
@@ -83,6 +70,22 @@ type GrpcService struct {
 	env      *config.Env
 	server   *grpc.Server
 	handlers []grpc.UnaryServerInterceptor
+
+	// throttles ActiveTm writes for users / access keys (shared by the clones
+	// created with withContext)
+	userActiveTm      *activeTmTracker
+	accessKeyActiveTm *activeTmTracker
+}
+
+// newGrpcServiceCore returns a GrpcService able to authenticate requests
+// (JWT / access key) without a listening gRPC server, as used by the MCP
+// endpoint.
+func newGrpcServiceCore(env *config.Env) *GrpcService {
+	return &GrpcService{
+		env:               env,
+		userActiveTm:      newActiveTmTracker(activeTmThrottle),
+		accessKeyActiveTm: newActiveTmTracker(activeTmThrottle),
+	}
 }
 
 // getLastLoginExpireTime gets the last login expire time from Redis
@@ -93,17 +96,7 @@ func (s *GrpcService) getLastLoginExpireTime(ctx context.Context, username strin
 
 // updateUserActiveTm updates the User's ActiveTm field with throttling
 func (s *GrpcService) updateUserActiveTm(username string) error {
-	shouldUpdate := false
-
-	userActiveTmMutex.RLock()
-	lastUpdate, exists := userActiveTmCache[username]
-	userActiveTmMutex.RUnlock()
-
-	if !exists || time.Since(lastUpdate) >= userActiveTmThrottle {
-		shouldUpdate = true
-	}
-
-	if shouldUpdate {
+	if s.userActiveTm.shouldUpdate(username) {
 		user, err := server.GetUser(s.env, username)
 		if err != nil {
 			logger.Errorf("Failed to find user before updating active_tm for %s: %v", username, err)
@@ -123,10 +116,7 @@ func (s *GrpcService) updateUserActiveTm(username string) error {
 			return err
 		}
 
-		// Update cache
-		userActiveTmMutex.Lock()
-		userActiveTmCache[username] = now
-		userActiveTmMutex.Unlock()
+		s.userActiveTm.mark(username, now)
 	}
 
 	return nil
@@ -157,17 +147,7 @@ func (s *GrpcService) authenticateByAccessKey(secretHash string) (*util.UserClai
 
 	// Update ActiveTm with throttling (only update if last update was more than 5 minutes ago)
 	accessKeyID := accessKey.ID.Hex()
-	shouldUpdate := false
-
-	accessKeyActiveTmMutex.RLock()
-	lastUpdate, exists := accessKeyActiveTmCache[accessKeyID]
-	accessKeyActiveTmMutex.RUnlock()
-
-	if !exists || time.Since(lastUpdate) >= accessKeyActiveTmThrottle {
-		shouldUpdate = true
-	}
-
-	if shouldUpdate {
+	if s.accessKeyActiveTm.shouldUpdate(accessKeyID) {
 		// Update the ActiveTm field in database
 		now := time.Now()
 		accessKey.ActiveTm = now
@@ -176,10 +156,7 @@ func (s *GrpcService) authenticateByAccessKey(secretHash string) (*util.UserClai
 			logger.Warnf("Failed to update AccessKey ActiveTm for %s: %v", accessKeyID, err)
 			// Don't fail authentication if we can't update the timestamp
 		} else {
-			// Update cache
-			accessKeyActiveTmMutex.Lock()
-			accessKeyActiveTmCache[accessKeyID] = now
-			accessKeyActiveTmMutex.Unlock()
+			s.accessKeyActiveTm.mark(accessKeyID, now)
 		}
 	}
 
@@ -213,8 +190,7 @@ func New(env *config.Env, opt ...grpc.ServerOption) *GrpcService {
 		Timeout:               time.Second * 20,
 	})
 
-	s := new(GrpcService)
-	s.env = env
+	s := newGrpcServiceCore(env)
 
 	lang := getSysLanguage(env)
 
@@ -521,9 +497,16 @@ func eventMasking(fullMethod string, data string) string {
 	return data
 }
 
+var regUsername = regexp.MustCompile(`username:"(.*?)"`)
+
+// getRegUser extracts the username from a textproto-formatted request; it
+// returns "" when the request carries no username field.
 func getRegUser(data string) string {
-	reg := regexp.MustCompile(`username:"(.*?)"`)
-	return reg.FindStringSubmatch(data)[1]
+	m := regUsername.FindStringSubmatch(data)
+	if len(m) < 2 {
+		return ""
+	}
+	return m[1]
 }
 
 // proto参数校验: 使用 protovalidate 执行 ada.proto 中声明的 (buf.validate.field) 规则

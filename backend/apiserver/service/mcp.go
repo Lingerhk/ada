@@ -48,8 +48,9 @@ func NewMCPHTTPHandler(env *config.Env) http.Handler {
 		JSONResponse: true,
 	})
 
+	core := newGrpcServiceCore(env)
 	return http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
-		ctx, err := authenticateMCPRequest(req, env)
+		ctx, err := authenticateMCPRequest(req, core)
 		if err != nil {
 			logger.Warnf("mcp auth failed: %v", err)
 			http.Error(w, "unauthorized", http.StatusUnauthorized)
@@ -59,14 +60,14 @@ func NewMCPHTTPHandler(env *config.Env) http.Handler {
 	})
 }
 
-func authenticateMCPRequest(req *http.Request, env *config.Env) (context.Context, error) {
+func authenticateMCPRequest(req *http.Request, core *GrpcService) (context.Context, error) {
 	token, err := bearerToken(req.Header.Get(_headerAuthz))
 	if err != nil {
 		return nil, err
 	}
 
 	ctx := req.Context()
-	gs := (&GrpcService{env: env}).withContext(ctx)
+	gs := core.withContext(ctx)
 	claim, err := util.ParseToken(token, common.JWT_SECRET)
 	if err != nil {
 		if !errors.Is(err, util.ErrInvalidJwtToken) {

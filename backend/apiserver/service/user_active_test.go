@@ -42,16 +42,9 @@ func (s *userActiveMongoStub) UpdateRaw(ctx context.Context, name string, query,
 	return nil
 }
 
-func resetUserActiveTmCache() {
-	userActiveTmMutex.Lock()
-	userActiveTmCache = make(map[string]time.Time)
-	userActiveTmMutex.Unlock()
-}
-
 func TestUpdateUserActiveTmRequiresExistingUser(t *testing.T) {
-	resetUserActiveTmCache()
 	mongoStub := &userActiveMongoStub{}
-	svc := (&GrpcService{env: &config.Env{MongoCli: mongoStub}}).withContext(context.Background())
+	svc := newGrpcServiceCore(&config.Env{MongoCli: mongoStub}).withContext(context.Background())
 
 	if err := svc.updateUserActiveTm("admin"); err == nil {
 		t.Fatal("expected missing user to return an error")
@@ -65,12 +58,11 @@ func TestUpdateUserActiveTmRequiresExistingUser(t *testing.T) {
 }
 
 func TestUpdateUserActiveTmUpdatesExistingUserByID(t *testing.T) {
-	resetUserActiveTmCache()
 	mongoStub := &userActiveMongoStub{
 		userExists: true,
 		user:       &model.User{ID: 42, UserName: "adaegis"},
 	}
-	svc := (&GrpcService{env: &config.Env{MongoCli: mongoStub}}).withContext(context.Background())
+	svc := newGrpcServiceCore(&config.Env{MongoCli: mongoStub}).withContext(context.Background())
 
 	if err := svc.updateUserActiveTm("adaegis"); err != nil {
 		t.Fatalf("expected active_tm update to succeed, got %v", err)
@@ -84,4 +76,25 @@ func TestUpdateUserActiveTmUpdatesExistingUserByID(t *testing.T) {
 	if mongoStub.updateID != int32(42) {
 		t.Fatalf("expected update by numeric user id 42, got %v", mongoStub.updateID)
 	}
+}
+
+func TestActiveTmTrackerThrottles(t *testing.T) {
+	tr := newActiveTmTracker(time.Hour)
+	if !tr.shouldUpdate("u") {
+		t.Fatal("first access must update")
+	}
+	tr.mark("u", time.Now())
+	if tr.shouldUpdate("u") {
+		t.Fatal("second access within throttle must not update")
+	}
+	tr.mark("u", time.Now().Add(-2*time.Hour))
+	if !tr.shouldUpdate("u") {
+		t.Fatal("stale mark must update again")
+	}
+
+	var nilTracker *activeTmTracker
+	if !nilTracker.shouldUpdate("x") {
+		t.Fatal("nil tracker always updates")
+	}
+	nilTracker.mark("x", time.Now()) // must not panic
 }
