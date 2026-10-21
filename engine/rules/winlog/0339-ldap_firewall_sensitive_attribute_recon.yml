@@ -1,0 +1,37 @@
+title: LDAP Firewall Audited Sensitive Attribute Access
+id: winlog-0339
+status: experimental
+rule_origin: internal
+description: Detects the LDAP Firewall auditing an LDAP query that touches attributes commonly abused for recon or credential
+  theft - admincount and servicePrincipalName (BloodHound / Kerberoasting), ms-Mcs-AdmPwd (LAPS), and msDS-KeyCredentialLink
+  (Shadow Credentials). The LDAP Firewall must be configured to audit these attributes for the event to be produced.
+references:
+- https://github.com/zeronetworks/ldapfw
+- https://attack.mitre.org/techniques/T1087/
+- https://attack.mitre.org/techniques/T1558/003/
+author: ADA default rules
+date: 2026/05/05
+modified: 2026/05/05
+tags:
+- TA0007
+- attack.t1087
+- attack.discovery
+logsource: winlog
+detection:
+  selection:
+    Channel: LDAPFW
+  sensitive_attr:
+    Message|contains:
+    - admincount
+    - ms-mcs-admpwd
+    - msds-keycredentiallink
+    - serviceprincipalname
+  condition: selection and sensitive_attr
+fields:
+- Hostname
+- Message
+unique_fields:
+- Hostname
+level: medium
+falsepositives:
+- Legitimate administrative tooling or directory-synchronisation that reads these attributes.

@@ -1,0 +1,28 @@
+title: RPC Firewall Protection Removed
+id: winlog-0336
+status: experimental
+rule_origin: internal
+description: Detects the RPC Firewall writing a protection-removed event (Application/RPCFW event ID 2). On a protected
+  domain controller this means RPC call auditing/blocking was torn down, which can indicate an attacker disabling the
+  firewall before lateral movement or that the sensor stopped the plugin. Correlate with an expected stop from ADAegis.
+references:
+- https://github.com/zeronetworks/rpcfirewall
+author: ADA default rules
+date: 2026/05/05
+modified: 2026/05/05
+tags:
+- TA0005
+- attack.defense_evasion
+- attack.t1562
+logsource: winlog
+detection:
+  selection:
+    Channel: RPCFW
+    EventID: 2
+  condition: selection
+fields:
+- Hostname
+- Message
+level: high
+falsepositives:
+- Planned RPC Firewall stop or reconfiguration performed through ADAegis.

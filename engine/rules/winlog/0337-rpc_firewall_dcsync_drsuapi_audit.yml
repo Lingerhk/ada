@@ -1,0 +1,35 @@
+title: RPC Firewall Audited DRSUAPI Replication (Possible DCSync)
+id: winlog-0337
+status: experimental
+rule_origin: internal
+description: Detects the RPC Firewall auditing a remote RPC server call to the DRSUAPI interface
+  (e3514235-4b06-11d1-ab04-00c04fc2dcd2), which exposes DRSGetNCChanges used by DCSync credential-replication attacks.
+  Legitimate domain-controller replication also uses this interface, so restrict to calls from hosts that are not domain
+  controllers.
+references:
+- https://github.com/zeronetworks/rpcfirewall
+- https://attack.mitre.org/techniques/T1003/006/
+author: ADA default rules
+date: 2026/05/05
+modified: 2026/05/05
+tags:
+- TA0006
+- attack.t1003.006
+- attack.credential_access
+logsource: winlog
+detection:
+  selection:
+    Channel: RPCFW
+    EventID: 3
+    Message|contains: e3514235-4b06-11d1-ab04-00c04fc2dcd2
+  filter_dc:
+    Message|contains: '%domain_controllers_ips%'
+  condition: selection and not filter_dc
+fields:
+- Hostname
+- Message
+unique_fields:
+- Hostname
+level: high
+falsepositives:
+- Domain-controller-to-domain-controller replication from a source not listed in domain_controllers_ips.
