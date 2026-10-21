@@ -5,9 +5,10 @@ import (
 	"ada/scanner/common"
 	"ada/scanner/config"
 	"context"
-	_ "embed"
+	"embed"
 	"errors"
 	"fmt"
+	"io/fs"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -18,11 +19,26 @@ import (
 	logger "github.com/sirupsen/logrus"
 )
 
-//go:embed plugin_enc.tar.gz
-var pluginCnt []byte
+// assets holds the encrypted runtime payloads produced by `make -C scanner
+// package-runtime`. Embedding the directory (instead of the two files) keeps
+// `go build ./...` working on a checkout without the payloads.
+//
+//go:embed assets
+var assets embed.FS
 
-//go:embed venv_enc.tar.gz
-var venvCnt []byte
+const (
+	pluginAssetName = "assets/plugin_enc.tar.gz"
+	venvAssetName   = "assets/venv_enc.tar.gz"
+)
+
+// readAsset returns the embedded payload, or nil when it was not bundled.
+func readAsset(name string) []byte {
+	data, err := fs.ReadFile(assets, name)
+	if err != nil {
+		return nil
+	}
+	return data
+}
 
 type ScanSvc struct {
 	ctx       context.Context
@@ -50,8 +66,10 @@ func (s *ScanSvc) Setup() error {
 
 	pluginFile := filepath.Join(tmpDir, "plugin_enc.tar.gz")
 	venvFile := filepath.Join(tmpDir, "venv_enc.tar.gz")
+	pluginCnt := readAsset(pluginAssetName)
+	venvCnt := readAsset(venvAssetName)
 	if len(pluginCnt) < 1024 {
-		return errors.New("embedded scanner package plugin_enc.tar.gz is not bundled")
+		return errors.New("embedded scanner package plugin_enc.tar.gz is not bundled (run `make -C scanner package-runtime` before building)")
 	}
 	if err := os.WriteFile(pluginFile, pluginCnt, 0644); err != nil {
 		logger.Errorf("write enc file err:%v", err)

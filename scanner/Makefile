@@ -8,8 +8,8 @@ PLUGINS_DIR ?= plugins
 PLUGIN_CATEGORIES ?= baseline,leak,weakpwd
 PLUGIN_MODE ?= missing
 PLUGIN_IDS ?=
-PLUGIN_ENC_OUT ?= worker/plugin_enc.tar.gz
-VENV_ENC_OUT ?= worker/venv_enc.tar.gz
+PLUGIN_ENC_OUT ?= worker/assets/plugin_enc.tar.gz
+VENV_ENC_OUT ?= worker/assets/venv_enc.tar.gz
 PYLIBS_SITE_PACKAGES ?= pylibs/site-packages
 PYLIBS_PACKAGES ?= utillib utillib-1.0.0.dist-info
 PYLIBS_LEGACY_PACKAGES ?= common config model
@@ -42,7 +42,7 @@ help:
 	@echo "  make compile-plugins-docker       Build Python 3.7 image and compile missing plugins"
 	@echo "  make compile-plugins-dry-run      Show plugins that would be compiled"
 	@echo "  make compile-plugins-all          Rebuild all plugin .so files"
-	@echo "  make package-plugins              Repack plugins as worker/plugin_enc.tar.gz"
+	@echo "  make package-plugins              Repack plugins as worker/assets/plugin_enc.tar.gz"
 	@echo "  make package-venv                 Repack venv with pylibs/site-packages"
 	@echo "  make package-runtime              Repack plugin and venv payloads"
 	@echo "  make compile-and-package          Compile missing plugins, then repack payloads"

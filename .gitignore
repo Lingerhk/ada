@@ -30,8 +30,8 @@ agent/sensor/tools/packet_forward.go
 agent/sensor/tools/crypt_cfg.go
 agent/sensor/tools/pkg_sensor.go
 
-scanner/worker/plugin_enc.tar.gz
-scanner/worker/venv_enc.tar.gz
+scanner/worker/assets/plugin_enc.tar.gz
+scanner/worker/assets/venv_enc.tar.gz
 scanner/worker/.sc
 scanner/worker/.venv
 scanner/plugins

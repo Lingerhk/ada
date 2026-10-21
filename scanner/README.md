@@ -4,8 +4,8 @@
 
 The scanner binary embeds two encrypted runtime archives:
 
-- `worker/plugin_enc.tar.gz`: scanner plugins only. It expands to `/var/lib/scada/.sc/plugins`.
-- `worker/venv_enc.tar.gz`: Python runtime and shared libraries. It expands to `/var/lib/scada/.venv`.
+- `worker/assets/plugin_enc.tar.gz`: scanner plugins only. It expands to `/var/lib/scada/.sc/plugins`.
+- `worker/assets/venv_enc.tar.gz`: Python runtime and shared libraries. It expands to `/var/lib/scada/.venv`.
 
 Plugin code is loaded by the Go scanner through Python 3.7:
 
@@ -68,8 +68,8 @@ make package-runtime
 
 This runs:
 
-- `package-plugins`: encrypts `plugins/` into `worker/plugin_enc.tar.gz`.
-- `package-venv`: decrypts `worker/venv_enc.tar.gz`, removes legacy top-level `common/config/model` packages, overlays `PYLIBS_PACKAGES`, and re-encrypts it.
+- `package-plugins`: encrypts `plugins/` into `worker/assets/plugin_enc.tar.gz`.
+- `package-venv`: decrypts `worker/assets/venv_enc.tar.gz`, removes legacy top-level `common/config/model` packages, overlays `PYLIBS_PACKAGES`, and re-encrypts it.
 
 By default only these packages are overlaid into the Python runtime:
 
