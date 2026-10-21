@@ -136,7 +136,7 @@ sequenceDiagram
   TS->>Redis: Send Machinery task
   TW->>Redis: Consume ada:tasker:task_queue
   TW->>Mongo: create tb_scan_tasks / tb_scan_subtasks
-  TW->>Redis: send Celery compatible scanner task
+  TW->>Redis: send machinery task to scanner queue
   Scanner->>Redis: consume tasks.baseline/leak/weakpwd
   Scanner->>Mongo: update subtask result and task progress
 ```
@@ -146,4 +146,4 @@ sequenceDiagram
 - apiserver 只校验参数和发起内部任务。
 - task_worker 负责把业务任务拆成子任务。
 - scanner 才是真正运行插件的地方。
-- task 状态同时涉及 Machinery result backend、MongoDB 任务表和 scanner Celery 兼容结果。
+- task 状态同时涉及 Machinery result backend（tasker 与 scanner 两个队列）和 MongoDB 任务表。

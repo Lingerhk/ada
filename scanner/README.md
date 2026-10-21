@@ -110,7 +110,7 @@ Expected startup log:
 
 ```text
 registered plugins=179; templates refreshed
-scanner(scgo) starting celery workers=8
+scanner(scgo) starting machinery workers=8 queue=ada:scanner:task_queue
 ```
 
 MongoDB should show:

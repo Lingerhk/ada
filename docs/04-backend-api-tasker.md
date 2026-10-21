@@ -136,7 +136,7 @@ sequenceDiagram
   TS->>Redis: Send Machinery task
   TW->>Redis: Consume ada:tasker:task_queue
   TW->>Mongo: create tb_scan_tasks / tb_scan_subtasks
-  TW->>Redis: send Celery compatible scanner task
+  TW->>Redis: send machinery task to scanner queue
   Scanner->>Redis: consume tasks.baseline/leak/weakpwd
   Scanner->>Mongo: update subtask result and task progress
 ```
@@ -146,4 +146,4 @@ Key points:
 - apiserver only validates parameters and starts internal tasks.
 - task_worker splits business tasks into subtasks.
 - scanner is where plugins actually run.
-- Task state spans the Machinery result backend, MongoDB task tables, and scanner Celery-compatible results.
+- Task state spans the Machinery result backend (tasker and scanner queues) and the MongoDB task tables.

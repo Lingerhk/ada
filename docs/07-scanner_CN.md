@@ -9,7 +9,7 @@ flowchart LR
   API[apiserver] -->|ADATask gRPC| TS[task_server]
   TS -->|Machinery task| TW[task_worker]
   TW -->|create task/subtask| Mongo[(MongoDB)]
-  TW -->|Celery compatible task| Redis[(Redis)]
+  TW -->|machinery task, scanner queue| Redis[(Redis)]
   Scanner[scanner / scgo] -->|consume task| Redis
   Scanner -->|read domain/template/plugin| Mongo
   Scanner -->|run Plugin.verify| Python[Python plugin runtime]
@@ -32,11 +32,11 @@ flowchart LR
 3. license 和随机数校验通过后，解密并释放内嵌扫描包。
 4. 初始化 `scgo.Service`。
 5. 扫描插件和模板注册到 MongoDB。
-6. 启动 Celery 兼容 worker。
+6. 启动 machinery worker，消费 `ada:scanner:task_queue` 队列。
 
 ## scgo 的职责
 
-`scanner/scgo` 是扫描 worker 的 Go 实现，替代原先 Python Celery worker 的任务消费和状态管理，但插件执行仍然依赖 Python：
+`scanner/scgo` 是扫描 worker 的 Go 实现，替代原先 Python Celery worker 的任务消费和状态管理（任务现在经由与 tasker 相同的 machinery/Redis 队列下发，见 `infra/taskq`），但插件执行仍然依赖 Python：
 
 - Go 负责消费 Redis task、更新 MongoDB 任务状态、推送通知、注册插件和模板。
 - Python 只负责导入受保护的 `.so` 插件并执行 `Plugin.verify()`。
@@ -118,7 +118,7 @@ scanner 给插件的主要上下文：
 - `dc_conf`：域控地址、主机名、平台、LDAP 配置等。
 - `meta_data`：插件配置元数据。
 - `env.mongo_conf`：插件访问 MongoDB 所需配置。
-- `_task_id`：用于 Celery 兼容和状态追踪。
+- `_task_id`：扫描子任务 ID，来自 machinery payload，用于状态追踪。
 
 baseline 使用在线 DC；leak 使用指定 hostname 的 DC；weakpwd 选择 SMB `445` 可用的 DC。
 

@@ -27,7 +27,7 @@ Numbered documents are available in both English and Chinese. English documents 
 | Task Server | `backend/tasker/cmd/server/main.go` | gRPC task interface, cron, syslog/pktlog receiving, Redis pubsub handling |
 | Task Worker | `backend/tasker/cmd/worker/main.go` | Machinery task executor for sync, scan orchestration, notifications, and exports |
 | Engine | `engine/cmd/engine.go` | Sigma single-event matching and Flow multi-event correlation |
-| Scanner | `scanner/cmd/scanner.go` | Active scanner worker that consumes Celery-compatible tasks and runs Python plugins |
+| Scanner | `scanner/cmd/scanner.go` | Active scanner worker that consumes machinery tasks and runs Python plugins |
 | Sensor | `agent/sensor/cmd/sensor.go` | Windows service for registration, plugin control, collection, status reporting, and self-upgrade |
 | Zeek | `zeek/plugins` | TrafficReceiver packet receiver and RedisWriter log writer plugins |
 

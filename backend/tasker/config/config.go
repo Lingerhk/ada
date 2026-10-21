@@ -34,7 +34,6 @@ type RedisCfg struct {
 	Active      int    `yaml:"Active"`
 	Idle        int    `yaml:"Idle"`
 	IdleTimeout int    `yaml:"IdleTimeout"`
-	AddrTmp     string // Temporary address storage
 }
 
 type MongodbCfg struct {
@@ -106,8 +105,6 @@ func InitRedisClient(setting *Config) (*redis.Client, error) {
 	if err != nil {
 		return nil, err
 	}
-
-	setting.Redis.AddrTmp = fmt.Sprintf("%s@%s", opt.Password, opt.Addr)
 
 	opt.DialTimeout = 15 * time.Second
 	opt.ReadTimeout = 15 * time.Second

@@ -119,7 +119,7 @@ func (s *ScanSvc) Stop() {
 func (s *ScanSvc) Worker() {
 	defer s.clean()
 
-	// Default implementation: Go celery worker + Python plugin runtime (.so)
+	// Default implementation: Go machinery worker + Python plugin runtime (.so)
 	env := &config.Env{Cfg: s.cfg, RedisCli: s.redisCli, MongoCli: s.mongoCli}
 	svc, err := scgo.NewService(env, s.pyRunPath)
 	if err != nil {

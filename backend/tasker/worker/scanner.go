@@ -3,11 +3,10 @@ package worker
 import (
 	"ada/backend/common"
 	"ada/backend/model"
-	"ada/infra/gocelery"
+	"ada/infra/taskq"
 	utime "ada/infra/time"
 	"context"
 	"encoding/json"
-	"fmt"
 	logger "github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/v2/bson"
 	"slices"
@@ -362,20 +361,25 @@ func (w *Worker) getAssetUserNameList(domain string) ([]string, error) {
 	return userNames, nil
 }
 
+// sendTaskToScanner dispatches a scan sub-task to the scanner queue through
+// the shared machinery server.
 func (w *Worker) sendTaskToScanner(taskType, taskId string, kwargs map[string]any) {
-	ctx := context.Background()
-	taskCli, _ := gocelery.NewCeleryClient(
-		gocelery.NewRedisBroker(ctx, w.env.RedisCli),
-		gocelery.NewRedisBackend(ctx, w.env.RedisCli),
-		5,
-	)
-
-	taskName := fmt.Sprintf("tasks.%s.execute_%s", taskType, taskType)
-	taskRet, err := taskCli.DelayKwargs(taskName, taskId, kwargs)
-	if err != nil {
-		logger.Errorf("send task %s to scanner err:%v", taskName, err)
+	if w.taskSrv == nil {
+		logger.Errorf("send task %s(%s) to scanner: task server not configured", taskType, taskId)
 		return
 	}
 
-	logger.Debugf("send task %s to scanner, task_uuid:%s", taskName, taskRet.TaskID)
+	sig, err := taskq.NewScannerSignature(taskType, taskId, kwargs)
+	if err != nil {
+		logger.Errorf("send task %s(%s) to scanner err:%v", taskType, taskId, err)
+		return
+	}
+
+	res, err := w.taskSrv.SendTaskWithContext(w.env.MongoContext(), sig)
+	if err != nil {
+		logger.Errorf("send task %s to scanner err:%v", sig.Name, err)
+		return
+	}
+
+	logger.Debugf("send task %s to scanner, task_uuid:%s", sig.Name, res.Signature.UUID)
 }

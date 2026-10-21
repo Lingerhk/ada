@@ -19,11 +19,8 @@ import (
 	"syscall"
 	"time"
 
+	"ada/infra/taskq"
 	"github.com/RichardKnop/machinery/v2"
-	redisbackend "github.com/RichardKnop/machinery/v2/backends/redis"
-	redisbroker "github.com/RichardKnop/machinery/v2/brokers/redis"
-	mconfig "github.com/RichardKnop/machinery/v2/config"
-	eagerlock "github.com/RichardKnop/machinery/v2/locks/eager"
 	"github.com/golang-jwt/jwt/v5"
 	logger "github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
@@ -73,38 +70,24 @@ func (s *TaskServer) withContext(ctx context.Context) *TaskServer {
 	return &clone
 }
 
+// MachineryServer builds the tasker's machinery server (Redis broker/backend
+// via infra/taskq) with every tasker task registered. The same server is used
+// by the worker to dispatch scan jobs to the scanner queue.
 func MachineryServer(env *config.Env, taskQueue string) (*machinery.Server, error) {
-	cnf := &mconfig.Config{
-		DefaultQueue:    taskQueue,
-		ResultsExpireIn: 12 * 3600,
-		NoUnixSignals:   true,
-		Redis: &mconfig.RedisConfig{
-			MaxIdle:                3,
-			IdleTimeout:            240,
-			ReadTimeout:            15,
-			WriteTimeout:           15,
-			ConnectTimeout:         15,
-			NormalTasksPollPeriod:  1000,
-			DelayedTasksPollPeriod: 500,
-		},
-	}
-
-	broker := redisbroker.NewGR(cnf, []string{env.Cfg.Redis.AddrTmp}, 0)
-	backend := redisbackend.NewGR(cnf, []string{env.Cfg.Redis.AddrTmp}, 0)
-	lock := eagerlock.New()
-
-	server := machinery.NewServer(cnf, broker, backend, lock)
-
-	w := worker.New(env)
-	err := server.RegisterTasks(tasks.GetTaskMap(w))
+	server, err := taskq.NewServer(env.Cfg.Redis.URI, taskQueue)
 	if err != nil {
 		return nil, err
 	}
-	return server, err
+
+	w := worker.New(env).WithTaskServer(server)
+	if err := server.RegisterTasks(tasks.GetTaskMap(w)); err != nil {
+		return nil, err
+	}
+	return server, nil
 }
 
 func New(env *config.Env) (*TaskService, error) {
-	taskSrv, err := MachineryServer(env, "ada:tasker:task_queue")
+	taskSrv, err := MachineryServer(env, taskq.TaskerQueue)
 	if err != nil {
 		return nil, err
 	}

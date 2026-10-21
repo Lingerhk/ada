@@ -1,9 +1,9 @@
 # scanner/scgo
 
-`scgo` 是 scanner 模块的 Go 实现（替代原先的 Python celery worker），但**插件执行仍然使用 Python 来 import `main.so`**（CPython 扩展，用于源码保护）。
+`scgo` 是 scanner 模块的 Go 实现（替代原先的 Python celery worker，任务经 machinery/Redis 队列下发），但**插件执行仍然使用 Python 来 import `main.so`**（CPython 扩展，用于源码保护）。
 
 核心思路：
-- **Go**：负责从 Redis 消费 celery 任务、更新 MongoDB 的任务/子任务状态、推送通知消息、注册插件/模板。
+- **Go**：负责从 Redis（machinery `ada:scanner:task_queue`）消费任务、更新 MongoDB 的任务/子任务状态、推送通知消息、注册插件/模板。
 - **Python**：仅作为“插件运行时”，通过 `import plugins.xxx.plugin_xxx.main` 加载 `.so` 并执行 `Plugin.verify()`。
 
 启用方式（建议在容器内运行，确保 Python 3.7 兼容 `.so`）：

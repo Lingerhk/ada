@@ -9,7 +9,7 @@ flowchart LR
   API[apiserver] -->|ADATask gRPC| TS[task_server]
   TS -->|Machinery task| TW[task_worker]
   TW -->|create task/subtask| Mongo[(MongoDB)]
-  TW -->|Celery compatible task| Redis[(Redis)]
+  TW -->|machinery task, scanner queue| Redis[(Redis)]
   Scanner[scanner / scgo] -->|consume task| Redis
   Scanner -->|read domain/template/plugin| Mongo
   Scanner -->|run Plugin.verify| Python[Python plugin runtime]
@@ -32,11 +32,11 @@ Startup flow:
 3. After license and random value validation pass, decrypt and release embedded scan packages.
 4. Initialize `scgo.Service`.
 5. Register scan plugins and templates into MongoDB.
-6. Start the Celery-compatible worker.
+6. Start the machinery worker on the `ada:scanner:task_queue` queue.
 
 ## scgo Responsibilities
 
-`scanner/scgo` is the Go implementation of the scan worker. It replaces the previous Python Celery worker for task consumption and state management, while plugin execution still depends on Python:
+`scanner/scgo` is the Go implementation of the scan worker. It replaces the previous Python Celery worker for task consumption and state management (tasks now arrive through the same machinery/Redis queue the tasker uses, see `infra/taskq`), while plugin execution still depends on Python:
 
 - Go consumes Redis tasks, updates MongoDB task state, pushes notifications, and registers plugins and templates.
 - Python only imports protected `.so` plugins and executes `Plugin.verify()`.
@@ -118,7 +118,7 @@ scanner provides plugins with the main context below:
 - `dc_conf`: domain controller address, hostname, platform, LDAP configuration, and related data.
 - `meta_data`: plugin configuration metadata.
 - `env.mongo_conf`: MongoDB configuration needed by plugins.
-- `_task_id`: Celery compatibility and state tracking.
+- `_task_id`: the scan sub-task id, taken from the machinery payload for state tracking.
 
 baseline uses online DCs; leak uses the DC with the specified hostname; weakpwd selects a DC where SMB `445` is reachable.
 

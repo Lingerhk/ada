@@ -27,7 +27,7 @@
 | Task Server | `backend/tasker/cmd/server/main.go` | gRPC 任务接口、cron、syslog/pktlog 接收、Redis pubsub 处理 |
 | Task Worker | `backend/tasker/cmd/worker/main.go` | Machinery 任务执行器，执行同步、扫描编排、通知、导出 |
 | Engine | `engine/cmd/engine.go` | Sigma 单事件匹配和 Flow 多事件关联 |
-| Scanner | `scanner/cmd/scanner.go` | 主动扫描 worker，消费 Celery 兼容任务并运行 Python 插件 |
+| Scanner | `scanner/cmd/scanner.go` | 主动扫描 worker，消费 machinery 任务并运行 Python 插件 |
 | Sensor | `agent/sensor/cmd/sensor.go` | Windows 服务，负责注册、插件控制、采集、状态上报和自升级 |
 | Zeek | `zeek/plugins` | TrafficReceiver 包接收插件和 RedisWriter 日志写入插件 |
 

@@ -1,8 +1,6 @@
 package scgo
 
 import (
-	"ada/infra/gocelery"
-	"context"
 	"encoding/json"
 	"fmt"
 	"strings"
@@ -15,16 +13,6 @@ type BaselineTask struct {
 	svc    *Service
 	kwargs map[string]any
 	id     string
-}
-
-func (t *BaselineTask) WithContext(ctx context.Context) gocelery.CeleryTask {
-	if t == nil {
-		return nil
-	}
-
-	clone := *t
-	clone.svc = t.svc.WithContext(ctx)
-	return &clone
 }
 
 func (t *BaselineTask) ParseKwargs(kwargs map[string]any) error {
@@ -128,7 +116,7 @@ func (t *BaselineTask) RunTask() (any, error) {
 		}
 	}
 
-	// return a json string for compatibility with celery result backend consumers
+	// return a json string so the result is storable in the machinery result backend
 	b, _ := json.Marshal(pluginResult)
 	return string(b), nil
 }

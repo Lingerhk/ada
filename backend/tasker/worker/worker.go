@@ -16,11 +16,18 @@ import (
 )
 
 type Worker struct {
-	env *config.Env
+	env     *config.Env
+	taskSrv *machinery.Server // used to dispatch jobs to other queues (scanner)
 }
 
 func New(env *config.Env) *Worker {
-	return &Worker{env}
+	return &Worker{env: env}
+}
+
+// WithTaskServer sets the machinery server used by sendTaskToScanner.
+func (w *Worker) WithTaskServer(srv *machinery.Server) *Worker {
+	w.taskSrv = srv
+	return w
 }
 
 func (w *Worker) WithContext(ctx context.Context) *Worker {

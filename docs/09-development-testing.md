@@ -133,7 +133,7 @@ Actual file names depend on `ProjectName` and the tasker moduleName. During trou
 2. Check whether `ada:tasker:task_queue` has Machinery task backlog.
 3. Check whether task_worker creates `tb_scan_tasks` and `tb_scan_subtasks`.
 4. Check whether scanner starts the scgo worker.
-5. Check whether the Celery-compatible task name is `tasks.<type>.execute_<type>`.
+5. Check whether the machinery task name is `scanner.<type>` (`infra/taskq`) and the message is on `ada:scanner:task_queue`.
 6. Check Python plugin runtime version and `.so` compatibility.
 
 ### Sensor Startup Failure

@@ -25,7 +25,7 @@ flowchart LR
   TaskServer -->|Machinery queue| TaskWorker[task_worker]
   TaskWorker --> Redis
   TaskWorker --> Mongo
-  TaskWorker -->|Celery compatible tasks| Scanner[scanner / scgo]
+  TaskWorker -->|machinery tasks (scanner queue)| Scanner[scanner / scgo]
 
   Sensor[Windows Sensor] -->|state / command response / TLS Redis| Redis
   Sensor -->|winlog syslog UDP 9092| TaskServer
@@ -49,10 +49,10 @@ flowchart LR
 | task_server | `backend/tasker/cmd/server` | Process inside the `ada_backend` container | Internal gRPC task entrypoint, cron scheduling, syslog receiving, pktlog pubsub consumption, ES status monitoring |
 | task_worker | `backend/tasker/cmd/worker` | Process inside the `ada_backend` container | Executes Machinery async tasks, including domain sync, LDAP asset sync, rule sync, scan orchestration, notifications, and report export |
 | engine | `engine` | `ada_engine` container | Consumes log queues, runs Sigma rule matching and Flow correlation, and produces activity/event alerts |
-| scanner | `scanner` | `ada_scanner` container | Consumes Celery-compatible scan tasks and invokes Python `.so` plugins for baseline, leak, and weak-password checks |
+| scanner | `scanner` | `ada_scanner` container | Consumes scan tasks from the machinery scanner queue and invokes Python `.so` plugins for baseline, leak, and weak-password checks |
 | sensor | `agent/sensor` | Windows service `adaegis` | Registers with the server, receives commands, collects event logs and network traffic, runs plugins, reports status, and self-upgrades |
 | zeek | `zeek/plugins` | `ada_zeek` container | Receives raw packets forwarded by sensors, parses AD-related protocols, and writes to the Redis pktlog queue |
-| infra | `infra` | Shared Go packages | MongoDB, Redis, log hooks, encryption, license, self-update, gocelery, and other shared capabilities |
+| infra | `infra` | Shared Go packages | MongoDB, Redis, log hooks, encryption, license, self-update, task queue (taskq), and other shared capabilities |
 
 ## Control Plane and Data Plane
 

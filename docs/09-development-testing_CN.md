@@ -133,7 +133,7 @@ GOCACHE=/tmp/ada-go-build go test ./...
 2. 查 `ada:tasker:task_queue` 是否有 Machinery 任务积压。
 3. 查 task_worker 是否创建 `tb_scan_tasks` 和 `tb_scan_subtasks`。
 4. 查 scanner 是否启动 scgo worker。
-5. 查 Celery 兼容 task name 是否为 `tasks.<type>.execute_<type>`。
+5. 查 machinery task name 是否为 `scanner.<type>`（见 `infra/taskq`），消息是否进入 `ada:scanner:task_queue`。
 6. 查 Python 插件运行时版本和 `.so` 兼容性。
 
 ### Sensor 启动失败

@@ -4,6 +4,7 @@ import (
 	"ada/backend/tasker/config"
 	"ada/backend/tasker/server"
 	"ada/backend/tasker/worker"
+	"ada/infra/taskq"
 	_ "ada/infra/version"
 	logger "github.com/sirupsen/logrus"
 	"os"
@@ -23,7 +24,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	machineryServer, err := server.MachineryServer(env, "ada:tasker:task_queue")
+	machineryServer, err := server.MachineryServer(env, taskq.TaskerQueue)
 	if err != nil {
 		logger.Errorf("init tasker worker machinery server failed: %v", err)
 		os.Exit(1)

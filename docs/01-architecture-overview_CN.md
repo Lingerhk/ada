@@ -25,7 +25,7 @@ flowchart LR
   TaskServer -->|Machinery queue| TaskWorker[task_worker]
   TaskWorker --> Redis
   TaskWorker --> Mongo
-  TaskWorker -->|Celery compatible tasks| Scanner[scanner / scgo]
+  TaskWorker -->|machinery tasks (scanner queue)| Scanner[scanner / scgo]
 
   Sensor[Windows Sensor] -->|状态 / 命令响应 / TLS Redis| Redis
   Sensor -->|winlog syslog UDP 9092| TaskServer
@@ -49,10 +49,10 @@ flowchart LR
 | task_server | `backend/tasker/cmd/server` | `ada_backend` 容器内进程 | 内部 gRPC 任务入口、cron 调度、syslog 接收、pktlog pubsub 消费、ES 状态监控 |
 | task_worker | `backend/tasker/cmd/worker` | `ada_backend` 容器内进程 | 执行 Machinery 异步任务，包括域同步、LDAP 资产同步、规则同步、扫描编排、通知、报表导出 |
 | engine | `engine` | `ada_engine` 容器 | 消费日志队列，执行 Sigma 规则匹配和 Flow 关联，产生 activity/event 告警 |
-| scanner | `scanner` | `ada_scanner` 容器 | 消费 Celery 兼容扫描任务，调用 Python `.so` 插件执行 baseline、leak、weakpwd 检测 |
+| scanner | `scanner` | `ada_scanner` 容器 | 从 machinery scanner 队列消费扫描任务，调用 Python `.so` 插件执行 baseline、leak、weakpwd 检测 |
 | sensor | `agent/sensor` | Windows 服务 `adaegis` | 注册到服务端、接收命令、采集事件日志和网络流量、运行插件、上报状态、自升级 |
 | zeek | `zeek/plugins` | `ada_zeek` 容器 | 接收 sensor 转发的原始数据包，解析 AD 相关协议，写入 Redis pktlog 队列 |
-| infra | `infra` | 共享 Go 包 | Mongo、Redis、日志 hook、加密、license、selfupdate、gocelery 等基础能力 |
+| infra | `infra` | 共享 Go 包 | Mongo、Redis、日志 hook、加密、license、selfupdate、任务队列（taskq）等基础能力 |
 
 ## 控制面和数据面
 
