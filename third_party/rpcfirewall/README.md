@@ -179,6 +179,3 @@ Yes! Don't be shy to do a pull request.
 
 # I want RPC Firewall to do more things!
 We want this also!  Please reach out to us with any thoughts, ideas or issues you are having: [support@zeronetworks.com](mailto:support@zeronetworks.com)
-
-# Is there a License?
-For more details see [LICENSE](LICENSE).
