@@ -1,5 +1,6 @@
 GO ?= go
-BUILD_VERSION=3.1.0
+# Single source of truth for the release version (also used for image tags, see script/docker/build.sh)
+BUILD_VERSION ?= $(shell tr -d "[:space:]" < VERSION)
 BUILD_TIME=$(shell date "+%F %T")
 COMMIT_VERSION=$(shell git log -1 --format="%h")
 COMMIT_TIME=$(shell git log -1 --format="%ci" | cut -d' ' -f1,2)
@@ -16,7 +17,7 @@ PROTO_MODULES=backend/apiserver/api/v2 backend/tasker/api
 BUF ?= buf
 
 
-.PHONY: all gen_proto proto_tools apiserver task_worker task_server engine scanner clean
+.PHONY: all gen_proto proto_tools apiserver task_worker task_server engine scanner clean version check-version
 
 all: apiserver task_worker task_server engine scanner
 
@@ -85,3 +86,14 @@ clean:
 	rm -rf ${BUILD_BASE_PATH}/bin/task_worker
 	rm -rf ${BUILD_BASE_PATH}/bin/engine
 	rm -rf ${BUILD_BASE_PATH}/bin/scanner
+
+# Print the release version.
+version:
+	@echo $(BUILD_VERSION)
+
+# Verify every place that must agree with VERSION.
+check-version:
+	@for f in script/docker/.env script/docker-poc/.env script/deploy/easytier-demo/.env; do \
+		grep -qx "ADA_VERSION=$(BUILD_VERSION)" $$f || { echo "$$f does not match VERSION ($(BUILD_VERSION))"; exit 1; }; \
+	done
+	@echo "version $(BUILD_VERSION) consistent"

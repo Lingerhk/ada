@@ -6,16 +6,18 @@ https://docs.docker.com/engine/install/ubuntu/
 
 
 ##### Docker build
+镜像 tag 统一来自仓库根目录的 `VERSION` 文件：`./build.sh build <image>` 会读取它并同步到 `.env`（`ADA_VERSION`），`docker-compose.yml` 通过 `${ADA_VERSION}` 引用。手动构建时请先 `export ADA_VERSION=$(cat ../../VERSION)`。
+
 ```shell
-docker build -f redis/Dockerfile -t ada_redis:2.9.1 .
-docker build --no-cache -f redis/Dockerfile -t ada_redis:2.9.1 .
+docker build -f redis/Dockerfile -t ada_redis:${ADA_VERSION} .
+docker build --no-cache -f redis/Dockerfile -t ada_redis:${ADA_VERSION} .
 ```
 
 ##### Docker run
 ```shell
-docker run -d -p 27017:27017/tcp --name ada_mongodb ada_mongodb:2.9.1
-docker run -d -p 6379:6379/tcp -p5513:5513/tcp --name ada_redis ada_redis:2.9.1
-docker run -d -p 9200:9200/tcp --env-file .env --name ada_elasticsearch ada_elasticsearch:2.9.1
+docker run -d -p 27017:27017/tcp --name ada_mongodb ada_mongodb:${ADA_VERSION}
+docker run -d -p 6379:6379/tcp -p5513:5513/tcp --name ada_redis ada_redis:${ADA_VERSION}
+docker run -d -p 9200:9200/tcp --env-file .env --name ada_elasticsearch ada_elasticsearch:${ADA_VERSION}
 
 ```
 

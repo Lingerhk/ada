@@ -2,8 +2,16 @@
 
 set -euo pipefail
 
-version=2.9.1
+script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+version=${ADA_IMAGE_VERSION:-$(tr -d '[:space:]' < "${script_dir}/../../VERSION")}
 root_path="/home/adadmin/adaegis"
+
+# Keep script/docker-poc/.env in sync with VERSION for docker-compose.
+if [ -f "${script_dir}/.env" ] && grep -q '^ADA_VERSION=' "${script_dir}/.env"; then
+    sed -i "s/^ADA_VERSION=.*/ADA_VERSION=${version}/" "${script_dir}/.env"
+else
+    echo "ADA_VERSION=${version}" >> "${script_dir}/.env"
+fi
 ada_path="${root_path}/ada"
 web_path="${root_path}/ada-web"
 poc_path="${ada_path}/script/docker-poc"

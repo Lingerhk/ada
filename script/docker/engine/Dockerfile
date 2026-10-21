@@ -4,7 +4,8 @@ ENV SERVICE_NAME=ada_engine
 ENV ENGINE_CONF_PATH=/home/adadmin/conf/engine.yaml
 
 LABEL maintainer="dev@ada"
-LABEL version=2.9.1
+ARG ADA_VERSION=dev
+LABEL version=${ADA_VERSION}
 LABEL description="Docker image for ada system engine service"
 
 RUN useradd -rm -d /home/adadmin -s /bin/bash -g root -G sudo -u 1001 adadmin

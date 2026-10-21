@@ -3,7 +3,7 @@ name: "adaegis"
 services:
   ada_mongodb:
     container_name: "ada_mongodb"
-    image: ada_mongodb:2.9.1
+    image: ada_mongodb:${ADA_VERSION:?set ADA_VERSION in script/docker/.env (see VERSION)}
     restart: unless-stopped
     networks:
       ada-networks:
@@ -29,7 +29,7 @@ services:
 
   ada_redis:
     container_name: "ada_redis"
-    image: ada_redis:2.9.1
+    image: ada_redis:${ADA_VERSION:?set ADA_VERSION in script/docker/.env (see VERSION)}
     restart: unless-stopped
     networks:
       ada-networks:
@@ -53,7 +53,7 @@ services:
 
   ada_elasticsearch:
     container_name: "ada_elasticsearch"
-    image: ada_elasticsearch:2.9.1
+    image: ada_elasticsearch:${ADA_VERSION:?set ADA_VERSION in script/docker/.env (see VERSION)}
     restart: unless-stopped
     networks:
       ada-networks:
@@ -85,7 +85,7 @@ services:
 
   ada_elasticsearch_setup:
     container_name: "ada_elasticsearch_setup"
-    image: ada_elasticsearch_setup:2.9.1
+    image: ada_elasticsearch_setup:${ADA_VERSION:?set ADA_VERSION in script/docker/.env (see VERSION)}
     networks:
       ada-networks:
     environment:
@@ -98,7 +98,7 @@ services:
 
   ada_kibana:
     container_name: "ada_kibana"
-    image: ada_kibana:2.9.1
+    image: ada_kibana:${ADA_VERSION:?set ADA_VERSION in script/docker/.env (see VERSION)}
     restart: unless-stopped
     networks:
       ada-networks:
@@ -124,7 +124,7 @@ services:
 
   ada_kibana_setup:
     container_name: "ada_kibana_setup"
-    image: ada_elasticsearch_setup:2.9.1
+    image: ada_elasticsearch_setup:${ADA_VERSION:?set ADA_VERSION in script/docker/.env (see VERSION)}
     networks:
       ada-networks:
     environment:
@@ -139,7 +139,7 @@ services:
 
   ada_backend:
     container_name: "ada_backend"
-    image: ada_backend:2.9.1
+    image: ada_backend:${ADA_VERSION:?set ADA_VERSION in script/docker/.env (see VERSION)}
     restart: unless-stopped
     networks:
       ada-networks:
@@ -174,7 +174,7 @@ services:
 
   ada_easytier:
     container_name: "ada_easytier"
-    image: ada_easytier:2.9.1
+    image: ada_easytier:${ADA_VERSION:?set ADA_VERSION in script/docker/.env (see VERSION)}
     restart: unless-stopped
     network_mode: host
     cap_add:
@@ -198,7 +198,7 @@ services:
 
   ada_engine:
     container_name: "ada_engine"
-    image: ada_engine:2.9.1
+    image: ada_engine:${ADA_VERSION:?set ADA_VERSION in script/docker/.env (see VERSION)}
     restart: unless-stopped
     networks:
       ada-networks:
@@ -215,7 +215,7 @@ services:
 
   ada_zeek:
     container_name: "ada_zeek"
-    image: ada_zeek:2.9.1
+    image: ada_zeek:${ADA_VERSION:?set ADA_VERSION in script/docker/.env (see VERSION)}
     restart: unless-stopped
     networks:
       ada-networks:
@@ -231,7 +231,7 @@ services:
 
   ada_scanner:
     container_name: "ada_scanner"
-    image: ada_scanner:2.9.1
+    image: ada_scanner:${ADA_VERSION:?set ADA_VERSION in script/docker/.env (see VERSION)}
     restart: unless-stopped
     networks:
       ada-networks:

@@ -3,7 +3,7 @@ name: "adaegis-demo-tunnel"
 services:
   ada_easytier_public:
     container_name: "ada_easytier_public"
-    image: ada_easytier:2.9.1
+    image: ada_easytier:${ADA_VERSION:?set ADA_VERSION in .env next to this compose file (see VERSION)}
     restart: unless-stopped
     network_mode: host
     environment:

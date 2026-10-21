@@ -8,7 +8,8 @@ ENV SCANNER_CONF_PATH=/home/adadmin/conf/scanner.yaml
 ENV TEST_TRAIT=c6dd002b714181fd7c273ee7fdda5d16
 
 LABEL maintainer="dev@ada"
-LABEL version=2.9.1
+ARG ADA_VERSION=dev
+LABEL version=${ADA_VERSION}
 LABEL description="Docker image for ada system scanner service"
 
 ENV DEBIAN_FRONTEND=noninteractive

@@ -1,7 +1,20 @@
 
 set -euo pipefail
 
-version=${ADA_IMAGE_VERSION:-2.9.1}
+script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# Release version comes from the VERSION file at the repository root (override with ADA_IMAGE_VERSION).
+version=${ADA_IMAGE_VERSION:-$(tr -d '[:space:]' < "${script_dir}/../../VERSION")}
+
+# Keep script/docker/.env in sync so `docker compose up` picks the same image tag.
+sync_env_version() {
+    local env_file="${script_dir}/.env"
+    if [ -f "${env_file}" ] && grep -q '^ADA_VERSION=' "${env_file}"; then
+        sed -i "s/^ADA_VERSION=.*/ADA_VERSION=${version}/" "${env_file}"
+    else
+        echo "ADA_VERSION=${version}" >> "${env_file}"
+    fi
+}
+sync_env_version
 root_path="${ADA_ROOT_PATH:-/home/adadmin/adaegis}"
 ada_path="${root_path}/ada"
 web_path="${root_path}/ada-web"
@@ -21,8 +34,7 @@ build_engine() {
     cp ${ada_path}/bin/engine.yaml ./
     rm -rf rules
     cp -r ${ada_path}/engine/rules ./rules
-    sed -i "s/version=.*/version=${version}/g" Dockerfile
-    docker build --network=host -f Dockerfile -t ada_engine:${version} .
+    docker build --network=host --build-arg ADA_VERSION=${version} -f Dockerfile -t ada_engine:${version} .
     cd - || exit
 }
 
@@ -50,8 +62,7 @@ build_backend() {
     cp ${ada_path}/bin/task_worker ./
     cp ${ada_path}/bin/tasker.yaml ./
     cp ${ada_path}/bin/apiserver.yaml ./
-    sed -i "s/version=.*/version=${version}/g" Dockerfile
-    docker build --network=host -f Dockerfile -t ada_backend:${version} .
+    docker build --network=host --build-arg ADA_VERSION=${version} -f Dockerfile -t ada_backend:${version} .
     cd - || exit
 }
 
@@ -65,22 +76,21 @@ build_scanner() {
     cp ${ada_path}/bin/scanner ./
     cp ${ada_path}/bin/scanner ./scanner
     cp ${ada_path}/bin/scanner.yaml ./
-    sed -i "s/version=.*/version=${version}/g" Dockerfile
-    docker build --network=host -f Dockerfile -t ada_scanner:${version} .
+    docker build --network=host --build-arg ADA_VERSION=${version} -f Dockerfile -t ada_scanner:${version} .
     cd - || exit
 }
 
 # build zeek
 build_zeek() {
     cd zeek || exit;
-    docker build --network=host -f Dockerfile -t ada_zeek:${version} .
+    docker build --network=host --build-arg ADA_VERSION=${version} -f Dockerfile -t ada_zeek:${version} .
     cd - || exit
 }
 
 # build redis
 build_redis() {
     cd redis || exit;
-    docker build --network=host -f Dockerfile -t ada_redis:${version} .
+    docker build --network=host --build-arg ADA_VERSION=${version} -f Dockerfile -t ada_redis:${version} .
     cd - || exit
 }
 
@@ -90,34 +100,34 @@ build_mongodb() {
     build_ctx=$(mktemp -d)
     cp -a mongodb/. "${build_ctx}/"
     sed -i "s/ADA_SERVER_VERSION/${version}/g" "${build_ctx}/02-init_db.js"
-    docker build --network=host -f "${build_ctx}/Dockerfile" -t ada_mongodb:${version} "${build_ctx}"
+    docker build --network=host --build-arg ADA_VERSION=${version} -f "${build_ctx}/Dockerfile" -t ada_mongodb:${version} "${build_ctx}"
     rm -rf "${build_ctx}"
 }
 
 #build kibana
 build_kibana() {
     cd kibana || exit;
-    docker build --network=host -f Dockerfile -t ada_kibana:${version} .
+    docker build --network=host --build-arg ADA_VERSION=${version} -f Dockerfile -t ada_kibana:${version} .
     cd - || exit
 }
 
 # build elasticsearch
 build_elasticsearch() {
     cd elasticsearch || exit;
-    docker build --network=host -f Dockerfile -t ada_elasticsearch:${version} .
+    docker build --network=host --build-arg ADA_VERSION=${version} -f Dockerfile -t ada_elasticsearch:${version} .
     cd - || exit
 }
 
 # build elasticsearch-setup
 build_elasticsearch_setup() {
     cd elasticsearch-setup || exit;
-    docker build --network=host -f Dockerfile -t ada_elasticsearch_setup:${version} .
+    docker build --network=host --build-arg ADA_VERSION=${version} -f Dockerfile -t ada_elasticsearch_setup:${version} .
     cd - || exit
 }
 
 build_easytier() {
     cd ${ada_path} || exit
-    docker build --network=host -f script/docker/easytier/Dockerfile -t ada_easytier:${version} .
+    docker build --network=host --build-arg ADA_VERSION=${version} -f script/docker/easytier/Dockerfile -t ada_easytier:${version} .
     cd - || exit
 }
 

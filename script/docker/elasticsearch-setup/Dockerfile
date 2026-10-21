@@ -3,7 +3,8 @@ FROM curlimages/curl:latest
 ENV SERVICE_NAME=ada_elasticsearch_setup
 
 LABEL maintainer="dev@ada"
-LABEL version="2.9.1"
+ARG ADA_VERSION=dev
+LABEL version=${ADA_VERSION}
 LABEL description="Elasticsearch setup service for ADAegis - configures passwords and optionally creates Kibana data views"
 
 # Copy the setup script
