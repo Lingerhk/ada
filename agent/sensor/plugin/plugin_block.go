@@ -1,6 +1,7 @@
 package plugin
 
 import (
+	"ada/infra/sanitize"
 	"fmt"
 	"os/exec"
 	"strings"
@@ -138,21 +139,39 @@ func (p *Plugin) blockPolicyUpdate(data map[string]string) error {
 	return nil
 }
 
+// runPowerShell executes a PowerShell script in a non-interactive session.
+//
+// PowerShell's -Command switch concatenates every following argument into one
+// script string, so values coming from the backend must never be appended as
+// separate arguments. Callers validate every value with the sanitize package
+// and embed it as a single-quoted literal (sanitize.PowerShellQuote), which
+// PowerShell never interpolates.
+func runPowerShell(script string) ([]byte, error) {
+	cmd := exec.Command("powershell.exe", "-NoProfile", "-NonInteractive", "-Command", script)
+	return cmd.Output()
+}
+
+func firewallRuleName(ip string) string {
+	return fmt.Sprintf("(ADA)Block IP(%s)", ip)
+}
+
 func checkUserBlocked(username string) bool {
-	cmd := exec.Command("powershell.exe", "-Command", "Get-ADUser", "-Identity", username, "-Properties", "Enabled", "|", "Select", "Enabled")
-	out, err := cmd.Output()
+	if err := sanitize.ValidateAccountName(username); err != nil {
+		logger.Warnf("refuse to query user(%q): %v", username, err)
+		return false
+	}
+	out, err := runPowerShell("Get-ADUser -Identity " + sanitize.PowerShellQuote(username) + " -Properties Enabled | Select-Object -ExpandProperty Enabled")
 	if err != nil {
 		return false
 	}
-	if strings.Contains(string(out), "False") {
-		return true
-	}
-	return false
+	return strings.Contains(string(out), "False")
 }
 
 func blockingUser(username string) error {
-	cmd := exec.Command("powershell.exe", "-Command", "Set-ADUser", "-Identity", username, "-Enabled", "$false")
-	out, err := cmd.Output()
+	if err := sanitize.ValidateAccountName(username); err != nil {
+		return fmt.Errorf("refuse to block user %q: %w", username, err)
+	}
+	out, err := runPowerShell("Set-ADUser -Identity " + sanitize.PowerShellQuote(username) + " -Enabled $false")
 	if err != nil {
 		logger.Errorf("blocking user(username:%s) exec failed, err: %v, output:%s", username, err, out)
 		return err
@@ -161,8 +180,10 @@ func blockingUser(username string) error {
 }
 
 func unBlockingUser(username string) error {
-	cmd := exec.Command("powershell.exe", "-Command", "Set-ADUser", "-Identity", username, "-Enabled", "$true")
-	out, err := cmd.Output()
+	if err := sanitize.ValidateAccountName(username); err != nil {
+		return fmt.Errorf("refuse to unblock user %q: %w", username, err)
+	}
+	out, err := runPowerShell("Set-ADUser -Identity " + sanitize.PowerShellQuote(username) + " -Enabled $true")
 	if err != nil {
 		logger.Errorf("un-blocking user(username:%s) exec failed, err: %v, output:%s", username, err, out)
 		return err
@@ -171,19 +192,21 @@ func unBlockingUser(username string) error {
 }
 
 func checkIpBlocked(ip string) bool {
-	ruleName := fmt.Sprintf(`"(ADA)Block IP(%s)"`, ip)
-	cmd := exec.Command("powershell.exe", "-Command", "Get-NetFirewallRule", "-DisplayName", ruleName)
-	_, err := cmd.Output()
-	if err != nil {
+	if _, err := sanitize.ValidateIPOrCIDR(ip); err != nil {
+		logger.Warnf("refuse to query firewall rule for ip(%q): %v", ip, err)
 		return false
 	}
-	return true
+	_, err := runPowerShell("Get-NetFirewallRule -DisplayName " + sanitize.PowerShellQuote(firewallRuleName(ip)))
+	return err == nil
 }
 
 func blockingIp(ip string) error {
-	ruleName := fmt.Sprintf(`"(ADA)Block IP(%s)"`, ip)
-	cmd := exec.Command("powershell.exe", "-Command", "New-NetFirewallRule", "-DisplayName", ruleName, "-Direction", "Inbound", "-Action", "Block", "-Protocol", "Any", "-RemoteAddress", ip)
-	out, err := cmd.Output()
+	if _, err := sanitize.ValidateIPOrCIDR(ip); err != nil {
+		return fmt.Errorf("refuse to block ip %q: %w", ip, err)
+	}
+	script := "New-NetFirewallRule -DisplayName " + sanitize.PowerShellQuote(firewallRuleName(ip)) +
+		" -Direction Inbound -Action Block -Protocol Any -RemoteAddress " + sanitize.PowerShellQuote(ip)
+	out, err := runPowerShell(script)
 	if err != nil {
 		logger.Errorf("blocking ip(ip:%s) exec failed, err: %v, output:%s", ip, err, out)
 		return err
@@ -192,9 +215,10 @@ func blockingIp(ip string) error {
 }
 
 func unBlockingIp(ip string) error {
-	ruleName := fmt.Sprintf(`"(ADA)Block IP(%s)"`, ip)
-	cmd := exec.Command("powershell.exe", "-Command", "Remove-NetFirewallRule", "-DisplayName", ruleName)
-	out, err := cmd.Output()
+	if _, err := sanitize.ValidateIPOrCIDR(ip); err != nil {
+		return fmt.Errorf("refuse to unblock ip %q: %w", ip, err)
+	}
+	out, err := runPowerShell("Remove-NetFirewallRule -DisplayName " + sanitize.PowerShellQuote(firewallRuleName(ip)))
 	if err != nil {
 		logger.Errorf("un-blocking ip(ip:%s) exec failed, err: %v, output:%s", ip, err, out)
 		return err

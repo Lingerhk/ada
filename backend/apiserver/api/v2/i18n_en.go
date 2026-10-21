@@ -273,6 +273,8 @@ var I18nLangEnMap = map[string]any{
 			"DomainNotExist": "Domain not found",
 			"UserListEmpty":  "User block list cannot be empty",
 			"IpListEmpty":    "IP block list cannot be empty",
+			"InvalidUser":    "User block list contains an invalid account name",
+			"InvalidIp":      "IP block list contains an invalid IP address",
 		},
 	},
 }

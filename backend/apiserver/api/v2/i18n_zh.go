@@ -273,6 +273,8 @@ var I18nLangZhMap = map[string]any{
 			"DomainNotExist": "域名不存在",
 			"UserListEmpty":  "用户阻断列表不能为空",
 			"IpListEmpty":    "IP阻断列表不能为空",
+			"InvalidUser":    "用户阻断列表包含非法账户名",
+			"InvalidIp":      "IP阻断列表包含非法IP地址",
 		},
 	},
 }

@@ -9,6 +9,7 @@ import (
 	"ada/backend/cache"
 	"ada/infra/base"
 	"ada/infra/crypto"
+	"ada/infra/sanitize"
 	"ada/infra/version"
 	"context"
 	"fmt"
@@ -896,6 +897,25 @@ func (s *ADAServiceV2) ListThreatBlock(ctx context.Context, in *v2.ListThreatBlo
 	return &ret, nil
 }
 
+// validateBlockTargets rejects account names and IP addresses that cannot be
+// safely passed to the sensor, which executes them through PowerShell on the
+// domain controller.
+func (s *ADAServiceV2) validateBlockTargets(userBlock bool, userList []string, ipBlock bool, ipList []string) error {
+	if userBlock {
+		if err := sanitize.ValidateAccountNames(userList); err != nil {
+			logger.Warnf("reject block policy, invalid user: %v", err)
+			return status.Error(codes.InvalidArgument, s.I18n("Threat.ThreatBlock.InvalidUser"))
+		}
+	}
+	if ipBlock {
+		if err := sanitize.ValidateIPList(ipList); err != nil {
+			logger.Warnf("reject block policy, invalid ip: %v", err)
+			return status.Error(codes.InvalidArgument, s.I18n("Threat.ThreatBlock.InvalidIp"))
+		}
+	}
+	return nil
+}
+
 func (s *ADAServiceV2) AddThreatBlock(ctx context.Context, in *v2.AddThreatBlockReq) (*v2.AddThreatBlockReply, error) {
 	s = s.withContext(ctx)
 	if !s.IsSuper(ctx) {
@@ -915,6 +935,9 @@ func (s *ADAServiceV2) AddThreatBlock(ctx context.Context, in *v2.AddThreatBlock
 	}
 	if in.UserBlock && len(in.UserList) == 0 {
 		return &ret, status.Error(codes.InvalidArgument, s.I18n("Threat.ThreatBlock.UserListEmpty"))
+	}
+	if err := s.validateBlockTargets(in.UserBlock, in.UserList, in.IpBlock, in.IpList); err != nil {
+		return &ret, err
 	}
 
 	sensors, err := server.FindAllSensorByDomain(s.env, in.Domain)
@@ -992,6 +1015,9 @@ func (s *ADAServiceV2) UpdateThreatBlock(ctx context.Context, in *v2.UpdateThrea
 
 	if checkSensorOffline(s.env, ab.Domain) {
 		return &ret, status.Error(codes.Canceled, s.I18n("Threat.ThreatBlock.SensorOffline"))
+	}
+	if err := s.validateBlockTargets(in.UserBlock, in.UserList, in.IpBlock, in.IpList); err != nil {
+		return &ret, err
 	}
 
 	var cmdData = make(map[string]string)
