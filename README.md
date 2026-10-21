@@ -106,7 +106,7 @@ make engine
 make scanner
 ```
 
-`make apiserver` regenerates protobuf output, so make sure `protoc` and the Go protobuf plugins are installed before using that target.
+Generated protobuf code is committed. After editing a `.proto` file run `make proto_tools` once (installs `buf`, `protoc-gen-go`, `protoc-gen-go-grpc`) and then `make gen_proto`; no `protoc` installation is needed.
 
 ### Frontend
 

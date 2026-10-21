@@ -25,6 +25,7 @@ import (
 	"ada/backend/apiserver/server"
 	bCommon "ada/backend/common"
 
+	"buf.build/go/protovalidate"
 	logger "github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/v2/bson"
 	"google.golang.org/grpc"
@@ -34,6 +35,7 @@ import (
 	"google.golang.org/grpc/peer"
 	"google.golang.org/grpc/reflection"
 	"google.golang.org/grpc/status"
+	"google.golang.org/protobuf/proto"
 )
 
 // return status
@@ -525,15 +527,17 @@ func getRegUser(data string) string {
 	return reg.FindStringSubmatch(data)[1]
 }
 
-type validator interface {
-	Validate() error
-}
-
-// proto参数校验
+// proto参数校验: 使用 protovalidate 执行 ada.proto 中声明的 (buf.validate.field) 规则
 func (s *GrpcService) validate() grpc.UnaryServerInterceptor {
+	pv, err := protovalidate.New()
+	if err != nil {
+		// protovalidate.New only fails on an invalid configuration, never on
+		// message content; treat it as a programming error.
+		panic(fmt.Sprintf("init protovalidate: %v", err))
+	}
 	return func(ctx context.Context, req any, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (any, error) {
-		if v, ok := req.(validator); ok {
-			if err := v.Validate(); err != nil {
+		if msg, ok := req.(proto.Message); ok {
+			if err := pv.Validate(msg); err != nil {
 				logger.Infof("middleware validate parameter err(path:%s):%v", info.FullMethod, err)
 				return nil, status.Error(codes.InvalidArgument, "Invalid argument")
 			}

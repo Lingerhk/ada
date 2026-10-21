@@ -1,15 +1,14 @@
-/* protobuf generated code shouldn't be here. consider add a script or a flag in main */
-
-// generate:
-// protoc -I$GOPATH/src:. --govalidators_out=:. --go_out=plugins=grpc:. ada.proto
+// Generated with `make gen_proto` (buf + protoc-gen-go + protoc-gen-go-grpc).
+// Field rules use protovalidate (buf.validate) and are enforced by the
+// apiserver gRPC interceptor.
 
 syntax = "proto3";
 
 package ada;
 
-option go_package = "./;v2";
+option go_package = "ada/backend/apiserver/api/v2;v2";
 
-import "github.com/mwitkow/go-proto-validators/validator.proto";
+import "buf/validate/validate.proto";
 
 service ADA {
   // User 账户管理
@@ -178,9 +177,9 @@ message ModelPage {
 }
 
 message LoginReq {
-  string username = 1 [(validator.field) = {string_not_empty: true}];
-  string password = 2 [(validator.field) = {string_not_empty: true}];
-  string totpCode = 3 [(validator.field) = {regex: "d{6}|^(\\s&&[^\\f\\n\\r\\t\\v])*"}];
+  string username = 1 [(buf.validate.field) = {string: {min_len: 1}}];
+  string password = 2 [(buf.validate.field) = {string: {min_len: 1}}];
+  string totpCode = 3 [(buf.validate.field) = {ignore: IGNORE_IF_ZERO_VALUE, string: {pattern: "^\\d{6}$"}}];
 }
 
 message LoginReply {
@@ -208,7 +207,7 @@ message LogoutReply {
 
 message ListUserReq {
   // start index with 1.
-  int32 pageIdx = 1 [(validator.field) = {int_gt: 0}];
+  int32 pageIdx = 1 [(buf.validate.field) = {int32: {gt: 0}}];
   // if pageSize is -1, we will return all pods.
   int32 pageSize = 2;
   // the fuzzying matching pairs for this query.
@@ -252,8 +251,8 @@ message AddUserReq {
   string username = 1;
   string password = 2;
   string role = 3;
-  string mobile = 4 [(validator.field) = {regex: "^1[3|4|5|6|7|8|9][0-9]\\d{8}$|^(\\s&&[^\\f\\n\\r\\t\\v])*"}];
-  string email = 5 [(validator.field) = {regex: "\\w+([-+.]\\w+)*@\\w+([-.]\\w+)*\\.\\w+([-.]\\w+)*|^(\\s&&[^\\f\\n\\r\\t\\v])*"}];
+  string mobile = 4 [(buf.validate.field) = {ignore: IGNORE_IF_ZERO_VALUE, string: {pattern: "^1[3|4|5|6|7|8|9][0-9]\\d{8}$"}}];
+  string email = 5 [(buf.validate.field) = {ignore: IGNORE_IF_ZERO_VALUE, string: {pattern: "\\w+([-+.]\\w+)*@\\w+([-.]\\w+)*\\.\\w+([-.]\\w+)*"}}];
   string remark = 6;
   string department = 9; // 部门
 }
@@ -264,8 +263,8 @@ message AddUserReply {
 
 message UpdateUserReq {
   string username = 1;
-  string mobile = 2 [(validator.field) = {regex: "^1[3|4|5|6|7|8|9][0-9]\\d{8}$|^(\\s&&[^\\f\\n\\r\\t\\v])*"}];
-  string email = 3 [(validator.field) = {regex: "\\w+([-+.]\\w+)*@\\w+([-.]\\w+)*\\.\\w+([-.]\\w+)*|^(\\s&&[^\\f\\n\\r\\t\\v])*"}];
+  string mobile = 2 [(buf.validate.field) = {ignore: IGNORE_IF_ZERO_VALUE, string: {pattern: "^1[3|4|5|6|7|8|9][0-9]\\d{8}$"}}];
+  string email = 3 [(buf.validate.field) = {ignore: IGNORE_IF_ZERO_VALUE, string: {pattern: "\\w+([-+.]\\w+)*@\\w+([-.]\\w+)*\\.\\w+([-.]\\w+)*"}}];
   string remark = 4;
   string role = 5; // 可选，super用户可以修改任意username的role
   string department = 8; // 部门
@@ -314,7 +313,7 @@ message EnableMfaReq {
   string username = 1;
   string password = 2;
   string secret = 3;
-  string mfaCode = 4 [(validator.field) = {length_eq: 6}];
+  string mfaCode = 4 [(buf.validate.field) = {string: {len: 6}}];
 }
 
 message EnableMfaReply {
@@ -340,7 +339,7 @@ message UpdateAvatarReply {
 
 message ResetPasswordReq {
   string username = 1;
-  string newPassword = 2 [(validator.field) = {length_gt: 11}];
+  string newPassword = 2 [(buf.validate.field) = {string: {min_len: 12}}];
 }
 
 message ResetPasswordReply {
@@ -368,7 +367,7 @@ message ListAccessKeyReply {
 }
 
 message GenerateAccessKeyReq {
-  string username = 1 [(validator.field) = {length_gt: 0}]; // 用户名
+  string username = 1 [(buf.validate.field) = {string: {min_len: 1}}]; // 用户名
   string remark = 2; // 备注
 }
 
@@ -379,7 +378,7 @@ message GenerateAccessKeyReply {
 }
 
 message DeleteAccessKeyReq {
-  string iD = 1 [(validator.field) = {length_gt: 0}]; // AccessKey ID
+  string iD = 1 [(buf.validate.field) = {string: {min_len: 1}}]; // AccessKey ID
 }
 
 message DeleteAccessKeyReply {
@@ -389,7 +388,7 @@ message DeleteAccessKeyReply {
 
 // Domain
 message ListDomainReq {
-  int32 pageIdx = 1 [(validator.field) = {int_gt: 0}];
+  int32 pageIdx = 1 [(buf.validate.field) = {int32: {gt: 0}}];
   // if pageSize is -1, we will return all pods.
   int32 pageSize = 2;
   string filterDomain = 3; // 根据所在域筛选
@@ -430,7 +429,7 @@ message AddDomainReq {
   string ldapAddr = 1;
   string username = 2;
   string password = 3;
-  string DNS = 4 [(validator.field) = {regex: "^((0|[1-9]\\d?|1\\d\\d|2[0-4]\\d|25[0-5])\\.){3}(0|[1-9]\\d?|1\\d\\d|2[0-4]\\d|25[0-5])$|^(\\s&&[^\\f\\n\\r\\t\\v])*"}]; //可选
+  string DNS = 4 [(buf.validate.field) = {ignore: IGNORE_IF_ZERO_VALUE, string: {pattern: "^((0|[1-9]\\d?|1\\d\\d|2[0-4]\\d|25[0-5])\\.){3}(0|[1-9]\\d?|1\\d\\d|2[0-4]\\d|25[0-5])$"}}]; //可选
 }
 message AddDomainReply {
   string result = 1;
@@ -440,7 +439,7 @@ message TestDomainReq {
   string ldapAddr = 1;
   string username = 2;
   string password = 3;
-  string DNS = 4 [(validator.field) = {regex: "^((0|[1-9]\\d?|1\\d\\d|2[0-4]\\d|25[0-5])\\.){3}(0|[1-9]\\d?|1\\d\\d|2[0-4]\\d|25[0-5])$|^(\\s&&[^\\f\\n\\r\\t\\v])*"}]; //可选
+  string DNS = 4 [(buf.validate.field) = {ignore: IGNORE_IF_ZERO_VALUE, string: {pattern: "^((0|[1-9]\\d?|1\\d\\d|2[0-4]\\d|25[0-5])\\.){3}(0|[1-9]\\d?|1\\d\\d|2[0-4]\\d|25[0-5])$"}}]; //可选
 }
 message TestDomainReply {
   int32 status = 1; // 1为成功，0为失败，
@@ -452,7 +451,7 @@ message UpdateDomainReq {
   string ldapAddr = 2;
   string username = 3;
   string password = 4;
-  string DNS = 5 [(validator.field) = {regex: "^((0|[1-9]\\d?|1\\d\\d|2[0-4]\\d|25[0-5])\\.){3}(0|[1-9]\\d?|1\\d\\d|2[0-4]\\d|25[0-5])$|^(\\s&&[^\\f\\n\\r\\t\\v])*"}]; //可选
+  string DNS = 5 [(buf.validate.field) = {ignore: IGNORE_IF_ZERO_VALUE, string: {pattern: "^((0|[1-9]\\d?|1\\d\\d|2[0-4]\\d|25[0-5])\\.){3}(0|[1-9]\\d?|1\\d\\d|2[0-4]\\d|25[0-5])$"}}]; //可选
 }
 message UpdateDomainReply {
   string result = 1;
@@ -485,7 +484,7 @@ message DeploySensorReply {
 }
 
 message ListSensorReq {
-  int32 pageIdx = 1 [(validator.field) = {int_gt: 0}];
+  int32 pageIdx = 1 [(buf.validate.field) = {int32: {gt: 0}}];
   int32 pageSize = 2;
   repeated string domain = 3; // filter: domain
   repeated string status = 4; // filter: Init|Running|Stopped
@@ -551,10 +550,10 @@ message UpdateSensorReq {
   repeated string bindNetIface = 2; // 如果没有变化 带原值
   map<string, string> perfLimit = 3; // 如果没有变化 带原值, {"limit_mem_max":"0.05", "limit_cpu_max":"0.06"}
   string remark = 4;// 如果没有变化 带原值
-  string pktPluginSwitch = 5 [(validator.field) = {regex: "true|false"}]; // 如果没有变化留空
-  string logPluginSwitch = 6 [(validator.field) = {regex: "true|false"}];  // 如果没有变化留空
-  string rpcFwPluginSwitch = 7 [(validator.field) = {regex: "true|false"}];  // 如果没有变化留空
-  string ldapFwPluginSwitch = 8 [(validator.field) = {regex: "true|false"}];  // 如果没有变化留空
+  string pktPluginSwitch = 5 [(buf.validate.field) = {string: {pattern: "true|false"}}]; // 如果没有变化留空
+  string logPluginSwitch = 6 [(buf.validate.field) = {string: {pattern: "true|false"}}];  // 如果没有变化留空
+  string rpcFwPluginSwitch = 7 [(buf.validate.field) = {string: {pattern: "true|false"}}];  // 如果没有变化留空
+  string ldapFwPluginSwitch = 8 [(buf.validate.field) = {string: {pattern: "true|false"}}];  // 如果没有变化留空
 }
 
 message UpdateSensorReply {
@@ -562,7 +561,7 @@ message UpdateSensorReply {
 }
 
 message DownloadSensorReq {
-  string Type = 1 [(validator.field) = {regex: "x64|x86"}]; // x64 x86
+  string Type = 1 [(buf.validate.field) = {string: {pattern: "x64|x86"}}]; // x64 x86
 }
 
 message DownloadSensorReply {
@@ -571,7 +570,7 @@ message DownloadSensorReply {
 
 message CmdSensorReq {
   string ID = 1;
-  string cmd = 2 [(validator.field) = {regex: "delete|uninstall"}]; // delete|uninstall
+  string cmd = 2 [(buf.validate.field) = {string: {pattern: "delete|uninstall"}}]; // delete|uninstall
 }
 
 message CmdSensorReply {
@@ -618,7 +617,7 @@ message GetSystemIconReply {
 }
 
 message UpdateSystemLanguageReq{
-  string language = 1[(validator.field) = {regex: "EN|ZH"}]; // EN/ZH
+  string language = 1 [(buf.validate.field) = {string: {pattern: "EN|ZH"}}]; // EN/ZH
 }
 message UpdateSystemLanguageReply{
   string result = 1; //  success failed
@@ -654,8 +653,8 @@ message GetSystemProxyReply {
 }
 
 message UpdateSystemProxyReq {
-  string httpProxy = 1 [(validator.field) = {regex: "^http://[^\\s]+|^(\\s&&[^\\f\\n\\r\\t\\v])*"}]; // HTTP代理地址，格式: http://proxy:port
-  string httpsProxy = 2 [(validator.field) = {regex: "^https://[^\\s]+|^(\\s&&[^\\f\\n\\r\\t\\v])*"}]; // HTTPS代理地址，格式: https://proxy:port
+  string httpProxy = 1 [(buf.validate.field) = {ignore: IGNORE_IF_ZERO_VALUE, string: {pattern: "^http://[^\\s]+"}}]; // HTTP代理地址，格式: http://proxy:port
+  string httpsProxy = 2 [(buf.validate.field) = {ignore: IGNORE_IF_ZERO_VALUE, string: {pattern: "^https://[^\\s]+"}}]; // HTTPS代理地址，格式: https://proxy:port
   bool upgradeProxy = 3; // 升级时使用代理
   bool notifyProxy = 4; // 告警通知时使用代理
 }
@@ -665,8 +664,8 @@ message UpdateSystemProxyReply {
 }
 
 message GetSystemStatsReq {
-  string Type = 1 [(validator.field) = {regex: "load|cpu|mem|net_rx|net_tx"}];
-  string scope = 2 [(validator.field) = {regex: "2h|24h"}];
+  string Type = 1 [(buf.validate.field) = {string: {pattern: "load|cpu|mem|net_rx|net_tx"}}];
+  string scope = 2 [(buf.validate.field) = {string: {pattern: "2h|24h"}}];
 }
 
 message StatsInfo {
@@ -687,7 +686,7 @@ message SetSystemStatsCfgReply {
 
 message ListAuditLogReq {
   // start index with 1.
-  int32 pageIdx = 1 [(validator.field) = {int_gt: 0}];
+  int32 pageIdx = 1 [(buf.validate.field) = {int32: {gt: 0}}];
   // if pageSize is -1, we will return all pods.
   int32 pageSize = 2;
   string startTm = 3; // 开始时间
@@ -712,10 +711,10 @@ message ListAuditLogReply {
 }
 
 message ListSystemLogsReq {
-  int32 pageIdx = 1 [(validator.field) = {int_gt: 0}];
+  int32 pageIdx = 1 [(buf.validate.field) = {int32: {gt: 0}}];
   int32 pageSize = 2;
-  repeated string level = 3 [(validator.field) = {regex: "error|warn"}]; // error, warn
-  repeated string module = 4 [(validator.field) = {regex: "apiserver|task_worker|task_server|scanner|engine"}]; // module filter
+  repeated string level = 3 [(buf.validate.field) = {repeated: {items: {string: {pattern: "error|warn"}}}}]; // error, warn
+  repeated string module = 4 [(buf.validate.field) = {repeated: {items: {string: {pattern: "apiserver|task_worker|task_server|scanner|engine"}}}}]; // module filter
   string search = 5; // search in msg field
   string startTm = 6; // optional, start time
   string endTm = 7; // optional, end time
@@ -753,8 +752,8 @@ message UpdateLicenseReply {
 }
 
 message NetworkDebugReq {
-  string type = 1 [(validator.field) = {regex: "ping|nslookup|traceroute|nc"}];
-  string target = 2 [(validator.field) = {regex: "[a-zA-Z0-9][-a-zA-Z0-9]{0,62}(\\.[a-zA-Z0-9][-a-zA-Z0-9]{0,62})+\\.?|((2(5[0-5]|[0-4]\\d))|[0-1]?\\d{1,2})(\\.((2(5[0-5]|[0-4]\\d))|[0-1]?\\d{1,2})){3}"}]; // 诊断目标
+  string type = 1 [(buf.validate.field) = {string: {pattern: "ping|nslookup|traceroute|nc"}}];
+  string target = 2 [(buf.validate.field) = {string: {pattern: "[a-zA-Z0-9][-a-zA-Z0-9]{0,62}(\\.[a-zA-Z0-9][-a-zA-Z0-9]{0,62})+\\.?|((2(5[0-5]|[0-4]\\d))|[0-1]?\\d{1,2})(\\.((2(5[0-5]|[0-4]\\d))|[0-1]?\\d{1,2})){3}"}}]; // 诊断目标
 }
 
 message NetworkDebugReply {
@@ -765,10 +764,10 @@ message NetworkDebugReply {
 message ListNotifyConfReq{
   int32 pageIdx = 1 ; // start index with 1
   int32 pageSize = 2 ; // if pageSize is -1, we will return all nodes
-  repeated string moduleName = 3 [(validator.field) = {regex: "all|alert|baseline|leak|system"}]; // 模块类型 alert,baseline,leak,system
-  repeated string notifyType = 4 [(validator.field) = {regex: "all|syslog|webhook|email"}]; // 通知类型 syslog,webhook,email
+  repeated string moduleName = 3 [(buf.validate.field) = {repeated: {items: {string: {pattern: "all|alert|baseline|leak|system"}}}}]; // 模块类型 alert,baseline,leak,system
+  repeated string notifyType = 4 [(buf.validate.field) = {repeated: {items: {string: {pattern: "all|syslog|webhook|email"}}}}]; // 通知类型 syslog,webhook,email
   string endpoint = 5; // 通知目标
-  repeated string enable = 6 [(validator.field) = {regex: "all|enable|disable"}]; // 启用状态， 开启enable 关闭disable
+  repeated string enable = 6 [(buf.validate.field) = {repeated: {items: {string: {pattern: "all|enable|disable"}}}}]; // 启用状态， 开启enable 关闭disable
   int32 sortTime = 7; // 根据时间排序，1升序，-1降序,0为默认顺序
 }
 
@@ -789,8 +788,8 @@ message ListNotifyConfReply{
 }
 
 message UpdateNotifyConfReq {
-  string id = 1 [(validator.field) = {string_not_empty: true}];
-  string enable = 2 [(validator.field) = {regex: "enable|disable"}]; //启用状态， 开启enable 关闭disable
+  string id = 1 [(buf.validate.field) = {string: {min_len: 1}}];
+  string enable = 2 [(buf.validate.field) = {string: {pattern: "enable|disable"}}]; //启用状态， 开启enable 关闭disable
   string endpoint = 3;
   repeated int32 level = 4; // 危险等级
   map<string, string> metadata = 5; // 都有: alert_interval: 20(str), 可选: email类型: server(str),port(str),username,password,receiver; syslog类型; webhook类型: application_type(weixin/feishu/dingtalk/common)
@@ -802,8 +801,8 @@ message UpdateNotifyConfReply {
 }
 
 message EnableNotifyConfReq{
-  string id = 1 [(validator.field) = {string_not_empty: true}];
-  string enable = 2 [(validator.field) = {regex: "enable|disable"}]; //启用状态， 开启enable 关闭disable
+  string id = 1 [(buf.validate.field) = {string: {min_len: 1}}];
+  string enable = 2 [(buf.validate.field) = {string: {pattern: "enable|disable"}}]; //启用状态， 开启enable 关闭disable
 }
 
 message EnableNotifyConfReply{
@@ -811,8 +810,8 @@ message EnableNotifyConfReply{
 }
 
 message TestNotifyConfReq{
-  string moduleName = 1 [(validator.field) = {regex: "alert|baseline|leak|system"}]; // 模块类型 alert,baseline,leak,system
-  string notifyType = 2 [(validator.field) = {regex: "syslog|webhook|email"}]; // 通知类型 syslog,webhook,email
+  string moduleName = 1 [(buf.validate.field) = {string: {pattern: "alert|baseline|leak|system"}}]; // 模块类型 alert,baseline,leak,system
+  string notifyType = 2 [(buf.validate.field) = {string: {pattern: "syslog|webhook|email"}}]; // 通知类型 syslog,webhook,email
   string endpoint = 3; // 通知目标
   map<string, string> metadata = 4; // 配置参数
 }
@@ -823,10 +822,10 @@ message TestNotifyConfReply{
 }
 
 message AddNotifyConfReq{
-  string moduleName = 1 [(validator.field) = {regex: "alert|baseline|leak|system"}]; // 模块类型 alert,baseline,leak,system
-  string notifyType = 2 [(validator.field) = {regex: "syslog|webhook|email"}]; // 通知类型 syslog,webhook,email
+  string moduleName = 1 [(buf.validate.field) = {string: {pattern: "alert|baseline|leak|system"}}]; // 模块类型 alert,baseline,leak,system
+  string notifyType = 2 [(buf.validate.field) = {string: {pattern: "syslog|webhook|email"}}]; // 通知类型 syslog,webhook,email
   string endpoint = 3; // 通知目标
-  string enable = 4 [(validator.field) = {regex: "enable|disable"}]; // 启用状态， 开启enable 关闭disable
+  string enable = 4 [(buf.validate.field) = {string: {pattern: "enable|disable"}}]; // 启用状态， 开启enable 关闭disable
   repeated int32 level = 5; // 危险等级
   map<string, string> metadata = 6; // 配置参数
   string remark = 7; // 备注
@@ -838,7 +837,7 @@ message AddNotifyConfReply{
 }
 
 message DeleteNotifyConfReq{
-  string id = 1 [(validator.field) = {string_not_empty: true}]; // 配置ID
+  string id = 1 [(buf.validate.field) = {string: {min_len: 1}}]; // 配置ID
 }
 
 message DeleteNotifyConfReply{
@@ -848,8 +847,8 @@ message DeleteNotifyConfReply{
 message ListExportTaskReq{
   int32 pageIdx = 1 ; // start index with 1
   int32 pageSize = 2 ; // if pageSize is -1, we will return all nodes
-  repeated string type = 3 [(validator.field) = {regex: "all|alert_event|alert_activity|baseline|leak|weakpwd|system|audit"}];  // alert_event/alert_activity/baseline/leak/weakpwd/system/audit
-  repeated string status = 4 [(validator.field) = {regex: "all|padding|doing|finish|failed"}]; // 任务状态: padding,doing,finish,failed
+  repeated string type = 3 [(buf.validate.field) = {repeated: {items: {string: {pattern: "all|alert_event|alert_activity|baseline|leak|weakpwd|system|audit"}}}}];  // alert_event/alert_activity/baseline/leak/weakpwd/system/audit
+  repeated string status = 4 [(buf.validate.field) = {repeated: {items: {string: {pattern: "all|padding|doing|finish|failed"}}}}]; // 任务状态: padding,doing,finish,failed
   string startTm = 5; //  可选，开始时间
   string endTm = 6;  //  可选，结束时间
   int32 sortTime = 7; // 根据时间排序，1升序，-1降序,0为默认顺序
@@ -932,7 +931,7 @@ message StatsNotifyReply{
 
 message ThreatTopsReq{
   string domain = 1; // 必选，all|domainX
-  string type = 2 [(validator.field) = {regex: "activity|event"}]; // 必选，activity|event
+  string type = 2 [(buf.validate.field) = {string: {pattern: "activity|event"}}]; // 必选，activity|event
   int32 duration = 3; // 必选，时间范围/天， 可选值: 1/7/30 （默认为7）
 }
 
@@ -959,7 +958,7 @@ message ThreatTrendsReply{
 }
 
 message ListThreatReq{
-  int32 pageIdx = 1 [(validator.field) = {int_gt: 0}];
+  int32 pageIdx = 1 [(buf.validate.field) = {int32: {gt: 0}}];
   int32 pageSize = 2;
   repeated string IDs = 3; // 威胁ID list
   repeated int32 level = 4; // 威胁等级,严重性
@@ -1040,7 +1039,7 @@ message GetThreatReply {
 
 message ActionThreatReq{
   string ID = 1;
-  int32 eventStatus = 2 [(validator.field) = {int_gt: -1, int_lt: 4}]; // 事件状态: 0:未处理 1:已处理 2:已加白 3:已阻断
+  int32 eventStatus = 2 [(buf.validate.field) = {int32: {gt: -1, lt: 4}}]; // 事件状态: 0:未处理 1:已处理 2:已加白 3:已阻断
   string remark = 3; // 添加备注说明
 }
 
@@ -1049,7 +1048,7 @@ message ActionThreatReply {
 }
 
 message ListActivityReq{
-  int32 pageIdx = 1 [(validator.field) = {int_gt: 0}];
+  int32 pageIdx = 1 [(buf.validate.field) = {int32: {gt: 0}}];
   int32 pageSize = 2;
   repeated int32 level = 3; // 威胁等级,严重性
   repeated string dcHostname = 4; // 可选，所在域控
@@ -1100,7 +1099,7 @@ message GetActivityReply{
 }
 
 message ListSensitiveEntryReq{
-  int32 pageIdx = 1 [(validator.field) = {int_gt: 0}];  // start index with 1.
+  int32 pageIdx = 1 [(buf.validate.field) = {int32: {gt: 0}}];  // start index with 1.
   int32 pageSize = 2;
   string type = 3; // 必选，user|group|computer|honeyuser
   repeated string domain = 4; // 可选，过滤使用
@@ -1126,7 +1125,7 @@ message ListSensitiveEntryReply{
 }
 
 message AddSensitiveEntryReq{
-  string type = 1 [(validator.field) = {regex: "user|group|computer|honeyuser"}];
+  string type = 1 [(buf.validate.field) = {string: {pattern: "user|group|computer|honeyuser"}}];
   string domain = 2;
   string name = 3; // entry name
 }
@@ -1136,7 +1135,7 @@ message AddSensitiveEntryReply{
 }
 
 message ListDomainEntryReq {
-  string type = 1 [(validator.field) = {regex: "user|group|computer|honeyuser"}];
+  string type = 1 [(buf.validate.field) = {string: {pattern: "user|group|computer|honeyuser"}}];
   string domain = 2; // domain
   string search = 3; // 可选，搜索关键字
 }
@@ -1155,7 +1154,7 @@ message DeleteSensitiveEntryReply{
 
 // 告警规则白名单
 message ListThreatWhitelistReq{
-  int32 pageIdx = 1 [(validator.field) = {int_gt: 0}];
+  int32 pageIdx = 1 [(buf.validate.field) = {int32: {gt: 0}}];
   int32 pageSize = 2;
   string ruleId = 3; // 可选,如果不为空则只返回该规则ID对应的白名单规则
   repeated string domain = 4; // 可选,为空则查询所有域
@@ -1204,7 +1203,7 @@ message AddThreatWhitelistReq{
     map<string, string> info = 1; // 规则信息,eg: {"field":"TargetUsername","op":"==","value":"admin"}
   }
   repeated ruleInfo rules = 3; // 规则信息
-  int32 origin = 4 [(validator.field) = {int_gt: 0, int_lt: 3}];  // 来源，1:手动添加, 2:手动批量添加
+  int32 origin = 4 [(buf.validate.field) = {int32: {gt: 0, lt: 3}}];  // 来源，1:手动添加, 2:手动批量添加
   string remark = 5; // 备注
 }
 message AddThreatWhitelistReply{
@@ -1234,7 +1233,7 @@ message DeleteThreatWhitelistReply{
 
 // 威胁阻挡
 message ListThreatBlockReq{
-  int32 pageIdx = 1 [(validator.field) = {int_gt: 0}];
+  int32 pageIdx = 1 [(buf.validate.field) = {int32: {gt: 0}}];
   int32 pageSize = 2;
   repeated string domain = 4; // 可选,为空则查询所有域
   repeated int32 origin = 5; // 可选，来源，1:手动, 2:自动
@@ -1305,7 +1304,7 @@ message DeleteThreatBlockReply{
 // 主动扫描
 message ScanRiskStatsReq{
   string domain = 1; // 必选，all|domainX
-  string type = 2 [(validator.field) = {regex: "baseline|leak"}]; // 必选，baseline|leak(无weakpwd)
+  string type = 2 [(buf.validate.field) = {string: {pattern: "baseline|leak"}}]; // 必选，baseline|leak(无weakpwd)
 }
 message ScanRiskStatsReply{
   message Details {
@@ -1318,7 +1317,7 @@ message ScanRiskStatsReply{
 }
 
 message ListBaselineReq{
-  int32 pageIdx = 1 [(validator.field) = {int_gt: 0}];  // start index with 1.
+  int32 pageIdx = 1 [(buf.validate.field) = {int32: {gt: 0}}];  // start index with 1.
   int32 pageSize = 2;
   repeated string domain = 3;
   repeated string subType = 4; //
@@ -1367,7 +1366,7 @@ message GetBaselineReply{
 }
 
 message ListLeakReq{
-  int32 pageIdx = 1 [(validator.field) = {int_gt: 0}];  // start index with 1.
+  int32 pageIdx = 1 [(buf.validate.field) = {int32: {gt: 0}}];  // start index with 1.
   int32 pageSize = 2;
   repeated string domain = 3;
   repeated string subType = 4; //
@@ -1399,7 +1398,7 @@ message ListLeakReply{
 }
 
 message ListWeakPwdReq{
-  int32 pageIdx = 1 [(validator.field) = {int_gt: 0}];  // start index with 1.
+  int32 pageIdx = 1 [(buf.validate.field) = {int32: {gt: 0}}];  // start index with 1.
   int32 pageSize = 2;
   repeated string domain = 3;
   repeated int32 locked = 4; // 1:locked, 0:正常
@@ -1426,11 +1425,11 @@ message ListWeakPwdReply{
 }
 
 message ListScanTaskReq{
-  int32 pageIdx = 1 [(validator.field) = {int_gt: 0}];  // start index with 1.
+  int32 pageIdx = 1 [(buf.validate.field) = {int32: {gt: 0}}];  // start index with 1.
   int32 pageSize = 2;
-  string cycle = 3 [(validator.field) = {regex: "all|cycle|once"}]; // 必选，all|cycle|once
-  string type = 4 [(validator.field) = {regex: "all|baseline|leak|weakpwd"}]; // all|baseline|leak|weakpwd
-  string status = 5 [(validator.field) = {regex: "all|PENDING|RUNNING|FINISH|FAILURE"}]; // 可选，状态:all|PENDING|RUNNING|FINISH|FAILURE
+  string cycle = 3 [(buf.validate.field) = {string: {pattern: "all|cycle|once"}}]; // 必选，all|cycle|once
+  string type = 4 [(buf.validate.field) = {string: {pattern: "all|baseline|leak|weakpwd"}}]; // all|baseline|leak|weakpwd
+  string status = 5 [(buf.validate.field) = {string: {pattern: "all|PENDING|RUNNING|FINISH|FAILURE"}}]; // 可选，状态:all|PENDING|RUNNING|FINISH|FAILURE
   string startTm = 6; //  可选，开始时间
   string endTm = 7;  //  可选，结束时间
   int32 orderCreateTm = 8; // 创建时间排序 1升序 -1降序, 默认-1
@@ -1455,7 +1454,7 @@ message ListScanTaskReply{
 }
 
 message GetScanTaskReq{
-  int32 pageIdx = 1 [(validator.field) = {int_gt: 0}];  // start index with 1.
+  int32 pageIdx = 1 [(buf.validate.field) = {int32: {gt: 0}}];  // start index with 1.
   int32 pageSize = 2;
   string ID = 3; // ID
 }
@@ -1481,7 +1480,7 @@ message GetScanTaskReply{
 }
 
 message AddScanTaskReq{
-  string type = 1 [(validator.field) = {regex: "all|baseline|leak|weakpwd"}]; // all|baseline|leak|weakpwd
+  string type = 1 [(buf.validate.field) = {string: {pattern: "all|baseline|leak|weakpwd"}}]; // all|baseline|leak|weakpwd
   map<string, string> plans = 2; // domain: template_id
 }
 
@@ -1491,7 +1490,7 @@ message AddScanTaskReply{
 
 message RecheckScanTaskReq{
   string ID = 1; // ID
-  string type = 2 [(validator.field) = {regex: "baseline|leak|weakpwd"}]; // baseline|leak|weakpwd
+  string type = 2 [(buf.validate.field) = {string: {pattern: "baseline|leak|weakpwd"}}]; // baseline|leak|weakpwd
 }
 
 message RecheckScanTaskReply{
@@ -1507,7 +1506,7 @@ message DeleteScanTaskReply{
 }
 
 message ListScanConfReq{
-  int32 pageIdx = 1 [(validator.field) = {int_gt: 0}];  // start index with 1.
+  int32 pageIdx = 1 [(buf.validate.field) = {int32: {gt: 0}}];  // start index with 1.
   int32 pageSize = 2;
 }
 
@@ -1531,7 +1530,7 @@ message scanConfDetail{
 message SetScanConfReq{
   string ID = 1; // ID
   bool isEnable = 2; // 启用状态, 若无修改需将原值返回
-  int32 cycleType = 3 [(validator.field) = {int_gt: 0, int_lt: 4}]; // 1是day，2是week，3是month, 若无修改需将原值返回
+  int32 cycleType = 3 [(buf.validate.field) = {int32: {gt: 0, lt: 4}}]; // 1是day，2是week，3是month, 若无修改需将原值返回
 }
 
 message SetScanConfReply{
@@ -1547,7 +1546,7 @@ message GetScanConfReply{
 }
 
 message GetScanTmplNamesReq{
-  string type = 1 [(validator.field) = {regex: "all|baseline|leak|weakpwd"}]; // all|baseline|leak|weakpwd
+  string type = 1 [(buf.validate.field) = {string: {pattern: "all|baseline|leak|weakpwd"}}]; // all|baseline|leak|weakpwd
 }
 
 message GetScanTmplNamesReply{
@@ -1568,9 +1567,9 @@ message UpdateScanConfReply{
 }
 
 message ListScanTmplReq{
-  int32 pageIdx = 1 [(validator.field) = {int_gt: 0}];  // start index with 1.
+  int32 pageIdx = 1 [(buf.validate.field) = {int32: {gt: 0}}];  // start index with 1.
   int32 pageSize = 2;
-  string type = 3 [(validator.field) = {regex: "all|baseline|leak|weakpwd"}]; // all|baseline|leak|weakpwd
+  string type = 3 [(buf.validate.field) = {string: {pattern: "all|baseline|leak|weakpwd"}}]; // all|baseline|leak|weakpwd
 
 }
 
@@ -1658,7 +1657,7 @@ message AddScanTmplReply{
 }
 
 message ListScanPluginReq{
-  string type = 1  [(validator.field) = {regex: "baseline|leak|weakpwd"}]; // baseline|leak|weakpwd
+  string type = 1 [(buf.validate.field) = {string: {pattern: "baseline|leak|weakpwd"}}]; // baseline|leak|weakpwd
 }
 
 message ListScanPluginReply{
@@ -1731,7 +1730,7 @@ message DashboardLogStatsReply {
 
 // Alert Rule (Flow Rules) Messages
 message ListAlertRuleReq {
-  int32 pageIdx = 1 [(validator.field) = {int_gt: 0}];
+  int32 pageIdx = 1 [(buf.validate.field) = {int32: {gt: 0}}];
   int32 pageSize = 2;
   repeated int32 level = 3; // 规则等级: 5:critical, 4:high, 3:medium, 2:low, 1:info
   repeated string status = 4; // 规则状态: test|experimental|stable|deprecated
@@ -1781,7 +1780,7 @@ message ListAlertRuleReply {
 }
 
 message AlertDetection {
-  string eventType = 1 [(validator.field) = {regex: "count|multi_eve|multi_pkt|multi_eve_pkt"}]; // 事件类型
+  string eventType = 1 [(buf.validate.field) = {string: {pattern: "count|multi_eve|multi_pkt|multi_eve_pkt"}}]; // 事件类型
   string winSize = 2; // 窗口大小
   bool sorted = 3; // 是否排序
   repeated string sigmaRules = 4; // 关联sigma规则
@@ -1790,10 +1789,10 @@ message AlertDetection {
 
 message AddAlertRuleReq {
   string iD = 1; // Alert rule ID, optional. If empty, will be auto-generated
-  string title = 2 [(validator.field) = {string_not_empty: true}];
+  string title = 2 [(buf.validate.field) = {string: {min_len: 1}}];
   string description = 3;
   bool enable = 4;
-  int32 level = 5 [(validator.field) = {int_gt: 0, int_lt: 6}]; // 1-5
+  int32 level = 5 [(buf.validate.field) = {int32: {gt: 0, lt: 6}}]; // 1-5
   string status = 6;
   repeated string tags = 7;
   string logsource = 8;
@@ -1814,7 +1813,7 @@ message AddAlertRuleReply {
 }
 
 message UpdateAlertRuleReq {
-  string ID = 1 [(validator.field) = {string_not_empty: true}];
+  string ID = 1 [(buf.validate.field) = {string: {min_len: 1}}];
   string title = 2;
   string description = 3;
   bool enable = 4;
@@ -1838,7 +1837,7 @@ message UpdateAlertRuleReply {
 }
 
 message DeleteAlertRuleReq {
-  string ID = 1 [(validator.field) = {string_not_empty: true}];
+  string ID = 1 [(buf.validate.field) = {string: {min_len: 1}}];
 }
 
 message DeleteAlertRuleReply {
@@ -1890,7 +1889,7 @@ message GetActivityRuleUniqueFieldsReply{
 
 // Activity Rule (Sigma Rules) Messages
 message ListActivityRuleReq {
-  int32 pageIdx = 1 [(validator.field) = {int_gt: 0}];
+  int32 pageIdx = 1 [(buf.validate.field) = {int32: {gt: 0}}];
   int32 pageSize = 2;
   repeated string IDs = 3; // 规则ID列表
   repeated int32 level = 4; // 规则等级: 5:critical, 4:high, 3:medium, 2:low, 1:info
@@ -1927,7 +1926,7 @@ message ListActivityRuleReply {
 }
 
 message GetActivityRuleReq {
-  string ID = 1 [(validator.field) = {string_not_empty: true}];
+  string ID = 1 [(buf.validate.field) = {string: {min_len: 1}}];
 }
 
 message GetActivityRuleReply {
@@ -1950,15 +1949,15 @@ message GetActivityRuleReply {
 }
 
 message AddActivityRuleReq {
-  string ID = 1 [(validator.field) = {string_not_empty: true}]; // Sigma rule ID (e.g. winlog-0000-0001)
-  string title = 2 [(validator.field) = {string_not_empty: true}];
+  string ID = 1 [(buf.validate.field) = {string: {min_len: 1}}]; // Sigma rule ID (e.g. winlog-0000-0001)
+  string title = 2 [(buf.validate.field) = {string: {min_len: 1}}];
   string description = 3;
-  int32 level = 4 [(validator.field) = {int_gt: 0, int_lt: 6}]; // 1-5
+  int32 level = 4 [(buf.validate.field) = {int32: {gt: 0, lt: 6}}]; // 1-5
   string status = 5;
   repeated string tags = 6;
   string logsource = 7;
   repeated string references = 8;
-  string detection = 9 [(validator.field) = {string_not_empty: true}]; // JSON string
+  string detection = 9 [(buf.validate.field) = {string: {min_len: 1}}]; // JSON string
   string rdxKey = 10;
   repeated string fields = 11;
   repeated string uniqueFields = 12;
@@ -1972,7 +1971,7 @@ message AddActivityRuleReply {
 }
 
 message UpdateActivityRuleReq {
-  string ID = 1 [(validator.field) = {string_not_empty: true}];
+  string ID = 1 [(buf.validate.field) = {string: {min_len: 1}}];
   string title = 2;
   string description = 3;
   int32 level = 4;
@@ -1993,7 +1992,7 @@ message UpdateActivityRuleReply {
 }
 
 message DeleteActivityRuleReq {
-  string ID = 1 [(validator.field) = {string_not_empty: true}];
+  string ID = 1 [(buf.validate.field) = {string: {min_len: 1}}];
 }
 
 message DeleteActivityRuleReply {

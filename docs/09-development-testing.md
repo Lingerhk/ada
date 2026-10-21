@@ -23,7 +23,7 @@ Build outputs are written to `bin/` by default:
 - `bin/engine`
 - `bin/scanner`
 
-`make apiserver` first runs `gen_proto`, which requires local `protoc` and the corresponding Go plugin.
+Generated protobuf code is committed, so the build targets do not regenerate it. After editing a `.proto` file run `make proto_tools` once and then `make gen_proto` (buf + protoc-gen-go + protoc-gen-go-grpc, no `protoc` required). Field rules use protovalidate; see `backend/apiserver/api/v2/README.md`.
 
 ## Docker Build
 

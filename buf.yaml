@@ -1,0 +1,16 @@
+version: v2
+# Workspace for the protobuf definitions of this repository. `make gen_proto`
+# regenerates the Go code with buf (no protoc installation needed).
+modules:
+  - path: backend/apiserver/api/v2
+  - path: backend/tasker/api
+  # protovalidate rules (vendored copy of buf.build/bufbuild/protovalidate)
+  - path: third_party/proto
+lint:
+  use:
+    - MINIMAL
+  ignore:
+    - third_party/proto
+breaking:
+  use:
+    - WIRE_JSON

@@ -9,7 +9,7 @@ import (
 	logger "github.com/sirupsen/logrus"
 )
 
-var serviceName = _ADA_serviceDesc.ServiceName
+var serviceName = ADA_ServiceDesc.ServiceName
 
 // URL事件映射定义(日志审计的操作映射)
 var URLEventMap = map[string]string{

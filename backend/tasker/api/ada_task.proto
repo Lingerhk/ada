@@ -1,8 +1,8 @@
 syntax = "proto3";
 package api;
-option go_package = "./;api";
+option go_package = "ada/backend/tasker/api;api";
 
-//protoc  -I.:. --govalidators_out=:. --go_out=plugins=grpc:. ada_task.proto
+// Generated with `make gen_proto` (buf + protoc-gen-go + protoc-gen-go-grpc).
 
 service ADATask {
   // tasker内部接口

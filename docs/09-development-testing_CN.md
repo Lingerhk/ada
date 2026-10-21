@@ -23,7 +23,7 @@ make all
 - `bin/engine`
 - `bin/scanner`
 
-`make apiserver` 会先执行 `gen_proto`，依赖本机存在 `protoc` 和对应 Go plugin。
+生成的 protobuf 代码已提交，构建目标不会重新生成。修改 `.proto` 后先执行一次 `make proto_tools`，再执行 `make gen_proto`（buf + protoc-gen-go + protoc-gen-go-grpc，无需 `protoc`）。字段校验使用 protovalidate，见 `backend/apiserver/api/v2/README.md`。
 
 ## Docker 构建
 

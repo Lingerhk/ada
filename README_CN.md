@@ -106,7 +106,7 @@ make engine
 make scanner
 ```
 
-`make apiserver` 会重新生成 protobuf 输出，运行该目标前请确认已经安装 `protoc` 和 Go protobuf 插件。
+生成的 protobuf 代码已提交到仓库。修改 `.proto` 后先执行一次 `make proto_tools`（安装 `buf`、`protoc-gen-go`、`protoc-gen-go-grpc`），再执行 `make gen_proto`，无需安装 `protoc`。
 
 ### 前端
 
