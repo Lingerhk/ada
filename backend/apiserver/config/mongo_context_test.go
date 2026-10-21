@@ -3,6 +3,8 @@ package config
 import (
 	"context"
 	"testing"
+
+	"ada/infra/svcconfig"
 )
 
 type stubMongoAdaptor struct {
@@ -94,7 +96,7 @@ func (s *stubMongoAdaptor) FindWithDistinct(ctx context.Context, name, distinct 
 
 func TestEnvWithMongoContextClonesEnvAndStoresContext(t *testing.T) {
 	base := &stubMongoAdaptor{}
-	env := &Env{MongoCli: base, ctx: context.Background()}
+	env := &Env{MongoCli: base, Ctx: svcconfig.NewCtx(context.Background())}
 	ctx := context.WithValue(context.Background(), "request-id", "ctx-test")
 
 	bound := env.WithMongoContext(ctx)

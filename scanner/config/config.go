@@ -1,39 +1,23 @@
 package config
 
 import (
-	"ada/infra/loghook"
-	"ada/infra/mongo"
-	"ada/scanner/common"
 	"context"
 	"fmt"
 	"os"
-	"path"
-	"time"
 
-	"github.com/natefinch/lumberjack"
+	"ada/infra/mongo"
+	"ada/infra/svcconfig"
+	"ada/scanner/common"
+
 	"github.com/redis/go-redis/v9"
-	"github.com/sirupsen/logrus"
-	"go.mongodb.org/mongo-driver/v2/x/mongo/driver/connstring"
-	"gopkg.in/yaml.v3"
 )
 
-type LogCfg struct {
-	LogPath  string `yaml:"LogPath"`
-	LogLevel string `yaml:"LogLevel"`
-	IsStdOut bool   `yaml:"IsStdOut"`
-}
-
-type RedisCfg struct {
-	URI         string `yaml:"URI"`
-	Active      int    `yaml:"Active"`
-	Idle        int    `yaml:"Idle"`
-	IdleTimeout int    `yaml:"IdleTimeout"`
-}
-
-type MongodbCfg struct {
-	URI       string `yaml:"URI"`
-	PoolLimit uint64 `yaml:"PoolLimit"`
-}
+// Shared configuration blocks (see infra/svcconfig).
+type (
+	LogCfg     = svcconfig.LogCfg
+	RedisCfg   = svcconfig.RedisCfg
+	MongodbCfg = svcconfig.MongodbCfg
+)
 
 type Config struct {
 	ProjectName string     `yaml:"ProjectName"`
@@ -46,90 +30,14 @@ type Env struct {
 	Cfg      *Config
 	RedisCli *redis.Client
 	MongoCli mongo.DBAdaptor
-	ctx      context.Context
+	svcconfig.Ctx
 }
 
-func InitLog(setting *Config, mongoCli mongo.DBAdaptor) error {
-	logrus.SetFormatter(&logrus.JSONFormatter{})
-	if setting.Log.LogLevel == "" {
-		return nil
-	}
-
-	lvl, err := logrus.ParseLevel(setting.Log.LogLevel)
-	if err != nil {
-		return err
-	}
-	logrus.SetLevel(lvl)
-
-	if setting.Log.IsStdOut {
-		logrus.SetOutput(os.Stdout)
-		logrus.SetFormatter(&logrus.TextFormatter{})
-	} else if setting.Log.LogPath != "" {
-		logFile := path.Join(setting.Log.LogPath, setting.ProjectName+".log")
-		logout := &lumberjack.Logger{
-			Filename:   logFile,
-			MaxSize:    30,    // 日志文件最大size, 单位是MB
-			MaxBackups: 2,     // 最大过期日志保留的个数
-			MaxAge:     60,    // 保留过期文件的最大时间间隔，单位是天
-			Compress:   false, // 是否需要压缩滚动日志，使用的gzip压缩
-		}
-		logrus.SetOutput(logout)
-	}
-
-	logrus.SetReportCaller(true)
-	// Use MongoDB hook instead of Redis
-	hook := loghook.NewLogrusMongoHook(mongoCli, "scanner")
-	logrus.AddHook(hook)
-	return nil
-}
-
-func InitRedisClient(setting *Config) (*redis.Client, error) {
-	opt, err := redis.ParseURL(setting.Redis.URI)
-	if err != nil {
-		return nil, err
-	}
-
-	opt.DialTimeout = 15 * time.Second
-	opt.ReadTimeout = 10 * time.Second
-	opt.WriteTimeout = 10 * time.Second
-	opt.PoolSize = 100
-
-	rdb := redis.NewClient(opt)
-	_, err = rdb.Ping(context.Background()).Result()
-	if err != nil {
-		return nil, err
-	}
-
-	return rdb, err
-}
-
-func InitMongoClient(setting *Config) (mongo.DBAdaptor, error) {
-	mongoCli := mongo.NewMongoSession()
-
-	cs, err := connstring.Parse(setting.Mongodb.URI)
-	if err != nil {
-		return nil, err
-	}
-
-	err = mongoCli.Connect(context.Background(), setting.Mongodb.URI, cs.Database)
-	if err != nil {
-		return nil, err
-	}
-
-	mongoCli.SetPoolLimit(setting.Mongodb.PoolLimit)
-
-	return mongoCli, nil
-}
+const logModule = "scanner"
 
 func Init(confPath string) (*Env, error) {
-	content, err := os.ReadFile(confPath)
-	if err != nil {
-		return nil, err
-	}
-
 	var setting Config
-	err = yaml.Unmarshal(content, &setting)
-	if err != nil {
+	if err := svcconfig.LoadYAML(confPath, &setting); err != nil {
 		return nil, err
 	}
 
@@ -150,20 +58,20 @@ func Init(confPath string) (*Env, error) {
 		return nil, fmt.Errorf("empty Mongodb.URI in config: %s", confPath)
 	}
 
-	redisCli, err := InitRedisClient(&setting)
+	ctx := context.Background()
+	redisCli, err := svcconfig.NewRedisClient(ctx, setting.Redis)
 	if err != nil {
 		return nil, err
 	}
 
-	mongoCli, err := InitMongoClient(&setting)
+	mongoCli, err := svcconfig.NewMongoClient(ctx, setting.Mongodb)
 	if err != nil {
 		return nil, err
 	}
 
-	err = InitLog(&setting, mongoCli)
-	if err != nil {
+	if err := svcconfig.InitLog(setting.Log, setting.ProjectName, logModule, mongoCli); err != nil {
 		return nil, err
 	}
 
-	return &Env{Cfg: &setting, RedisCli: redisCli, MongoCli: mongoCli, ctx: context.Background()}, nil
+	return &Env{Cfg: &setting, RedisCli: redisCli, MongoCli: mongoCli, Ctx: svcconfig.NewCtx(ctx)}, nil
 }

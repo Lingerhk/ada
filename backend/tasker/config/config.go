@@ -1,51 +1,27 @@
 package config
 
 import (
-	"ada/infra/loghook"
-	"ada/infra/mongo"
 	"context"
-	"fmt"
-	"os"
-	"path"
-	"time"
+
+	"ada/infra/mongo"
+	"ada/infra/svcconfig"
 
 	"github.com/elastic/go-elasticsearch/v8"
-	"github.com/natefinch/lumberjack"
 	"github.com/redis/go-redis/v9"
-	"github.com/sirupsen/logrus"
-	"go.mongodb.org/mongo-driver/v2/x/mongo/driver/connstring"
-	"gopkg.in/yaml.v3"
 )
 
-type LogCfg struct {
-	LogPath  string `yaml:"LogPath"`
-	LogLevel string `yaml:"LogLevel"`
-	IsStdOut bool   `yaml:"IsStdOut"`
-}
+// Shared configuration blocks (see infra/svcconfig).
+type (
+	LogCfg     = svcconfig.LogCfg
+	RedisCfg   = svcconfig.RedisCfg
+	MongodbCfg = svcconfig.MongodbCfg
+	ESCfg      = svcconfig.ESCfg
+)
 
 type TaskSrvCfg struct {
 	GrpcAddr   string `yaml:"GrpcAddr"`
 	HttpAddr   string `yaml:"HttpAddr"`
 	SyslogAddr string `yaml:"SyslogAddr"`
-}
-
-type RedisCfg struct {
-	URI         string `yaml:"URI"`
-	Active      int    `yaml:"Active"`
-	Idle        int    `yaml:"Idle"`
-	IdleTimeout int    `yaml:"IdleTimeout"`
-}
-
-type MongodbCfg struct {
-	URI       string `yaml:"URI"`
-	PoolLimit uint64 `yaml:"PoolLimit"`
-}
-
-type ESCfg struct {
-	Enable    bool     `yaml:"Enable"`
-	Addresses []string `yaml:"Addresses"`
-	Username  string   `yaml:"Username"`
-	Password  string   `yaml:"Password"`
 }
 
 type Config struct {
@@ -62,130 +38,37 @@ type Env struct {
 	RedisCli *redis.Client
 	MongoCli mongo.DBAdaptor
 	EsCli    *elasticsearch.Client
-	ctx      context.Context
+	svcconfig.Ctx
 }
 
-func InitLog(setting *Config, mongoCli mongo.DBAdaptor, moduleName string) error {
-	logrus.SetFormatter(&logrus.JSONFormatter{})
-	if setting.Log.LogLevel == "" {
-		return nil
-	}
-
-	lvl, err := logrus.ParseLevel(setting.Log.LogLevel)
-	if err != nil {
-		return err
-	}
-	logrus.SetLevel(lvl)
-
-	if setting.Log.IsStdOut {
-		logrus.SetOutput(os.Stdout)
-		logrus.SetFormatter(&logrus.TextFormatter{})
-	} else if setting.Log.LogPath != "" {
-		logName := fmt.Sprintf("%s_%s.log", setting.ProjectName, moduleName)
-		logFile := path.Join(setting.Log.LogPath, logName)
-		logout := &lumberjack.Logger{
-			Filename:   logFile,
-			MaxSize:    30,    // 日志文件最大size, 单位是MB
-			MaxBackups: 2,     // 最大过期日志保留的个数
-			MaxAge:     60,    // 保留过期文件的最大时间间隔，单位是天
-			Compress:   false, // 是否需要压缩滚动日志，使用的gzip压缩
-		}
-		logrus.SetOutput(logout)
-	}
-
-	logrus.SetReportCaller(true)
-	// Use MongoDB hook instead of Redis
-	hook := loghook.NewLogrusMongoHook(mongoCli, "task_"+moduleName)
-	logrus.AddHook(hook)
-	return nil
-}
-
-func InitRedisClient(setting *Config) (*redis.Client, error) {
-	opt, err := redis.ParseURL(setting.Redis.URI)
-	if err != nil {
-		return nil, err
-	}
-
-	opt.DialTimeout = 15 * time.Second
-	opt.ReadTimeout = 15 * time.Second
-	opt.WriteTimeout = 15 * time.Second
-	opt.PoolSize = 100
-
-	rdb := redis.NewClient(opt)
-	_, err = rdb.Ping(context.Background()).Result()
-	if err != nil {
-		return nil, err
-	}
-
-	return rdb, err
-}
-
-func InitMongoClient(setting *Config) (mongo.DBAdaptor, error) {
-	mongoCli := mongo.NewMongoSession()
-
-	cs, err := connstring.Parse(setting.Mongodb.URI)
-	if err != nil {
-		return nil, err
-	}
-
-	err = mongoCli.Connect(context.Background(), setting.Mongodb.URI, cs.Database)
-	if err != nil {
-		return nil, err
-	}
-
-	mongoCli.SetPoolLimit(setting.Mongodb.PoolLimit)
-
-	return mongoCli, nil
-}
-
-func InitElasticsearch(setting *Config) (*elasticsearch.Client, error) {
-	if !setting.ES.Enable {
-		return nil, nil
-	}
-
-	cfg := elasticsearch.Config{
-		Addresses: setting.ES.Addresses,
-		Username:  setting.ES.Username,
-		Password:  setting.ES.Password,
-	}
-	esCli, err := elasticsearch.NewClient(cfg)
-	if err != nil {
-		return nil, err
-	}
-	return esCli, nil
-}
-
+// Init loads confPath and connects the clients. moduleName ("server" or
+// "worker") distinguishes the two tasker processes in log file names and in
+// the MongoDB log hook.
 func Init(confPath, moduleName string) (*Env, error) {
-	content, err := os.ReadFile(confPath)
-	if err != nil {
-		return nil, err
-	}
-
 	var setting Config
-	err = yaml.Unmarshal(content, &setting)
+	if err := svcconfig.LoadYAML(confPath, &setting); err != nil {
+		return nil, err
+	}
+
+	ctx := context.Background()
+	redisCli, err := svcconfig.NewRedisClient(ctx, setting.Redis)
 	if err != nil {
 		return nil, err
 	}
 
-	redisCli, err := InitRedisClient(&setting)
+	mongoCli, err := svcconfig.NewMongoClient(ctx, setting.Mongodb)
 	if err != nil {
 		return nil, err
 	}
 
-	mongoCli, err := InitMongoClient(&setting)
+	if err := svcconfig.InitLog(setting.Log, setting.ProjectName+"_"+moduleName, "task_"+moduleName, mongoCli); err != nil {
+		return nil, err
+	}
+
+	esCli, err := svcconfig.NewElasticsearchClient(setting.ES)
 	if err != nil {
 		return nil, err
 	}
 
-	err = InitLog(&setting, mongoCli, moduleName)
-	if err != nil {
-		return nil, err
-	}
-
-	esCli, err := InitElasticsearch(&setting)
-	if err != nil {
-		return nil, err
-	}
-
-	return &Env{Cfg: &setting, RedisCli: redisCli, MongoCli: mongoCli, EsCli: esCli, ctx: context.Background()}, nil
+	return &Env{Cfg: &setting, RedisCli: redisCli, MongoCli: mongoCli, EsCli: esCli, Ctx: svcconfig.NewCtx(ctx)}, nil
 }
