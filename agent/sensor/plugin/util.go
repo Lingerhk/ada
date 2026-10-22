@@ -4,11 +4,14 @@ package plugin
 
 import (
 	"ada/agent/sensor/common"
+	"ada/agent/sensor/fwmgr"
+	"context"
 	"crypto/sha256"
 	"fmt"
 	"os"
 	"os/exec"
 	"path/filepath"
+	"time"
 
 	logger "github.com/sirupsen/logrus"
 	"golang.org/x/sys/windows/svc"
@@ -18,7 +21,38 @@ import (
 var (
 	rpcFwBinPath  = filepath.Join(common.SensorDir, "rpcfw", common.PlugRpcFwProcName)
 	ldapFwBinPath = filepath.Join(common.SensorDir, "ldapfw", common.PlugLdapFwProcName)
+
+	rpcFwConfPath  = filepath.Join(common.SensorDir, "rpcfw", "rpcFw.conf")
+	ldapFwConfPath = filepath.Join(common.SensorDir, "ldapfw", "config.json")
 )
+
+// managerCmdTimeout bounds a single firewall manager invocation (service
+// control or config reload) so a hung manager cannot stall the plugin loop,
+// unlike the previous unbounded exec.Command calls.
+const managerCmdTimeout = 60 * time.Second
+
+func rpcFwManager() *fwmgr.Manager  { return fwmgr.NewRPC(rpcFwBinPath, rpcFwConfPath) }
+func ldapFwManager() *fwmgr.Manager { return fwmgr.NewLDAP(ldapFwBinPath, ldapFwConfPath) }
+
+func managerContext() (context.Context, context.CancelFunc) {
+	return context.WithTimeout(context.Background(), managerCmdTimeout)
+}
+
+// firewallProtectionActive reports whether the firewall's event log shows
+// protection is currently applied. ok is false when the state could not be
+// determined (e.g. the event channel is unreadable), in which case callers
+// should fall back to the plain service-running signal rather than assume a
+// state.
+func firewallProtectionActive(m *fwmgr.Manager) (active, ok bool) {
+	ctx, cancel := managerContext()
+	defer cancel()
+	a, err := m.ProtectionActive(ctx)
+	if err != nil {
+		logger.Warnf("determine %s protection state err:%v", m.Name(), err)
+		return false, false
+	}
+	return a, true
+}
 
 func (p *Plugin) getPluginStatus() (map[string]bool, error) {
 	m, err := mgr.Connect()
@@ -89,6 +123,24 @@ func (p *Plugin) getPluginStatus() (map[string]bool, error) {
 		s.Close()
 	}
 
+	// A firewall service can be running while protection is not actually
+	// applied (e.g. injection failed). Judge "up" by the firewall's own
+	// event log; when it shows protection is NOT applied, report the plugin
+	// as down so runPlugin re-applies it. On an unreadable log, keep the
+	// service-running signal.
+	if statusMap[common.PlugRpcFwName] {
+		if active, ok := firewallProtectionActive(rpcFwManager()); ok && !active {
+			logger.Warnf("rpcfw service running but protection not applied; will re-apply")
+			statusMap[common.PlugRpcFwName] = false
+		}
+	}
+	if statusMap[common.PlugLdapFwName] {
+		if active, ok := firewallProtectionActive(ldapFwManager()); ok && !active {
+			logger.Warnf("ldapfw service running but protection not applied; will re-apply")
+			statusMap[common.PlugLdapFwName] = false
+		}
+	}
+
 	return statusMap, nil
 }
 
@@ -102,27 +154,21 @@ func isRpcFwInstalled() bool {
 }
 
 func startRpcFwPlugin(restart bool) error {
+	ctx, cancel := managerContext()
+	defer cancel()
+	m := rpcFwManager()
 	if restart {
-		// Wait for stop to complete before starting
-		cmd := exec.Command(rpcFwBinPath, "/stop")
-		if err := cmd.Run(); err != nil {
+		if err := m.Stop(ctx); err != nil {
 			logger.Warnf("stop rpcfw before restart err: %v", err)
-			// Continue with start anyway
 		}
 	}
-
-	cmd := exec.Command(rpcFwBinPath, "/start")
-	return cmd.Run()
+	return m.Start(ctx)
 }
 
 func stopRpcFwPlugin() error {
-	cmd := exec.Command(rpcFwBinPath, "/stop")
-	return cmd.Run()
-}
-
-func reloadRpcFwPlugin() error {
-	cmd := exec.Command(rpcFwBinPath, "/update")
-	return cmd.Run()
+	ctx, cancel := managerContext()
+	defer cancel()
+	return rpcFwManager().Stop(ctx)
 }
 
 func isLdapFwInstalled() bool {
@@ -135,27 +181,21 @@ func isLdapFwInstalled() bool {
 }
 
 func startLdapFwPlugin(restart bool) error {
+	ctx, cancel := managerContext()
+	defer cancel()
+	m := ldapFwManager()
 	if restart {
-		// Wait for stop to complete before starting
-		if err := stopLdapFwPlugin(); err != nil {
+		if err := m.Stop(ctx); err != nil {
 			logger.Warnf("stop ldapfw before restart err: %v", err)
-			// Continue with start anyway
 		}
 	}
-
-	cmd := exec.Command("powershell.exe", "-Command", "Start-Service", "-Name", `"LDAP Firewall"`)
-	return cmd.Run()
+	return m.Start(ctx)
 }
 
 func stopLdapFwPlugin() error {
-	// powershell exec: Stop-Service -name "LDAP Firewall"
-	cmd := exec.Command("powershell.exe", "-Command", "Stop-Service", "-Name", `"LDAP Firewall"`)
-	return cmd.Run()
-}
-
-func reloadLdapFwPlugin() error {
-	cmd := exec.Command(ldapFwBinPath, "/update")
-	return cmd.Run()
+	ctx, cancel := managerContext()
+	defer cancel()
+	return ldapFwManager().Stop(ctx)
 }
 
 func (p *Plugin) sensorConfUpdate(data map[string]string) error {
@@ -192,15 +232,14 @@ func (p *Plugin) pluginConfUpdate(data map[string]string) error {
 		if !p.checkFileSum(rpcfwCfg, data["rpcFw.conf.sha256"]) {
 			logger.Error("check file(rpcFw.conf) sum failed")
 		} else {
-			rpcfwCfgFile := filepath.Join(common.SensorDir, "rpcfw", "rpcFw.conf")
-			if err = os.WriteFile(rpcfwCfgFile, []byte(rpcfwCfg), 0644); err != nil {
-				logger.Errorf("write %s file err:%v", rpcfwCfgFile, err)
-			} else {
-				// reload rpcfw
-				if err = reloadRpcFwPlugin(); err != nil {
-					logger.Errorf("reload rpcfw plugin err:%v", err)
-				}
+			// ApplyConfig validates the config, writes it atomically and asks
+			// the firewall to reload, rolling back on a rejected reload.
+			ctx, cancel := managerContext()
+			if e := rpcFwManager().ApplyConfig(ctx, []byte(rpcfwCfg)); e != nil {
+				logger.Errorf("apply rpcfw config err:%v", e)
+				err = e
 			}
+			cancel()
 		}
 	}
 
@@ -208,15 +247,12 @@ func (p *Plugin) pluginConfUpdate(data map[string]string) error {
 		if !p.checkFileSum(ldapfwCfg, data["config.json.sha256"]) {
 			logger.Error("check file(config.json) sum failed")
 		} else {
-			ldapfwCfgFile := filepath.Join(common.SensorDir, "ldapfw", "config.json")
-			if err = os.WriteFile(ldapfwCfgFile, []byte(ldapfwCfg), 0644); err != nil {
-				logger.Errorf("write %s file err:%v", ldapfwCfgFile, err)
-			} else {
-				// reload ldapfw
-				if err = reloadLdapFwPlugin(); err != nil {
-					logger.Errorf("reload ldapfw plugin err:%v", err)
-				}
+			ctx, cancel := managerContext()
+			if e := ldapFwManager().ApplyConfig(ctx, []byte(ldapfwCfg)); e != nil {
+				logger.Errorf("apply ldapfw config err:%v", e)
+				err = e
 			}
+			cancel()
 		}
 	}
 
