@@ -1,0 +1,28 @@
+title: LDAP Firewall Protection Removed
+id: winlog-0338
+status: experimental
+rule_origin: internal
+description: Detects the LDAP Firewall writing a protection-removed event (Application/LDAPFW event ID 258). On a protected
+  domain controller this means the LDAP query auditing/blocking hook was removed from lsass, which can indicate an attacker
+  disabling the firewall, or a sensor-driven stop. Correlate with an expected stop from ADAegis.
+references:
+- https://github.com/zeronetworks/ldapfw
+author: ADA default rules
+date: 2026/10/22
+modified: 2026/10/22
+tags:
+- TA0005
+- attack.defense_evasion
+- attack.t1562
+logsource: winlog
+detection:
+  selection:
+    Channel: LDAPFW
+    EventID: 258
+  condition: selection
+fields:
+- Hostname
+- Message
+level: high
+falsepositives:
+- Planned LDAP Firewall stop or reconfiguration performed through ADAegis.
